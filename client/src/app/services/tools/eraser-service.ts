@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
+export const MIN_WIDTH_ERASER = 5;
 export enum MouseButton {
     Left = 0,
     Middle = 1,
@@ -21,6 +22,14 @@ export class EraserService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
+    }
+
+    setLineWidth(value: number): void {
+        if (value >= MIN_WIDTH_ERASER) {
+            this.drawingService.previewCtx.lineWidth = value;
+        } else {
+            this.drawingService.previewCtx.lineWidth = MIN_WIDTH_ERASER;
+        }
     }
 
     onMouseDown(event: MouseEvent): void {
