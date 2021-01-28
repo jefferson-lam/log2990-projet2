@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EraserService } from '@app/services/tools/eraser-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 
 // TODO : Avoir un fichier séparé pour les constantes ?
@@ -25,8 +26,8 @@ export class DrawingComponent implements AfterViewInit {
     // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     private tools: Tool[];
     currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService) {
-        this.tools = [pencilService];
+    constructor(private drawingService: DrawingService, pencilService: PencilService, eraserService: EraserService) {
+        this.tools = [pencilService, eraserService];
         this.currentTool = this.tools[0];
     }
 
@@ -36,6 +37,22 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+    }
+
+    @HostListener('keydown.c', ['$event'])
+    onKeyC(event: KeyboardEvent): void {
+        this.currentTool = this.tools[0];
+        this.drawingService.previewCtx.strokeStyle = 'black';
+        this.drawingService.baseCtx.strokeStyle = 'black';
+        console.log(this.currentTool);
+    }
+
+    @HostListener('keydown.e', ['$event'])
+    onKeyE(event: KeyboardEvent): void {
+        this.currentTool = this.tools[1];
+        this.drawingService.previewCtx.strokeStyle = 'white';
+        this.drawingService.baseCtx.strokeStyle = 'white';
+        console.log(this.currentTool);
     }
 
     @HostListener('mousemove', ['$event'])
