@@ -15,21 +15,24 @@ export enum MouseButton {
 enum CornerIndex {
     start = 0,
     end = 1,
+    substitute = 2,
 }
 
 // TODO: CHANGE WAY TO GET COLOR
-const primaryColor = 'red';
-const secondColor = 'blue';
+const primaryColor = '#B5CF60';
+const secondColor = '#2F2A36';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
     private pathData: Vec2[];
+    private isSquare: boolean;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
+        this.isSquare = false;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -59,7 +62,6 @@ export class RectangleService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         // TODO: change to interact with color picker
-
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             if (this.pathData.length < 2) {
@@ -68,49 +70,76 @@ export class RectangleService extends Tool {
                 this.pathData[CornerIndex.end] = mousePosition;
             }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            // TODO: draw rectangle based on chosen rectangle (outline, filled, or both)
             this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
         }
     }
 
+    onKeyDown(event: KeyboardEvent): void {
+        if (event.key == 'Shift') {
+            if (this.mouseDown) {
+                this.isSquare = true;
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
+            }
+        }
+    }
+
+    onKeyUp(event: KeyboardEvent): void {
+        if (event.key == 'Shift') {
+            if (this.isSquare) {
+                this.isSquare = false;
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
+            }
+        }
+    }
+
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], color: string) {
-        let num: number = 2;
-        switch (num) {
+        const fillMode: number = 1;
+        let width = path[CornerIndex.end].x - path[CornerIndex.start].x;
+        let height = path[CornerIndex.end].y - path[CornerIndex.start].y;
+        if (this.isSquare) {
+            const longestSide = Math.max(Math.abs(width), Math.abs(height));
+            width = width > 0 ? longestSide : -longestSide;
+            height = height > 0 ? longestSide : -longestSide;
+        }
+        switch (fillMode) {
             case 0: {
-                this.drawFilledRectangle(ctx, path, color);
+                this.drawFilledRectangle(ctx, path, color, width, height);
                 break;
             }
             case 1: {
-                this.drawOutlinedRectangle(ctx, path, color);
+                this.drawOutlinedRectangle(ctx, path, secondColor, width, height);
                 break;
             }
             case 2: {
-                this.drawOutlineFilledrectangle(ctx, path, color, secondColor);
+                this.drawOutlineFilledrectangle(ctx, path, color, secondColor, width, height);
                 break;
             }
         }
     }
 
-    private drawFilledRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], primaryColor: string) {
-        const width = path[CornerIndex.end].x - path[CornerIndex.start].x;
-        const height = path[CornerIndex.end].y - path[CornerIndex.start].y;
+    private drawFilledRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], primaryColor: string, width: number, height: number) {
         ctx.beginPath();
         ctx.fillStyle = primaryColor;
         ctx.fillRect(path[CornerIndex.start].x, path[CornerIndex.start].y, width, height);
     }
 
-    private drawOutlinedRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], primaryColor: string) {
-        const width = path[CornerIndex.end].x - path[CornerIndex.start].x;
-        const height = path[CornerIndex.end].y - path[CornerIndex.start].y;
+    private drawOutlinedRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], primaryColor: string, width: number, height: number) {
         ctx.beginPath();
         ctx.rect(path[CornerIndex.start].x, path[CornerIndex.start].y, width, height);
         ctx.strokeStyle = primaryColor;
         ctx.stroke();
     }
 
-    private drawOutlineFilledrectangle(ctx: CanvasRenderingContext2D, path: Vec2[], fillColor: string, borderColor: string) {
-        const width = path[CornerIndex.end].x - path[CornerIndex.start].x;
-        const height = path[CornerIndex.end].y - path[CornerIndex.start].y;
+    private drawOutlineFilledrectangle(
+        ctx: CanvasRenderingContext2D,
+        path: Vec2[],
+        fillColor: string,
+        borderColor: string,
+        width: number,
+        height: number,
+    ) {
         ctx.beginPath();
         ctx.rect(path[CornerIndex.start].x, path[CornerIndex.start].y, width, height);
         ctx.fillStyle = fillColor;
