@@ -78,8 +78,8 @@ export class RectangleService extends Tool {
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        if (event.key == 'Shift') {
-            if (this.mouseDown) {
+        if (this.mouseDown) {
+            if (event.key == 'Shift') {
                 this.isSquare = true;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
@@ -88,12 +88,14 @@ export class RectangleService extends Tool {
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        if (event.key == 'Shift') {
-            if (this.isSquare) {
+        if (this.mouseDown) {
+            if (event.key == 'Shift') {
                 this.isSquare = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
             }
+        } else {
+            this.isSquare = false;
         }
     }
 
