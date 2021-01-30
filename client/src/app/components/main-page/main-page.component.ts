@@ -13,6 +13,9 @@ export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
+    oldDrawingTrue: boolean = true;
+    oldDrawingFalse: boolean = false;
+    drawingExists: boolean;
     constructor(private basicService: IndexService) {}
 
     sendTimeToServer(): void {
@@ -34,5 +37,15 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
+    }
+
+    openDrawing(): void {
+        console.log('Temporary message');
+    }
+    openCarousel(): void {
+        console.log('Temporary message');
+    }
+    openOldDrawing(): void {
+        console.log('Temporary message');
     }
 }

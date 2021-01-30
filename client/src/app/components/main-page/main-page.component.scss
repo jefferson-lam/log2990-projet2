@@ -31,3 +31,21 @@
     width: 20%;
     min-width: min-content;
 }
+#main-buttons {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  width:200px;
+}
+
+#main-buttons > button {
+  margin-bottom: 20px;
+  width: 300px;
+  height: 50px;
+  color: black;
+  background-color: #00b7b7;
+}
+
+#main-title{
+  margin-top: 100px;
+}
