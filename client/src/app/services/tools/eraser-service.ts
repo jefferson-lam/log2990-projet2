@@ -18,17 +18,19 @@ export enum MouseButton {
 })
 export class EraserService extends Tool {
     private pathData: Vec2[];
+    private width: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
+        this.width = MIN_WIDTH_ERASER;
     }
 
-    setLineWidth(value: number): void {
+    setWidth(value: number): void {
         if (value >= MIN_WIDTH_ERASER) {
-            this.drawingService.previewCtx.lineWidth = value;
+            this.width = value;
         } else {
-            this.drawingService.previewCtx.lineWidth = MIN_WIDTH_ERASER;
+            this.width = MIN_WIDTH_ERASER;
         }
     }
 
@@ -46,7 +48,7 @@ export class EraserService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -59,12 +61,16 @@ export class EraserService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.eraseLine(this.drawingService.previewCtx, this.pathData);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    private eraseLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
+        ctx.lineWidth = this.width;
+        ctx.strokeStyle = 'white';
+        ctx.lineCap = 'square';
+
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
