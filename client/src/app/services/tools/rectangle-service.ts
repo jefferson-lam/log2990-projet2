@@ -22,6 +22,9 @@ enum CornerIndex {
 const primaryColor = '#B5CF60';
 const secondColor = '#2F2A36';
 
+// TODO: Find way to get fill mode
+const fillMode: number = 1;
+
 @Injectable({
     providedIn: 'root',
 })
@@ -95,7 +98,8 @@ export class RectangleService extends Tool {
     }
 
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], color: string) {
-        const fillMode: number = 1;
+        if (path.length < 2) return;
+
         let width = path[CornerIndex.end].x - path[CornerIndex.start].x;
         let height = path[CornerIndex.end].y - path[CornerIndex.start].y;
         if (this.isSquare) {
