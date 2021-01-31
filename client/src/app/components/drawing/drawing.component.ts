@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { PencilService } from '@app/services/tools/pencil-service';
+import { Subscription } from 'rxjs';
 
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
@@ -19,6 +20,10 @@ export class DrawingComponent implements AfterViewInit {
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
+    private cursor: HTMLElement;
+    @ViewChild('cursor', { static: false }) cursorDiv: ElementRef;
+    @ViewChild('canvasContainer', { static: false }) parentDiv: ElementRef;
+
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
@@ -26,9 +31,14 @@ export class DrawingComponent implements AfterViewInit {
     // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     private tools: Tool[];
     currentTool: Tool;
+    eraserSizeSubscription: Subscription;
     constructor(private drawingService: DrawingService, pencilService: PencilService, eraserService: EraserService) {
         this.tools = [pencilService, eraserService];
         this.currentTool = this.tools[0];
+        this.eraserSizeSubscription = eraserService.eraserSizeChanged$.subscribe((newSize) => {
+            this.cursor.style.height = newSize + 'px';
+            this.cursor.style.width = newSize + 'px';
+        });
     }
 
     ngAfterViewInit(): void {
@@ -37,6 +47,8 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+
+        this.cursor = this.cursorDiv.nativeElement;
     }
 
     @HostListener('keydown.c', ['$event'])
@@ -55,7 +67,13 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
+        this.cursor.style.visibility = 'hidden';
         this.currentTool.onMouseMove(event);
+        if (this.currentTool === this.tools[1]) {
+            this.cursor.style.visibility = 'visible';
+            this.cursor.style.top = event.pageY - this.parentDiv.nativeElement.offsetTop - parseInt(this.cursor.style.height, 10) / 2 + 'px';
+            this.cursor.style.left = event.pageX - this.parentDiv.nativeElement.offsetLeft - parseInt(this.cursor.style.width, 10) / 2 + 'px';
+        }
     }
 
     @HostListener('mousedown', ['$event'])

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { EraserService } from '@app/services/tools/eraser-service';
 
 @Component({
@@ -7,8 +7,13 @@ import { EraserService } from '@app/services/tools/eraser-service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    constructor(private eraserService: EraserService) {}
-    changeEraserWidth(value: number): void {
-        this.eraserService.setWidth(value);
+    @Output() eraserSizeChanged: EventEmitter<number> = new EventEmitter();
+
+    constructor(private eraserService: EraserService) {
+        this.eraserSizeChanged.subscribe((newSize: number) => this.eraserService.setSize(newSize));
+    }
+
+    changeEraserSize(value: number): void {
+        this.eraserSizeChanged.emit(value);
     }
 }
