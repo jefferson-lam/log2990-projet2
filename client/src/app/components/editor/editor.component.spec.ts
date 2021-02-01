@@ -6,6 +6,7 @@ import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EraserService } from '@app/services/tools/eraser-service';
+import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { EditorComponent } from './editor.component';
 
@@ -18,13 +19,14 @@ describe('EditorComponent', () => {
     let fixture: ComponentFixture<EditorComponent>;
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
+    let lineStub: ToolStub;
     let toolManagerStub: ToolManagerService;
-    // const drawingStub: DrawingService = new DrawingService();
 
     beforeEach(async(() => {
         pencilStub = new ToolStub({} as DrawingService);
         eraserStub = new ToolStub({} as DrawingService);
-        toolManagerStub = new ToolManagerService(pencilStub as PencilService, eraserStub as EraserService);
+        lineStub = new ToolStub({} as DrawingService);
+        toolManagerStub = new ToolManagerService(pencilStub as PencilService, eraserStub as EraserService, lineStub as LineService);
         TestBed.configureTestingModule({
             declarations: [EditorComponent, DrawingComponent, SidebarComponent, EraserStubComponent],
             providers: [
