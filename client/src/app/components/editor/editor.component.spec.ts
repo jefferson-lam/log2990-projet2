@@ -4,6 +4,7 @@ import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { EditorComponent } from './editor.component';
 
@@ -18,7 +19,7 @@ describe('EditorComponent', () => {
 
     beforeEach(async(() => {
         toolStub = new ToolStub({} as DrawingService);
-        toolManagerStub = new ToolManagerService(new PencilService(drawingStub));
+        toolManagerStub = new ToolManagerService(new PencilService(drawingStub), new LineService(drawingStub));
         TestBed.configureTestingModule({
             declarations: [EditorComponent, DrawingComponent, SidebarComponent],
             providers: [
