@@ -1,4 +1,4 @@
-export interface ToolsList {
+export interface ToolsInterface {
     id: number;
     name: string;
     icon: string;
