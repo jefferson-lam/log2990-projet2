@@ -35,9 +35,24 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
+    @HostListener('keyboard', ['$event'])
+    onKeyboardDown(event: KeyboardEvent): void {
+        this.currentTool.onKeyboardDown(event);
+    }
+
     @HostListener('keypress', ['$event'])
     onKeyboardPress(event: KeyboardEvent): void {
         this.currentTool.onKeyboardPress(event);
+    }
+
+    @HostListener('click', ['$event'])
+    onMouseClick(event: MouseEvent): void {
+        this.currentTool.onMouseClick(event);
+    }
+
+    @HostListener('dblclick', ['$event'])
+    onMouseDoubleClick(event: MouseEvent): void {
+        this.currentTool.onMouseDoubleClick(event);
     }
 
     @HostListener('mousemove', ['$event'])
