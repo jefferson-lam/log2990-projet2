@@ -9,7 +9,13 @@ export abstract class Tool {
 
     constructor(protected drawingService: DrawingService) {}
 
+    onKeyboardDown(event: KeyboardEvent): void {}
+
     onKeyboardPress(event: KeyboardEvent): void {}
+
+    onMouseClick(event: MouseEvent): void {}
+
+    onMouseDoubleClick(event: MouseEvent): void {}
 
     onMouseDown(event: MouseEvent): void {}
 
