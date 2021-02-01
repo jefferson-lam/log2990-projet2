@@ -1,23 +1,21 @@
 <div class="container">
   <h2 id='titleSidebar'>My Tools</h2>
   <ul class="tools-sidebar">
-    <li *ngFor="let tool of TOOLSLIST" >
+    <li id='toolId' *ngFor="let tool of TOOLSLIST" >
       <span class="badge">{{tool.id}} </span>
       <mat-icon (click)='onSelectTool(tool.name); toggleOpen();' [class.selected]="selectedTool === tool.name" >
         {{tool.icon}} </mat-icon> {{tool.name}}
     </li>
   </ul>
- <!-- <div *ngIf="selectedTool">
-    <h2> OPTIONS {{selectedTool | uppercase}} </h2>
-    <div>{{'it works!'}}</div>
-    </div> -->
-  <!-- Ici on rentres dans l'interface des options des outils -->
 </div>
+
+  <!-- Ici on rentres dans l'interface des options des outils -->
+
   <mat-drawer-container class='tools-option-container' (mouseleave)='toggleOpen()'>
     <mat-drawer #drawer [mode]='"side"' class='sidenav' [opened]='opened'>
-      <mat-toolbar *ngIf="selectedTool">
+      <mat-card-title id='optionsTitle' *ngIf="selectedTool">
         <p> OPTIONS {{selectedTool | uppercase}} </p>
-      </mat-toolbar>
+      </mat-card-title>
       <mat-drawer-content [ngSwitch]='selectedTool'>
           <app-sidebar-pencil class='sidebar-tool-options' *ngSwitchCase="ToolsList.Pencil" > </app-sidebar-pencil>
           <app-sidebar-eraser class='sidebar-tool-options' *ngSwitchCase='ToolsList.Eraser'></app-sidebar-eraser>

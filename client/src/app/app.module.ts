@@ -18,6 +18,7 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options/sidebar-eraser/sidebar-eraser.component';
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options/sidebar-pencil/sidebar-pencil.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
     declarations: [
@@ -31,19 +32,20 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MainPageCarrouselComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        AppRoutingModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSidenavModule,
-        BrowserAnimationsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatDialogModule,
-        MatToolbarModule,
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSidenavModule,
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogModule,
+    MatToolbarModule,
+    MatCardModule,
+  ],
     providers: [],
     bootstrap: [AppComponent],
 })
