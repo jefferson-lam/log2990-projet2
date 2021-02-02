@@ -28,7 +28,7 @@ enum FillMode {
     FILL_ONLY = 1,
     OUTLINE_FILL = 2,
 }
-const fillMode: number = FillMode.OUTLINE_FILL;
+let fillMode: number = FillMode.OUTLINE_FILL;
 
 // TODO: Find way to get line width
 const lineWidth: number = 5;
@@ -41,29 +41,25 @@ export class RectangleService extends Tool {
     isSquare: boolean;
 
     constructor(drawingService: DrawingService) {
+        const MAX_PATH_DATA_SIZE: number = 2;
         super(drawingService);
-        this.clearPath();
         this.isSquare = false;
+        this.pathData = new Array<Vec2>(MAX_PATH_DATA_SIZE);
+        this.clearPath();
     }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            this.clearPath();
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
+            this.pathData[CornerIndex.start] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
-            if (this.pathData.length < 2) {
-                this.pathData.push(mousePosition);
-            } else {
-                this.pathData[CornerIndex.end] = mousePosition;
-            }
+            this.pathData[CornerIndex.end] = mousePosition;
             this.drawRectangle(this.drawingService.baseCtx, this.pathData, primaryColor);
         }
         this.mouseDown = false;
@@ -71,14 +67,9 @@ export class RectangleService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        // TODO: change to interact with color picker
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
-            if (this.pathData.length < 2) {
-                this.pathData.push(mousePosition);
-            } else {
-                this.pathData[CornerIndex.end] = mousePosition;
-            }
+            this.pathData[CornerIndex.end] = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
         }
@@ -107,8 +98,6 @@ export class RectangleService extends Tool {
     }
 
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], color: string) {
-        if (path.length < 2) return;
-
         let width = path[CornerIndex.end].x - path[CornerIndex.start].x;
         let height = path[CornerIndex.end].y - path[CornerIndex.start].y;
         if (this.isSquare) {
@@ -142,6 +131,6 @@ export class RectangleService extends Tool {
     }
 
     private clearPath(): void {
-        this.pathData = [];
+        this.pathData.fill({ x: 0, y: 0 });
     }
 }
