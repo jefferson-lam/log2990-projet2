@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle-service';
@@ -6,7 +7,7 @@ import { RectangleService } from './rectangle-service';
 describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
-    //let canvasTestHelper: CanvasTestHelper;
+    let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
@@ -18,6 +19,10 @@ describe('RectangleService', () => {
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
+        canvasTestHelper = TestBed.inject(CanvasTestHelper);
+        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+
         service = TestBed.inject(RectangleService);
         drawRectangleSpy = spyOn<any>(service, 'drawRectangle').and.callThrough();
 
@@ -101,6 +106,7 @@ describe('RectangleService', () => {
         } as KeyboardEvent;
 
         service.onKeyDown(keyEvent);
+        expect(service.isSquare).toEqual(true);
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
@@ -113,6 +119,7 @@ describe('RectangleService', () => {
         } as KeyboardEvent;
 
         service.onKeyDown(keyEvent);
+        expect(service.isSquare).toEqual(false);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
@@ -127,4 +134,42 @@ describe('RectangleService', () => {
         service.onKeyDown(keyEvent);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
+
+    it(' onKeyUp should call drawRectangle if mouse was down and then shift was pressed', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        let keyEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+
+        service.onKeyUp(keyEvent);
+        expect(service.isSquare).toEqual(false);
+        expect(drawRectangleSpy).toHaveBeenCalled();
+    });
+
+    it(' onKeyUp should not call drawRectangle if mouse was down and then keyboard key was released', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        let keyEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+
+        service.onKeyUp(keyEvent);
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onKeyUp should not call drawRectangle if mouse was not down when keyboard key was released', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = false;
+
+        let keyEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+
+        service.onKeyUp(keyEvent);
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
+    });
+    // TODO: implement tests with the 3 different fill modes
 });
