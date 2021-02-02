@@ -99,6 +99,24 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
+    it(' onKeyDown should not call drawLine if any key is pressed', () => {
+        let keyEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+
+        service.onKeyDown(keyEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onKeyUp should not call drawLine if any key is pressed', () => {
+        let keyEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+
+        service.onKeyUp(keyEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
     // Exemple de test d'intégration qui est quand même utile
     it(' should change the pixel of the canvas ', () => {
         mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;

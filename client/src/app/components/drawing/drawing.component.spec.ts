@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
@@ -74,5 +73,21 @@ describe('DrawingComponent', () => {
         component.onMouseUp(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
+    });
+
+    it(" should call the tool's keydown when receiving a keydown event", () => {
+        const event = {} as KeyboardEvent;
+        const mouseKeyboardSpy = spyOn(toolStub, 'onKeyDown').and.callThrough();
+        component.onKeyDown(event);
+        expect(mouseKeyboardSpy).toHaveBeenCalled();
+        expect(mouseKeyboardSpy).toHaveBeenCalledWith(event);
+    });
+
+    it(" should call the tool's keydown when receiving a keyup event", () => {
+        const event = {} as KeyboardEvent;
+        const mouseKeyboardSpy = spyOn(toolStub, 'onKeyUp').and.callThrough();
+        component.onKeyUp(event);
+        expect(mouseKeyboardSpy).toHaveBeenCalled();
+        expect(mouseKeyboardSpy).toHaveBeenCalledWith(event);
     });
 });
