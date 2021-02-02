@@ -13,3 +13,6 @@ coverage/
 
 #Google drive sync files
 *.ini
+
+#ignoring webstorm folder
+/.idea/*
