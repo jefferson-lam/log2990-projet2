@@ -15,16 +15,10 @@ export enum MouseButton {
     providedIn: 'root',
 })
 export class LineService extends Tool {
-<<<<<<< HEAD
     initialPoint: Vec2;
     mousePosition: Vec2;
     linePathData: Vec2[];
     shiftDown: boolean = false;
-=======
-    private initialPoint: Vec2;
-    private mousePosition: Vec2;
-    private linePathData: Vec2[];
->>>>>>> Added optional juncture feature to every drawn line by using arc(), and first iteration of line rotation.
     isDrawing: boolean = false;
     withJunction: boolean = true;
 
@@ -34,7 +28,6 @@ export class LineService extends Tool {
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-<<<<<<< HEAD
         if (this.isDrawing) {
             if (event.key == 'Shift' && !this.shiftDown) {
                 this.linePathData[1] = this.rotateLine(this.linePathData[0], this.mousePosition, 315);
@@ -44,15 +37,6 @@ export class LineService extends Tool {
                 this.mousePosition = currentMousePosition;
                 this.shiftDown = true;
             }
-=======
-        if (event.key == 'a' && this.isDrawing) {
-            //0 degrees
-            //angle could be a attribute of the setting service?
-            //clarify how these angles will be selected
-            this.linePathData[1] = this.rotateLine(this.linePathData[0], this.linePathData[1], 0);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.linePathData);
->>>>>>> Added optional juncture feature to every drawn line by using arc(), and first iteration of line rotation.
         }
     }
 
