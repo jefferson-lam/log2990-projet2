@@ -28,10 +28,10 @@ enum FillMode {
     FILL_ONLY = 1,
     OUTLINE_FILL = 2,
 }
-let fillMode: number = FillMode.OUTLINE_FILL;
+const fillMode: number = FillMode.OUTLINE_FILL;
 
 // TODO: Find way to get line width
-const lineWidth: number = 5;
+const lineWidth = 5;
 
 @Injectable({
     providedIn: 'root',
@@ -41,7 +41,7 @@ export class RectangleService extends Tool {
     isSquare: boolean;
 
     constructor(drawingService: DrawingService) {
-        const MAX_PATH_DATA_SIZE: number = 2;
+        const MAX_PATH_DATA_SIZE = 2;
         super(drawingService);
         this.isSquare = false;
         this.pathData = new Array<Vec2>(MAX_PATH_DATA_SIZE);
@@ -77,7 +77,7 @@ export class RectangleService extends Tool {
 
     onKeyDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
-            if (event.key == 'Shift') {
+            if (event.key === 'Shift') {
                 this.isSquare = true;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
@@ -87,7 +87,7 @@ export class RectangleService extends Tool {
 
     onKeyUp(event: KeyboardEvent): void {
         if (this.mouseDown) {
-            if (event.key == 'Shift') {
+            if (event.key === 'Shift') {
                 this.isSquare = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
@@ -97,7 +97,7 @@ export class RectangleService extends Tool {
         }
     }
 
-    private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], color: string) {
+    private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], color: string): void {
         let width = path[CornerIndex.end].x - path[CornerIndex.start].x;
         let height = path[CornerIndex.end].y - path[CornerIndex.start].y;
         if (this.isSquare) {
@@ -115,15 +115,15 @@ export class RectangleService extends Tool {
         borderColor: string,
         width: number,
         height: number,
-        fillMode: number,
-    ) {
+        fillMethod: number,
+    ): void {
         ctx.beginPath();
         ctx.rect(path[CornerIndex.start].x, path[CornerIndex.start].y, width, height);
-        if (fillMode != FillMode.OUTLINE) {
+        if (fillMethod !== FillMode.OUTLINE) {
             ctx.fillStyle = fillColor;
             ctx.fill();
         }
-        if (fillMode != FillMode.FILL_ONLY) {
+        if (fillMethod !== FillMode.FILL_ONLY) {
             ctx.strokeStyle = borderColor;
             ctx.lineWidth = lineWidth;
             ctx.stroke();

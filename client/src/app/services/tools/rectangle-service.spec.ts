@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle-service';
 
+// tslint:disable:no-any
 describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
@@ -25,7 +26,6 @@ describe('RectangleService', () => {
 
         service = TestBed.inject(RectangleService);
         drawRectangleSpy = spyOn<any>(service, 'drawRectangle').and.callThrough();
-
         // Configuration of spy of service
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
@@ -101,7 +101,7 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
-        let keyEvent = {
+        const keyEvent = {
             key: 'Shift',
         } as KeyboardEvent;
 
@@ -114,7 +114,7 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
-        let keyEvent = {
+        const keyEvent = {
             key: 'Shift',
         } as KeyboardEvent;
 
@@ -127,7 +127,7 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
-        let keyEvent = {
+        const keyEvent = {
             key: 'e',
         } as KeyboardEvent;
 
@@ -139,7 +139,7 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
-        let keyEvent = {
+        const keyEvent = {
             key: 'Shift',
         } as KeyboardEvent;
 
@@ -149,10 +149,11 @@ describe('RectangleService', () => {
     });
 
     it(' onKeyUp should not call drawRectangle if mouse was down and then keyboard key was released', () => {
+        // const drawRectanglySpyTest: jasmine.SpyObj<RectangleService> = jasmine.createSpyObj('RectangleService', ['drawRectangle']);
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
-        let keyEvent = {
+        const keyEvent = {
             key: 'e',
         } as KeyboardEvent;
 
@@ -164,7 +165,7 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
-        let keyEvent = {
+        const keyEvent = {
             key: 'e',
         } as KeyboardEvent;
 
