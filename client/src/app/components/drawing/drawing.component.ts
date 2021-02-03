@@ -3,6 +3,11 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+<<<<<<< HEAD
+=======
+import { LineService } from '@app/services/tools/line-service';
+import { PencilService } from '@app/services/tools/pencil-service';
+>>>>>>> d35a11bdeee9923f4934e8bb7688be4bb49bfb8f
 
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
