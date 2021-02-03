@@ -9,6 +9,10 @@ import { EraserService } from '@app/services/tools/eraser-service';
 export class SidebarComponent {
     @Output() eraserSizeChanged: EventEmitter<number> = new EventEmitter();
 
+    /* TODO : use toolManager instead to subscribe to eventEmitters like following
+    constructor(private toolManager: ToolManager) {
+     this.toolManager.eraserSizeChanged.subscribe( (newSize: number) => this.toolManager.setToolSize(newSize));
+    }*/
     constructor(private eraserService: EraserService) {
         this.eraserSizeChanged.subscribe((newSize: number) => this.eraserService.setSize(newSize));
     }
