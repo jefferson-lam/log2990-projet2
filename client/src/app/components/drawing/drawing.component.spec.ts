@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
@@ -77,9 +76,9 @@ describe('DrawingComponent', () => {
     });
 
     it("should call the tool's keyboard press when receiving a keyboard press event", () => {
-        const keyboardEvent = { } as KeyboardEvent;
+        const keyboardEvent = {} as KeyboardEvent;
         const keyboardEventSpy = spyOn(toolStub, 'onKeyboardPress').and.callThrough();
-        component.onKeyboardPress(event);
+        component.onKeyboardPress(keyboardEvent);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
