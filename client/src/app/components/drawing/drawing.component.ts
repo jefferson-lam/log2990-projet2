@@ -38,13 +38,7 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('keypress', ['$event'])
     onKeybordPress(event: KeyboardEvent): void {
-        //Keys that provoke a tool change: 1, 2, c, L, E
-        if (event.key.match(/^(1|2|c|l|e)$/)) {
-            this.currentTool = this.toolManager.selectTool(event);
-        } else {
-            //TODO: A integrer avec les services outils individuels
-            //this.currentTool.onKeyboardPress(event);
-        }
+        this.currentTool.onKeyboardPress(event);
     }
 
     @HostListener('mousemove', ['$event'])
