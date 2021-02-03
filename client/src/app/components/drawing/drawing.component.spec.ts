@@ -43,26 +43,6 @@ describe('DrawingComponent', () => {
         fixture.detectChanges();
     });
 
-    // TODO : move to editor component spec
-    it('should change to eraser tool when e key pressed', () => {
-        const event = { key: 'e' } as KeyboardEvent;
-        const keyboardEventSpy = spyOn(component, 'onKeyPress').and.callThrough();
-        component.onKeyPress(event);
-
-        expect(keyboardEventSpy).toHaveBeenCalled();
-        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
-        expect(component.currentTool).toEqual(eraserStub);
-    });
-    it('should change to pencil tool when c key pressed', () => {
-        const event = { key: 'c' } as KeyboardEvent;
-        const keyboardEventSpy = spyOn(component, 'onKeyPress').and.callThrough();
-        component.onKeyPress(event);
-
-        expect(keyboardEventSpy).toHaveBeenCalled();
-        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
-        expect(component.currentTool).toEqual(pencilStub);
-    });
-
     it('should create', () => {
         expect(component).toBeTruthy();
     });
@@ -105,7 +85,7 @@ describe('DrawingComponent', () => {
 
     it("should call the tool's keyboard press when receiving a keyboard press event", () => {
         const keyboardEvent = {} as KeyboardEvent;
-        const keyboardEventSpy = spyOn(toolStub, 'onKeyboardPress').and.callThrough();
+        const keyboardEventSpy = spyOn(pencilStub, 'onKeyboardPress').and.callThrough();
         component.onKeyboardPress(keyboardEvent);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
