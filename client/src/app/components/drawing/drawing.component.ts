@@ -44,7 +44,6 @@ export class DrawingComponent implements AfterViewInit {
         this.currentTool = this.tools[0];
         this.drawingService.previewCtx.strokeStyle = 'black';
         this.drawingService.baseCtx.strokeStyle = 'black';
-        console.log(this.currentTool);
     }
 
     @HostListener('keydown.e', ['$event'])
@@ -52,7 +51,6 @@ export class DrawingComponent implements AfterViewInit {
         this.currentTool = this.tools[1];
         this.drawingService.previewCtx.strokeStyle = 'white';
         this.drawingService.baseCtx.strokeStyle = 'white';
-        console.log(this.currentTool);
     }
 
     @HostListener('mousemove', ['$event'])

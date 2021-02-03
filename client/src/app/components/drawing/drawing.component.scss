@@ -1,13 +1,16 @@
 canvas {
     cursor: crosshair;
-    border: 2px solid #000000;
+    border: 1px solid #000000;
     position: absolute;
     left: 0;
     top: 0;
+    margin-left: 80px;
+    margin-top: 8px;
 }
 
 #canvas{
     z-index: 0;
+    background-color: white;
 }
 
 #drawCanvas{

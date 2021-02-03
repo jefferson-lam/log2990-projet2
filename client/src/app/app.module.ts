@@ -19,6 +19,7 @@ import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-optio
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options/sidebar-pencil/sidebar-pencil.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
     declarations: [
@@ -45,6 +46,7 @@ import { MatCardModule } from '@angular/material/card';
     MatDialogModule,
     MatToolbarModule,
     MatCardModule,
+    MatTooltipModule,
   ],
     providers: [],
     bootstrap: [AppComponent],
