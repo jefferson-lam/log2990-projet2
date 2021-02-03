@@ -12,4 +12,12 @@ describe('ToolManagerService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
+    it('select tool on c keypress should select pencil', () => {
+        let keyboardEvent = {
+            key: 'c',
+        } as KeyboardEvent;
+
+        expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
+    });
 });
