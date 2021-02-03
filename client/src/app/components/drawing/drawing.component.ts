@@ -22,10 +22,9 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     currentTool: Tool;
     constructor(private drawingService: DrawingService, public toolManager: ToolManagerService) {
-        this.currentTool = toolManager.pencilService; //default value
+        this.currentTool = toolManager.pencilService; // default value
     }
 
     ngAfterViewInit(): void {

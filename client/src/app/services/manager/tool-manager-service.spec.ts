@@ -14,7 +14,7 @@ describe('ToolManagerService', () => {
     });
 
     it('select tool on c keypress should select pencil', () => {
-        let keyboardEvent = {
+        const keyboardEvent = {
             key: 'c',
         } as KeyboardEvent;
 

@@ -8,7 +8,7 @@ import { PencilService } from '@app/services/tools/pencil-service';
 export class ToolManagerService {
     constructor(public pencilService: PencilService) {}
 
-    //Method that will pick tool according to what user presses on keyboard
+    // Method that will pick tool according to what user presses on keyboard
     selectTool(event: KeyboardEvent): Tool {
         switch (event.key) {
             case 'c':
