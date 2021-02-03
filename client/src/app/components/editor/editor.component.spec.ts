@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
+import { EraserComponent } from '@app/components/eraser/eraser.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -20,7 +21,7 @@ describe('EditorComponent', () => {
         toolStub = new ToolStub({} as DrawingService);
         toolManagerStub = new ToolManagerService(new PencilService(drawingStub));
         TestBed.configureTestingModule({
-            declarations: [EditorComponent, DrawingComponent, SidebarComponent],
+            declarations: [EditorComponent, DrawingComponent, SidebarComponent, EraserComponent],
             providers: [
                 { provide: ToolManagerService, useValue: toolManagerStub },
                 { provide: PencilService, useValue: toolStub },
