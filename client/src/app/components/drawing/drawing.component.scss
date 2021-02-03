@@ -18,13 +18,3 @@ canvas {
     position: relative;
 }
 
-.cursor {
-    cursor: crosshair;
-    position: relative;
-    width: 5px;
-    height: 5px;
-    border: 1px solid black;
-    background-color: white;
-    pointer-events: auto;
-    z-index: 1;
-}
