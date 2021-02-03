@@ -14,7 +14,7 @@ export class EditorComponent {
     }
 
     @HostListener('keypress', ['$event'])
-    onKeyboardDown(event: KeyboardEvent): void {
+    onKeyboardPress(event: KeyboardEvent): void {
         if (event.key.match(/^(1|2|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
         }
