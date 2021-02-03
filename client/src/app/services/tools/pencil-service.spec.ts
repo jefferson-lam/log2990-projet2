@@ -100,7 +100,7 @@ describe('PencilService', () => {
     });
 
     it(' onKeyDown should not call drawLine if any key is pressed', () => {
-        let keyEvent = {
+        const keyEvent = {
             key: 'e',
         } as KeyboardEvent;
 
@@ -109,7 +109,7 @@ describe('PencilService', () => {
     });
 
     it(' onKeyUp should not call drawLine if any key is pressed', () => {
-        let keyEvent = {
+        const keyEvent = {
             key: 'e',
         } as KeyboardEvent;
 
