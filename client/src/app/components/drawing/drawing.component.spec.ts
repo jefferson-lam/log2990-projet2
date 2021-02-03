@@ -75,4 +75,13 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
+
+    it("should call the tool's keyboard press when receiving a keyboard press event", () => {
+        const keyboardEvent = { } as KeyboardEvent;
+        const keyboardEventSpy = spyOn(toolStub, 'onKeyboardPress').and.callThrough();
+        component.onKeyboardPress(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
+    });
 });

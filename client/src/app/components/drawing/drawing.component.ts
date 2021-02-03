@@ -36,7 +36,7 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     @HostListener('keypress', ['$event'])
-    onKeybordPress(event: KeyboardEvent): void {
+    onKeyboardPress(event: KeyboardEvent): void {
         this.currentTool.onKeyboardPress(event);
     }
 
