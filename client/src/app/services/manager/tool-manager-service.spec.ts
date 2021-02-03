@@ -20,4 +20,12 @@ describe('ToolManagerService', () => {
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
     });
+
+    it('select tool should return pencil as a default value', () => {
+        const keyboardEvent = {
+            key: ',',
+        } as KeyboardEvent;
+
+        expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
+    });
 });
