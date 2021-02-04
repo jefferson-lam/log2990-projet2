@@ -64,6 +64,7 @@ export class RectangleService extends Tool {
         }
         this.mouseDown = false;
         this.clearPath();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onMouseMove(event: MouseEvent): void {
