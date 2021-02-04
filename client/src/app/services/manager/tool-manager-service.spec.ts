@@ -28,4 +28,18 @@ describe('ToolManagerService', () => {
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
     });
+
+    it('select tool on l keypress should select line', () => {
+        const keyboardEvent = {
+            key: 'l',
+        } as KeyboardEvent;
+        expect(service.selectTool(keyboardEvent)).toEqual(service.lineService);
+    });
+
+    it('select tool on e should select eraser', () => {
+        const keyboardEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+        expect(service.selectTool(keyboardEvent)).toEqual(service.eraserService);
+    });
 });
