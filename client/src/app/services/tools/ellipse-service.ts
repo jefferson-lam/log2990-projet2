@@ -37,14 +37,12 @@ const lineWidth = 5;
 })
 export class EllipseService extends Tool {
     pathData: Vec2[];
-    isCircle: boolean;
-    fillMode: FillMode;
+    isCircle: boolean = false;
+    fillMode: FillMode = FillMode.OUTLINE_FILL;
 
     constructor(drawingService: DrawingService) {
-        const MAX_PATH_DATA_SIZE = 2;
         super(drawingService);
-        this.isCircle = false;
-        this.fillMode = FillMode.OUTLINE_FILL;
+        const MAX_PATH_DATA_SIZE = 2;
         this.pathData = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearPath();
     }
