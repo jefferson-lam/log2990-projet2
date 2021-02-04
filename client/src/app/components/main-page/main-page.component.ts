@@ -16,9 +16,7 @@ export class MainPageComponent {
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     oldDrawingTrue: boolean = true;
-    oldDrawingFalse: boolean = false;
     drawingExists: boolean;
-    openCarrousel: boolean;
 
     constructor(private basicService: IndexService, public dialog: MatDialog) {}
 

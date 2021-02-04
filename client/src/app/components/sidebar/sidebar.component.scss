@@ -89,6 +89,7 @@ mat-icon{
   height: 100%;
   overflow: visible;
   -webkit-transition: all;
+  z-index: 2;
 }
 
 .mat-drawer-inner-container {
@@ -140,5 +141,4 @@ mat-drawer-content {
 
 .options-sidebar{
   padding: 0;
-
 }

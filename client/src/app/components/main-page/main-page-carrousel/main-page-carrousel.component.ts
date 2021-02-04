@@ -5,6 +5,4 @@ import { Component } from '@angular/core';
     templateUrl: './main-page-carrousel.component.html',
     styleUrls: ['./main-page-carrousel.component.scss'],
 })
-export class MainPageCarrouselComponent {
-    constructor() {}
-}
+export class MainPageCarrouselComponent {}
