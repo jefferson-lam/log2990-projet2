@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { IndexService } from '@app/services/index/index.service';
 import { Message } from '@common/communication/message';
 import { BehaviorSubject } from 'rxjs';
@@ -13,7 +15,10 @@ export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    constructor(private basicService: IndexService) {}
+    oldDrawingTrue: boolean = true;
+    drawingExists: boolean;
+
+    constructor(private basicService: IndexService, public dialog: MatDialog) {}
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
@@ -34,5 +39,18 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
+    }
+
+    openDrawing(): void {
+        console.log('Temporary message');
+    }
+    openCarousel(): void {
+        console.log('Temporary message');
+        this.dialog.open(MainPageCarrouselComponent, {
+            width: '400px;',
+        });
+    }
+    openOldDrawing(): void {
+        console.log('Temporary message');
     }
 }
