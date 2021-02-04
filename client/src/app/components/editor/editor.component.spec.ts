@@ -9,9 +9,6 @@ import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { EditorComponent } from './editor.component';
-<<<<<<< HEAD
-=======
->>>>>>> a710bc8a26bc2f010baaa3166db3ca6c04b4b5d3
 
 class ToolStub extends Tool {}
 @Component({ selector: 'app-eraser', template: ' ' })
