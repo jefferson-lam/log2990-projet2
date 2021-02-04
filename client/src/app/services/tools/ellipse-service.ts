@@ -28,7 +28,6 @@ enum FillMode {
     FILL_ONLY = 1,
     OUTLINE_FILL = 2,
 }
-const fillMode: number = FillMode.OUTLINE_FILL;
 
 // TODO: Find way to get line width
 const lineWidth = 5;
@@ -36,14 +35,16 @@ const lineWidth = 5;
 @Injectable({
     providedIn: 'root',
 })
-export class RectangleService extends Tool {
+export class EllipseService extends Tool {
     pathData: Vec2[];
-    isSquare: boolean;
+    isCircle: boolean;
+    fillMode: FillMode;
 
     constructor(drawingService: DrawingService) {
         const MAX_PATH_DATA_SIZE = 2;
         super(drawingService);
-        this.isSquare = false;
+        this.isCircle = false;
+        this.fillMode = FillMode.OUTLINE_FILL;
         this.pathData = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearPath();
     }
@@ -60,7 +61,7 @@ export class RectangleService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData[CornerIndex.end] = mousePosition;
-            this.drawRectangle(this.drawingService.baseCtx, this.pathData, primaryColor);
+            this.drawEllipse(this.drawingService.baseCtx, this.pathData, primaryColor);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -72,16 +73,16 @@ export class RectangleService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData[CornerIndex.end] = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
+            this.drawEllipse(this.drawingService.previewCtx, this.pathData, primaryColor);
         }
     }
 
     onKeyDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
             if (event.key === 'Shift') {
-                this.isSquare = true;
+                this.isCircle = true;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
+                this.drawEllipse(this.drawingService.previewCtx, this.pathData, primaryColor);
             }
         }
     }
@@ -89,37 +90,42 @@ export class RectangleService extends Tool {
     onKeyUp(event: KeyboardEvent): void {
         if (this.mouseDown) {
             if (event.key === 'Shift') {
-                this.isSquare = false;
+                this.isCircle = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
+                this.drawEllipse(this.drawingService.previewCtx, this.pathData, primaryColor);
             }
         } else {
-            this.isSquare = false;
+            this.isCircle = false;
         }
     }
 
-    private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], color: string): void {
-        let width = path[CornerIndex.end].x - path[CornerIndex.start].x;
-        let height = path[CornerIndex.end].y - path[CornerIndex.start].y;
-        if (this.isSquare) {
-            const longestSide = Math.max(Math.abs(width), Math.abs(height));
-            width = width > 0 ? longestSide : -longestSide;
-            height = height > 0 ? longestSide : -longestSide;
+    private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[], color: string): void {
+        let xRadius = Math.abs((path[CornerIndex.end].x - path[CornerIndex.start].x) / 2);
+        let yRadius = Math.abs((path[CornerIndex.end].y - path[CornerIndex.start].y) / 2);
+        const fillMethod = this.fillMode;
+        if (this.isCircle) {
+            const longestSide = Math.max(Math.abs(xRadius), Math.abs(yRadius));
+            xRadius = yRadius = longestSide;
         }
-        this.drawTypeRectangle(ctx, path, color, secondColor, width, height, fillMode);
+        this.drawTypeEllipse(ctx, path, color, secondColor, xRadius, yRadius, fillMethod);
     }
 
-    private drawTypeRectangle(
+    private drawTypeEllipse(
         ctx: CanvasRenderingContext2D,
         path: Vec2[],
         fillColor: string,
         borderColor: string,
-        width: number,
-        height: number,
+        xRadius: number,
+        yRadius: number,
         fillMethod: number,
     ): void {
+        const START_POS_X = (path[CornerIndex.end].x + path[CornerIndex.start].x) / 2;
+        const START_POS_Y = (path[CornerIndex.end].y + path[CornerIndex.start].y) / 2;
+        const ROTATION = 0;
+        const START_ANGLE = 0;
+        const END_ANGLE = Math.PI * 2;
         ctx.beginPath();
-        ctx.rect(path[CornerIndex.start].x, path[CornerIndex.start].y, width, height);
+        ctx.ellipse(START_POS_X, START_POS_Y, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
         if (fillMethod !== FillMode.OUTLINE) {
             ctx.fillStyle = fillColor;
             ctx.fill();
