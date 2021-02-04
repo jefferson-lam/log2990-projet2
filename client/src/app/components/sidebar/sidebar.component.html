@@ -1,12 +1,31 @@
 <div class="container">
-    <p>Barre latérale pour vos outils!</p>
-    <p>
-        N'oubliez pas de regarder <br />
-        les tests dans les fichiers spec.ts aussi!
-    </p>
-
-    <div>
-        <label for="eraserSize">Taille efface : </label>
-        <input id="eraserSize" value=5 type="number" (change)="changeEraserSize($event.target.value)" />
-    </div>
+    <ul class="options-sidebar">
+        <li><mat-icon style="color: white" matTooltip="Retour" [matTooltipPosition]="'right'" (click)="backClick()">backspace</mat-icon></li>
+        <li><mat-icon style="color: white" matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
+        <li><mat-icon style="color: white" matTooltip="Effacer" [matTooltipPosition]="'right'">undo</mat-icon></li>
+        <li><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
+    </ul>
+    <ul class="tools-sidebar">
+        <li id="toolId" *ngFor="let tool of TOOLSLIST">
+            <mat-icon
+                matTooltip="{{ tool.name }} {{ tool.keyShortcut }}"
+                [matTooltipPosition]="'right'"
+                (click)="onSelectTool(tool.name); toggleOpen()"
+                [class.selected]="selectedTool === tool.name"
+            >
+                {{ tool.icon }}
+            </mat-icon>
+        </li>
+    </ul>
 </div>
+
+<!-- Ici on rentres dans l'interface des options des outils -->
+
+<mat-drawer-container class="tools-option-container" (mouseleave)="toggleOpen()">
+    <mat-drawer #drawer [mode]="'side'" class="sidenav" [opened]="opened">
+        <mat-drawer-content [ngSwitch]="selectedTool">
+            <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="ToolsList.Pencil"> </app-sidebar-pencil>
+            <app-sidebar-eraser class="sidebar-tool-options" *ngSwitchCase="ToolsList.Eraser"></app-sidebar-eraser>
+        </mat-drawer-content>
+    </mat-drawer>
+</mat-drawer-container>
