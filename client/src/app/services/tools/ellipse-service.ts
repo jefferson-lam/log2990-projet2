@@ -77,7 +77,7 @@ export class EllipseService extends Tool {
         }
     }
 
-    onKeyDown(event: KeyboardEvent): void {
+    onKeyboardDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
             if (event.key === 'Shift') {
                 this.isCircle = true;
@@ -87,7 +87,7 @@ export class EllipseService extends Tool {
         }
     }
 
-    onKeyUp(event: KeyboardEvent): void {
+    onKeyboardUp(event: KeyboardEvent): void {
         if (this.mouseDown) {
             if (event.key === 'Shift') {
                 this.isCircle = false;

@@ -76,7 +76,7 @@ export class RectangleService extends Tool {
         }
     }
 
-    onKeyDown(event: KeyboardEvent): void {
+    onKeyboardDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
             if (event.key === 'Shift') {
                 this.isSquare = true;
@@ -86,7 +86,7 @@ export class RectangleService extends Tool {
         }
     }
 
-    onKeyUp(event: KeyboardEvent): void {
+    onKeyboardUp(event: KeyboardEvent): void {
         if (this.mouseDown) {
             if (event.key === 'Shift') {
                 this.isSquare = false;
