@@ -65,18 +65,6 @@ export class DrawingComponent implements AfterViewInit {
         this.currentTool.onKeyUp(event);
     }
 
-    @HostListener('keypress', ['$event'])
-    // TODO: MODIFY ONCE WE HAVE TOOL MANAGER
-    onKeyToolSwitch(event: KeyboardEvent): void {
-        if (event.key === '1') {
-            // change later when tools aren't managed by this.currentTool anymore
-            this.currentTool = this.tools[1];
-        } else if (event.key === 'c') {
-            // change later when tools aren't managed by this.currentTool anymore
-            this.currentTool = this.tools[0];
-        }
-    }
-
     get width(): number {
         return this.canvasSize.x;
     }
