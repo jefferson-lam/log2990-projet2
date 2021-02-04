@@ -7,6 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
+import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { EditorComponent } from './editor.component';
@@ -21,18 +22,20 @@ describe('EditorComponent', () => {
     let pencilStub: ToolStub;
     let ellipseStub: ToolStub;
     let eraserStub: ToolStub;
+    let lineStub: ToolStub;
     let rectangleStub: ToolStub;
     let toolManagerStub: ToolManagerService;
-    // const drawingStub: DrawingService = new DrawingService();
 
     beforeEach(async(() => {
         pencilStub = new ToolStub({} as DrawingService);
-        ellipseStub = new ToolStub({} as DrawingService);
         eraserStub = new ToolStub({} as DrawingService);
+        lineStub = new ToolStub({} as DrawingService);
         rectangleStub = new ToolStub({} as DrawingService);
+        ellipseStub = new ToolStub({} as DrawingService);
         toolManagerStub = new ToolManagerService(
             pencilStub as PencilService,
             eraserStub as EraserService,
+            lineStub as LineService,
             rectangleStub as RectangleService,
             ellipseStub as EllipseService,
         );

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
+import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 
@@ -12,11 +13,11 @@ export class ToolManagerService {
     constructor(
         public pencilService: PencilService,
         public eraserService: EraserService,
+        public lineService: LineService,
         public rectangleService: RectangleService,
         public ellipseService: EllipseService,
     ) {}
 
-    // Method that will pick tool according to what user presses on keyboard
     selectTool(event: KeyboardEvent): Tool {
         switch (event.key) {
             case '1':
@@ -27,6 +28,8 @@ export class ToolManagerService {
                 return this.pencilService;
             case 'e':
                 return this.eraserService;
+            case 'l':
+                return this.lineService;
             default:
                 return this.pencilService;
         }
