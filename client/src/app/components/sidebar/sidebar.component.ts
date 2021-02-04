@@ -24,17 +24,17 @@ export class SidebarComponent {
     TOOLSLIST: ToolsInterface[] = [
         { id: 0, name: 'Crayon', icon: 'create', keyShortcut: '(Touche C)' },
         { id: 1, name: 'Efface', icon: 'delete_outline', keyShortcut: '(Touche E)' },
-        { id: 2, name: 'Rectangle', icon: 'crop_portrait', keyShortcut: '(Touche R)' },
-        { id: 3, name: 'Ellipse', icon: 'vignette', keyShortcut: '(Touche R)' },
-        { id: 4, name: 'Polygone', icon: 'brush', keyShortcut: '(Touche P)' },
-        { id: 5, name: 'Ligne', icon: 'trending_flat', keyShortcut: '(Touche C)' },
-        { id: 6, name: 'Texte', icon: 'text_format', keyShortcut: '(Touche C)' },
-        { id: 7, name: 'Étampe', icon: 'today', keyShortcut: '(Touche C)' },
-        { id: 8, name: 'Pipette', icon: 'edit_location', keyShortcut: '(Touche C)' },
-        { id: 9, name: 'Rectangle de selection', icon: 'tab_unselected', keyShortcut: '(Touche C)' },
-        { id: 10, name: 'Ellipse de selection', icon: 'toys', keyShortcut: '(Touche C)' },
-        { id: 11, name: 'Lasso polygonal', icon: 'gps_off', keyShortcut: '(Touche C)' },
-        { id: 12, name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: '(Touche C)' },
+        { id: 2, name: 'Rectangle', icon: 'crop_portrait', keyShortcut: '(Touche 1)' },
+        { id: 3, name: 'Ellipse', icon: 'vignette', keyShortcut: '(Touche 2)' },
+        { id: 4, name: 'Polygone', icon: 'brush', keyShortcut: '(Touche 3)' },
+        { id: 5, name: 'Ligne', icon: 'trending_flat', keyShortcut: '(Touche L)' },
+        { id: 6, name: 'Texte', icon: 'text_format', keyShortcut: '(Touche T)' },
+        { id: 7, name: 'Étampe', icon: 'today', keyShortcut: '(Touche D)' },
+        { id: 8, name: 'Pipette', icon: 'edit_location', keyShortcut: '(Touche I)' },
+        { id: 9, name: 'Rectangle de selection', icon: 'tab_unselected', keyShortcut: '(Touche R)' },
+        { id: 10, name: 'Ellipse de selection', icon: 'toys', keyShortcut: '(Touche S)' },
+        { id: 11, name: 'Lasso polygonal', icon: 'gps_off', keyShortcut: '(Touche V)' },
+        { id: 12, name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: '(Touche B)' },
     ];
 
     onSelectTool(tool: string): void {
