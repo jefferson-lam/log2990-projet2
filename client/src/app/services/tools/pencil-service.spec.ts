@@ -104,7 +104,7 @@ describe('PencilService', () => {
             key: 'e',
         } as KeyboardEvent;
 
-        service.onKeyDown(keyEvent);
+        service.onKeyboardDown(keyEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
@@ -113,7 +113,7 @@ describe('PencilService', () => {
             key: 'e',
         } as KeyboardEvent;
 
-        service.onKeyUp(keyEvent);
+        service.onKeyboardUp(keyEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 

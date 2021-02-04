@@ -100,18 +100,6 @@ fdescribe('LineService', () => {
         expect(service.linePathData[0]).toEqual({ x: 257, y: 399 });
     });
 
-    it('on mouse click should draw to the same point if end destination is 20px from starting position', () => {
-        service.isDrawing = true;
-        service.linePathData[1] = { x: 134, y: 257 };
-        service.onMouseClick(mouseEvent);
-        expect(drawLineSpy).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalledWith(baseCtxStub, [
-            { x: 133, y: 256 },
-            { x: 133, y: 256 },
-        ]);
-        expect(service.linePathData[0]).toEqual({ x: 133, y: 256 });
-    });
-
     it('on mouse dblclick should clear linePathData and stop drawing', () => {
         service.isDrawing = true;
         service.onMouseDoubleClick(mouseEvent);

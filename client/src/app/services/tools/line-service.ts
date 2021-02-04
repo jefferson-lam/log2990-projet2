@@ -17,6 +17,7 @@ export enum MouseButton {
 })
 export class LineService extends Tool {
     mousePosition: Vec2;
+    initialPoint: Vec2;
     linePathData: Vec2[];
     shiftDown: boolean = false;
     isDrawing: boolean = false;
@@ -96,6 +97,7 @@ export class LineService extends Tool {
             this.clearPath();
             this.isDrawing = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.initialPoint = this.mouseDownCoord;
             this.linePathData[LineConstants.STARTING_POINT] = this.mouseDownCoord;
         } else {
             const distanceToInitialPoint = this.calculateDistance(
@@ -140,7 +142,7 @@ export class LineService extends Tool {
     }
 
     private calculateDistance(initialPoint: Vec2, currentPoint: Vec2): number {
-        return Math.sqrt(Math.pow(currentPoint.x - initialPoint.x, 2) + Math.pow(currentPoint.y - initialPoint.y, 2));
+        return Math.abs(Math.sqrt(Math.pow(currentPoint.x - initialPoint.x, 2) + Math.pow(currentPoint.y - initialPoint.y, 2)));
     }
 
     private rotateLine(initialPoint: Vec2, currentPoint: Vec2, angle: number): Vec2 {
