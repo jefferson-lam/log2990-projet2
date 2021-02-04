@@ -1,0 +1,8 @@
+#eraser-cursor {
+  visibility: hidden;
+  position: relative;
+  border: 1px solid black;
+  background-color: white;
+  pointer-events: auto;
+  z-index: 1;
+}

@@ -1,9 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { EraserService } from '@app/services/tools/eraser-service';
-import { PencilService } from '@app/services/tools/pencil-service';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
@@ -23,12 +22,9 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
-    private tools: Tool[];
-    currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService, eraserService: EraserService) {
-        this.tools = [pencilService, eraserService];
-        this.currentTool = this.tools[0];
+    @Input() currentTool: Tool;
+    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService) {
+        this.currentTool = toolManager.pencilService; // default value
     }
 
     ngAfterViewInit(): void {
@@ -39,18 +35,9 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
-    @HostListener('keydown.c', ['$event'])
-    onKeyC(event: KeyboardEvent): void {
-        this.currentTool = this.tools[0];
-        this.drawingService.previewCtx.strokeStyle = 'black';
-        this.drawingService.baseCtx.strokeStyle = 'black';
-    }
-
-    @HostListener('keydown.e', ['$event'])
-    onKeyE(event: KeyboardEvent): void {
-        this.currentTool = this.tools[1];
-        this.drawingService.previewCtx.strokeStyle = 'white';
-        this.drawingService.baseCtx.strokeStyle = 'white';
+    @HostListener('keypress', ['$event'])
+    onKeyboardPress(event: KeyboardEvent): void {
+        this.currentTool.onKeyboardPress(event);
     }
 
     @HostListener('mousemove', ['$event'])

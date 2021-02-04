@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { EraserService } from '@app/services/tools/eraser-service';
 import { ToolsInterface } from './tools-interface';
 import { ToolsList } from './tools-list';
 
@@ -8,17 +9,22 @@ import { ToolsList } from './tools-list';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-
 export class SidebarComponent {
     @Input() selectedTool: ToolsList;
     @Output() notifyOnToolSelect: EventEmitter<ToolsList> = new EventEmitter<ToolsList>();
+    @Output() eraserSizeChanged: EventEmitter<number> = new EventEmitter();
 
     opened: boolean = false;
     shouldRun: boolean;
     ToolsList: typeof ToolsList = ToolsList;
     toolListSelect: string[] = Object.values(ToolsList);
 
-    constructor(private location: Location) {
+    /* TODO : use toolManager instead to subscribe to eventEmitters like following
+    constructor(private toolManager: ToolManager) {
+     this.toolManager.eraserSizeChanged.subscribe( (newSize: number) => this.toolManager.setToolSize(newSize));
+    }*/
+    constructor(private location: Location, private eraserService: EraserService) {
+        this.eraserSizeChanged.subscribe((newSize: number) => this.eraserService.setSize(newSize));
         this.shouldRun = false;
     }
 
@@ -54,5 +60,9 @@ export class SidebarComponent {
 
     backClick(): void {
         this.location.back();
+    }
+
+    changeEraserSize(value: number): void {
+        this.eraserSizeChanged.emit(value);
     }
 }

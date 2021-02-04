@@ -6,6 +6,5 @@ import { Component } from '@angular/core';
     styleUrls: ['./main-page-carrousel.component.scss'],
 })
 export class MainPageCarrouselComponent {
-    constructor(){}
-
+    constructor() {}
 }

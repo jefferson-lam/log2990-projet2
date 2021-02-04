@@ -8,15 +8,19 @@ canvas {
     margin-top: 8px;
 }
 
-#canvas{
+#canvas {
     z-index: 0;
     background-color: white;
 }
 
-#drawCanvas{
+#previewLayer {
     z-index: 1;
 }
 
-#canvas-container{
+#canvas-container {
     position: relative;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> demo
