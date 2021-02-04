@@ -100,15 +100,14 @@ export class EllipseService extends Tool {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[], color: string): void {
-        let width = path[CornerIndex.end].x - path[CornerIndex.start].x;
-        let height = path[CornerIndex.end].y - path[CornerIndex.start].y;
+        let xRadius = Math.abs((path[CornerIndex.end].x - path[CornerIndex.start].x) / 2);
+        let yRadius = Math.abs((path[CornerIndex.end].y - path[CornerIndex.start].y) / 2);
         const fillMethod = this.fillMode;
         if (this.isCircle) {
-            const longestSide = Math.max(Math.abs(width), Math.abs(height));
-            width = width > 0 ? longestSide : -longestSide;
-            height = height > 0 ? longestSide : -longestSide;
+            const longestSide = Math.max(Math.abs(xRadius), Math.abs(yRadius));
+            xRadius = yRadius = longestSide;
         }
-        this.drawTypeEllipse(ctx, path, color, secondColor, width, height, fillMethod);
+        this.drawTypeEllipse(ctx, path, color, secondColor, xRadius, yRadius, fillMethod);
     }
 
     private drawTypeEllipse(
@@ -116,17 +115,17 @@ export class EllipseService extends Tool {
         path: Vec2[],
         fillColor: string,
         borderColor: string,
-        width: number,
-        height: number,
+        xRadius: number,
+        yRadius: number,
         fillMethod: number,
     ): void {
-        const START_POS_X: number = path[CornerIndex.start].x;
-        const START_POS_Y: number = path[CornerIndex.start].y;
+        const START_POS_X = (path[CornerIndex.end].x + path[CornerIndex.start].x) / 2;
+        const START_POS_Y = (path[CornerIndex.end].y + path[CornerIndex.start].y) / 2;
         const ROTATION = 0;
         const START_ANGLE = 0;
         const END_ANGLE = Math.PI * 2;
         ctx.beginPath();
-        ctx.ellipse(START_POS_X, START_POS_Y, Math.abs(width), Math.abs(height), ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(START_POS_X, START_POS_Y, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
         if (fillMethod !== FillMode.OUTLINE) {
             ctx.fillStyle = fillColor;
             ctx.fill();
