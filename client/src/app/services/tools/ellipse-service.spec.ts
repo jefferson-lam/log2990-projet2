@@ -88,7 +88,7 @@ describe('RectangleService', () => {
         expect(drawEllipseSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseMove should not call drawLine if mouse was not already down', () => {
+    it(' onMouseMove should not call Rectangle if mouse was not already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
