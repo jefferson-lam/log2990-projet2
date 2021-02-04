@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 export enum MouseButton {
@@ -15,7 +16,6 @@ export enum MouseButton {
     providedIn: 'root',
 })
 export class LineService extends Tool {
-    initialPoint: Vec2;
     mousePosition: Vec2;
     linePathData: Vec2[];
     shiftDown: boolean = false;
@@ -29,50 +29,63 @@ export class LineService extends Tool {
 
     onKeyboardDown(event: KeyboardEvent): void {
         if (this.isDrawing) {
-            if (event.key == 'Shift' && !this.shiftDown) {
-                this.linePathData[1] = this.rotateLine(this.linePathData[0], this.mousePosition, 315);
-                let currentMousePosition = this.mousePosition;
+            if (event.key === 'Shift' && !this.shiftDown) {
+                let finalLineCoord: Vec2 = this.calculateLengthAndFlatten(
+                    this.linePathData[LineConstants.STARTING_POINT],
+                    this.mousePosition,
+                    LineConstants.DEGREES_135,
+                );
+                this.linePathData[LineConstants.ENDING_POINT] = this.rotateLine(
+                    this.linePathData[LineConstants.STARTING_POINT],
+                    finalLineCoord,
+                    LineConstants.DEGREES_135,
+                );
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawLine(this.drawingService.previewCtx, this.linePathData);
-                this.mousePosition = currentMousePosition;
                 this.shiftDown = true;
             }
         }
     }
 
-    //Computes the new coordinates of the point with regards to the specified angle, and
-    //makes sure that length of line matches requirements
-    private rotateLine(initialPoint: Vec2, mousePosition: Vec2, angle: number): Vec2 {
-        let lineLength: number = 0;
-        if (angle == 45 || angle == 135 || angle == 225 || angle == 315) {
-            lineLength = Math.abs(Math.abs(mousePosition.x - initialPoint.x) / Math.cos(angle * (Math.PI / 180)));
-        } else if (angle == 90 || angle == 270) {
-            lineLength = Math.abs(mousePosition.y - initialPoint.y);
-        } else if (angle == 0 || angle == 180) {
-            lineLength = Math.abs(mousePosition.x - initialPoint.x);
+    // Computes the new coordinates of the point with regards to the specified angle, and
+    // makes sure that length of line matches requirements
+    private calculateLengthAndFlatten(initialPoint: Vec2, mousePosition: Vec2, angle: number): Vec2 {
+        let lineLength = 0;
+        switch (angle) {
+            case LineConstants.DEGREES_45:
+            case LineConstants.DEGREES_135:
+            case LineConstants.DEGREES_225:
+            case LineConstants.DEGREES_315:
+                lineLength = Math.abs(Math.abs(mousePosition.x - initialPoint.x) / Math.cos(angle * (Math.PI / LineConstants.DEGREES_180)));
+                break;
+            case LineConstants.DEGREES_90:
+            case LineConstants.DEGREES_270:
+                lineLength = Math.abs(mousePosition.y - initialPoint.y);
+                break;
+            default:
+                lineLength = Math.abs(mousePosition.x - initialPoint.x);
+                break;
         }
-        this.mousePosition = mousePosition;
-        let currentPoint: Vec2 = {
-            x: initialPoint.x + lineLength,
-            y: initialPoint.y,
+        return {
+            x: Math.round(initialPoint.x + lineLength),
+            y: Math.round(initialPoint.y),
         };
-        return this.rotate(initialPoint, currentPoint, angle);
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
         if (this.isDrawing) {
-            if (event.key == 'Shift') {
+            if (event.key === 'Shift') {
                 this.shiftDown = false;
-                this.linePathData[1] = this.mousePosition;
-                console.log(this.linePathData[1]);
+                this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawLine(this.drawingService.previewCtx, this.linePathData);
             }
         }
     }
 
+    // TODO
     onKeyboardPress(event: KeyboardEvent): void {
-        if (event.key == 'd' && this.isDrawing) {
+        if (event.key === 'Escape' && this.isDrawing) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.isDrawing = false;
         }
@@ -83,15 +96,17 @@ export class LineService extends Tool {
             this.clearPath();
             this.isDrawing = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.initialPoint = this.mouseDownCoord;
-            this.linePathData[0] = this.mouseDownCoord;
+            this.linePathData[LineConstants.STARTING_POINT] = this.mouseDownCoord;
         } else {
-            const distanceToInitialPoint = this.calculateDistance(this.initialPoint, this.linePathData[1]);
-            if (distanceToInitialPoint < 20) {
-                this.linePathData[1] = this.initialPoint;
+            const distanceToInitialPoint = this.calculateDistance(
+                this.linePathData[LineConstants.STARTING_POINT],
+                this.linePathData[LineConstants.ENDING_POINT],
+            );
+            if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
+                this.linePathData[LineConstants.ENDING_POINT] = this.linePathData[LineConstants.STARTING_POINT];
             }
             this.drawLine(this.drawingService.baseCtx, this.linePathData);
-            this.linePathData[0] = this.linePathData[1];
+            this.linePathData[LineConstants.STARTING_POINT] = this.linePathData[LineConstants.ENDING_POINT];
         }
     }
 
@@ -105,7 +120,7 @@ export class LineService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.isDrawing) {
             this.mousePosition = this.getPositionFromMouse(event);
-            this.linePathData[1] = this.mousePosition;
+            this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.linePathData);
         }
@@ -113,10 +128,10 @@ export class LineService extends Tool {
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        //Arc draws a circle of diameter 1 on every click, to refactor
-        ctx.arc(path[1].x, path[1].y, 1, 0, 2 * Math.PI);
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[1].x, path[1].y);
+        // Arc draws a circle of diameter 1 on every click, to refactor
+        ctx.arc(path[LineConstants.ENDING_POINT].x, path[LineConstants.ENDING_POINT].y, 1, 0, 2 * Math.PI);
+        ctx.moveTo(path[LineConstants.STARTING_POINT].x, path[LineConstants.STARTING_POINT].y);
+        ctx.lineTo(path[LineConstants.ENDING_POINT].x, path[LineConstants.ENDING_POINT].y);
         ctx.stroke();
     }
 
@@ -128,11 +143,15 @@ export class LineService extends Tool {
         return Math.sqrt(Math.pow(currentPoint.x - initialPoint.x, 2) + Math.pow(currentPoint.y - initialPoint.y, 2));
     }
 
-    private rotate(initialPoint: Vec2, currentPoint: Vec2, angle: number): Vec2 {
-        let radians = (Math.PI / 180) * angle;
+    private rotateLine(initialPoint: Vec2, currentPoint: Vec2, angle: number): Vec2 {
+        const radians = (Math.PI / LineConstants.DEGREES_180) * angle;
         return {
-            x: (currentPoint.x - initialPoint.x) * Math.cos(radians) + (currentPoint.y - initialPoint.y) * Math.sin(radians) + initialPoint.x,
-            y: (currentPoint.y - initialPoint.y) * Math.cos(radians) - (currentPoint.x - initialPoint.x) * Math.sin(radians) + initialPoint.y,
+            x: Math.round(
+                (currentPoint.x - initialPoint.x) * Math.cos(radians) + (currentPoint.y - initialPoint.y) * Math.sin(radians) + initialPoint.x,
+            ),
+            y: Math.round(
+                (currentPoint.y - initialPoint.y) * Math.cos(radians) - (currentPoint.x - initialPoint.x) * Math.sin(radians) + initialPoint.y,
+            ),
         };
     }
 }
