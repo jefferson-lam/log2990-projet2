@@ -1,19 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EraserService, MIN_SIZE_ERASER } from '@app/services/tools/eraser-service';
 import { EraserComponent } from './eraser.component';
 
 describe('EraserComponent', () => {
     let component: EraserComponent;
     let fixture: ComponentFixture<EraserComponent>;
-    // let eraserMock: jasmine.SpyObj<EraserService>;
 
     beforeEach(async(() => {
-        // const eraserSpy = jasmine.createSpyObj('EraserService', ['onMouseMove']);
-
         TestBed.configureTestingModule({
             declarations: [EraserComponent],
-            // providers: [{ provide: EraserService, useValue: eraserSpy }],
+            providers: [EraserService],
         }).compileComponents();
     }));
 

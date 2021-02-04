@@ -21,4 +21,6 @@ describe('SidebarEraserComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('');
 });
