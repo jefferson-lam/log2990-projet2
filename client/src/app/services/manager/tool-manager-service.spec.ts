@@ -13,6 +13,14 @@ describe('ToolManagerService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('select tool on 1 keypress should select rectangle', () => {
+        const keyboardEvent = {
+            key: '1',
+        } as KeyboardEvent;
+
+        expect(service.selectTool(keyboardEvent)).toEqual(service.rectangleService);
+    });
+
     it('select tool on c keypress should select pencil', () => {
         const keyboardEvent = {
             key: 'c',
