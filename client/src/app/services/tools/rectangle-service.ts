@@ -38,12 +38,12 @@ const lineWidth = 5;
 })
 export class RectangleService extends Tool {
     pathData: Vec2[];
-    isSquare: boolean;
+    isSquare: boolean = false;
+    shiftDown: boolean = false;
 
     constructor(drawingService: DrawingService) {
-        const MAX_PATH_DATA_SIZE = 2;
         super(drawingService);
-        this.isSquare = false;
+        const MAX_PATH_DATA_SIZE = 2;
         this.pathData = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearPath();
     }
@@ -76,9 +76,10 @@ export class RectangleService extends Tool {
         }
     }
 
-    onKeyDown(event: KeyboardEvent): void {
+    onKeyboardDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
-            if (event.key === 'Shift') {
+            if (event.key === 'Shift' && !this.shiftDown) {
+                this.shiftDown = true;
                 this.isSquare = true;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
@@ -86,9 +87,10 @@ export class RectangleService extends Tool {
         }
     }
 
-    onKeyUp(event: KeyboardEvent): void {
+    onKeyboardUp(event: KeyboardEvent): void {
         if (this.mouseDown) {
             if (event.key === 'Shift') {
+                this.shiftDown = false;
                 this.isSquare = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawRectangle(this.drawingService.previewCtx, this.pathData, primaryColor);
