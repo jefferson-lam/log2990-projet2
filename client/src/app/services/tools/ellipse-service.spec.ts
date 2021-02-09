@@ -97,7 +97,7 @@ describe('RectangleService', () => {
         expect(drawEllipseSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyDown should call drawEllipse if mouse was down and then Shift was pressed', () => {
+    it(' onKeyboardDown should call drawEllipse if mouse was down and then Shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -105,12 +105,12 @@ describe('RectangleService', () => {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.onKeyDown(keyEvent);
+        service.onKeyboardDown(keyEvent);
         expect(service.isCircle).toEqual(true);
         expect(drawEllipseSpy).toHaveBeenCalled();
     });
 
-    it(' onKeyDown should not call drawEllipse if mouse was not down and then Shift was pressed', () => {
+    it(' onKeyboardDown should not call drawEllipse if mouse was not down and then Shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
@@ -118,12 +118,12 @@ describe('RectangleService', () => {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.onKeyDown(keyEvent);
+        service.onKeyboardDown(keyEvent);
         expect(service.isCircle).toEqual(false);
         expect(drawEllipseSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyDown should not call drawEllipse if Shift was not pressed while mouse was already down', () => {
+    it(' onKeyboardDown should not call drawEllipse if Shift was not pressed while mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
@@ -131,12 +131,12 @@ describe('RectangleService', () => {
             key: 'e',
         } as KeyboardEvent;
 
-        service.onKeyDown(keyEvent);
+        service.onKeyboardDown(keyEvent);
         expect(service.isCircle).toEqual(false);
         expect(drawEllipseSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyUp should call drawEllipse if mouse was down and then shift was pressed', () => {
+    it(' onKeyboardUp should call drawEllipse if mouse was down and then shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -144,12 +144,12 @@ describe('RectangleService', () => {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.onKeyUp(keyEvent);
+        service.onKeyboardUp(keyEvent);
         expect(service.isCircle).toEqual(false);
         expect(drawEllipseSpy).toHaveBeenCalled();
     });
 
-    it(' onKeyUp should not call drawEllipse if mouse was down and then keyboard key was released', () => {
+    it(' onKeyboardUp should not call drawEllipse if mouse was down and then keyboard key was released', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -157,11 +157,11 @@ describe('RectangleService', () => {
             key: 'e',
         } as KeyboardEvent;
 
-        service.onKeyUp(keyEvent);
+        service.onKeyboardUp(keyEvent);
         expect(drawEllipseSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyUp should not call drawEllipse if mouse was not down when keyboard key was released', () => {
+    it(' onKeyboardUp should not call drawEllipse if mouse was not down when keyboard key was released', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
@@ -169,7 +169,7 @@ describe('RectangleService', () => {
             key: 'e',
         } as KeyboardEvent;
 
-        service.onKeyUp(keyEvent);
+        service.onKeyboardUp(keyEvent);
         expect(drawEllipseSpy).not.toHaveBeenCalled();
     });
     // TODO: implement tests with the 3 different fill modes
