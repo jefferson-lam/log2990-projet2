@@ -32,8 +32,6 @@ export class SidebarPencilComponent implements AfterViewInit {
             this.size = MIN_SIZE_PENCIL;
         }
         this.pencilSizeChanged.emit(this.size);
-        if (this.inputDiv != null) {
-            this.inputDiv.value = String(this.size);
-        }
+        this.inputDiv.value = String(this.size);
     }
 }
