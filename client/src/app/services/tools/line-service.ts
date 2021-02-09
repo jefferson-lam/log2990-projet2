@@ -31,7 +31,7 @@ export class LineService extends Tool {
     onKeyboardDown(event: KeyboardEvent): void {
         if (this.isDrawing) {
             if (event.key === 'Shift' && !this.shiftDown) {
-                let finalLineCoord: Vec2 = this.calculateLengthAndFlatten(
+                const finalLineCoord: Vec2 = this.calculateLengthAndFlatten(
                     this.linePathData[LineConstants.STARTING_POINT],
                     this.mousePosition,
                     LineConstants.DEGREES_135,

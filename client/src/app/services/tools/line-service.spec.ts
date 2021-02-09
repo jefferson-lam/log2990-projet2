@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '../drawing/drawing.service';
 import { LineService } from './line-service';
 
-fdescribe('LineService', () => {
+describe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -28,8 +28,10 @@ fdescribe('LineService', () => {
         drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
         rotateLineSpy = spyOn<any>(service, 'rotateLine').and.callThrough();
 
+        // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
+        // tslint:enable:no-string-literal
         service.linePathData = [
             { x: 133, y: 256 },
             { x: 257, y: 399 },
