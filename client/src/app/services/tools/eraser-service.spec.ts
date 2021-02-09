@@ -65,7 +65,7 @@ describe('EraserService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it(' onMouseUp should call drawLine if mouse was already down', () => {
+    it('onMouseUp should call drawLine if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -98,7 +98,6 @@ describe('EraserService', () => {
         expect(eraseSquareSpy).not.toHaveBeenCalled();
     });
 
-    // Change to ToolManager when created
     it(' setSize should set size to minimum 5', () => {
         service.setSize(1);
         expect(service.size).toEqual(MIN_SIZE_ERASER);

@@ -38,8 +38,6 @@ export class SidebarComponent {
     ];
 
     onSelectTool(tool: string): void {
-        console.log(ToolsList.Pencil);
-        console.log(this.selectedTool);
         const toolName = tool as ToolsList;
         if (toolName) {
             this.selectedTool = toolName;
