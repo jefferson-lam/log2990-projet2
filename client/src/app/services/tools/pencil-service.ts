@@ -88,7 +88,7 @@ export class PencilService extends Tool {
     }
 
     onMouseEnter(event: MouseEvent): void {
-        if (this.mouseDown && event.buttons === MouseButton.Left) {
+        if (event.buttons === MouseButton.Left) {
             this.mouseDown = false;
         }
     }
