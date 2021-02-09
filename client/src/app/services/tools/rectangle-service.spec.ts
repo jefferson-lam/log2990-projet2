@@ -105,7 +105,7 @@ describe('RectangleService', () => {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.onKeyDown(keyEvent);
+        service.onKeyboardDown(keyEvent);
         expect(service.isSquare).toEqual(true);
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
@@ -118,7 +118,7 @@ describe('RectangleService', () => {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.onKeyDown(keyEvent);
+        service.onKeyboardDown(keyEvent);
         expect(service.isSquare).toEqual(false);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
@@ -131,7 +131,7 @@ describe('RectangleService', () => {
             key: 'e',
         } as KeyboardEvent;
 
-        service.onKeyDown(keyEvent);
+        service.onKeyboardDown(keyEvent);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
@@ -143,7 +143,7 @@ describe('RectangleService', () => {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.onKeyUp(keyEvent);
+        service.onKeyboardUp(keyEvent);
         expect(service.isSquare).toEqual(false);
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
@@ -157,7 +157,7 @@ describe('RectangleService', () => {
             key: 'e',
         } as KeyboardEvent;
 
-        service.onKeyUp(keyEvent);
+        service.onKeyboardUp(keyEvent);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
@@ -169,7 +169,7 @@ describe('RectangleService', () => {
             key: 'e',
         } as KeyboardEvent;
 
-        service.onKeyUp(keyEvent);
+        service.onKeyboardUp(keyEvent);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
     // TODO: implement tests with the 3 different fill modes
