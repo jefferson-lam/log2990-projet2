@@ -104,7 +104,7 @@ export class RectangleService extends Tool {
         let width = path[CornerIndex.end].x - path[CornerIndex.start].x;
         let height = path[CornerIndex.end].y - path[CornerIndex.start].y;
         if (this.isSquare) {
-            const longestSide = Math.max(Math.abs(width), Math.abs(height));
+            const longestSide = Math.min(Math.abs(width), Math.abs(height));
             width = width > 0 ? longestSide : -longestSide;
             height = height > 0 ? longestSide : -longestSide;
         }
