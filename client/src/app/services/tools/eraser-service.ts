@@ -6,6 +6,7 @@ import { Observable, Subject } from 'rxjs';
 
 // TODO : Constants in common file (common/constants.ts?)
 export const MIN_SIZE_ERASER = 5;
+export const MAX_SIZE_ERASER = 200;
 export enum MouseButton {
     Left = 0,
     Middle = 1,

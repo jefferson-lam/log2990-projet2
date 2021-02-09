@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
-import { EraserService, MIN_SIZE_ERASER } from '@app/services/tools/eraser-service';
+import { EraserService, MAX_SIZE_ERASER, MIN_SIZE_ERASER } from '@app/services/tools/eraser-service';
 
 @Component({
     selector: 'app-sidebar-eraser',
@@ -24,14 +24,14 @@ export class SidebarEraserComponent implements AfterViewInit {
     }
 
     changeEraserSize(value: number): void {
-        if (value >= MIN_SIZE_ERASER) {
+        if (value >= MIN_SIZE_ERASER && value <= MAX_SIZE_ERASER) {
             this.size = value;
+        } else if (value >= MAX_SIZE_ERASER) {
+            this.size = MAX_SIZE_ERASER;
         } else {
             this.size = MIN_SIZE_ERASER;
         }
         this.eraserSizeChanged.emit(this.size);
-        if (this.inputDiv != null) {
-            this.inputDiv.value = String(this.size);
-        }
+        this.inputDiv.value = String(this.size);
     }
 }

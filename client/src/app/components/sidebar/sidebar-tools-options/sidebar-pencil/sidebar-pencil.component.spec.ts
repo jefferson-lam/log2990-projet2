@@ -43,7 +43,8 @@ describe('SidebarPencilComponent', () => {
         const medianSize = MIN_SIZE_PENCIL + (MAX_SIZE_PENCIL - MIN_SIZE_PENCIL) / 2;
         component.changePencilSize(medianSize);
 
-        // @ts-ignore
-        expect(component.inputDiv.value).toBe(medianSize.toString());
+        // tslint:disable:no-string-literal
+        expect(component['inputDiv'].value).toBe(medianSize.toString());
+        // tslint:enable:no-string-literal
     });
 });
