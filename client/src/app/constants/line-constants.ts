@@ -19,3 +19,5 @@ export const DEGREES_225 = 225;
 export const DEGREES_270 = 270;
 
 export const DEGREES_315 = 315;
+
+export const DEGREES_360 = 360;
