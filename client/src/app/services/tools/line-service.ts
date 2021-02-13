@@ -47,9 +47,9 @@ export class LineService extends Tool {
     onKeyboardDown(event: KeyboardEvent): void {
         if (this.isDrawing) {
             if (event.key === 'Shift' && !this.shiftDown) {
-                let angle = this.calculateAngle(this.linePathData[LineConstants.STARTING_POINT], this.mousePosition);
-                let finalAngle = this.roundAngleToNearestMultiple(angle, LineConstants.DEGREES_45);
-                let finalLineCoord: Vec2 = this.calculateLengthAndFlatten(
+                const angle = this.calculateAngle(this.linePathData[LineConstants.STARTING_POINT], this.mousePosition);
+                const finalAngle = this.roundAngleToNearestMultiple(angle, LineConstants.DEGREES_45);
+                const finalLineCoord: Vec2 = this.calculateLengthAndFlatten(
                     this.linePathData[LineConstants.STARTING_POINT],
                     this.mousePosition,
                     finalAngle,
@@ -95,7 +95,7 @@ export class LineService extends Tool {
             this.linePathData[LineConstants.STARTING_POINT] = this.mouseDownCoord;
             this.canvasState = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
         } else {
-            let distanceToInitialPoint = this.calculateDistance(this.linePathData[LineConstants.ENDING_POINT], this.initialPoint);
+            const distanceToInitialPoint = this.calculateDistance(this.linePathData[LineConstants.ENDING_POINT], this.initialPoint);
             if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
                 this.linePathData[LineConstants.ENDING_POINT] = this.initialPoint;
             }
