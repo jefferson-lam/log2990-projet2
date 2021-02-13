@@ -43,6 +43,8 @@ export class LineService extends Tool {
      * set of points at a set length defined by the requirements for each angle,
      * at the angle 0. It finally rotates this set of points a new set of point at the
      * required angle.
+     * We use keyboardDown event to simulate Escape and backspace as the keyboardClick
+     * event does not work for these modifiers.
      */
     onKeyboardDown(event: KeyboardEvent): void {
         if (this.isDrawing) {
