@@ -1,6 +1,10 @@
 <div class="container">
     <ul class="options-sidebar">
-        <li><mat-icon style="color: white" matTooltip="Retour" [matTooltipPosition]="'right'" (click)="backClick()">backspace</mat-icon></li>
+        <li>
+            <mat-icon style="color: white" id="return-button" matTooltip="Retour" [matTooltipPosition]="'right'" (click)="backClick()"
+                >backspace</mat-icon
+            >
+        </li>
         <li><mat-icon style="color: white" matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
         <li><mat-icon style="color: white" matTooltip="Effacer" [matTooltipPosition]="'right'">undo</mat-icon></li>
         <li><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
@@ -23,9 +27,6 @@
 
 <mat-drawer-container class="tools-option-container" (mouseleave)="toggleOpen()">
     <mat-drawer #drawer [mode]="'side'" class="sidenav" [opened]="opened">
-        <mat-drawer-content [ngSwitch]="selectedTool">
-            <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="ToolsList.Pencil"> </app-sidebar-pencil>
-            <app-sidebar-eraser class="sidebar-tool-options" *ngSwitchCase="ToolsList.Eraser"></app-sidebar-eraser>
-        </mat-drawer-content>
+        <mat-drawer-content [ngSwitch]="selectedTool"> </mat-drawer-content>
     </mat-drawer>
 </mat-drawer-container>

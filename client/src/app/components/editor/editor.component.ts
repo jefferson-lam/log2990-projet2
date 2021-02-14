@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 
 @Component({
@@ -9,8 +10,9 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 })
 export class EditorComponent {
     currentTool: Tool;
-    constructor(public toolManager: ToolManagerService) {
+    constructor(public toolManager: ToolManagerService, public settingsManager: SettingsManagerService) {
         this.currentTool = toolManager.pencilService;
+        this.settingsManager.editorComponent = this;
     }
 
     @HostListener('keypress', ['$event'])

@@ -15,25 +15,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
-import { EraserComponent } from './components/eraser/eraser.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
-import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options/sidebar-eraser/sidebar-eraser.component';
-import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options/sidebar-pencil/sidebar-pencil.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        EditorComponent,
-        SidebarComponent,
-        DrawingComponent,
-        MainPageComponent,
-        SidebarPencilComponent,
-        SidebarEraserComponent,
-        MainPageCarrouselComponent,
-        EraserComponent,
-    ],
+    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, MainPageCarrouselComponent],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
         BrowserModule,

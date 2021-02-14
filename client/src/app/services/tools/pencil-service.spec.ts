@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from './pencil-service';
+import { MAX_SIZE_PENCIL, MIN_SIZE_PENCIL, MouseButton, PencilService } from './pencil-service';
 
 // tslint:disable:no-any
 describe('PencilService', () => {
@@ -44,28 +44,44 @@ describe('PencilService', () => {
         expect(service).toBeTruthy();
     });
 
-    it(' mouseDown should set mouseDownCoord to correct position', () => {
+    it('setSize should set size to MIN_SIZE_PENCIL if under MIN_SIZE_PENCIL', () => {
+        service.setSize(MIN_SIZE_PENCIL - 1);
+        expect(service.size).toEqual(MIN_SIZE_PENCIL);
+    });
+
+    it('setSize should set size to MAX_SIZE_PENCIL if over MAX_SIZE_PENCIL', () => {
+        service.setSize(MAX_SIZE_PENCIL + 1);
+        expect(service.size).toEqual(MAX_SIZE_PENCIL);
+    });
+
+    it('setSize should set size to value if between MAX and MIN_SIZE_PENCIL', () => {
+        const newSize = MIN_SIZE_PENCIL + (MAX_SIZE_PENCIL - MIN_SIZE_PENCIL) / 2;
+        service.setSize(newSize);
+        expect(service.size).toEqual(newSize);
+    });
+
+    it('mouseDown should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
         service.onMouseDown(mouseEvent);
         expect(service.mouseDownCoord).toEqual(expectedResult);
     });
 
-    it(' mouseDown should set mouseDown property to true on left click', () => {
+    it('mouseDown should set mouseDown property to true on left click', () => {
         service.onMouseDown(mouseEvent);
         expect(service.mouseDown).toEqual(true);
     });
 
-    it(' mouseDown should set mouseDown property to false on right click', () => {
+    it('mouseDown should set mouseDown property to false on right click', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
+            button: MouseButton.Right, // TODO: Avoir ceci dans un enum accessible
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
     });
 
-    it(' onMouseUp should call drawLine if mouse was already down', () => {
+    it('onMouseUp should call drawLine if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -73,7 +89,7 @@ describe('PencilService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseUp should not call drawLine if mouse was not already down', () => {
+    it('onMouseUp should not call drawLine if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
@@ -81,7 +97,7 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    it(' onMouseMove should call drawLine if mouse was already down', () => {
+    it('onMouseMove should call drawLine if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -90,7 +106,7 @@ describe('PencilService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseMove should not call drawLine if mouse was not already down', () => {
+    it('onMouseMove should not call drawLine if mouse was not already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
@@ -99,7 +115,42 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyDown should not call drawLine if any key is pressed', () => {
+    it('onMouseLeave should call drawLine if mouse was down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseLeave should not call drawLine if mouse was not down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = false;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseEnter should set mouseDown to false if mouse is not down', () => {
+        service.mouseDown = true;
+        const mouseEventNoClick = {
+            buttons: MouseButton.Left,
+        } as MouseEvent;
+
+        service.onMouseEnter(mouseEventNoClick);
+        expect(service.mouseDown).toBeFalse();
+    });
+
+    it('onMouseEnter should not set mouseDown to false if mouse is down', () => {
+        service.mouseDown = true;
+
+        service.onMouseEnter(mouseEvent);
+        expect(service.mouseDown).toBeTrue();
+    });
+
+    it('onKeyDown should not call drawLine if any key is pressed', () => {
         const keyEvent = {
             key: 'e',
         } as KeyboardEvent;
@@ -108,7 +159,7 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyUp should not call drawLine if any key is pressed', () => {
+    it('onKeyUp should not call drawLine if any key is pressed', () => {
         const keyEvent = {
             key: 'e',
         } as KeyboardEvent;
@@ -118,7 +169,7 @@ describe('PencilService', () => {
     });
 
     // Exemple de test d'intégration qui est quand même utile
-    it(' should change the pixel of the canvas ', () => {
+    it('should change the pixel of the canvas ', () => {
         mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
         service.onMouseDown(mouseEvent);
         mouseEvent = { offsetX: 1, offsetY: 0, button: 0 } as MouseEvent;

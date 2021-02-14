@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
@@ -13,8 +14,6 @@ import { RectangleService } from '@app/services/tools/rectangle-service';
 import { EditorComponent } from './editor.component';
 
 class ToolStub extends Tool {}
-@Component({ selector: 'app-eraser', template: ' ' })
-class EraserStubComponent {}
 
 describe('EditorComponent', () => {
     let component: EditorComponent;
@@ -40,14 +39,16 @@ describe('EditorComponent', () => {
             ellipseStub as EllipseService,
         );
         TestBed.configureTestingModule({
-            declarations: [EditorComponent, DrawingComponent, SidebarComponent, EraserStubComponent],
+            declarations: [EditorComponent, DrawingComponent, SidebarComponent],
             providers: [
                 { provide: ToolManagerService, useValue: toolManagerStub },
                 { provide: EllipseService, useValue: ellipseStub },
                 { provide: RectangleService, useValue: rectangleStub },
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
+                { provide: MatDialog },
             ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
