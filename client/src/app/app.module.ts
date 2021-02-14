@@ -15,7 +15,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
-import { EraserComponent } from './components/eraser/eraser.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options/sidebar-eraser/sidebar-eraser.component';
@@ -32,7 +31,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarPencilComponent,
         SidebarEraserComponent,
         MainPageCarrouselComponent,
-        EraserComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

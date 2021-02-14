@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
-import { EraserService, MAX_SIZE_ERASER, MIN_SIZE_ERASER } from '@app/services/tools/eraser-service';
+import * as EraserConstants from '@app/constants/eraser-constants';
+import { EraserService } from '@app/services/tools/eraser-service';
 
 @Component({
     selector: 'app-sidebar-eraser',
@@ -8,7 +9,7 @@ import { EraserService, MAX_SIZE_ERASER, MIN_SIZE_ERASER } from '@app/services/t
 })
 export class SidebarEraserComponent implements AfterViewInit {
     @Output() eraserSizeChanged: EventEmitter<number> = new EventEmitter();
-    size: number = MIN_SIZE_ERASER;
+    size: number = EraserConstants.MIN_SIZE_ERASER;
     private inputDiv: HTMLInputElement;
 
     /* TODO : use toolManager instead to subscribe to eventEmitters like following
@@ -24,12 +25,12 @@ export class SidebarEraserComponent implements AfterViewInit {
     }
 
     changeEraserSize(value: number): void {
-        if (value >= MIN_SIZE_ERASER && value <= MAX_SIZE_ERASER) {
+        if (value >= EraserConstants.MIN_SIZE_ERASER && value <= EraserConstants.MAX_SIZE_ERASER) {
             this.size = value;
-        } else if (value >= MAX_SIZE_ERASER) {
-            this.size = MAX_SIZE_ERASER;
+        } else if (value >= EraserConstants.MAX_SIZE_ERASER) {
+            this.size = EraserConstants.MAX_SIZE_ERASER;
         } else {
-            this.size = MIN_SIZE_ERASER;
+            this.size = EraserConstants.MIN_SIZE_ERASER;
         }
         this.eraserSizeChanged.emit(this.size);
         this.inputDiv.value = String(this.size);

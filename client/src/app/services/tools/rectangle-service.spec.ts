@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as RectangleConstants from '@app/constants/rectangle-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle-service';
 
+// tslint:disable:max-file-line-count
 // tslint:disable:no-any
 describe('RectangleService', () => {
     let service: RectangleService;
@@ -93,13 +95,14 @@ describe('RectangleService', () => {
         service.mouseDown = false;
 
         service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyDown should call drawRectangle if mouse was down and then Shift was pressed', () => {
+    it(' onKeyboardDown should call drawRectangle if mouse was down and Shift was not pressed before shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
+        service.isShiftDown = false;
 
         const keyEvent = {
             key: 'Shift',
@@ -110,9 +113,10 @@ describe('RectangleService', () => {
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
-    it(' onKeyDown should not call drawRectangle if mouse was not down and then Shift was pressed', () => {
+    it(' onKeyboardDown should not call drawRectangle if mouse was down and Shift was pressed before shift was pressed.', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = false;
+        service.mouseDown = true;
+        service.isShiftDown = true;
 
         const keyEvent = {
             key: 'Shift',
@@ -123,7 +127,21 @@ describe('RectangleService', () => {
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyDown should not call drawRectangle if Shift was not pressed while mouse was already down', () => {
+    it(' onKeyboardDown should not call drawRectangle if mouse was not down and Shift was pressed before shift was pressed.', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = false;
+        service.isShiftDown = true;
+
+        const keyEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+
+        service.onKeyboardDown(keyEvent);
+        expect(service.isSquare).toEqual(false);
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onKeyboardDown should not call drawRectangle if Shift was not pressed while mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
@@ -135,7 +153,7 @@ describe('RectangleService', () => {
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyUp should call drawRectangle if mouse was down and then shift was pressed', () => {
+    it(' onKeyboardUp should call drawRectangle if mouse was down and then shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -148,7 +166,7 @@ describe('RectangleService', () => {
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
-    it(' onKeyUp should not call drawRectangle if mouse was down and then keyboard key was released', () => {
+    it(' onKeyboardUp should not call drawRectangle if mouse was down and then keyboard key was released', () => {
         // const drawRectanglySpyTest: jasmine.SpyObj<RectangleService> = jasmine.createSpyObj('RectangleService', ['drawRectangle']);
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
@@ -161,7 +179,7 @@ describe('RectangleService', () => {
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyUp should not call drawRectangle if mouse was not down when keyboard key was released', () => {
+    it(' onKeyboardUp should not call drawRectangle if mouse was not down when keyboard key was released', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
@@ -172,5 +190,224 @@ describe('RectangleService', () => {
         service.onKeyboardUp(keyEvent);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
+
+    it('setSize should change size of lineWidth if within min and max width allowed', () => {
+        const RANDOM_TEST_WIDTH = 10;
+        service.setSize(RANDOM_TEST_WIDTH);
+        expect(service.lineWidth).toEqual(RANDOM_TEST_WIDTH);
+    });
+
+    it('setSize should change size of lineWidth to min width if width is lower than min', () => {
+        const LOWER_TEST_WIDTH = -1;
+        service.setSize(LOWER_TEST_WIDTH);
+        expect(service.lineWidth).toEqual(RectangleConstants.MIN_BORDER_WIDTH);
+    });
+
+    it('setSize should change size of lineWidth to max width if width is bigger than max', () => {
+        const RANDOM_TEST_WIDTH = 70;
+        service.setSize(RANDOM_TEST_WIDTH);
+        expect(service.lineWidth).toEqual(RectangleConstants.MAX_BORDER_WIDTH);
+    });
+
+    it('setFillMode should change to FILL ONLY mode', () => {
+        const EXPECTED_FILL_MODE = RectangleConstants.FillMode.FILL_ONLY;
+        service.setFillMode(EXPECTED_FILL_MODE);
+        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
+    });
+
+    it('setFillMode should change to OUTLINE mode', () => {
+        const EXPECTED_FILL_MODE = RectangleConstants.FillMode.OUTLINE;
+        service.setFillMode(EXPECTED_FILL_MODE);
+        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
+    });
+
+    it('setFillMode should change to OUTLINE_FILL ONLY mode', () => {
+        const EXPECTED_FILL_MODE = RectangleConstants.FillMode.OUTLINE_FILL;
+        service.setFillMode(EXPECTED_FILL_MODE);
+        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
+    });
+
+    it('setPrimaryColor should change primary color to wanted color', () => {
+        const EXPECTED_RANDOM_COLOR = 'blue';
+        service.setPrimaryColor(EXPECTED_RANDOM_COLOR);
+        expect(service.primaryColor).toEqual(EXPECTED_RANDOM_COLOR);
+    });
+
+    it('setSecondaryColor should change secondary color to wanted color', () => {
+        const EXPECTED_RANDOM_COLOR = 'green';
+        service.setSecondaryColor(EXPECTED_RANDOM_COLOR);
+        expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
+    });
+
+    it('onMouseLeave should call drawRectangle if mouse was pressed', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawRectangleSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseLeave should not call drawRectangle if mouse was not pressed', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = false;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseEnter should make service.mouseDown true if left mouse was pressed and mouse was pressed before leaving', () => {
+        const mouseEnterEvent = {
+            offsetX: 25,
+            offsetY: 40,
+            buttons: 1,
+        } as MouseEvent;
+        service.mouseDown = true;
+
+        service.onMouseEnter(mouseEnterEvent);
+        expect(service.mouseDown).toEqual(true);
+    });
+
+    it('onMouseEnter should make service.mouseDown false if left mouse was pressed and mouse was not pressed before leaving', () => {
+        const mouseEnterEvent = {
+            offsetX: 25,
+            offsetY: 40,
+            buttons: 1,
+        } as MouseEvent;
+        service.mouseDown = false;
+
+        service.onMouseEnter(mouseEnterEvent);
+        expect(service.mouseDown).toEqual(false);
+    });
+
+    it('onMouseEnter should make service.mouseDown false if left mouse was not pressed and mouse was not pressed before leaving', () => {
+        const mouseEnterEvent = {
+            offsetX: 25,
+            offsetY: 40,
+            buttons: 0,
+        } as MouseEvent;
+        service.mouseDown = false;
+
+        service.onMouseEnter(mouseEnterEvent);
+        expect(service.mouseDown).toEqual(false);
+    });
+
+    it('drawRectangle should be called if fillMode is OUTLINE', () => {
+        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        service.onMouseDown(mouseEvent);
+        mouseEvent = { offsetX: 25, offsetY: 25, button: 0 } as MouseEvent;
+        service.onMouseUp(mouseEvent);
+    });
+
     // TODO: implement tests with the 3 different fill modes
+    // 'FillMode.OUTLINE should only fill border pixels between start and end point with the same color'
+    it('FillMode.FILL_ONLY should fill all pixels between start and end point with the same color.', () => {
+        service.setFillMode(RectangleConstants.FillMode.FILL_ONLY);
+        const RED_VALUE = 120;
+        const GREEN_VALUE = 170;
+        const BLUE_VALUE = 120;
+        service.setPrimaryColor(`rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE})`);
+        service.setSecondaryColor('black');
+
+        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        service.onMouseDown(mouseEvent);
+        const TEST_X_OFFSET = 25;
+        const TEST_Y_OFFSET = 25;
+        mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: 0 } as MouseEvent;
+        service.onMouseUp(mouseEvent);
+
+        const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
+        const pixelDataSize = 4;
+        for (let i = 0; i < imageData.data.length; i += pixelDataSize) {
+            expect(imageData.data[0]).toEqual(RED_VALUE); // R
+            expect(imageData.data[1]).toEqual(GREEN_VALUE); // G
+            expect(imageData.data[2]).toEqual(BLUE_VALUE); // B
+            // tslint:disable-next-line:no-magic-numbers
+            expect(imageData.data[3]).not.toEqual(0); // A
+        }
+    });
+
+    // TODO: implement tests with the 3 different fill modes
+    // 'FillMode.OUTLINE should only fill border pixels between start and end point with the same color'
+    it('drawRectangle should fill all pixels with border color if width or height to be is smaller than line width.', () => {
+        service.setFillMode(RectangleConstants.FillMode.OUTLINE);
+
+        const TEST_WIDTH = 50;
+        service.setSize(TEST_WIDTH);
+
+        const RED_VALUE_PRIMARY = 255;
+        const GREEN_VALUE_PRIMARY = 170;
+        const BLUE_VALUE_PRIMARY = 120;
+        service.setPrimaryColor(`rgb(${RED_VALUE_PRIMARY}, ${GREEN_VALUE_PRIMARY}, ${BLUE_VALUE_PRIMARY})`);
+
+        const RED_VALUE_SECONDARY = 100;
+        const GREEN_VALUE_SECONDARY = 70;
+        const BLUE_VALUE_SECONDARY = 220;
+        service.setSecondaryColor(`rgb(${RED_VALUE_SECONDARY}, ${GREEN_VALUE_SECONDARY}, ${BLUE_VALUE_SECONDARY})`);
+
+        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        service.onMouseDown(mouseEvent);
+        const TEST_X_OFFSET = 25;
+        const TEST_Y_OFFSET = 25;
+        mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: 0 } as MouseEvent;
+        service.onMouseUp(mouseEvent);
+
+        const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
+        const pixelDataSize = 4;
+        for (let i = 0; i < imageData.data.length; i += pixelDataSize) {
+            expect(imageData.data[0]).toEqual(RED_VALUE_SECONDARY); // R
+            expect(imageData.data[1]).toEqual(GREEN_VALUE_SECONDARY); // G
+            expect(imageData.data[2]).toEqual(BLUE_VALUE_SECONDARY); // B
+            // tslint:disable-next-line:no-magic-numbers
+            expect(imageData.data[3]).not.toEqual(0); // A
+        }
+    });
+
+    it('drawRectangle should fill only border with line width between start and end.', () => {
+        service.setFillMode(RectangleConstants.FillMode.OUTLINE);
+
+        const TEST_WIDTH = 1;
+        service.setSize(TEST_WIDTH);
+
+        const RED_VALUE_PRIMARY = 255;
+        const GREEN_VALUE_PRIMARY = 170;
+        const BLUE_VALUE_PRIMARY = 120;
+        service.setPrimaryColor(`rgb(${RED_VALUE_PRIMARY}, ${GREEN_VALUE_PRIMARY}, ${BLUE_VALUE_PRIMARY})`);
+
+        const RED_VALUE_SECONDARY = 100;
+        const GREEN_VALUE_SECONDARY = 70;
+        const BLUE_VALUE_SECONDARY = 220;
+        service.setSecondaryColor(`rgb(${RED_VALUE_SECONDARY}, ${GREEN_VALUE_SECONDARY}, ${BLUE_VALUE_SECONDARY})`);
+
+        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        service.onMouseDown(mouseEvent);
+        const END_OFFSET = 25;
+        mouseEvent = { offsetX: END_OFFSET, offsetY: END_OFFSET, button: 0 } as MouseEvent;
+        service.onMouseUp(mouseEvent);
+
+        const imageData: ImageData = baseCtxStub.getImageData(0, 0, END_OFFSET, END_OFFSET);
+        const pixelDataSize = 4;
+        for (let rowIndex = 0; rowIndex < imageData.height; ++rowIndex) {
+            for (let columnIndex = 0; columnIndex < imageData.height; ++columnIndex) {
+                let currentZeroIndex = (rowIndex * imageData.height + columnIndex) * pixelDataSize;
+
+                if ((0 < rowIndex && rowIndex < TEST_WIDTH) || (imageData.height - TEST_WIDTH <= rowIndex && rowIndex < imageData.height)) {
+                    expect(imageData.data[currentZeroIndex]).toEqual(RED_VALUE_SECONDARY); // R
+                    expect(imageData.data[++currentZeroIndex]).toEqual(GREEN_VALUE_SECONDARY); // G
+                    expect(imageData.data[++currentZeroIndex]).toEqual(BLUE_VALUE_SECONDARY); // B
+                    expect(imageData.data[++currentZeroIndex]).not.toEqual(0); // A
+                } else if (TEST_WIDTH <= rowIndex && rowIndex < imageData.height - TEST_WIDTH) {
+                    if (TEST_WIDTH <= columnIndex && columnIndex < imageData.width - TEST_WIDTH) {
+                        expect(imageData.data[currentZeroIndex]).toEqual(0); // R
+                        expect(imageData.data[++currentZeroIndex]).toEqual(0); // G
+                        expect(imageData.data[++currentZeroIndex]).toEqual(0); // B
+                        expect(imageData.data[++currentZeroIndex]).toEqual(0); // A
+                    } else {
+                        expect(imageData.data[currentZeroIndex]).toEqual(RED_VALUE_SECONDARY); // R
+                        expect(imageData.data[++currentZeroIndex]).toEqual(GREEN_VALUE_SECONDARY); // G
+                        expect(imageData.data[++currentZeroIndex]).toEqual(BLUE_VALUE_SECONDARY); // B
+                    }
+                }
+            }
+        }
+    });
 });

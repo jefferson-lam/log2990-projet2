@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAX_SIZE_ERASER, MIN_SIZE_ERASER } from '@app/services/tools/eraser-service';
+import * as EraserConstants from '@app/constants/eraser-constants';
 import { SidebarEraserComponent } from './sidebar-eraser.component';
 
 describe('SidebarEraserComponent', () => {
@@ -23,23 +23,23 @@ describe('SidebarEraserComponent', () => {
     });
 
     it('changeEraserSize should set size to MAX_SIZE_ERASER if over MAX_SIZE_ERASER', () => {
-        component.changeEraserSize(MAX_SIZE_ERASER + 1);
-        expect(component.size).toEqual(MAX_SIZE_ERASER);
+        component.changeEraserSize(EraserConstants.MAX_SIZE_ERASER + 1);
+        expect(component.size).toEqual(EraserConstants.MAX_SIZE_ERASER);
     });
 
     it('changeEraserSize should set size to MIN_SIZE_ERASER if under MIN_SIZE_ERASER', () => {
-        component.changeEraserSize(MIN_SIZE_ERASER - 1);
-        expect(component.size).toEqual(MIN_SIZE_ERASER);
+        component.changeEraserSize(EraserConstants.MIN_SIZE_ERASER - 1);
+        expect(component.size).toEqual(EraserConstants.MIN_SIZE_ERASER);
     });
 
     it('changeEraserSize should set size to value if between MAX and MIN_SIZE_ERASER', () => {
-        const medianSize = MIN_SIZE_ERASER + (MAX_SIZE_ERASER - MIN_SIZE_ERASER) / 2;
+        const medianSize = EraserConstants.MIN_SIZE_ERASER + (EraserConstants.MAX_SIZE_ERASER - EraserConstants.MIN_SIZE_ERASER) / 2;
         component.changeEraserSize(medianSize);
         expect(component.size).toEqual(medianSize);
     });
 
     it('inputDiv should be assigned value of validated size', () => {
-        const medianSize = MIN_SIZE_ERASER + (MAX_SIZE_ERASER - MIN_SIZE_ERASER) / 2;
+        const medianSize = EraserConstants.MIN_SIZE_ERASER + (EraserConstants.MAX_SIZE_ERASER - EraserConstants.MIN_SIZE_ERASER) / 2;
         component.changeEraserSize(medianSize);
 
         // tslint:disable:no-string-literal

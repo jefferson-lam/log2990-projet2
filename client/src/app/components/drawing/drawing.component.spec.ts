@@ -1,4 +1,3 @@
-import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -11,9 +10,6 @@ class ToolStub extends Tool {}
 // TODO : Déplacer dans un fichier accessible à tous
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
-
-@Component({ selector: 'app-eraser', template: '' })
-class EraserStubComponent {}
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
@@ -28,7 +24,7 @@ describe('DrawingComponent', () => {
         drawingStub = new DrawingService();
 
         TestBed.configureTestingModule({
-            declarations: [DrawingComponent, EraserStubComponent],
+            declarations: [DrawingComponent],
             providers: [
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
