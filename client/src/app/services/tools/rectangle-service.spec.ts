@@ -291,13 +291,6 @@ describe('RectangleService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it('drawRectangle should be called if fillMode is OUTLINE', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 25, offsetY: 25, button: 0 } as MouseEvent;
-        service.onMouseUp(mouseEvent);
-    });
-
     // TODO: implement tests with the 3 different fill modes
     // 'FillMode.OUTLINE should only fill border pixels between start and end point with the same color'
     it('FillMode.FILL_ONLY should fill all pixels between start and end point with the same color.', () => {
