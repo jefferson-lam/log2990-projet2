@@ -5,7 +5,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
 
-// TODO: put into new class common with editorcomponent
 class ToolStub extends Tool {}
 
 // tslint:disable:no-any

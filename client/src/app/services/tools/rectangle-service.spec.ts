@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as MouseConstants from '@app/constants/mouse-constants';
 import * as RectangleConstants from '@app/constants/rectangle-constants';
+import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle-service';
 
@@ -59,7 +61,7 @@ describe('RectangleService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
+            button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -167,7 +169,6 @@ describe('RectangleService', () => {
     });
 
     it(' onKeyboardUp should not call drawRectangle if mouse was down and then keyboard key was released', () => {
-        // const drawRectanglySpyTest: jasmine.SpyObj<RectangleService> = jasmine.createSpyObj('RectangleService', ['drawRectangle']);
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -210,19 +211,19 @@ describe('RectangleService', () => {
     });
 
     it('setFillMode should change to FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = RectangleConstants.FillMode.FILL_ONLY;
+        const EXPECTED_FILL_MODE = ToolConstants.FillMode.FILL_ONLY;
         service.setFillMode(EXPECTED_FILL_MODE);
         expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
     });
 
     it('setFillMode should change to OUTLINE mode', () => {
-        const EXPECTED_FILL_MODE = RectangleConstants.FillMode.OUTLINE;
+        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE;
         service.setFillMode(EXPECTED_FILL_MODE);
         expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
     });
 
     it('setFillMode should change to OUTLINE_FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = RectangleConstants.FillMode.OUTLINE_FILL;
+        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE_FILL;
         service.setFillMode(EXPECTED_FILL_MODE);
         expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
     });
@@ -259,7 +260,7 @@ describe('RectangleService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: 1,
+            buttons: MouseConstants.PRIMARY_BUTTON,
         } as MouseEvent;
         service.mouseDown = true;
 
@@ -271,7 +272,7 @@ describe('RectangleService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: 1,
+            buttons: MouseConstants.PRIMARY_BUTTON,
         } as MouseEvent;
         service.mouseDown = false;
 
@@ -283,7 +284,7 @@ describe('RectangleService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: 0,
+            buttons: MouseConstants.NO_BUTTON_PRESSED,
         } as MouseEvent;
         service.mouseDown = false;
 
@@ -291,21 +292,19 @@ describe('RectangleService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    // TODO: implement tests with the 3 different fill modes
-    // 'FillMode.OUTLINE should only fill border pixels between start and end point with the same color'
     it('FillMode.FILL_ONLY should fill all pixels between start and end point with the same color.', () => {
-        service.setFillMode(RectangleConstants.FillMode.FILL_ONLY);
+        service.setFillMode(ToolConstants.FillMode.FILL_ONLY);
         const RED_VALUE = 120;
         const GREEN_VALUE = 170;
         const BLUE_VALUE = 120;
         service.setPrimaryColor(`rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE})`);
         service.setSecondaryColor('black');
 
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
         const TEST_X_OFFSET = 25;
         const TEST_Y_OFFSET = 25;
-        mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
@@ -314,15 +313,12 @@ describe('RectangleService', () => {
             expect(imageData.data[0]).toEqual(RED_VALUE); // R
             expect(imageData.data[1]).toEqual(GREEN_VALUE); // G
             expect(imageData.data[2]).toEqual(BLUE_VALUE); // B
-            // tslint:disable-next-line:no-magic-numbers
             expect(imageData.data[3]).not.toEqual(0); // A
         }
     });
 
-    // TODO: implement tests with the 3 different fill modes
-    // 'FillMode.OUTLINE should only fill border pixels between start and end point with the same color'
     it('drawRectangle should fill all pixels with border color if width or height to be is smaller than line width.', () => {
-        service.setFillMode(RectangleConstants.FillMode.OUTLINE);
+        service.setFillMode(ToolConstants.FillMode.OUTLINE);
 
         const TEST_WIDTH = 50;
         service.setSize(TEST_WIDTH);
@@ -337,11 +333,11 @@ describe('RectangleService', () => {
         const BLUE_VALUE_SECONDARY = 220;
         service.setSecondaryColor(`rgb(${RED_VALUE_SECONDARY}, ${GREEN_VALUE_SECONDARY}, ${BLUE_VALUE_SECONDARY})`);
 
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
         const TEST_X_OFFSET = 25;
         const TEST_Y_OFFSET = 25;
-        mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
@@ -350,13 +346,12 @@ describe('RectangleService', () => {
             expect(imageData.data[0]).toEqual(RED_VALUE_SECONDARY); // R
             expect(imageData.data[1]).toEqual(GREEN_VALUE_SECONDARY); // G
             expect(imageData.data[2]).toEqual(BLUE_VALUE_SECONDARY); // B
-            // tslint:disable-next-line:no-magic-numbers
             expect(imageData.data[3]).not.toEqual(0); // A
         }
     });
 
     it('drawRectangle should fill only border with line width between start and end.', () => {
-        service.setFillMode(RectangleConstants.FillMode.OUTLINE);
+        service.setFillMode(ToolConstants.FillMode.OUTLINE);
 
         const TEST_WIDTH = 1;
         service.setSize(TEST_WIDTH);
@@ -371,10 +366,10 @@ describe('RectangleService', () => {
         const BLUE_VALUE_SECONDARY = 220;
         service.setSecondaryColor(`rgb(${RED_VALUE_SECONDARY}, ${GREEN_VALUE_SECONDARY}, ${BLUE_VALUE_SECONDARY})`);
 
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
         const END_OFFSET = 25;
-        mouseEvent = { offsetX: END_OFFSET, offsetY: END_OFFSET, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: END_OFFSET, offsetY: END_OFFSET, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, END_OFFSET, END_OFFSET);

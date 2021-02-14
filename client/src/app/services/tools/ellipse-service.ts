@@ -2,18 +2,9 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
+import * as MouseConstants from '@app/constants/mouse-constants';
+import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
-
-// TODO: Find way to get fill mode
 
 @Injectable({
     providedIn: 'root',
@@ -22,7 +13,7 @@ export class EllipseService extends Tool {
     cornerCoords: Vec2[];
     isCircle: boolean = false;
     lineWidth: number = 20;
-    fillMode: EllipseConstants.FillMode = EllipseConstants.FillMode.OUTLINE;
+    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
     primaryColor: string = '#B5CF60';
     secondaryColor: string = '#2F2A36';
 
@@ -34,7 +25,7 @@ export class EllipseService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
         if (this.mouseDown) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.START_INDEX] = this.mouseDownCoord;
@@ -116,7 +107,7 @@ export class EllipseService extends Tool {
         }
     }
 
-    setFillMode(newFillMode: EllipseConstants.FillMode): void {
+    setFillMode(newFillMode: ToolConstants.FillMode): void {
         this.fillMode = newFillMode;
     }
 
@@ -149,7 +140,7 @@ export class EllipseService extends Tool {
         const radiiXAndY = this.getRadiiXAndY(path);
         let xRadius = radiiXAndY[EllipseConstants.X_INDEX];
         let yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
-        const borderColor: string = this.fillMode === EllipseConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
+        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
         if (xRadius > this.lineWidth / 2 && yRadius > this.lineWidth / 2) {
             xRadius -= this.lineWidth / 2;
             yRadius -= this.lineWidth / 2;
@@ -161,7 +152,7 @@ export class EllipseService extends Tool {
                 startY,
                 xRadius,
                 yRadius,
-                EllipseConstants.FillMode.OUTLINE_FILL,
+                ToolConstants.FillMode.OUTLINE_FILL,
                 borderColor,
                 borderColor,
                 EllipseConstants.HIDDEN_BORDER_WIDTH,
@@ -207,7 +198,7 @@ export class EllipseService extends Tool {
         ctx.strokeStyle = secondaryColor;
         ctx.lineWidth = lineWidth;
         ctx.stroke();
-        if (fillMethod !== EllipseConstants.FillMode.OUTLINE) {
+        if (fillMethod !== ToolConstants.FillMode.OUTLINE) {
             ctx.fillStyle = primaryColor;
             ctx.fill();
         }

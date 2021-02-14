@@ -2,17 +2,8 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as EraserConstants from '@app/constants/eraser-constants';
+import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
-// TODO : Constants in common file (common/constants.ts?)
-
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 
 @Injectable({
     providedIn: 'root',
@@ -38,7 +29,7 @@ export class EraserService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
 

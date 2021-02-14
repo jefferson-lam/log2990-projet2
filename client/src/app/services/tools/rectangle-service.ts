@@ -1,18 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import * as MouseConstants from '@app/constants/mouse-constants';
 import * as RectangleConstants from '@app/constants/rectangle-constants';
+import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
-// TODO: Find way to get fill mode
 
 @Injectable({
     providedIn: 'root',
@@ -22,7 +14,7 @@ export class RectangleService extends Tool {
     isSquare: boolean = false;
     isShiftDown: boolean = false;
     lineWidth: number = 30;
-    fillMode: RectangleConstants.FillMode = RectangleConstants.FillMode.OUTLINE_FILL;
+    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = 'red';
     secondaryColor: string = 'grey';
 
@@ -32,7 +24,7 @@ export class RectangleService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
         if (this.mouseDown) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.START_INDEX] = this.mouseDownCoord;
@@ -114,7 +106,7 @@ export class RectangleService extends Tool {
         }
     }
 
-    setFillMode(newFillMode: RectangleConstants.FillMode): void {
+    setFillMode(newFillMode: ToolConstants.FillMode): void {
         this.fillMode = newFillMode;
     }
 
@@ -136,7 +128,7 @@ export class RectangleService extends Tool {
             width = Math.sign(width) * longestSide;
             height = Math.sign(height) * longestSide;
         }
-        const borderColor: string = this.fillMode === RectangleConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
+        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
         if (Math.abs(width) > this.lineWidth && Math.abs(height) > this.lineWidth) {
             width -= Math.sign(width) * this.lineWidth;
             height -= Math.sign(height) * this.lineWidth;
@@ -147,7 +139,7 @@ export class RectangleService extends Tool {
                 path,
                 width,
                 height,
-                RectangleConstants.FillMode.OUTLINE_FILL,
+                ToolConstants.FillMode.OUTLINE_FILL,
                 RectangleConstants.MIN_BORDER_WIDTH,
                 borderColor,
                 borderColor,
@@ -160,7 +152,7 @@ export class RectangleService extends Tool {
         path: Vec2[],
         width: number,
         height: number,
-        fillMode: RectangleConstants.FillMode,
+        fillMode: ToolConstants.FillMode,
         lineWidth: number,
         fillColor: string,
         borderColor: string,
@@ -174,7 +166,7 @@ export class RectangleService extends Tool {
         ctx.strokeStyle = borderColor;
         ctx.lineWidth = lineWidth;
         ctx.stroke();
-        if (fillMode !== RectangleConstants.FillMode.OUTLINE) {
+        if (fillMode !== ToolConstants.FillMode.OUTLINE) {
             ctx.fillStyle = fillColor;
             ctx.fill();
         }

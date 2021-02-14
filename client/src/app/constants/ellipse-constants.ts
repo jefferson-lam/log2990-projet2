@@ -23,9 +23,3 @@ export const START_INDEX = 0;
 export const X_INDEX = 0;
 
 export const Y_INDEX = 1;
-
-export enum FillMode {
-    OUTLINE = 0,
-    FILL_ONLY = 1,
-    OUTLINE_FILL = 2,
-}

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as EraserConstants from '@app/constants/eraser-constants';
+import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from './eraser-service';
 
@@ -37,7 +38,7 @@ describe('EraserService', () => {
         mouseEvent = {
             offsetX: 25,
             offsetY: 25,
-            button: 0,
+            button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
     });
 
@@ -60,7 +61,7 @@ describe('EraserService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
+            button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -170,7 +171,6 @@ describe('EraserService', () => {
         expect(fillSpy).toHaveBeenCalled();
     });
 
-    // TODO : Change to ToolManager when created
     it('setSize should not be able to set size under minimum 5', () => {
         service.setSize(1);
         expect(service.size).toEqual(EraserConstants.MIN_SIZE_ERASER);

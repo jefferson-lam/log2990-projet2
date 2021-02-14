@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EditorComponent } from '@app/components/editor/editor.component';
-
-// TODO: Find way to get fill mode
-enum FillMode {
-    OUTLINE = 0,
-    FILL_ONLY = 1,
-    OUTLINE_FILL = 2,
-}
+import * as ToolConstants from '@app/constants/tool-constants';
 
 @Injectable({
     providedIn: 'root',
@@ -20,7 +14,7 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setSize(newWidth);
     }
 
-    changeFillMode(newFillMode: FillMode): void {
+    changeFillMode(newFillMode: ToolConstants.FillMode): void {
         this.editorComponent.currentTool.setFillMode(newFillMode);
     }
     // TODO: Put these lines in the component containing the event emitter

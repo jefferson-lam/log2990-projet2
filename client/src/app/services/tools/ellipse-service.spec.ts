@@ -2,6 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
+import * as MouseConstants from '@app/constants/mouse-constants';
+import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from './ellipse-service';
 
@@ -41,7 +43,7 @@ describe('EllipseService', () => {
         mouseEvent = {
             offsetX: 25,
             offsetY: 40,
-            button: 0,
+            button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
     });
 
@@ -64,7 +66,7 @@ describe('EllipseService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
+            button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -124,7 +126,7 @@ describe('EllipseService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: 1,
+            buttons: MouseConstants.PRIMARY_BUTTON,
         } as MouseEvent;
         service.mouseDown = true;
 
@@ -251,19 +253,19 @@ describe('EllipseService', () => {
     });
 
     it('setFillMode should change to FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = EllipseConstants.FillMode.FILL_ONLY;
+        const EXPECTED_FILL_MODE = ToolConstants.FillMode.FILL_ONLY;
         service.setFillMode(EXPECTED_FILL_MODE);
         expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
     });
 
     it('setFillMode should change to OUTLINE mode', () => {
-        const EXPECTED_FILL_MODE = EllipseConstants.FillMode.OUTLINE;
+        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE;
         service.setFillMode(EXPECTED_FILL_MODE);
         expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
     });
 
     it('setFillMode should change to OUTLINE_FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = EllipseConstants.FillMode.OUTLINE_FILL;
+        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE_FILL;
         service.setFillMode(EXPECTED_FILL_MODE);
         expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
     });
@@ -280,21 +282,6 @@ describe('EllipseService', () => {
         expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
     });
 
-    it('should make an ellipse with border and fill color of different colors on FillMode.OUTLINE_FILL', () => {
-        service.setFillMode(EllipseConstants.FillMode.OUTLINE_FILL);
-        const RED_VALUE = 120;
-        const GREEN_VALUE = 170;
-        const BLUE_VALUE = 120;
-        service.setPrimaryColor(`rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE})`);
-        service.setSecondaryColor('black');
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, button: 0 } as MouseEvent;
-        service.onMouseUp(mouseEvent);
-        const VARIABLE = 1;
-        expect(VARIABLE).toEqual(VARIABLE); // R
-    });
-
     it('should make an ellipse with border and fill color of same color on FillMode.FILL_ONLY', () => {
         const RED_VALUE = 110;
         const GREEN_VALUE = 225;
@@ -306,13 +293,13 @@ describe('EllipseService', () => {
         service.setSecondaryColor(TEST_SECONDARY_COLOR);
         const TEST_LINE_WIDTH = 5;
         service.setSize(TEST_LINE_WIDTH);
-        service.setFillMode(EllipseConstants.FillMode.FILL_ONLY);
+        service.setFillMode(ToolConstants.FillMode.FILL_ONLY);
 
         const END_X = 10;
         const END_Y = 20;
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: END_X, offsetY: END_Y, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: END_X, offsetY: END_Y, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         // Trace test ellipse to be compared with stub.
@@ -357,13 +344,13 @@ describe('EllipseService', () => {
         service.setSecondaryColor(TEST_SECONDARY_COLOR);
         const TEST_LINE_WIDTH = 6;
         service.setSize(TEST_LINE_WIDTH);
-        service.setFillMode(EllipseConstants.FillMode.OUTLINE);
+        service.setFillMode(ToolConstants.FillMode.OUTLINE);
 
         const END_X = 10;
         const END_Y = 15;
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: END_X, offsetY: END_Y, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: END_X, offsetY: END_Y, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         // Trace test ellipse to be compared with stub.
@@ -402,7 +389,7 @@ describe('EllipseService', () => {
         const OPACITY = 1;
         const TEST_PRIMARY_COLOR = `rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE}, ${OPACITY})`;
         const TEST_SECONDARY_COLOR = 'black';
-        const TEST_FILL_MODE = EllipseConstants.FillMode.OUTLINE_FILL;
+        const TEST_FILL_MODE = ToolConstants.FillMode.OUTLINE_FILL;
 
         service.setPrimaryColor(TEST_PRIMARY_COLOR);
         service.setSecondaryColor(TEST_SECONDARY_COLOR);
@@ -412,9 +399,9 @@ describe('EllipseService', () => {
 
         const END_X = 10;
         const END_Y = 15;
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: END_X, offsetY: END_Y, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: END_X, offsetY: END_Y, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         // Trace test ellipse to be compared with stub.
