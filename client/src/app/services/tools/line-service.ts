@@ -26,10 +26,10 @@ export class LineService extends Tool {
     isEscapeKeyDown: boolean = false;
     isBackspaceKeyDown: boolean = false;
 
-    // optionValues to be obtained from settings manager.
-    withJunctionOption: boolean = true;
-    junctionRadiusOption: number = 15;
-    lineWidthOption: number = 10;
+    // TODO: optionValues to be obtained from settings manager.
+    withJunction: boolean = true;
+    junctionRadius: number = 15;
+    lineWidth: number = 10;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -127,17 +127,17 @@ export class LineService extends Tool {
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        if (this.withJunctionOption) {
+        if (this.withJunction) {
             ctx.arc(
                 path[LineConstants.ENDING_POINT].x,
                 path[LineConstants.ENDING_POINT].y,
-                this.junctionRadiusOption,
+                this.junctionRadius,
                 LineConstants.DEGREES_0,
                 LineConstants.DEGREES_360,
             );
             ctx.fill();
         }
-        ctx.lineWidth = this.lineWidthOption;
+        ctx.lineWidth = this.lineWidth;
         ctx.moveTo(path[LineConstants.STARTING_POINT].x, path[LineConstants.STARTING_POINT].y);
         ctx.lineTo(path[LineConstants.ENDING_POINT].x, path[LineConstants.ENDING_POINT].y);
         ctx.stroke();

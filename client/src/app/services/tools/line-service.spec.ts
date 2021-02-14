@@ -206,31 +206,31 @@ fdescribe('LineService', () => {
         expect(drawLineSpy).toHaveBeenCalledWith(previewCtxStub, [service.linePathData[0], service.initialPoint]);
     });
 
-    it('on mouse click, if withJunctionOption is set to true, will draw lines connected by a circular junction', () => {
+    it('on mouse click, if withJunction is set to true, will draw lines connected by a circular junction', () => {
         const mouseMoveEvent = {
             offsetX: 399,
             offsetY: 425,
         } as MouseEvent;
         service.isDrawing = true;
-        service.withJunctionOption = true;
+        service.withJunction = true;
         service.onMouseMove(mouseMoveEvent);
         service.onMouseClick(mouseMoveEvent);
         expect(ctxArcSpy).toHaveBeenCalledWith(
             service.linePathData[LineConstants.ENDING_POINT].x,
             service.linePathData[LineConstants.ENDING_POINT].y,
-            service.junctionRadiusOption,
+            service.junctionRadius,
             LineConstants.DEGREES_0,
             LineConstants.DEGREES_360,
         );
     });
 
-    it('on mouse click, if withJunctionOption is set to false, will only draw line and not draw arcs', () => {
+    it('on mouse click, if withJunction is set to false, will only draw line and not draw arcs', () => {
         const mouseMoveEvent = {
             offsetX: 399,
             offsetY: 420,
         } as MouseEvent;
         service.isDrawing = true;
-        service.withJunctionOption = false;
+        service.withJunction = false;
         service.onMouseMove(mouseMoveEvent);
         service.onMouseClick(mouseMoveEvent);
         expect(ctxArcSpy).not.toHaveBeenCalled();
