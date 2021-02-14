@@ -2,10 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as LineConstants from '@app/constants/line-constants';
-import { DrawingService } from '../drawing/drawing.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line-service';
 
 // tslint:disable:no-any
+// tslint:disable:max-file-line-count
 fdescribe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
@@ -19,6 +20,7 @@ fdescribe('LineService', () => {
 
     let getImageDataSpy: jasmine.Spy<any>;
     let putImageDataSpy: jasmine.Spy<any>;
+    let ctxArcSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -40,6 +42,7 @@ fdescribe('LineService', () => {
 
         getImageDataSpy = spyOn<any>(service['drawingService'].baseCtx, 'getImageData').and.callThrough();
         putImageDataSpy = spyOn<any>(service['drawingService'].baseCtx, 'putImageData').and.callThrough();
+        ctxArcSpy = spyOn<any>(service['drawingService'].baseCtx, 'arc').and.callThrough();
 
         service.linePathData = [
             { x: 133, y: 256 },
@@ -63,6 +66,26 @@ fdescribe('LineService', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
         service.onMouseClick(mouseEvent);
         expect(service.mouseDownCoord).toEqual(expectedResult);
+    });
+
+    it('keyboard down events should not do anything if user is not drawing', () => {
+        const keyboardEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.isDrawing = false;
+        expect((): void => {
+            service.onKeyboardDown(keyboardEvent);
+        }).not.toThrow();
+    });
+
+    it('keyboard up events should not trigger if user is not drawing', () => {
+        const keyboardEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.isDrawing = false;
+        expect((): void => {
+            service.onKeyboardUp(keyboardEvent);
+        }).not.toThrow();
     });
 
     it('on escape keyboard down event should set internal attribute isEscapeKeyDown to true if user is drawing', () => {
@@ -100,11 +123,23 @@ fdescribe('LineService', () => {
         const backspaceKeyboardEvent = {
             key: 'Backspace',
         } as KeyboardEvent;
+        const canvasWidth = 350;
+        const canvasHeight = 350;
         service.isDrawing = true;
         service.isBackspaceKeyDown = true;
-        service.canvasState = drawServiceSpy.baseCtx.getImageData(0, 0, 350, 350);
+        service.canvasState = drawServiceSpy.baseCtx.getImageData(0, 0, canvasWidth, canvasHeight);
         service.onKeyboardUp(backspaceKeyboardEvent);
         expect(putImageDataSpy).toHaveBeenCalledWith(service.canvasState, 0, 0);
+    });
+
+    it('on backspace up should not trigger if the backspace key was not down', () => {
+        const backspaceKeyboardEvent = {
+            key: 'Backspace',
+        } as KeyboardEvent;
+        service.isDrawing = true;
+        service.isBackspaceKeyDown = false;
+        service.onKeyboardUp(backspaceKeyboardEvent);
+        expect(putImageDataSpy).not.toHaveBeenCalled();
     });
 
     it('on shift keyboard down event should call rotate line if shift key is not down and is drawing', () => {
@@ -161,14 +196,44 @@ fdescribe('LineService', () => {
     });
 
     it('on mouse click, drawn line ending point should connect to initial point if distance is within 20px', () => {
-        const mouseEvent = {
+        const mouseMoveEvent = {
             offsetX: 399,
             offsetY: 425,
         } as MouseEvent;
         service.isDrawing = true;
-        service.onMouseMove(mouseEvent);
-        service.onMouseClick(mouseEvent);
+        service.onMouseMove(mouseMoveEvent);
+        service.onMouseClick(mouseMoveEvent);
         expect(drawLineSpy).toHaveBeenCalledWith(previewCtxStub, [service.linePathData[0], service.initialPoint]);
+    });
+
+    it('on mouse click, if withJunctionOption is set to true, will draw lines connected by a circular junction', () => {
+        const mouseMoveEvent = {
+            offsetX: 399,
+            offsetY: 425,
+        } as MouseEvent;
+        service.isDrawing = true;
+        service.withJunctionOption = true;
+        service.onMouseMove(mouseMoveEvent);
+        service.onMouseClick(mouseMoveEvent);
+        expect(ctxArcSpy).toHaveBeenCalledWith(
+            service.linePathData[LineConstants.ENDING_POINT].x,
+            service.linePathData[LineConstants.ENDING_POINT].y,
+            service.junctionRadiusOption,
+            LineConstants.DEGREES_0,
+            LineConstants.DEGREES_360,
+        );
+    });
+
+    it('on mouse click, if withJunctionOption is set to false, will only draw line and not draw arcs', () => {
+        const mouseMoveEvent = {
+            offsetX: 399,
+            offsetY: 420,
+        } as MouseEvent;
+        service.isDrawing = true;
+        service.withJunctionOption = false;
+        service.onMouseMove(mouseMoveEvent);
+        service.onMouseClick(mouseMoveEvent);
+        expect(ctxArcSpy).not.toHaveBeenCalled();
     });
 
     it('on mouse dblclick should clear linePathData and stop drawing', () => {
@@ -177,6 +242,13 @@ fdescribe('LineService', () => {
         expect(service.linePathData).toEqual([]);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(service.isDrawing).toBeFalsy();
+    });
+
+    it('mouse double click should not do anything if user is not drawing', () => {
+        service.isDrawing = false;
+        expect((): void => {
+            service.onMouseDoubleClick(mouseEvent);
+        }).not.toThrow();
     });
 
     it('on mouse move should only draw on preview layer', () => {
@@ -188,6 +260,13 @@ fdescribe('LineService', () => {
             { x: 133, y: 256 },
             { x: 25, y: 25 },
         ]);
+    });
+
+    it('on mouse move should not draw if user is not drawing', () => {
+        service.isDrawing = false;
+        expect((): void => {
+            service.onMouseMove(mouseEvent);
+        }).not.toThrow();
     });
 
     /**
@@ -205,7 +284,9 @@ fdescribe('LineService', () => {
             y: 500,
         } as Vec2;
 
-        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(88);
+        const expectedDistance = 88;
+
+        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(expectedDistance);
     });
 
     it('calculateDistance with +dx and -dy gives accurate euclidea distance', () => {
@@ -213,7 +294,10 @@ fdescribe('LineService', () => {
             x: 420,
             y: 350,
         } as Vec2;
-        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(86);
+
+        const expectedDistance = 86;
+
+        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(expectedDistance);
     });
 
     it('calculateDistance with -dx and +dy gives accurate euclidea distance', () => {
@@ -221,7 +305,10 @@ fdescribe('LineService', () => {
             x: 250,
             y: 500,
         } as Vec2;
-        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(159);
+
+        const expectedDistance = 159;
+
+        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(expectedDistance);
     });
 
     it('calculateDistance with -dx and -dy gives accurate euclidea distance', () => {
@@ -229,7 +316,10 @@ fdescribe('LineService', () => {
             x: 250,
             y: 190,
         } as Vec2;
-        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(282);
+
+        const expectedDistance = 282;
+
+        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(expectedDistance);
     });
 
     /**
@@ -245,6 +335,228 @@ fdescribe('LineService', () => {
      * 8. 270 degrees
      * 9. same points
      */
+
+    it('calculate angle of two points should return correct angle in 1st quadrant', () => {
+        const currentPoint = {
+            x: 420,
+            y: 500,
+        };
+
+        const expectedAngle = 291;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    it('calculate angle of two points should return correct angle in 2nd quadrant', () => {
+        const currentPoint = {
+            x: 220,
+            y: 500,
+        };
+
+        const expectedAngle = 201;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    it('calculate angle of two points should return correct angle in 3rd quadrant', () => {
+        const currentPoint = {
+            x: 250,
+            y: 350,
+        };
+
+        const expectedAngle = 150;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    it('calculate angle of two points should return correct angle in 4th quadrant', () => {
+        const currentPoint = {
+            x: 420,
+            y: 293,
+        };
+
+        const expectedAngle = 79;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    it('calculate angle of two points should return correct angle when points are 90deg', () => {
+        const currentPoint = {
+            x: 394,
+            y: 490,
+        };
+
+        const expectedAngle = 270;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    it('calculate angle of two points should return correct angle when points are 180deg ', () => {
+        const currentPoint = {
+            x: 250,
+            y: 432,
+        };
+
+        const expectedAngle = 180;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    it('calculate angle of two points should return correct angle when points are 270deg', () => {
+        const currentPoint = {
+            x: 394,
+            y: 293,
+        };
+
+        const expectedAngle = 90;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    it('calculate angle of two points should return correct angle when points are 0deg', () => {
+        const currentPoint = {
+            x: 420,
+            y: 432,
+        };
+
+        const expectedAngle = 0;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    it('calculate angle of two points should return 0deg angle when points are the same', () => {
+        const currentPoint = {
+            x: 394,
+            y: 432,
+        };
+
+        const expectedAngle = 0;
+
+        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+    });
+
+    /**
+     * Test: roundAngleToNearestMultiple
+     * Cases:
+     * 1. 22.4 -> 0
+     * 2. 22.5 -> 45
+     * 4. 67.4 -> 45
+     * 5. 67.5 -> 90
+     * 6. 112.4 -> 90
+     * 7. 112.5 -> 135
+     * 8. 157.4 -> 135
+     * 9. 157.5 -> 180
+     * 10. 202.4 -> 180
+     * 11. 202.5 -> 225
+     * 12. 247.4 -> 225
+     * 13. 247.5 -> 270
+     * 14. 292.4 -> 270
+     * 15. 292.5 -> 315
+     * 16. 337.4 -> 315
+     * 17. 337.5 -> 360/0
+     */
+
+    it('rounding 22.4deg angle with a multiple of 45 should round down to 0', () => {
+        const angle = 22.4;
+        const multiple = 45;
+        const expectedAngle = 0;
+        expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+    });
+
+    it('rounding edges 22.5deg and 67.4 with a multiple of 45 should round to 45', () => {
+        const lowerBound = 22.5;
+        const upperBound = 67.4;
+        const angles = [lowerBound, upperBound];
+        const multiple = 45;
+        const expectedAngle = 45;
+        angles.forEach((angle) => {
+            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        });
+    });
+
+    it('rounding edges 67.5deg and 112.4 with a multiple of 45 should round to 90', () => {
+        const lowerBound = 67.5;
+        const upperBound = 112.4;
+        const angles = [lowerBound, upperBound];
+        const multiple = 45;
+        const expectedAngle = 90;
+        angles.forEach((angle) => {
+            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        });
+    });
+
+    it('rounding edges 67.5deg and 112.4 with a multiple of 45 should round to 90', () => {
+        const lowerBound = 67.5;
+        const upperBound = 112.4;
+        const angles = [lowerBound, upperBound];
+        const multiple = 45;
+        const expectedAngle = 90;
+        angles.forEach((angle) => {
+            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        });
+    });
+
+    it('rounding edges 112.5deg and 157.4 with a multiple of 45 should round to 135', () => {
+        const lowerBound = 112.5;
+        const upperBound = 157.4;
+        const angles = [lowerBound, upperBound];
+        const multiple = 45;
+        const expectedAngle = 135;
+        angles.forEach((angle) => {
+            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        });
+    });
+
+    it('rounding edges 157.5deg and 200.4 with a multiple of 45 should round to 180', () => {
+        const lowerBound = 157.5;
+        const upperBound = 202.4;
+        const angles = [lowerBound, upperBound];
+        const multiple = 45;
+        const expectedAngle = 180;
+        angles.forEach((angle) => {
+            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        });
+    });
+
+    it('rounding edges 200.5deg and 247.4 with a multiple of 45 should round to 225', () => {
+        const lowerBound = 202.5;
+        const upperBound = 247.4;
+        const angles = [lowerBound, upperBound];
+        const multiple = 45;
+        const expectedAngle = 225;
+        angles.forEach((angle) => {
+            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        });
+    });
+
+    it('rounding edges 247.5deg and 292.4 with a multiple of 45 should round to 270', () => {
+        const lowerBound = 247.5;
+        const upperBound = 292.4;
+        const angles = [lowerBound, upperBound];
+        const multiple = 45;
+        const expectedAngle = 270;
+        angles.forEach((angle) => {
+            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        });
+    });
+
+    it('rounding edges 292.5deg and 337.4 with a multiple of 45 should round to 315', () => {
+        const lowerBound = 292.5;
+        const upperBound = 337.4;
+        const angles = [lowerBound, upperBound];
+        const multiple = 45;
+        const expectedAngle = 315;
+        angles.forEach((angle) => {
+            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        });
+    });
+
+    it('rounding 337.5 with a multiple of 45 should round up to 360 degrees', () => {
+        const angle = 337.5;
+        const multiple = 45;
+        const expectedAngle = 360;
+        expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+    });
 
     it('calculate length of rotated line with intercardinal degree angle returns correctly flattened line with correct length', () => {
         const initialPoint = {

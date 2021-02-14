@@ -172,6 +172,8 @@ export class LineService extends Tool {
                 lineLength = Math.abs(mousePosition.x - initialPoint.x);
                 break;
         }
+
+        // We simply add to the x position to ensure our line is at 0 degrees.
         return {
             x: Math.round(initialPoint.x + lineLength),
             y: Math.round(initialPoint.y),
@@ -207,7 +209,7 @@ export class LineService extends Tool {
         return angle;
     }
 
-    private roundAngleToNearestMultiple(angleBetweenTwoPoints: number, multiple: number): number {
+    roundAngleToNearestMultiple(angleBetweenTwoPoints: number, multiple: number): number {
         // We add to the angle the multiple divided by two in order to make sure that when we
         // the nearest multiple can always be obtained by rounding down. We floor the result in order to
         // eliminate floating point numbers, and the include the edge case: 0 as an final angle.
