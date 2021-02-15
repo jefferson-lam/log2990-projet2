@@ -110,4 +110,15 @@ describe('EditorComponent', () => {
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
         expect(component.currentTool).toEqual(rectangleStub);
     });
+
+    it('should not change to any tools if a non tool key is pressed.', () => {
+        const event = { key: 'u' } as KeyboardEvent;
+        const keyboardEventSpy = spyOn(component, 'onKeyboardPress').and.callThrough();
+        const toolSwitchSpy = spyOn(component.toolManager, 'selectTool').and.callThrough();
+        component.onKeyboardPress(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(toolSwitchSpy).not.toHaveBeenCalled();
+    });
 });
