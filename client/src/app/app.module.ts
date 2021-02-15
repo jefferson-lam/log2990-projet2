@@ -19,6 +19,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SidebarToolsOptionsComponent } from './components/sidebar/sidebar-tools-options/sidebar-tools-options.component';
 

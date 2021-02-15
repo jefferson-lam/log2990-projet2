@@ -1,23 +1,23 @@
+import { TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool.ts';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-class ToolStub extends Tool {
-    constructor() {
-        super({} as DrawingService);
-    }
-}
+class ToolStub extends Tool {}
 
 // tslint:disable:no-string-literal
 describe('Tool', () => {
-    let tool: ToolStub;
+    let toolStub: ToolStub;
 
     beforeEach(() => {
-        tool = new ToolStub();
+        toolStub = new ToolStub({} as DrawingService);
+        TestBed.configureTestingModule({
+            providers: [{ provide: Tool, useValue: toolStub }],
+        }).compileComponents();
     });
 
     it('should be created', () => {
-        expect(tool).toBeTruthy();
+        expect(toolStub).toBeTruthy();
     });
 
     it('getPositionFromMouse should return correct x and y offset of mouse', () => {
@@ -28,7 +28,6 @@ describe('Tool', () => {
             offsetX: EXPECTED_X_OFFSET,
             offsetY: EXPECTED_Y_OFFSET,
         } as MouseEvent;
-        const mousePosition = tool.getPositionFromMouse(mouseEvent);
-        expect(mousePosition).toEqual(EXPECTED_MOUSE_POSITION);
+        expect(toolStub.getPositionFromMouse(mouseEvent)).toEqual(EXPECTED_MOUSE_POSITION);
     });
 });

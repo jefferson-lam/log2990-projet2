@@ -1,32 +1,43 @@
-<div class="container">
-    <ul class="options-sidebar">
-        <li>
-            <mat-icon style="color: white" id="return-button" matTooltip="Retour" [matTooltipPosition]="'right'" (click)="backClick()"
-                >backspace</mat-icon
-            >
-        </li>
-        <li><mat-icon style="color: white" matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
-        <li><mat-icon style="color: white" matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon></li>
-        <li><mat-icon style="color: white" matTooltip="Refaire" [matTooltipPosition]="'right'">redo</mat-icon></li>
-    </ul>
-    <ul class="tools-sidebar">
-        <li id="toolId" *ngFor="let tool of TOOLSLIST">
-            <mat-icon
-                matTooltip="{{ tool.name }} {{ tool.keyShortcut }}"
-                [matTooltipPosition]="'right'"
-                (click)="onSelectTool(tool.name); toggleOpen()"
-                [class.selected]="selectedTool === tool.name"
-            >
-                {{ tool.icon }}
-            </mat-icon>
-        </li>
-    </ul>
+<div class="container" (mouseleave)="closeSettings()">
+    <div id="sidebar">
+        <ul class="options-sidebar">
+            <li>
+                <mat-icon id="return-button" style="color: white" matTooltip="Retour" [matTooltipPosition]="'right'" (click)="backClick()"
+                    >backspace</mat-icon
+                >
+            </li>
+            <li>
+                <mat-icon
+                    id="new-drawing-button"
+                    style="color: white"
+                    matTooltip="Nouveau dessin"
+                    [matTooltipPosition]="'right'"
+                    (click)="openNewDrawing()"
+                    >add_box</mat-icon
+                >
+            </li>
+            <li><mat-icon style="color: white" matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
+            <li><mat-icon style="color: white" matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon></li>
+            <li><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
+        </ul>
+        <ul class="tools-sidebar">
+            <li id="toolId" *ngFor="let tool of sidebarToolButtons">
+                <mat-icon
+                    id="icon-button-{{ tool.name }}"
+                    matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
+                    [matTooltipPosition]="'right'"
+                    (click)="onSelectTool(tool.keyShortcut); openSettings()"
+                    [class.selected]="selectedTool === tool.name"
+                >
+                    {{ tool.icon }}
+                </mat-icon>
+            </li>
+        </ul>
+    </div>
+    <!-- Ici on rentres dans l'interface des options des outils -->
+    <mat-drawer-container class="tools-option-container">
+        <mat-drawer [mode]="'side'" class="sidenav" [opened]="opened">
+            <mat-drawer-content [ngSwitch]="selectedTool"> </mat-drawer-content>
+        </mat-drawer>
+    </mat-drawer-container>
 </div>
-
-<mat-drawer-container class="tools-option-container" (mouseleave)="toggleOpen()">
-    <mat-drawer #drawer [mode]="'side'" class="sidenav" [opened]="opened">
-        <mat-drawer-content>
-        <app-sidebar-tools-options></app-sidebar-tools-options>
-      </mat-drawer-content>
-    </mat-drawer>
-</mat-drawer-container>
