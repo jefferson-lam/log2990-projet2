@@ -150,7 +150,7 @@ describe('PencilService', () => {
         expect(service.mouseDown).toBeTrue();
     });
 
-    it('onKeyDown should not call drawLine if any key is pressed', () => {
+    it('onKeyboardDown should not call drawLine if any key is pressed', () => {
         const keyEvent = {
             key: 'e',
         } as KeyboardEvent;
@@ -159,7 +159,7 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    it('onKeyUp should not call drawLine if any key is pressed', () => {
+    it(' onKeyboardUp should not call drawLine if any key is pressed', () => {
         const keyEvent = {
             key: 'e',
         } as KeyboardEvent;

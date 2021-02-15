@@ -95,9 +95,11 @@ export class PencilService extends Tool {
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
+
         ctx.lineWidth = this.size;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
