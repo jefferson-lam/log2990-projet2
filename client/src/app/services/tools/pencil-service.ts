@@ -1,24 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import * as MouseConstants from '@app/constants/mouse-constants';
+import * as PencilConstants from '@app/constants/pencil-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Observable, Subject } from 'rxjs';
 
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export const MIN_SIZE_PENCIL = 1;
-export const MAX_SIZE_PENCIL = 200;
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
-
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
@@ -33,22 +20,22 @@ export class PencilService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
-        this.size = MIN_SIZE_PENCIL;
+        this.size = PencilConstants.MIN_SIZE_PENCIL;
     }
 
     setSize(value: number): void {
-        if (value >= MIN_SIZE_PENCIL && value <= MAX_SIZE_PENCIL) {
+        if (value >= PencilConstants.MIN_SIZE_PENCIL && value <= PencilConstants.MAX_SIZE_PENCIL) {
             this.size = value;
-        } else if (value >= MAX_SIZE_PENCIL) {
-            this.size = MAX_SIZE_PENCIL;
+        } else if (value >= PencilConstants.MAX_SIZE_PENCIL) {
+            this.size = PencilConstants.MAX_SIZE_PENCIL;
         } else {
-            this.size = MIN_SIZE_PENCIL;
+            this.size = PencilConstants.MIN_SIZE_PENCIL;
         }
         this.pencilSizeChangedSource.next(this.size);
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
 
@@ -88,16 +75,18 @@ export class PencilService extends Tool {
     }
 
     onMouseEnter(event: MouseEvent): void {
-        if (event.buttons === MouseButton.Left) {
+        if (event.buttons === MouseConstants.MouseButton.Left) {
             this.mouseDown = false;
         }
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
+
         ctx.lineWidth = this.size;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
