@@ -1,11 +1,16 @@
 import { TestBed } from '@angular/core/testing';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from './tool-manager-service';
 
 describe('ToolManagerService', () => {
     let service: ToolManagerService;
+    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        TestBed.configureTestingModule({
+            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+        });
         service = TestBed.inject(ToolManagerService);
     });
 

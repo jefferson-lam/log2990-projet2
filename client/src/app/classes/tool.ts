@@ -29,11 +29,17 @@ export abstract class Tool {
 
     onMouseMove(event: MouseEvent): void {}
 
-    setSize(width: number): void {}
-
     onMouseLeave(event: MouseEvent): void {}
 
     onMouseEnter(event: MouseEvent): void {}
+
+    clearPreviewCanvas(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
+
+    getCursor(): void {}
+
+    setSize(width: number): void {}
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {}
 

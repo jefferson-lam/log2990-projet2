@@ -1,7 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ToolsInterface } from './tools-interface';
-import { ToolsList } from './tools-list';
+import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
+import { Tool } from '@app/classes/tool';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 
 @Component({
     selector: 'app-sidebar',
@@ -9,47 +10,54 @@ import { ToolsList } from './tools-list';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    @Input() selectedTool: ToolsList;
-    @Output() notifyOnToolSelect: EventEmitter<ToolsList> = new EventEmitter<ToolsList>();
+    @Input() selectedTool: string;
+    @Output() notifyOnToolSelect: EventEmitter<Tool> = new EventEmitter<Tool>();
+    @Output() notifyEditorNewDrawing: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Input() currentTool: Tool;
 
     opened: boolean = false;
     shouldRun: boolean;
-    ToolsList: typeof ToolsList = ToolsList;
-    toolListSelect: string[] = Object.values(ToolsList);
+    isNewDrawing: boolean;
 
-    constructor(private location: Location) {
+    constructor(public location: Location, public toolManagerService: ToolManagerService) {
         this.shouldRun = false;
     }
 
-    TOOLSLIST: ToolsInterface[] = [
-        { id: 0, name: 'Crayon', icon: 'create', keyShortcut: '(Touche C)' },
-        { id: 1, name: 'Efface', icon: 'delete_outline', keyShortcut: '(Touche E)' },
-        { id: 2, name: 'Rectangle', icon: 'crop_portrait', keyShortcut: '(Touche 1)' },
-        { id: 3, name: 'Ellipse', icon: 'vignette', keyShortcut: '(Touche 2)' },
-        { id: 4, name: 'Polygone', icon: 'brush', keyShortcut: '(Touche 3)' },
-        { id: 5, name: 'Ligne', icon: 'trending_flat', keyShortcut: '(Touche L)' },
-        { id: 6, name: 'Texte', icon: 'text_format', keyShortcut: '(Touche T)' },
-        { id: 7, name: 'Étampe', icon: 'today', keyShortcut: '(Touche D)' },
-        { id: 8, name: 'Pipette', icon: 'edit_location', keyShortcut: '(Touche I)' },
-        { id: 9, name: 'Rectangle de selection', icon: 'tab_unselected', keyShortcut: '(Touche R)' },
-        { id: 10, name: 'Ellipse de selection', icon: 'toys', keyShortcut: '(Touche S)' },
-        { id: 11, name: 'Lasso polygonal', icon: 'gps_off', keyShortcut: '(Touche V)' },
-        { id: 12, name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: '(Touche B)' },
+    sidebarToolButtons: SidebarToolButton[] = [
+        { id: 0, name: 'Crayon', icon: 'create', keyShortcut: 'c', helpShortcut: '(Touche C)' },
+        { id: 1, name: 'Efface', icon: 'delete_outline', keyShortcut: 'e', helpShortcut: '(Touche E)' },
+        { id: 2, name: 'Rectangle', icon: 'crop_portrait', keyShortcut: '1', helpShortcut: '(Touche 1)' },
+        { id: 3, name: 'Ellipse', icon: 'vignette', keyShortcut: '2', helpShortcut: '(Touche 2)' },
+        { id: 4, name: 'Polygone', icon: 'brush', keyShortcut: '3', helpShortcut: '(Touche 3)' },
+        { id: 5, name: 'Ligne', icon: 'trending_flat', keyShortcut: 'l', helpShortcut: '(Touche L)' },
+        { id: 6, name: 'Texte', icon: 'text_format', keyShortcut: 't', helpShortcut: '(Touche T)' },
+        { id: 7, name: 'Étampe', icon: 'today', keyShortcut: 'd', helpShortcut: '(Touche D)' },
+        { id: 8, name: 'Pipette', icon: 'edit_location', keyShortcut: 'i', helpShortcut: '(Touche I)' },
+        { id: 9, name: 'Rectangle de selection', icon: 'tab_unselected', keyShortcut: 'r', helpShortcut: '(Touche R)' },
+        { id: 10, name: 'Ellipse de selection', icon: 'toys', keyShortcut: 's', helpShortcut: '(Touche S)' },
+        { id: 11, name: 'Lasso polygonal', icon: 'gps_off', keyShortcut: 'v', helpShortcut: '(Touche V)' },
+        { id: 12, name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche B)' },
     ];
 
-    onSelectTool(tool: string): void {
-        const toolName = tool as ToolsList;
-        if (toolName) {
-            this.selectedTool = toolName;
-            this.notifyOnToolSelect.emit(toolName);
-        }
+    onSelectTool(keyShortcut: string): void {
+        this.currentTool = this.toolManagerService.getTool(keyShortcut);
+        this.notifyOnToolSelect.emit(this.currentTool);
+        this.selectedTool = keyShortcut;
     }
 
-    toggleOpen(): void {
-        this.opened = !this.opened;
+    openSettings(): void {
+        this.opened = true;
+    }
+
+    closeSettings(): void {
+        this.opened = false;
     }
 
     backClick(): void {
         this.location.back();
+    }
+
+    openNewDrawing(): void {
+        this.notifyEditorNewDrawing.emit(this.isNewDrawing);
     }
 }

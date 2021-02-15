@@ -8,7 +8,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: fixed;
-  width: 60px;
+  width: 46px;
   height: calc(100vh - 0px);
   z-index: 1000;
 }
@@ -19,7 +19,8 @@
 }
 mat-icon{
   position: center;
-  margin-left: 10px;
+  margin-left: 7px;
+  margin-top: 2px;
 }
 
 .tools-sidebar {
@@ -28,15 +29,15 @@ mat-icon{
   padding: 0;
   width: 60px;
   position: absolute;
-  top: 190px;
+  top: 210px;
 }
 .tools-sidebar li {
   cursor: pointer;
   position: relative;
   left: 0;
   background-color: #EEE;
-  margin: .5em;
-  padding: .3em 0;
+  margin: 5px 16px 4px 6px;
+  padding-top: 3px;
   border-radius: 4px;
 }
 .tools-sidebar li:hover {
@@ -65,8 +66,8 @@ mat-icon{
   position: relative;
   left: 0;
   background-color: #ff7f50;
-  margin: .5em;
-  padding: .3em 0;
+  margin: 5px 16px 4px 6px;
+  padding-top: 3px;
   border-radius: 4px;
 }
 .options-sidebar li:hover {
@@ -85,7 +86,7 @@ mat-icon{
 
 .tools-option-container {
   position: absolute;
-  margin-left: 70px;
+  margin-left: 50px;
   height: 100%;
   overflow: visible;
   -webkit-transition: all;
@@ -102,9 +103,9 @@ mat-card-title{
 }
 
 mat-drawer {
-  box-shadow: 0 14px 28px;
+  box-shadow: 10px 0 28px;
   background-color: #4682B4;
-  width: 190px;
+  width: 350px;
   overflow-y: hidden;
 }
 
@@ -141,4 +142,8 @@ mat-drawer-content {
 
 .options-sidebar{
   padding: 0;
+}
+
+#sidebar{
+  z-index:  3;
 }
