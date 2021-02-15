@@ -44,8 +44,8 @@ export class EditorComponent {
         }
     }
 
-    toggleNewDrawing(fun: boolean): void {
-        this.isNewDrawing = fun;
+    toggleNewDrawing(toggleDrawing: boolean): void {
+        this.isNewDrawing = toggleDrawing;
         this.openModalPopUp();
     }
 }
