@@ -22,6 +22,7 @@ describe('SidebarComponent', () => {
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
 
+    // tslint:disable:no-any
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool']);
         pencilStub = new ToolStub({} as DrawingService);
@@ -159,18 +160,6 @@ describe('SidebarComponent', () => {
         fixture.detectChanges();
         expect(notifyEditorNewDrawingSpy).toHaveBeenCalledWith(component.isNewDrawing);
     });
-
-    // it('on mouseLeave should toggle visibility', () => {
-    //     const toggleSpy = spyOn<any>(component, 'toggleOpen').and.callThrough();
-
-    //     fixture.detectChanges();
-    //     const btn = fixture.debugElement.nativeElement.querySelector('.tools-option-container');
-    //     const mouseLeave = new MouseEvent('mouseleave');
-    //     btn.dispatchEvent(mouseLeave);
-    //     fixture.detectChanges();
-
-    //     expect(toggleSpy).toHaveBeenCalled();
-    // });
 
     it('click on return button should return to main page', () => {
         const backSpy = spyOn<any>(component, 'backClick').and.callThrough();
