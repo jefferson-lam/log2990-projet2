@@ -37,7 +37,7 @@
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">
         <mat-drawer [mode]="'side'" class="sidenav" [opened]="opened">
-            <mat-drawer-content [ngSwitch]="selectedTool"> </mat-drawer-content>
+          <app-sidebar-tools-options></app-sidebar-tools-options>
         </mat-drawer>
     </mat-drawer-container>
 </div>

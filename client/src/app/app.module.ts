@@ -24,7 +24,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SidebarToolsOptionsComponent } from './components/sidebar/sidebar-tools-options/sidebar-tools-options.component';
 
 @NgModule({
-    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, MainPageCarrouselComponent, SidebarToolsOptionsComponent],
+    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, MainPageCarrouselComponent, SidebarToolsOptionsComponent, NewDrawingBoxComponent],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
         BrowserModule,
