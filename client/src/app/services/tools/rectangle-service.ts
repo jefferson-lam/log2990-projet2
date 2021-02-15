@@ -96,7 +96,7 @@ export class RectangleService extends Tool {
         }
     }
 
-    setSize(width: number): void {
+    setLineWidth(width: number): void {
         if (width < RectangleConstants.MIN_BORDER_WIDTH) {
             this.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
         } else if (width > RectangleConstants.MAX_BORDER_WIDTH) {

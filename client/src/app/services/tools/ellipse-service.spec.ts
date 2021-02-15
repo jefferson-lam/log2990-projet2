@@ -234,21 +234,21 @@ describe('EllipseService', () => {
         expect(drawEllipseSpy).not.toHaveBeenCalled();
     });
 
-    it('setSize should change size of lineWidth if within min and max width allowed', () => {
+    it('setLineWidth should change size of lineWidth if within min and max width allowed', () => {
         const RANDOM_TEST_WIDTH = 10;
-        service.setSize(RANDOM_TEST_WIDTH);
+        service.setLineWidth(RANDOM_TEST_WIDTH);
         expect(service.lineWidth).toEqual(RANDOM_TEST_WIDTH);
     });
 
-    it('setSize should change size of lineWidth to min width if width is lower than min', () => {
+    it('setLineWidth should change size of lineWidth to min width if width is lower than min', () => {
         const LOWER_TEST_WIDTH = -1;
-        service.setSize(LOWER_TEST_WIDTH);
+        service.setLineWidth(LOWER_TEST_WIDTH);
         expect(service.lineWidth).toEqual(EllipseConstants.MIN_BORDER_WIDTH);
     });
 
-    it('setSize should change size of lineWidth to max width if width is bigger than max', () => {
+    it('setLineWidth should change size of lineWidth to max width if width is bigger than max', () => {
         const RANDOM_TEST_WIDTH = 70;
-        service.setSize(RANDOM_TEST_WIDTH);
+        service.setLineWidth(RANDOM_TEST_WIDTH);
         expect(service.lineWidth).toEqual(EllipseConstants.MAX_BORDER_WIDTH);
     });
 
@@ -292,7 +292,7 @@ describe('EllipseService', () => {
         service.setPrimaryColor(TEST_PRIMARY_COLOR);
         service.setSecondaryColor(TEST_SECONDARY_COLOR);
         const TEST_LINE_WIDTH = 5;
-        service.setSize(TEST_LINE_WIDTH);
+        service.setLineWidth(TEST_LINE_WIDTH);
         service.setFillMode(ToolConstants.FillMode.FILL_ONLY);
 
         const END_X = 10;
@@ -343,7 +343,7 @@ describe('EllipseService', () => {
         service.setPrimaryColor(TEST_PRIMARY_COLOR);
         service.setSecondaryColor(TEST_SECONDARY_COLOR);
         const TEST_LINE_WIDTH = 6;
-        service.setSize(TEST_LINE_WIDTH);
+        service.setLineWidth(TEST_LINE_WIDTH);
         service.setFillMode(ToolConstants.FillMode.OUTLINE);
 
         const END_X = 10;
@@ -394,7 +394,7 @@ describe('EllipseService', () => {
         service.setPrimaryColor(TEST_PRIMARY_COLOR);
         service.setSecondaryColor(TEST_SECONDARY_COLOR);
         const TEST_LINE_WIDTH = 1;
-        service.setSize(TEST_LINE_WIDTH);
+        service.setLineWidth(TEST_LINE_WIDTH);
         service.setFillMode(TEST_FILL_MODE);
 
         const END_X = 10;

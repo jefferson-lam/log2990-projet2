@@ -46,20 +46,20 @@ describe('PencilService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('setSize should set size to MIN_SIZE_PENCIL if under MIN_SIZE_PENCIL', () => {
-        service.setSize(PencilConstants.MIN_SIZE_PENCIL - 1);
-        expect(service.size).toEqual(PencilConstants.MIN_SIZE_PENCIL);
+    it('setLineWidth should set size to MIN_SIZE_PENCIL if under MIN_SIZE_PENCIL', () => {
+        service.setLineWidth(PencilConstants.MIN_SIZE_PENCIL - 1);
+        expect(service.lineWidth).toEqual(PencilConstants.MIN_SIZE_PENCIL);
     });
 
-    it('setSize should set size to MAX_SIZE_PENCIL if over MAX_SIZE_PENCIL', () => {
-        service.setSize(PencilConstants.MAX_SIZE_PENCIL + 1);
-        expect(service.size).toEqual(PencilConstants.MAX_SIZE_PENCIL);
+    it('setLineWidth should set size to MAX_SIZE_PENCIL if over MAX_SIZE_PENCIL', () => {
+        service.setLineWidth(PencilConstants.MAX_SIZE_PENCIL + 1);
+        expect(service.lineWidth).toEqual(PencilConstants.MAX_SIZE_PENCIL);
     });
 
-    it('setSize should set size to value if between MAX and MIN_SIZE_PENCIL', () => {
+    it('setLineWidth should set size to value if between MAX and MIN_SIZE_PENCIL', () => {
         const newSize = PencilConstants.MIN_SIZE_PENCIL + (PencilConstants.MAX_SIZE_PENCIL - PencilConstants.MIN_SIZE_PENCIL) / 2;
-        service.setSize(newSize);
-        expect(service.size).toEqual(newSize);
+        service.setLineWidth(newSize);
+        expect(service.lineWidth).toEqual(newSize);
     });
 
     it('mouseDown should set mouseDownCoord to correct position', () => {

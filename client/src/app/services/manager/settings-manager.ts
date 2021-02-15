@@ -11,7 +11,7 @@ export class SettingsManagerService {
     editorComponent: EditorComponent;
 
     changeSizeTool(newWidth: number): void {
-        this.editorComponent.currentTool.setSize(newWidth);
+        this.editorComponent.currentTool.setLineWidth(newWidth);
     }
 
     changeFillMode(newFillMode: ToolConstants.FillMode): void {

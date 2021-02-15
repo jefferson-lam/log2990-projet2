@@ -29,7 +29,7 @@ export abstract class Tool {
 
     onMouseMove(event: MouseEvent): void {}
 
-    setSize(width: number): void {}
+    setLineWidth(width: number): void {}
 
     onMouseLeave(event: MouseEvent): void {}
 
