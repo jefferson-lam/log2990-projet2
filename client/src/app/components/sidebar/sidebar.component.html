@@ -1,9 +1,32 @@
 <div class="container">
-    <p>Barre latérale pour vos outils!</p>
-    <p>
-        Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet <br />
-        L'implémentation ici ne couvre pas tous les critères d'acceptation du projet<br />
-        Vous êtes encouragés de modifier et compléter le code.<br />
-        N'oubliez pas de regarder les tests dans les fichiers spec.ts aussi!
-    </p>
+    <ul class="options-sidebar">
+        <li>
+            <mat-icon style="color: white" id="return-button" matTooltip="Retour" [matTooltipPosition]="'right'" (click)="backClick()"
+                >backspace</mat-icon
+            >
+        </li>
+        <li><mat-icon style="color: white" matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
+        <li><mat-icon style="color: white" matTooltip="Effacer" [matTooltipPosition]="'right'">undo</mat-icon></li>
+        <li><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
+    </ul>
+    <ul class="tools-sidebar">
+        <li id="toolId" *ngFor="let tool of TOOLSLIST">
+            <mat-icon
+                matTooltip="{{ tool.name }} {{ tool.keyShortcut }}"
+                [matTooltipPosition]="'right'"
+                (click)="onSelectTool(tool.name); toggleOpen()"
+                [class.selected]="selectedTool === tool.name"
+            >
+                {{ tool.icon }}
+            </mat-icon>
+        </li>
+    </ul>
 </div>
+
+<!-- Ici on rentres dans l'interface des options des outils -->
+
+<mat-drawer-container class="tools-option-container" (mouseleave)="toggleOpen()">
+    <mat-drawer #drawer [mode]="'side'" class="sidenav" [opened]="opened">
+        <mat-drawer-content [ngSwitch]="selectedTool"> </mat-drawer-content>
+    </mat-drawer>
+</mat-drawer-container>

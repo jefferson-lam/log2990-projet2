@@ -1,0 +1,20 @@
+*{
+  font-family: 'Rubik', serif;
+}
+
+
+.modal-dialog{
+  width: 400px;
+  height: 400px;
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
+}
+
+#exitButton{
+  background-color: #ffbf00 ;
+  display: flex;
+  justify-content: flex-end ;
+  text-align: right;
+  margin-left: 350px;
+}

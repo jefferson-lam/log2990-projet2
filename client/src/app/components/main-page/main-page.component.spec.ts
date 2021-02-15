@@ -1,16 +1,25 @@
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IndexService } from '@app/services/index/index.service';
 import { of } from 'rxjs';
 import { MainPageComponent } from './main-page.component';
-
 import SpyObj = jasmine.SpyObj;
+
+TestBed.configureTestingModule({
+    declarations: [MainPageComponent],
+    imports: [MatTooltipModule, MatIconModule],
+    providers: [],
+});
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let indexServiceSpy: SpyObj<IndexService>;
+    const dialogStub: MatDialog = {} as MatDialog;
 
     beforeEach(async(() => {
         indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicGet', 'basicPost']);
@@ -20,7 +29,10 @@ describe('MainPageComponent', () => {
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
             declarations: [MainPageComponent],
-            providers: [{ provide: IndexService, useValue: indexServiceSpy }],
+            providers: [
+                { provide: IndexService, useValue: indexServiceSpy },
+                { provide: MatDialog, useValue: dialogStub },
+            ],
         }).compileComponents();
     }));
 

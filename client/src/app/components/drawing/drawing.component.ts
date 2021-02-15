@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil-service';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
@@ -22,12 +22,9 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
-    private tools: Tool[];
-    currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService) {
-        this.tools = [pencilService];
-        this.currentTool = this.tools[0];
+    @Input() currentTool: Tool;
+    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService) {
+        this.currentTool = toolManager.pencilService; // default value
     }
 
     ngAfterViewInit(): void {
@@ -36,6 +33,31 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyboardDown(event: KeyboardEvent): void {
+        this.currentTool.onKeyboardDown(event);
+    }
+
+    @HostListener('keyup', ['$event'])
+    onKeyboardUp(event: KeyboardEvent): void {
+        this.currentTool.onKeyboardUp(event);
+    }
+
+    @HostListener('keypress', ['$event'])
+    onKeyboardPress(event: KeyboardEvent): void {
+        this.currentTool.onKeyboardPress(event);
+    }
+
+    @HostListener('click', ['$event'])
+    onMouseClick(event: MouseEvent): void {
+        this.currentTool.onMouseClick(event);
+    }
+
+    @HostListener('dblclick', ['$event'])
+    onMouseDoubleClick(event: MouseEvent): void {
+        this.currentTool.onMouseDoubleClick(event);
     }
 
     @HostListener('mousemove', ['$event'])
@@ -51,6 +73,16 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.currentTool.onMouseUp(event);
+    }
+
+    @HostListener('mouseleave', ['$event'])
+    onMouseLeave(event: MouseEvent): void {
+        this.currentTool.onMouseLeave(event);
+    }
+
+    @HostListener('mouseenter', ['$event'])
+    onMouseEnter(event: MouseEvent): void {
+        this.currentTool.onMouseEnter(event);
     }
 
     get width(): number {
