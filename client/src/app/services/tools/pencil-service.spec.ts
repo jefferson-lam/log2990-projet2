@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as MouseConstants from '@app/constants/mouse-constants';
+import * as PencilConstants from '@app/constants/pencil-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MAX_SIZE_PENCIL, MIN_SIZE_PENCIL, MouseButton, PencilService } from './pencil-service';
+import { PencilService } from './pencil-service';
 
 // tslint:disable:no-any
 describe('PencilService', () => {
@@ -45,17 +47,17 @@ describe('PencilService', () => {
     });
 
     it('setSize should set size to MIN_SIZE_PENCIL if under MIN_SIZE_PENCIL', () => {
-        service.setSize(MIN_SIZE_PENCIL - 1);
-        expect(service.size).toEqual(MIN_SIZE_PENCIL);
+        service.setSize(PencilConstants.MIN_SIZE_PENCIL - 1);
+        expect(service.size).toEqual(PencilConstants.MIN_SIZE_PENCIL);
     });
 
     it('setSize should set size to MAX_SIZE_PENCIL if over MAX_SIZE_PENCIL', () => {
-        service.setSize(MAX_SIZE_PENCIL + 1);
-        expect(service.size).toEqual(MAX_SIZE_PENCIL);
+        service.setSize(PencilConstants.MAX_SIZE_PENCIL + 1);
+        expect(service.size).toEqual(PencilConstants.MAX_SIZE_PENCIL);
     });
 
     it('setSize should set size to value if between MAX and MIN_SIZE_PENCIL', () => {
-        const newSize = MIN_SIZE_PENCIL + (MAX_SIZE_PENCIL - MIN_SIZE_PENCIL) / 2;
+        const newSize = PencilConstants.MIN_SIZE_PENCIL + (PencilConstants.MAX_SIZE_PENCIL - PencilConstants.MIN_SIZE_PENCIL) / 2;
         service.setSize(newSize);
         expect(service.size).toEqual(newSize);
     });
@@ -75,7 +77,7 @@ describe('PencilService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: MouseButton.Right, // TODO: Avoir ceci dans un enum accessible
+            button: MouseConstants.MouseButton.Right, // TODO: Avoir ceci dans un enum accessible
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -136,7 +138,7 @@ describe('PencilService', () => {
     it('onMouseEnter should set mouseDown to false if mouse is not down', () => {
         service.mouseDown = true;
         const mouseEventNoClick = {
-            buttons: MouseButton.Left,
+            buttons: MouseConstants.MouseButton.Left,
         } as MouseEvent;
 
         service.onMouseEnter(mouseEventNoClick);
