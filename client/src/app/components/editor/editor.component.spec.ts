@@ -1,10 +1,14 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EditorComponent } from './editor.component';
+
+class ToolStub extends Tool {}
 
 describe('EditorComponent', () => {
     let component: EditorComponent;
@@ -12,6 +16,7 @@ describe('EditorComponent', () => {
     let keyboardEventSpy: jasmine.Spy;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
+    let toolStub: ToolStub;
 
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool']);
@@ -32,6 +37,7 @@ describe('EditorComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         keyboardEventSpy = spyOn(component, 'onKeyboardPress').and.callThrough();
+        toolStub = new ToolStub({} as DrawingService);
     });
 
     it('should create', () => {
@@ -86,5 +92,10 @@ describe('EditorComponent', () => {
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
         expect(toolManagerServiceSpy.selectTool).toHaveBeenCalled();
         expect(toolManagerServiceSpy.selectTool).toHaveBeenCalledWith(event);
+    });
+
+    it('editor should receive emited tool when selected from sidebar', () => {
+        component.updateToolFromSidebarClick(toolStub);
+        expect(component.currentTool).toEqual(toolStub);
     });
 });
