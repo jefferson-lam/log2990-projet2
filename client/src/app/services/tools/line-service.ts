@@ -4,14 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
-
 @Injectable({
     providedIn: 'root',
 })
