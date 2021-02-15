@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -24,7 +25,7 @@ describe('SettingsManagerService', () => {
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
 
-        editorComponent = new EditorComponent({} as ToolManagerService, service);
+        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service);
         toolStub = new ToolStub({} as DrawingService);
         editorComponent.currentTool = toolStub;
         setLineWidthSpy = spyOn<any>(service.editorComponent.currentTool, 'setLineWidth').and.callThrough();
