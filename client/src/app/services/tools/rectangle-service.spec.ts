@@ -18,6 +18,8 @@ describe('RectangleService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawRectangleSpy: jasmine.Spy<any>;
+    let testCanvas: HTMLCanvasElement;
+    let testCtx: CanvasRenderingContext2D;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -27,6 +29,9 @@ describe('RectangleService', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+        testCanvas = document.createElement('canvas');
+        testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(RectangleService);
         drawRectangleSpy = spyOn<any>(service, 'drawRectangle').and.callThrough();
@@ -294,34 +299,93 @@ describe('RectangleService', () => {
 
     it('FillMode.FILL_ONLY should fill all pixels between start and end point with the same color.', () => {
         service.setFillMode(ToolConstants.FillMode.FILL_ONLY);
+        const TEST_LINE_WIDTH = 1;
+        service.setSize(TEST_LINE_WIDTH);
+
         const RED_VALUE = 120;
         const GREEN_VALUE = 170;
-        const BLUE_VALUE = 120;
-        service.setPrimaryColor(`rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE})`);
-        service.setSecondaryColor('black');
+        const BLUE_VALUE = 140;
+        const TEST_PRIMARY_COLOR = `rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE})`;
+        const TEST_SECONDARY_COLOR = 'black';
+        service.setPrimaryColor(TEST_PRIMARY_COLOR);
+        service.setSecondaryColor(TEST_SECONDARY_COLOR);
 
         mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        const TEST_X_OFFSET = 25;
-        const TEST_Y_OFFSET = 25;
+        const TEST_X_OFFSET = 3;
+        const TEST_Y_OFFSET = 3;
         mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
+        const START_X = 0 + TEST_LINE_WIDTH / 2;
+        const START_Y = 0 + TEST_LINE_WIDTH / 2;
+        const WIDTH = TEST_X_OFFSET - TEST_LINE_WIDTH;
+        const HEIGHT = TEST_Y_OFFSET - TEST_LINE_WIDTH;
+        testCtx.beginPath();
+        testCtx.lineJoin = 'miter';
+        testCtx.fillStyle = TEST_PRIMARY_COLOR;
+        testCtx.strokeStyle = TEST_PRIMARY_COLOR;
+        testCtx.lineWidth = TEST_LINE_WIDTH;
+        testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
+        testCtx.stroke();
+        testCtx.fill();
+
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
-        const pixelDataSize = 4;
-        for (let i = 0; i < imageData.data.length; i += pixelDataSize) {
-            expect(imageData.data[0]).toEqual(RED_VALUE); // R
-            expect(imageData.data[1]).toEqual(GREEN_VALUE); // G
-            expect(imageData.data[2]).toEqual(BLUE_VALUE); // B
-            expect(imageData.data[3]).not.toEqual(0); // A
+        const testData: ImageData = testCtx.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
+        for (let i = 0; i < imageData.data.length; i++) {
+            expect(imageData.data[i]).toEqual(testData.data[i]);
         }
     });
 
     it('drawRectangle should fill all pixels with border color if width or height to be is smaller than line width.', () => {
         service.setFillMode(ToolConstants.FillMode.OUTLINE);
+        const TEST_LINE_WIDTH = 50;
+        service.setSize(TEST_LINE_WIDTH);
 
-        const TEST_WIDTH = 50;
-        service.setSize(TEST_WIDTH);
+        const RED_VALUE_PRIMARY = 255;
+        const GREEN_VALUE_PRIMARY = 170;
+        const BLUE_VALUE_PRIMARY = 120;
+        const TEST_PRIMARY_COLOR = `rgb(${RED_VALUE_PRIMARY}, ${GREEN_VALUE_PRIMARY}, ${BLUE_VALUE_PRIMARY})`;
+        service.setPrimaryColor(TEST_PRIMARY_COLOR);
+
+        const RED_VALUE_SECONDARY = 100;
+        const GREEN_VALUE_SECONDARY = 70;
+        const BLUE_VALUE_SECONDARY = 220;
+        const TEST_SECONDARY_COLOR = `rgb(${RED_VALUE_SECONDARY}, ${GREEN_VALUE_SECONDARY}, ${BLUE_VALUE_SECONDARY})`;
+        service.setSecondaryColor(TEST_SECONDARY_COLOR);
+
+        mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
+        service.onMouseDown(mouseEvent);
+        const TEST_X_OFFSET = 25;
+        const TEST_Y_OFFSET = 20;
+        mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: MouseConstants.MouseButton.Left } as MouseEvent;
+        service.onMouseUp(mouseEvent);
+
+        const START_X = RectangleConstants.MIN_BORDER_WIDTH / 2;
+        const START_Y = RectangleConstants.MIN_BORDER_WIDTH / 2;
+        const WIDTH = TEST_X_OFFSET;
+        const HEIGHT = TEST_Y_OFFSET;
+        testCtx.beginPath();
+        testCtx.lineJoin = 'miter';
+        testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
+        testCtx.strokeStyle = TEST_SECONDARY_COLOR;
+        testCtx.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
+        testCtx.stroke();
+        testCtx.fillStyle = TEST_SECONDARY_COLOR;
+        testCtx.fill();
+
+        const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
+        const testData: ImageData = testCtx.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
+        for (let i = 0; i < imageData.data.length; i++) {
+            expect(imageData.data[i]).toEqual(testData.data[i]);
+        }
+    });
+
+    it('drawRectangle should fill only border with line width between start and end on FillMode.OUTLINE.', () => {
+        service.setFillMode(ToolConstants.FillMode.OUTLINE);
+
+        const TEST_LINE_WIDTH = 1;
+        service.setSize(TEST_LINE_WIDTH);
 
         const RED_VALUE_PRIMARY = 255;
         const GREEN_VALUE_PRIMARY = 170;
@@ -331,7 +395,8 @@ describe('RectangleService', () => {
         const RED_VALUE_SECONDARY = 100;
         const GREEN_VALUE_SECONDARY = 70;
         const BLUE_VALUE_SECONDARY = 220;
-        service.setSecondaryColor(`rgb(${RED_VALUE_SECONDARY}, ${GREEN_VALUE_SECONDARY}, ${BLUE_VALUE_SECONDARY})`);
+        const TEST_SECONDARY_COLOR = `rgb(${RED_VALUE_SECONDARY}, ${GREEN_VALUE_SECONDARY}, ${BLUE_VALUE_SECONDARY})`;
+        service.setSecondaryColor(TEST_SECONDARY_COLOR);
 
         mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
@@ -340,62 +405,21 @@ describe('RectangleService', () => {
         mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
+        const START_X = 0 + TEST_LINE_WIDTH / 2;
+        const START_Y = 0 + TEST_LINE_WIDTH / 2;
+        const WIDTH = TEST_X_OFFSET - TEST_LINE_WIDTH;
+        const HEIGHT = TEST_Y_OFFSET - TEST_LINE_WIDTH;
+        testCtx.beginPath();
+        testCtx.lineJoin = 'miter';
+        testCtx.strokeStyle = TEST_SECONDARY_COLOR;
+        testCtx.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
+        testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
+        testCtx.stroke();
+
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
-        const pixelDataSize = 4;
-        for (let i = 0; i < imageData.data.length; i += pixelDataSize) {
-            expect(imageData.data[0]).toEqual(RED_VALUE_SECONDARY); // R
-            expect(imageData.data[1]).toEqual(GREEN_VALUE_SECONDARY); // G
-            expect(imageData.data[2]).toEqual(BLUE_VALUE_SECONDARY); // B
-            expect(imageData.data[3]).not.toEqual(0); // A
-        }
-    });
-
-    it('drawRectangle should fill only border with line width between start and end.', () => {
-        service.setFillMode(ToolConstants.FillMode.OUTLINE);
-
-        const TEST_WIDTH = 1;
-        service.setSize(TEST_WIDTH);
-
-        const RED_VALUE_PRIMARY = 255;
-        const GREEN_VALUE_PRIMARY = 170;
-        const BLUE_VALUE_PRIMARY = 120;
-        service.setPrimaryColor(`rgb(${RED_VALUE_PRIMARY}, ${GREEN_VALUE_PRIMARY}, ${BLUE_VALUE_PRIMARY})`);
-
-        const RED_VALUE_SECONDARY = 100;
-        const GREEN_VALUE_SECONDARY = 70;
-        const BLUE_VALUE_SECONDARY = 220;
-        service.setSecondaryColor(`rgb(${RED_VALUE_SECONDARY}, ${GREEN_VALUE_SECONDARY}, ${BLUE_VALUE_SECONDARY})`);
-
-        mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        const END_OFFSET = 25;
-        mouseEvent = { offsetX: END_OFFSET, offsetY: END_OFFSET, button: MouseConstants.MouseButton.Left } as MouseEvent;
-        service.onMouseUp(mouseEvent);
-
-        const imageData: ImageData = baseCtxStub.getImageData(0, 0, END_OFFSET, END_OFFSET);
-        const pixelDataSize = 4;
-        for (let rowIndex = 0; rowIndex < imageData.height; ++rowIndex) {
-            for (let columnIndex = 0; columnIndex < imageData.height; ++columnIndex) {
-                let currentZeroIndex = (rowIndex * imageData.height + columnIndex) * pixelDataSize;
-
-                if ((0 < rowIndex && rowIndex < TEST_WIDTH) || (imageData.height - TEST_WIDTH <= rowIndex && rowIndex < imageData.height)) {
-                    expect(imageData.data[currentZeroIndex]).toEqual(RED_VALUE_SECONDARY); // R
-                    expect(imageData.data[++currentZeroIndex]).toEqual(GREEN_VALUE_SECONDARY); // G
-                    expect(imageData.data[++currentZeroIndex]).toEqual(BLUE_VALUE_SECONDARY); // B
-                    expect(imageData.data[++currentZeroIndex]).not.toEqual(0); // A
-                } else if (TEST_WIDTH <= rowIndex && rowIndex < imageData.height - TEST_WIDTH) {
-                    if (TEST_WIDTH <= columnIndex && columnIndex < imageData.width - TEST_WIDTH) {
-                        expect(imageData.data[currentZeroIndex]).toEqual(0); // R
-                        expect(imageData.data[++currentZeroIndex]).toEqual(0); // G
-                        expect(imageData.data[++currentZeroIndex]).toEqual(0); // B
-                        expect(imageData.data[++currentZeroIndex]).toEqual(0); // A
-                    } else {
-                        expect(imageData.data[currentZeroIndex]).toEqual(RED_VALUE_SECONDARY); // R
-                        expect(imageData.data[++currentZeroIndex]).toEqual(GREEN_VALUE_SECONDARY); // G
-                        expect(imageData.data[++currentZeroIndex]).toEqual(BLUE_VALUE_SECONDARY); // B
-                    }
-                }
-            }
+        const testData: ImageData = testCtx.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
+        for (let i = 0; i < imageData.data.length; i++) {
+            expect(imageData.data[i]).toEqual(testData.data[i]);
         }
     });
 });
