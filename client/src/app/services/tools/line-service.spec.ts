@@ -88,7 +88,8 @@ describe('LineService', () => {
 
     it('setLineWidth should dynamically modify the junctionRadius size if lineWidth > junctionRadius', () => {
         const newLineWidth = 160;
-        service.junctionRadius = 90;
+        const TEST_JUNCTION_RADIUS = 90;
+        service.junctionRadius = TEST_JUNCTION_RADIUS;
         service.setLineWidth(newLineWidth);
         expect(service.junctionRadius).toEqual(newLineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
     });
@@ -100,15 +101,18 @@ describe('LineService', () => {
     });
 
     it('setJunctionRadius should set to lineWidth * minjunction factor if smaller than lineWidth * min_factor', () => {
+        const TEST_JUNCTION_RADIUS = 40;
+        service.lineWidth = TEST_JUNCTION_RADIUS;
         const newJunctionRadius = 5;
-        service.lineWidth = 40;
         service.setJunctionRadius(newJunctionRadius);
         expect(service.junctionRadius).toEqual(service.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
     });
 
     it('setJunctionRadius should set to lineWidth * minjunction factor if negative value', () => {
-        const newJunctionRadius = -10;
-        service.lineWidth = 40;
+        const TEST_JUNCTION_RADIUS = -10;
+        const newJunctionRadius = TEST_JUNCTION_RADIUS;
+        const TEST_LINE_WIDTH = 40;
+        service.lineWidth = TEST_LINE_WIDTH;
         service.setJunctionRadius(newJunctionRadius);
         expect(service.junctionRadius).toEqual(service.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
     });
