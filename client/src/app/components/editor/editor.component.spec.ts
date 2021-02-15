@@ -27,6 +27,7 @@ describe('EditorComponent', () => {
             providers: [
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
+                { provide: Tool, useValue: toolStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -94,8 +95,60 @@ describe('EditorComponent', () => {
         expect(toolManagerServiceSpy.selectTool).toHaveBeenCalledWith(event);
     });
 
-    it('editor should receive emited tool when selected from sidebar', () => {
+    it("should call openModalPopUp when 'ctrl+o' key pressed", () => {
+        const event = { ctrlKey: true, key: 'o' } as KeyboardEvent;
+        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
+        component.onKeyboardPress(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(modalPopUpSpy).toHaveBeenCalled();
+    });
+
+    it("should not call openModalPopUp when only 'ctrl' key pressed", () => {
+        const event = { ctrlKey: true, key: '' } as KeyboardEvent;
+        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
+        component.onKeyboardPress(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(modalPopUpSpy).not.toHaveBeenCalled();
+    });
+    it("should not call openModalPopUp when only 'o' key pressed", () => {
+        const event = { ctrlKey: false, key: 'o' } as KeyboardEvent;
+        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
+        component.onKeyboardPress(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(modalPopUpSpy).not.toHaveBeenCalled();
+    });
+
+    it('updateToolFromSidebarClick should set current tool', () => {
         component.updateToolFromSidebarClick(toolStub);
-        expect(component.currentTool).toEqual(toolStub);
+
+        expect(component.currentTool).toBe(toolStub);
+    });
+
+    it('toggleNewDrawing calls openModalPopUp', () => {
+        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
+        component.toggleNewDrawing(true);
+
+        expect(modalPopUpSpy).toHaveBeenCalled();
+    });
+
+    it('openModalPopUp should toggle newDrawingTrue', () => {
+        component.isNewDrawing = true;
+        component.openModalPopUp();
+
+        expect(component.isNewDrawing).toBeFalse();
+    });
+
+    it('openModalPopUp should open newDialog if isNewDrawing', () => {
+        component.isNewDrawing = false;
+        component.openModalPopUp();
+
+        expect(component.isNewDrawing).toBeTrue();
+        expect(dialogSpy.open).toHaveBeenCalled();
     });
 });

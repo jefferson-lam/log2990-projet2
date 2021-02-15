@@ -160,17 +160,17 @@ describe('SidebarComponent', () => {
         expect(notifyEditorNewDrawingSpy).toHaveBeenCalledWith(component.isNewDrawing);
     });
 
-    it('on mouseLeave should toggle visibility', () => {
-        const toggleSpy = spyOn<any>(component, 'toggleOpen').and.callThrough();
+    // it('on mouseLeave should toggle visibility', () => {
+    //     const toggleSpy = spyOn<any>(component, 'toggleOpen').and.callThrough();
 
-        fixture.detectChanges();
-        const btn = fixture.debugElement.nativeElement.querySelector('.tools-option-container');
-        const mouseLeave = new MouseEvent('mouseleave');
-        btn.dispatchEvent(mouseLeave);
-        fixture.detectChanges();
+    //     fixture.detectChanges();
+    //     const btn = fixture.debugElement.nativeElement.querySelector('.tools-option-container');
+    //     const mouseLeave = new MouseEvent('mouseleave');
+    //     btn.dispatchEvent(mouseLeave);
+    //     fixture.detectChanges();
 
-        expect(toggleSpy).toHaveBeenCalled();
-    });
+    //     expect(toggleSpy).toHaveBeenCalled();
+    // });
 
     it('click on return button should return to main page', () => {
         const backSpy = spyOn<any>(component, 'backClick').and.callThrough();
