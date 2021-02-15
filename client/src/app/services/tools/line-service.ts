@@ -28,8 +28,8 @@ export class LineService extends Tool {
 
     // TODO: optionValues to be obtained from settings manager.
     withJunction: boolean = true;
-    junctionRadius: number = 15;
-    lineWidth: number = 10;
+    junctionRadius: number = 1;
+    lineWidth: number = 1;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
