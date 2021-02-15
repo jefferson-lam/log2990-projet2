@@ -1,0 +1,26 @@
+*{
+  font-family: 'Rubik', serif;
+
+}
+
+#settings-container{
+  margin-left: 20px;
+  margin-top: 15px;
+  color: #EEE;
+}
+#title{
+  font-weight: bolder;
+  font-size: x-large;
+}
+#width-setting,#fill-setting{
+  display: block;
+}
+#another-setting{
+  flex-direction: column-reverse;
+}
+#color-picker{
+  margin-top: 25px;
+}
+.mat-radio-button{
+  margin-top:10px;
+}

@@ -1,2 +1,21 @@
-<div *ngIf ='selectedTool'>
+<div *ngIf ='currentTool' id="settings-container">
+  <h2 id="tittle"> Options {{name}} </h2>
+  <div id="width-setting">
+    <p> Taille : </p>
+    <mat-slider  color="warn" id="sizeSlider" thumbLabel [displayWith]="setMax" tickInterval="1" min="1" max="100"></mat-slider>
+  </div>
+  <div id="fill-setting">
+    <p> Épaisseur de contour : </p>
+  <mat-slider color="warn" id="fillMode" thumbLabel [displayWith]="setMax" tickInterval="1" min="1" max="100"></mat-slider>
+  </div>
+  <div id="another-setting">
+    <mat-radio-group>
+      <mat-radio-button value="border" color="warn"> Contour </mat-radio-button> <br>
+      <mat-radio-button value="filled" color="warn"> Plein </mat-radio-button>
+      <mat-radio-button value="filledContour" color="warn"> Plein avec contour </mat-radio-button>
+    </mat-radio-group>
+
+  </div>
+  <div id="color-picker"> Color-picker implementation  </div>
 </div>
+

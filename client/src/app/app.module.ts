@@ -6,9 +6,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSliderModule } from '@angular/material/slider';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -37,6 +39,8 @@ import { SidebarToolsOptionsComponent } from './components/sidebar/sidebar-tools
         MatToolbarModule,
         MatCardModule,
         MatTooltipModule,
+        MatSliderModule,
+        MatRadioModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
