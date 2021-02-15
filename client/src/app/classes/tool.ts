@@ -37,8 +37,6 @@ export abstract class Tool {
 
     setLineWidth(width: number): void {}
 
-    getCursor(): void {}
-
     setFillMode(newFillMode: ToolConstants.FillMode): void {}
 
     setJunctionRadius(newJunctionRadius: number): void {}
