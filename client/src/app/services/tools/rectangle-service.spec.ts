@@ -297,6 +297,10 @@ describe('RectangleService', () => {
         const RED_VALUE = 120;
         const GREEN_VALUE = 170;
         const BLUE_VALUE = 120;
+        const R = 0;
+        const G = 1;
+        const B = 2;
+        const A = 3;
         service.setPrimaryColor(`rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE})`);
         service.setSecondaryColor('black');
 
@@ -310,16 +314,19 @@ describe('RectangleService', () => {
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
         const pixelDataSize = 4;
         for (let i = 0; i < imageData.data.length; i += pixelDataSize) {
-            expect(imageData.data[0]).toEqual(RED_VALUE); // R
-            expect(imageData.data[1]).toEqual(GREEN_VALUE); // G
-            expect(imageData.data[2]).toEqual(BLUE_VALUE); // B
-            expect(imageData.data[3]).not.toEqual(0); // A
+            expect(imageData.data[R]).toEqual(RED_VALUE); // R
+            expect(imageData.data[G]).toEqual(GREEN_VALUE); // G
+            expect(imageData.data[B]).toEqual(BLUE_VALUE); // B
+            expect(imageData.data[A]).not.toEqual(0); // A
         }
     });
 
     it('drawRectangle should fill all pixels with border color if width or height to be is smaller than line width.', () => {
         service.setFillMode(ToolConstants.FillMode.OUTLINE);
-
+        const R = 0;
+        const G = 1;
+        const B = 2;
+        const A = 3;
         const TEST_WIDTH = 50;
         service.setSize(TEST_WIDTH);
 
@@ -343,10 +350,10 @@ describe('RectangleService', () => {
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
         const pixelDataSize = 4;
         for (let i = 0; i < imageData.data.length; i += pixelDataSize) {
-            expect(imageData.data[0]).toEqual(RED_VALUE_SECONDARY); // R
-            expect(imageData.data[1]).toEqual(GREEN_VALUE_SECONDARY); // G
-            expect(imageData.data[2]).toEqual(BLUE_VALUE_SECONDARY); // B
-            expect(imageData.data[3]).not.toEqual(0); // A
+            expect(imageData.data[R]).toEqual(RED_VALUE_SECONDARY); // R
+            expect(imageData.data[G]).toEqual(GREEN_VALUE_SECONDARY); // G
+            expect(imageData.data[B]).toEqual(BLUE_VALUE_SECONDARY); // B
+            expect(imageData.data[A]).not.toEqual(0); // A
         }
     });
 
