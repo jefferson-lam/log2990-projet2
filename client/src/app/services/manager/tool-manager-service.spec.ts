@@ -24,6 +24,7 @@ describe('ToolManagerService', () => {
         } as KeyboardEvent;
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.rectangleService);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('select tool on 2 keypress should select ellipse', () => {
@@ -32,6 +33,7 @@ describe('ToolManagerService', () => {
         } as KeyboardEvent;
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.ellipseService);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('select tool on c keypress should select pencil', () => {
@@ -40,6 +42,7 @@ describe('ToolManagerService', () => {
         } as KeyboardEvent;
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('select tool should return pencil as a default value', () => {
@@ -48,6 +51,7 @@ describe('ToolManagerService', () => {
         } as KeyboardEvent;
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('select tool on l keypress should select line', () => {
@@ -55,6 +59,7 @@ describe('ToolManagerService', () => {
             key: 'l',
         } as KeyboardEvent;
         expect(service.selectTool(keyboardEvent)).toEqual(service.lineService);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('select tool on e should select eraser', () => {
@@ -62,5 +67,6 @@ describe('ToolManagerService', () => {
             key: 'e',
         } as KeyboardEvent;
         expect(service.selectTool(keyboardEvent)).toEqual(service.eraserService);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 });

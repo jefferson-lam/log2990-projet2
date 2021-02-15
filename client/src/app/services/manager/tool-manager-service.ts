@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
@@ -19,6 +20,7 @@ export class ToolManagerService {
         public lineService: LineService,
         public rectangleService: RectangleService,
         public ellipseService: EllipseService,
+        public drawingService: DrawingService,
     ) {
         this.bindKeys();
         this.activeTool = this.pencilService;
@@ -38,6 +40,7 @@ export class ToolManagerService {
     }
 
     getTool(keyShortcut: string): Tool {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.keyBindings.has(keyShortcut)) {
             return this.keyBindings.get(keyShortcut) as Tool;
         } else {
