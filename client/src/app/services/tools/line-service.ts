@@ -41,7 +41,7 @@ export class LineService extends Tool {
     }
 
     setJunctionRadius(junctionRadius: number): void {
-        if (junctionRadius < this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR) {
+        if (junctionRadius < this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR || junctionRadius < LineConstants.MIN_JUNCTION_RADIUS) {
             this.junctionRadius = this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR;
         } else if (junctionRadius > LineConstants.MAX_JUNCTION_RADIUS) {
             this.junctionRadius = LineConstants.MAX_JUNCTION_RADIUS;

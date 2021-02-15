@@ -62,6 +62,81 @@ describe('LineService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('setLineWidth should correctly set the services internal lineWidth attribute', () => {
+        const newLineWidth = 50;
+        service.setLineWidth(newLineWidth);
+        expect(service.lineWidth).toEqual(newLineWidth);
+    });
+
+    it('setLineWidth should set to maximum value if user enters value bigger than max', () => {
+        const newLineWidth = 250;
+        service.setLineWidth(newLineWidth);
+        expect(service.lineWidth).toEqual(LineConstants.MAX_LINE_WIDTH);
+    });
+
+    it('setLineWith should set to 1 if user enters 0', () => {
+        const newLineWidth = 0;
+        service.setLineWidth(newLineWidth);
+        expect(service.lineWidth).toEqual(LineConstants.MIN_LINE_WIDTH);
+    });
+
+    it('setLineWidth should set to minimum value if user enters negative value', () => {
+        const newLineWidth = -50;
+        service.setLineWidth(newLineWidth);
+        expect(service.lineWidth).toEqual(LineConstants.MIN_LINE_WIDTH);
+    });
+
+    it('setLineWidth should dynamically modify the junctionRadius size if lineWidth > junctionRadius', () => {
+        const newLineWidth = 160;
+        service.junctionRadius = 90;
+        service.setLineWidth(newLineWidth);
+        expect(service.junctionRadius).toEqual(newLineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
+    });
+
+    it('setJunctionRadius should set to MAX_JUNCTION if entered setting is bigger than max', () => {
+        const newJunctionRadius = 250;
+        service.setJunctionRadius(newJunctionRadius);
+        expect(service.junctionRadius).toEqual(LineConstants.MAX_JUNCTION_RADIUS);
+    });
+
+    it('setJunctionRadius should set to lineWidth * minjunction factor if smaller than lineWidth * min_factor', () => {
+        const newJunctionRadius = 5;
+        service.lineWidth = 40;
+        service.setJunctionRadius(newJunctionRadius);
+        expect(service.junctionRadius).toEqual(service.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
+    });
+
+    it('setJunctionRadius should set to lineWidth * minjunction factor if negative value', () => {
+        const newJunctionRadius = -10;
+        service.lineWidth = 40;
+        service.setJunctionRadius(newJunctionRadius);
+        expect(service.junctionRadius).toEqual(service.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
+    });
+
+    it('setJunctionRadius will set junctionRadius to max if max value exceeded', () => {
+        const newJunctionRadius = 500;
+        service.setJunctionRadius(newJunctionRadius);
+        expect(service.junctionRadius).toEqual(LineConstants.MAX_JUNCTION_RADIUS);
+    });
+
+    it('setJunctionRadius will set junction radius to correct value', () => {
+        const newJunctionRadius = 20;
+        service.setJunctionRadius(newJunctionRadius);
+        expect(service.junctionRadius).toEqual(newJunctionRadius);
+    });
+
+    it('setWithJunction should set to false if entered value is false', () => {
+        service.withJunction = true;
+        service.setWithJunction(false);
+        expect(service.withJunction).toBeFalsy();
+    });
+
+    it('setWithJunction should set to true if entered value is true', () => {
+        service.withJunction = false;
+        service.setWithJunction(true);
+        expect(service.withJunction).toBeTruthy();
+    });
+
     it(' mouseClick should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
         service.onMouseClick(mouseEvent);
