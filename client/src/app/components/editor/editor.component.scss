@@ -7,10 +7,20 @@
 .drawing-container {
     overflow: auto;
     flex: 1 1 auto;
+    position: relative;
+    margin-top:2px;
+    margin-left: 60px;
 }
 
 .drawing {
     display: grid;
     width: min-content;
     outline: none;
+}
+
+.top-container{
+  height: 50px;
+  width:100%;
+  margin-left: 60px;
+  position: absolute;
 }
