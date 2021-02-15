@@ -24,19 +24,22 @@ describe('EditorComponent', () => {
     let lineStub: ToolStub;
     let rectangleStub: ToolStub;
     let toolManagerStub: ToolManagerService;
+    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(async(() => {
-        pencilStub = new ToolStub({} as DrawingService);
-        eraserStub = new ToolStub({} as DrawingService);
-        lineStub = new ToolStub({} as DrawingService);
-        rectangleStub = new ToolStub({} as DrawingService);
-        ellipseStub = new ToolStub({} as DrawingService);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        pencilStub = new ToolStub(drawServiceSpy as DrawingService);
+        eraserStub = new ToolStub(drawServiceSpy as DrawingService);
+        lineStub = new ToolStub(drawServiceSpy as DrawingService);
+        rectangleStub = new ToolStub(drawServiceSpy as DrawingService);
+        ellipseStub = new ToolStub(drawServiceSpy as DrawingService);
         toolManagerStub = new ToolManagerService(
             pencilStub as PencilService,
             eraserStub as EraserService,
             lineStub as LineService,
             rectangleStub as RectangleService,
             ellipseStub as EllipseService,
+            drawServiceSpy as DrawingService,
         );
         TestBed.configureTestingModule({
             declarations: [EditorComponent, DrawingComponent, SidebarComponent],
@@ -46,6 +49,7 @@ describe('EditorComponent', () => {
                 { provide: RectangleService, useValue: rectangleStub },
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
+                { provide: DrawingService, useValue: drawServiceSpy },
                 { provide: MatDialog },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
