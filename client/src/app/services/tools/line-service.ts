@@ -18,14 +18,40 @@ export class LineService extends Tool {
     isEscapeKeyDown: boolean = false;
     isBackspaceKeyDown: boolean = false;
 
-    // TODO: optionValues to be obtained from settings manager.
     withJunction: boolean = true;
-    junctionRadius: number = 1;
-    lineWidth: number = 1;
+    junctionRadius: number = LineConstants.MIN_LINE_WIDTH;
+    lineWidth: number = LineConstants.MIN_LINE_WIDTH;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
+    }
+
+    setLineWidth(width: number): void {
+        if (width < LineConstants.MIN_LINE_WIDTH) {
+            this.lineWidth = LineConstants.MIN_LINE_WIDTH;
+        } else if (width > LineConstants.MAX_LINE_WIDTH) {
+            this.lineWidth = LineConstants.MAX_LINE_WIDTH;
+        } else {
+            this.lineWidth = width;
+        }
+        if (this.lineWidth > this.junctionRadius) {
+            this.setJunctionRadius(this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
+        }
+    }
+
+    setJunctionRadius(junctionRadius: number): void {
+        if (junctionRadius < this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR || junctionRadius < LineConstants.MIN_JUNCTION_RADIUS) {
+            this.junctionRadius = this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR;
+        } else if (junctionRadius > LineConstants.MAX_JUNCTION_RADIUS) {
+            this.junctionRadius = LineConstants.MAX_JUNCTION_RADIUS;
+        } else {
+            this.junctionRadius = junctionRadius;
+        }
+    }
+
+    setWithJunction(hasJunction: boolean): void {
+        this.withJunction = hasJunction;
     }
 
     /**
