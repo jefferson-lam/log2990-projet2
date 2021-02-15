@@ -21,3 +21,13 @@ export const DEGREES_270 = 270;
 export const DEGREES_315 = 315;
 
 export const DEGREES_360 = 360;
+
+export const MAX_LINE_WIDTH = 200;
+
+export const MIN_LINE_WIDTH = 0.25;
+
+export const MAX_JUNCTION_RADIUS = 200;
+
+export const MIN_JUNCTION_RADIUS = 1;
+
+export const MIN_JUNCTION_TO_LINE_FACTOR = 4;

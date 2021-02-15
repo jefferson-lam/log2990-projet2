@@ -8,6 +8,8 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     lineWidth?: number;
     fillMode?: ToolConstants.FillMode;
+    junctionRadius?: number;
+    withJunction?: boolean;
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
 
@@ -29,13 +31,17 @@ export abstract class Tool {
 
     onMouseMove(event: MouseEvent): void {}
 
-    setLineWidth(width: number): void {}
-
     onMouseLeave(event: MouseEvent): void {}
 
     onMouseEnter(event: MouseEvent): void {}
 
+    setLineWidth(width: number): void {}
+
     setFillMode(newFillMode: ToolConstants.FillMode): void {}
+
+    setJunctionRadius(newJunctionRadius: number): void {}
+
+    setWithJunction(hasJunction: boolean): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
