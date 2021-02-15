@@ -363,8 +363,8 @@ describe('RectangleService', () => {
 
         const START_X = RectangleConstants.MIN_BORDER_WIDTH / 2;
         const START_Y = RectangleConstants.MIN_BORDER_WIDTH / 2;
-        const WIDTH = TEST_X_OFFSET - RectangleConstants.MIN_BORDER_WIDTH;
-        const HEIGHT = TEST_Y_OFFSET - RectangleConstants.MIN_BORDER_WIDTH;
+        const WIDTH = TEST_X_OFFSET;
+        const HEIGHT = TEST_Y_OFFSET;
         testCtx.beginPath();
         testCtx.lineJoin = 'miter';
         testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
