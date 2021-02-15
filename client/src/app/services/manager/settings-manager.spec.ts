@@ -12,8 +12,10 @@ describe('SettingsManagerService', () => {
     let service: SettingsManagerService;
     let editorComponent: EditorComponent;
     let toolStub: ToolStub;
-    let setSizeSpy: jasmine.Spy<any>;
-    let changeFillModeSpy: jasmine.Spy<any>;
+    let setLineWidthSpy: jasmine.Spy<any>;
+    let setFillModeSpy: jasmine.Spy<any>;
+    let setJunctionRadiusSpy: jasmine.Spy<any>;
+    let setWithJunctionSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -25,8 +27,10 @@ describe('SettingsManagerService', () => {
         editorComponent = new EditorComponent({} as ToolManagerService, service);
         toolStub = new ToolStub({} as DrawingService);
         editorComponent.currentTool = toolStub;
-        setSizeSpy = spyOn<any>(service.editorComponent.currentTool, 'setLineWidth').and.callThrough();
-        changeFillModeSpy = spyOn<any>(service.editorComponent.currentTool, 'setFillMode').and.callThrough();
+        setLineWidthSpy = spyOn<any>(service.editorComponent.currentTool, 'setLineWidth').and.callThrough();
+        setFillModeSpy = spyOn<any>(service.editorComponent.currentTool, 'setFillMode').and.callThrough();
+        setJunctionRadiusSpy = spyOn<any>(service.editorComponent.currentTool, 'setJunctionRadius');
+        setWithJunctionSpy = spyOn<any>(service.editorComponent.currentTool, 'setWithJunction');
     });
 
     it('should be created', () => {
@@ -34,14 +38,26 @@ describe('SettingsManagerService', () => {
     });
 
     it('changeSizeTool should call setSize of current tool', () => {
-        const EXPECTED_FILL_MODE = 2;
-        service.changeSizeTool(EXPECTED_FILL_MODE);
-        expect(setSizeSpy).toHaveBeenCalled();
+        const EXPECTED_TOOL_SIZE = 17;
+        service.setLineWidth(EXPECTED_TOOL_SIZE);
+        expect(setLineWidthSpy).toHaveBeenCalled();
     });
 
-    it('changeSizeTool should call setSize of current tool', () => {
-        const EXPECTED_TOOL_SIZE = 17;
-        service.changeFillMode(EXPECTED_TOOL_SIZE);
-        expect(changeFillModeSpy).toHaveBeenCalled();
+    it('setFillMode should set the fill mode correctly of current tool', () => {
+        const EXPECTED_FILL_MODE = 2;
+        service.setFillMode(EXPECTED_FILL_MODE);
+        expect(setFillModeSpy).toHaveBeenCalled();
+    });
+
+    it('setJunctionRadius should call setJunctionRadius of current tool', () => {
+        const newJunctionRadius = 25;
+        service.setJunctionRadius(newJunctionRadius);
+        expect(setJunctionRadiusSpy).toHaveBeenCalled();
+    });
+
+    it('setWithJunction should call setWithJunction of current tool', () => {
+        const hasJunction = true;
+        service.setWithJunction(hasJunction);
+        expect(setWithJunctionSpy).toHaveBeenCalled();
     });
 });
