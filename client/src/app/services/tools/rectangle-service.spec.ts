@@ -9,7 +9,7 @@ import { RectangleService } from './rectangle-service';
 
 // tslint:disable:max-file-line-count
 // tslint:disable:no-any
-fdescribe('RectangleService', () => {
+describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -357,21 +357,21 @@ fdescribe('RectangleService', () => {
         mouseEvent = { offsetX: 0, offsetY: 0, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseDown(mouseEvent);
         const TEST_X_OFFSET = 25;
-        const TEST_Y_OFFSET = 25;
+        const TEST_Y_OFFSET = 20;
         mouseEvent = { offsetX: TEST_X_OFFSET, offsetY: TEST_Y_OFFSET, button: MouseConstants.MouseButton.Left } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
-        const START_X = 0 + TEST_LINE_WIDTH / 2;
-        const START_Y = 0 + TEST_LINE_WIDTH / 2;
-        const WIDTH = TEST_X_OFFSET - TEST_LINE_WIDTH;
-        const HEIGHT = TEST_Y_OFFSET - TEST_LINE_WIDTH;
+        const START_X = RectangleConstants.MIN_BORDER_WIDTH / 2;
+        const START_Y = RectangleConstants.MIN_BORDER_WIDTH / 2;
+        const WIDTH = TEST_X_OFFSET - RectangleConstants.MIN_BORDER_WIDTH;
+        const HEIGHT = TEST_Y_OFFSET - RectangleConstants.MIN_BORDER_WIDTH;
         testCtx.beginPath();
         testCtx.lineJoin = 'miter';
-        testCtx.fillStyle = TEST_SECONDARY_COLOR;
+        testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
         testCtx.strokeStyle = TEST_SECONDARY_COLOR;
         testCtx.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
-        testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
         testCtx.stroke();
+        testCtx.fillStyle = TEST_SECONDARY_COLOR;
         testCtx.fill();
 
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
