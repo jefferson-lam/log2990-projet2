@@ -11,7 +11,7 @@ import { Observable, Subject } from 'rxjs';
 })
 export class PencilService extends Tool {
     private pathData: Vec2[];
-    size: number;
+    lineWidth: number;
 
     // Observables
     private pencilSizeChangedSource: Subject<number> = new Subject<number>();
@@ -20,18 +20,18 @@ export class PencilService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
-        this.size = PencilConstants.MIN_SIZE_PENCIL;
+        this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
     }
 
-    setSize(value: number): void {
-        if (value >= PencilConstants.MIN_SIZE_PENCIL && value <= PencilConstants.MAX_SIZE_PENCIL) {
-            this.size = value;
-        } else if (value >= PencilConstants.MAX_SIZE_PENCIL) {
-            this.size = PencilConstants.MAX_SIZE_PENCIL;
+    setLineWidth(width: number): void {
+        if (width >= PencilConstants.MIN_SIZE_PENCIL && width <= PencilConstants.MAX_SIZE_PENCIL) {
+            this.lineWidth = width;
+        } else if (width >= PencilConstants.MAX_SIZE_PENCIL) {
+            this.lineWidth = PencilConstants.MAX_SIZE_PENCIL;
         } else {
-            this.size = PencilConstants.MIN_SIZE_PENCIL;
+            this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
         }
-        this.pencilSizeChangedSource.next(this.size);
+        this.pencilSizeChangedSource.next(this.lineWidth);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -83,7 +83,7 @@ export class PencilService extends Tool {
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
 
-        ctx.lineWidth = this.size;
+        ctx.lineWidth = this.lineWidth;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 

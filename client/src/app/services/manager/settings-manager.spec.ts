@@ -25,7 +25,7 @@ describe('SettingsManagerService', () => {
         editorComponent = new EditorComponent({} as ToolManagerService, service);
         toolStub = new ToolStub({} as DrawingService);
         editorComponent.currentTool = toolStub;
-        setSizeSpy = spyOn<any>(service.editorComponent.currentTool, 'setSize').and.callThrough();
+        setSizeSpy = spyOn<any>(service.editorComponent.currentTool, 'setLineWidth').and.callThrough();
         changeFillModeSpy = spyOn<any>(service.editorComponent.currentTool, 'setFillMode').and.callThrough();
     });
 

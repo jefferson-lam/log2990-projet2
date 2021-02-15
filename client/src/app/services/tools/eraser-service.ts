@@ -10,21 +10,21 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class EraserService extends Tool {
     private pathData: Vec2[];
-    size: number;
+    lineWidth: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
-        this.size = EraserConstants.MIN_SIZE_ERASER;
+        this.lineWidth = EraserConstants.MIN_SIZE_ERASER;
     }
 
-    setSize(value: number): void {
-        if (value >= EraserConstants.MIN_SIZE_ERASER && value <= EraserConstants.MAX_SIZE_ERASER) {
-            this.size = value;
-        } else if (value > EraserConstants.MAX_SIZE_ERASER) {
-            this.size = EraserConstants.MAX_SIZE_ERASER;
+    setLineWidth(width: number): void {
+        if (width >= EraserConstants.MIN_SIZE_ERASER && width <= EraserConstants.MAX_SIZE_ERASER) {
+            this.lineWidth = width;
+        } else if (width > EraserConstants.MAX_SIZE_ERASER) {
+            this.lineWidth = EraserConstants.MAX_SIZE_ERASER;
         } else {
-            this.size = EraserConstants.MIN_SIZE_ERASER;
+            this.lineWidth = EraserConstants.MIN_SIZE_ERASER;
         }
     }
 
@@ -69,15 +69,15 @@ export class EraserService extends Tool {
         ctx.strokeStyle = 'black';
 
         ctx.beginPath();
-        ctx.rect(mousePosition.x - this.size / 2, mousePosition.y - this.size / 2, this.size, this.size);
-        ctx.fillRect(mousePosition.x - this.size / 2, mousePosition.y - this.size / 2, this.size, this.size);
+        ctx.rect(mousePosition.x - this.lineWidth / 2, mousePosition.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
+        ctx.fillRect(mousePosition.x - this.lineWidth / 2, mousePosition.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
         ctx.stroke();
     }
 
     private eraseSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.fillStyle = 'white';
-        ctx.rect(path[path.length - 1].x - this.size / 2, path[path.length - 1].y - this.size / 2, this.size, this.size);
+        ctx.rect(path[path.length - 1].x - this.lineWidth / 2, path[path.length - 1].y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
         ctx.fill();
     }
 
@@ -114,7 +114,7 @@ export class EraserService extends Tool {
         let topBefore: Vec2;
         let bottomLast: Vec2;
         let topLast: Vec2;
-        const displacement = Math.floor(this.size / 2);
+        const displacement = Math.floor(this.lineWidth / 2);
 
         if (vectorCenter.x * vectorCenter.y >= 0) {
             // Take bottom left and top right corners

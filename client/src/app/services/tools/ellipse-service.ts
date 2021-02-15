@@ -97,7 +97,7 @@ export class EllipseService extends Tool {
         }
     }
 
-    setSize(width: number): void {
+    setLineWidth(width: number): void {
         if (width < EllipseConstants.MIN_BORDER_WIDTH) {
             this.lineWidth = EllipseConstants.MIN_BORDER_WIDTH;
         } else if (width > EllipseConstants.MAX_BORDER_WIDTH) {

@@ -117,7 +117,7 @@ describe('EraserService', () => {
             { x: 5, y: 5 },
             { x: 10, y: 10 },
         ] as Vec2[];
-        service.size = 2;
+        service.lineWidth = 2;
         const corners: Vec2[] = service['getCorners'](pathStub[pathStub.length - 1], pathStub[pathStub.length - 2]);
         const expectedCorners = [
             { x: 4, y: 6 },
@@ -137,7 +137,7 @@ describe('EraserService', () => {
             { x: 5, y: 10 },
             { x: 10, y: 5 },
         ] as Vec2[];
-        service.size = 2;
+        service.lineWidth = 2;
         const corners: Vec2[] = service['getCorners'](pathStub[pathStub.length - 1], pathStub[pathStub.length - 2]);
         const expectedCorners = [
             { x: 6, y: 11 },
@@ -171,20 +171,20 @@ describe('EraserService', () => {
         expect(fillSpy).toHaveBeenCalled();
     });
 
-    it('setSize should not be able to set size under minimum 5', () => {
-        service.setSize(1);
-        expect(service.size).toEqual(EraserConstants.MIN_SIZE_ERASER);
+    it('setLineWidth should not be able to set size under minimum 5', () => {
+        service.setLineWidth(1);
+        expect(service.lineWidth).toEqual(EraserConstants.MIN_SIZE_ERASER);
     });
 
-    it('setSize should be able to set size over 5 and under maximum ' + EraserConstants.MAX_SIZE_ERASER, () => {
+    it('setLineWidth should be able to set size over 5 and under maximum ' + EraserConstants.MAX_SIZE_ERASER, () => {
         const medianSize = EraserConstants.MIN_SIZE_ERASER + (EraserConstants.MAX_SIZE_ERASER - EraserConstants.MIN_SIZE_ERASER) / 2;
-        service.setSize(medianSize);
-        expect(service.size).toEqual(medianSize);
+        service.setLineWidth(medianSize);
+        expect(service.lineWidth).toEqual(medianSize);
     });
 
-    it('setSize should not be able to set size over maximum ' + EraserConstants.MAX_SIZE_ERASER, () => {
+    it('setLineWidth should not be able to set size over maximum ' + EraserConstants.MAX_SIZE_ERASER, () => {
         const size = EraserConstants.MAX_SIZE_ERASER + 1;
-        service.setSize(size);
-        expect(service.size).toEqual(EraserConstants.MAX_SIZE_ERASER);
+        service.setLineWidth(size);
+        expect(service.lineWidth).toEqual(EraserConstants.MAX_SIZE_ERASER);
     });
 });
