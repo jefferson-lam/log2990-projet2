@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -12,7 +12,7 @@ import { SidebarComponent } from './sidebar.component';
 
 class ToolStub extends Tool {}
 
-describe('SidebarComponent', () => {
+fdescribe('SidebarComponent', () => {
     let component: SidebarComponent;
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
@@ -66,7 +66,7 @@ describe('SidebarComponent', () => {
         pencilButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('c');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Crayon', icon: 'create', keyShortcut: 'c', helpShortcut: '(Touche C)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(pencilStub);
     });
 
@@ -82,7 +82,7 @@ describe('SidebarComponent', () => {
         eraserButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('e');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Efface', icon: 'delete_outline', keyShortcut: 'e', helpShortcut: '(Touche E)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(eraserStub);
     });
 
@@ -98,7 +98,7 @@ describe('SidebarComponent', () => {
         lineButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('l');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Ligne', icon: 'trending_flat', keyShortcut: 'l', helpShortcut: '(Touche L)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(lineStub);
     });
 
@@ -114,7 +114,7 @@ describe('SidebarComponent', () => {
         rectangleButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('1');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Rectangle', icon: 'crop_portrait', keyShortcut: '1', helpShortcut: '(Touche 1)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleStub);
     });
 
@@ -130,8 +130,16 @@ describe('SidebarComponent', () => {
         ellipseButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('2');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Ellipse', icon: 'vignette', keyShortcut: '2', helpShortcut: '(Touche 2)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
+    });
+
+    it('when changing tool from editor, selected tool should correctly retrieve tool from map', () => {
+        component.ngOnChanges({
+            currentTool: new SimpleChange(null, pencilStub, true),
+        });
+        console.log(component.selectedTool);
+        expect(component.selectedTool).toEqual({ name: 'Efface', icon: 'delete_outline', keyShortcut: 'e', helpShortcut: '(Touche E)' });
     });
 
     it('calling openSettings should set internal attribute opened to true', () => {
