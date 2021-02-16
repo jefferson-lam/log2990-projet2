@@ -1,14 +1,14 @@
 <div id="settings-container">
-  <h2 id="title"> Options - {{currentToolName}} </h2> <!--  this.currentTool.name -->
+  <h2 id="title"> Options - {{currentToolName}} </h2>
   <div>
-  <!-- <div *ngIf="this.currentTool == Pencil"> -->
+  <div *ngIf="this.toolManager.activeTool.lineWidth">
     <div id="width-setting">
       <p> Épaisseur : </p>
       <mat-slider  color="warn" id="widthSlider" thumbLabel [displayWith]="setMax" tickInterval="1" min="5" max="100"></mat-slider>
     </div>
   </div>
-    <div> <!-- *ngIf="this.currentTool.name == Ellipse || this.currentTool == Rectangle " -->
-    <div id="trace-type">
+    <div > 
+    <div id="trace-type" *ngIf="this.toolManager.activeTool.fillMode">
       <mat-radio-group>
         <mat-radio-button value="border" color="warn"> Contour </mat-radio-button> <br>
         <mat-radio-button value="filled" color="warn"> Plein </mat-radio-button> <br>
@@ -16,11 +16,11 @@
       </mat-radio-group>
     </div>
     </div>
-    <div id="junction-settings"> <!--  *ngIf="this.currentTool.name == Line" -->
-      <div id="junction-type">
+    <div id="junction-settings">
+      <div id="junction-type"  *ngIf="this.toolManager.activeTool.withJunction">
         <p> Points de jonction : </p><mat-checkbox id="dot-bool" color="warn"></mat-checkbox>
       </div>
-        <div id="dot-size"> <!-- *ngIf="toolSettings.junctionType" -->
+        <div id="dot-size" *ngIf="this.toolManager.activeTool.junctionRadius">
         <p> Taille des points : </p>
         <mat-slider  color="warn" id="sizeSlider" thumbLabel [displayWith]="setMax" tickInterval="1" min="1" max="100"></mat-slider>
       </div>
@@ -28,4 +28,3 @@
   </div>
   <div id="color-picker"> Color-picker implementation  </div>
 <!-- </div> -->
-

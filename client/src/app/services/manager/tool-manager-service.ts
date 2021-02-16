@@ -23,7 +23,7 @@ export class ToolManagerService {
         public drawingService: DrawingService,
     ) {
         this.bindKeys();
-        this.activeTool = this.pencilService;
+        this.activeTool = this.lineService;
     }
 
     private bindKeys(): void {

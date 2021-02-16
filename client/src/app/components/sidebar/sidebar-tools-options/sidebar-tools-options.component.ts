@@ -16,7 +16,7 @@ export class SidebarToolsOptionsComponent implements OnInit {
   };
   currentToolName: string = 'outil selectionné';
   
-  constructor(settingsManager: SettingsManagerService, toolManager: ToolManagerService) { 
+  constructor(public settingsManager: SettingsManagerService, public toolManager: ToolManagerService) { 
     this.toolSizeChanged.subscribe((newSize: number) => settingsManager.setLineWidth(newSize));
   }
 
