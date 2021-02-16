@@ -112,6 +112,7 @@ describe('EraserService', () => {
     });
 
     it('onMouseLeave should call erase if mouse was down', () => {
+        // tslint:disable-next-line:no-empty
         eraseSpy.and.callFake(() => {});
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;

@@ -24,7 +24,9 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setWithJunction(hasJunction);
     }
 
-    setChangeColor(color: string): void {}
+    setChangeColor(color: string): void {
+        // TODO: when colorpicker will be added
+    }
 
     // TODO: Put these lines in the component containing the event emitter
     // @Output() eraserSizeChanged: EventEmitter<number> = new EventEmitter(); // in the attributes
