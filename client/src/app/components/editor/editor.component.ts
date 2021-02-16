@@ -21,11 +21,9 @@ export class EditorComponent {
 
     @HostListener('keypress', ['$event'])
     onKeyboardPress(event: KeyboardEvent): void {
-        if (event.key.match(/^(1|2|c|l|e)$/)) {
-            this.currentTool = this.toolManager.selectTool(event);
-        }
+        this.currentTool = this.toolManager.selectTool(event);
         // TODO : disable default listener for ctrl+o
-        else if (event.ctrlKey && event.key.match('o')) {
+        if (event.ctrlKey && event.key.match('o')) {
             this.openModalPopUp();
         }
     }
