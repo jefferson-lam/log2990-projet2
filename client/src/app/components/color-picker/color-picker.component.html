@@ -1,0 +1,34 @@
+<div class="colorpicker-wrapper">
+    <div class="color-display">
+        <div
+            class="color-preview"
+            [ngStyle]="{ 'background-color': colorService.convertRgbaToString(primaryColor) || 'black' }"
+            (click)="togglePrimaryPickerOpen()"
+        ></div>
+        <div id="switch">
+            <button mat-button (click)="switchPrimarySecondary()"><mat-icon>compare_arrows</mat-icon></button>
+        </div>
+        <div
+            class="color-preview"
+            [ngStyle]="{ 'background-color': colorService.convertRgbaToString(secondaryColor) || 'white' }"
+            (click)="toggleSecondaryPickerOpen()"
+        ></div>
+    </div>
+    <div class="colorhistory-wrapper">
+        <app-color-history [savedColors]="savedColors"></app-color-history>
+    </div>
+    <ng-container *ngIf="showPrimaryOptions">
+        <app-color-options
+            [color]="primaryColor"
+            (newColor)="confirmColorPick($event)"
+            (showOptions)="showPrimaryOptions = $event"
+        ></app-color-options>
+    </ng-container>
+    <ng-container *ngIf="showSecondaryOptions">
+        <app-color-options
+            [color]="secondaryColor"
+            (newColor)="confirmColorPick($event)"
+            (showOptions)="showSecondaryOptions = $event"
+        ></app-color-options>
+    </ng-container>
+</div>
