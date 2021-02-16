@@ -19,21 +19,16 @@ export class EditorComponent {
         this.settingsManager.editorComponent = this;
     }
 
-    @HostListener('keypress', ['$event'])
-    onKeyboardPress(event: KeyboardEvent): void {
+    @HostListener('window:keydown', ['$event'])
+    onKeyboardDown(event: KeyboardEvent): void {
         if (event.key.match(/^(1|2|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
         }
-    }
-
-    @HostListener('keydown',['$event'])
-    onKeyboardDown(event: KeyboardEvent) {
-      const keycode = event.keyCode || event.which;
-      if(keycode ===79 && event.ctrlKey){
-        event.preventDefault();
-        this.openModalPopUp();
-        this.isNewDrawing = false;
-      }
+        // TODO : problem with openModalPopUp and isNewDrawing value
+        else if (event.ctrlKey && event.key === 'o') {
+            event.preventDefault();
+            this.openModalPopUp();
+        }
     }
 
     updateToolFromSidebarClick(newTool: Tool): void {
