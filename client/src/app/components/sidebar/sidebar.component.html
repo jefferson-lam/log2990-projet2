@@ -27,13 +27,13 @@
             <li><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
         </ul>
         <ul class="tools-sidebar">
-            <li id="toolId" *ngFor="let tool of sidebarToolButtons" class="listToolsClass" [class.selected]="tool === selectedNewTool" (click)="changeColor(tool);" >
+            <li id="toolId" *ngFor="let tool of sidebarToolButtons" class="listToolsClass" >
                 <mat-icon class="toolClass"
                     id="icon-button-{{ tool.name }}"
                     matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
                     [matTooltipPosition]="'right'"
-                    (click)="onSelectTool(tool.keyShortcut); openSettings(); changeColor(tool);"
-                    [class.selected]="tool === selectedNewTool"
+                    (click)="onSelectTool(tool); openSettings();"
+                    [class.selected]="tool === selectedTool"
                 >
                     {{ tool.icon }}
                 </mat-icon>

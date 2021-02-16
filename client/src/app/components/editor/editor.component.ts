@@ -11,7 +11,8 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
     styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent {
-    isNewDrawing: boolean = false;
+
+  isNewDrawing: boolean = false;
     currentTool: Tool;
 
     constructor(public toolManager: ToolManagerService, public newDialog: MatDialog, public settingsManager: SettingsManagerService) {
