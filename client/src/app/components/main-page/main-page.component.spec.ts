@@ -19,13 +19,12 @@ describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let indexServiceSpy: SpyObj<IndexService>;
-    const dialogStub: MatDialog = {} as MatDialog;
+    const dialogStub = jasmine.createSpyObj('MatDialog', ['open']);
 
     beforeEach(async(() => {
         indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicGet', 'basicPost']);
         indexServiceSpy.basicGet.and.returnValue(of({ title: '', body: '' }));
         indexServiceSpy.basicPost.and.returnValue(of());
-
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
             declarations: [MainPageComponent],
@@ -58,5 +57,14 @@ describe('MainPageComponent', () => {
     it('should call basicPost when calling sendTimeToServer', () => {
         component.sendTimeToServer();
         expect(indexServiceSpy.basicPost).toHaveBeenCalled();
+    });
+
+    it('on click, should open carrousel interface', () => {
+        const backSpy = spyOn(component, 'openCarousel').and.callThrough();
+        fixture.detectChanges();
+        const btn = fixture.debugElement.nativeElement.querySelector('#carousel-button');
+        btn.click();
+        fixture.detectChanges();
+        expect(backSpy).toHaveBeenCalledWith();
     });
 });

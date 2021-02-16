@@ -3,6 +3,7 @@
 
     <div id="main-buttons">
         <button id="creation-button" mat-raised-button routerLink="/editor">Créer un nouveau dessin</button>
+        <button id="carousel-button" mat-raised-button (click)="openCarousel()">Ouvrir le carrousel de dessins</button>
         <button id="oldDrawing-button" mat-raised-button *ngIf="oldDrawingTrue">Continuer un dessin</button>
         <ng-template #oldDrawingFalse>
             <button mat-flat-button [disabled]="drawingExists">Continuer un dessin</button>
