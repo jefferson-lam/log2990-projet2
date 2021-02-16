@@ -1,5 +1,9 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ColorOptionsComponent } from './color-options.component';
+import { ColorOptionsComponent } from '@app/components/color-picker/color-options/color-options.component';
+import { ColorPaletteComponent } from '@app/components/color-picker/color-options/color-palette/color-palette.component';
+import { ColorSliderComponent } from '@app/components/color-picker/color-options/color-slider/color-slider.component';
+import { RgbSelectorComponent } from '@app/components/color-picker/color-options/rgb-selector/rgb-selector.component';
 
 describe('ColorOptionsComponent', () => {
     let component: ColorOptionsComponent;
@@ -7,7 +11,8 @@ describe('ColorOptionsComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ColorOptionsComponent],
+            declarations: [ColorOptionsComponent, ColorPaletteComponent, ColorSliderComponent, RgbSelectorComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
