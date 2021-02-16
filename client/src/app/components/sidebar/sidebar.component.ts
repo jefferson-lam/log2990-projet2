@@ -54,10 +54,6 @@ export class SidebarComponent {
         this.opened = false;
     }
 
-    backClick(): void {
-        this.location.back();
-    }
-
     openNewDrawing(): void {
         this.notifyEditorNewDrawing.emit(this.isNewDrawing);
     }
