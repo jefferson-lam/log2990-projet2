@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -45,6 +46,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatToolbarModule,
         MatCardModule,
         MatTooltipModule,
+        DragDropModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
