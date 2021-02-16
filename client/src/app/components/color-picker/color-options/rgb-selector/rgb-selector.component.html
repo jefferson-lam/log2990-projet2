@@ -1,0 +1,15 @@
+<div id="input-boxes">
+    <label for="red">
+        R:
+        <input type="text" id="red-input" maxlength="2" value="{{ printDecToHex(red) }}" size="5" (input)="onInput($event)" />
+    </label>
+    <label for="green">
+        V: <input type="text" id="green-input" maxlength="2" value="{{ printDecToHex(green) }}" size="5" (input)="onInput($event)" />
+    </label>
+    <label for="blue">
+        B: <input type="text" id="blue-input" maxlength="2" value="{{ printDecToHex(blue) }}" size="5" (input)="onInput($event)" />
+    </label>
+</div>
+<div *ngIf="invalidInput">
+    <p>Please enter a valid hex value.</p>
+</div>

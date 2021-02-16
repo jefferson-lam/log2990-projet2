@@ -43,9 +43,10 @@ export class ToolManagerService {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.currentTool.onMouseUp({} as MouseEvent);
         if (this.keyBindings.has(keyShortcut)) {
-            return this.keyBindings.get(keyShortcut) as Tool;
+            this.currentTool = this.keyBindings.get(keyShortcut) as Tool;
+            return this.currentTool;
         } else {
-            return this.pencilService;
+            return this.currentTool;
         }
     }
 }
