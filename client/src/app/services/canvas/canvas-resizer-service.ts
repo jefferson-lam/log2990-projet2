@@ -8,12 +8,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class CanvasResizerService {
-    newDrawingSaved: boolean = false;
-
-    newBaseCanvasRef: ImageData;
-    newPreviewCanvasRef: ImageData;
-    canvasState: ImageData;
-
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     baseCanvas: ElementRef<HTMLCanvasElement>;
@@ -28,8 +22,6 @@ export class CanvasResizerService {
     sideResizer: ElementRef<HTMLElement>;
     cornerResizer: ElementRef<HTMLElement>;
     bottomResizer: ElementRef<HTMLElement>;
-
-    canvasImageData: ImageData;
 
     constructor(public drawingService: DrawingService) {}
 
@@ -69,28 +61,35 @@ export class CanvasResizerService {
         }
     }
 
+    /**
+     * This function is called when the user does a mouseup event, while dragging
+     * the button. It sets the base canvas' size to the one defined by the user.
+     * It also saves the drawing that was on the canvas by doing a swap with the
+     * preview canvas.
+     */
     expandCanvas(event: CdkDragEnd): void {
-        this.canvasState = this.baseCtx.getImageData(0, 0, this.previewCtx.canvas.width, this.previewCtx.canvas.height);
+        // Save drawing to preview canvas before drawing is wiped due to resizing
+        this.previewCtx.drawImage(this.baseCtx.canvas, 0, 0);
         if (this.isSideResizerDown) {
             this.lockMinCanvasValue();
-            this.canvasSize.x = this.previewCanvasSize.x;
-            this.sideResizer.nativeElement.style.left = this.canvasSize.x + 'px';
+            this.baseCtx.canvas.width = this.previewCanvasSize.x;
+            this.sideResizer.nativeElement.style.left = this.baseCtx.canvas.width + 'px';
             this.isSideResizerDown = false;
         } else if (this.isCornerResizerDown) {
             this.lockMinCanvasValue();
-            this.canvasSize.x = this.previewCanvasSize.x;
-            this.canvasSize.y = this.previewCanvasSize.y;
-            this.cornerResizer.nativeElement.style.left = this.canvasSize.x + 'px';
-            this.cornerResizer.nativeElement.style.top = this.canvasSize.y + 'px';
+            this.baseCtx.canvas.width = this.previewCanvasSize.x;
+            this.baseCtx.canvas.height = this.previewCanvasSize.y;
+            this.cornerResizer.nativeElement.style.left = this.baseCtx.canvas.width + 'px';
+            this.cornerResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
             this.isCornerResizerDown = false;
         } else if (this.isBottomResizerDown) {
             this.lockMinCanvasValue();
-            this.canvasSize.y = this.previewCanvasSize.y;
-            this.bottomResizer.nativeElement.style.top = this.canvasSize.y + 'px';
+            this.baseCtx.canvas.height = this.previewCanvasSize.y;
+            this.bottomResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
             this.isBottomResizerDown = false;
         }
-        this.previewCtx.putImageData(this.canvasState, 0, 0);
-        this.baseCtx.putImageData(this.canvasState, 0, 0);
+        // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
+        this.baseCtx.drawImage(this.previewCtx.canvas, 0, 0);
     }
 
     lockMinCanvasValue(): void {
@@ -119,24 +118,6 @@ export class CanvasResizerService {
             this.sideResizer.nativeElement.style.left = CanvasConstants.MIN_HEIGHT_CANVAS + 'px';
 
             this.bottomResizer.nativeElement.style.top = CanvasConstants.MIN_LENGTH_CANVAS + 'px';
-        }
-    }
-
-    putDrawingOnBaseCanvas(): void {
-        if (this.newDrawingSaved) {
-            this.baseCtx.putImageData(this.newPreviewCanvasRef, 0, 0);
-            this.previewCtx.putImageData(this.newPreviewCanvasRef, 0, 0);
-            this.newBaseCanvasRef = this.newPreviewCanvasRef;
-            this.newDrawingSaved = false;
-        }
-    }
-
-    saveDrawingOnPreviewCanvas(): void {
-        if (!this.newDrawingSaved) {
-            this.newPreviewCanvasRef = this.baseCtx.getImageData(0, 0, this.baseCtx.canvas.width, this.baseCtx.canvas.height);
-            this.previewCtx.putImageData(this.newBaseCanvasRef, 0, 0);
-            this.baseCtx.putImageData(this.newBaseCanvasRef, 0, 0);
-            this.newDrawingSaved = true;
         }
     }
 
