@@ -134,15 +134,6 @@ describe('SidebarComponent', () => {
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
     });
 
-    it('on click, return button should return to main page', () => {
-        const backSpy = spyOn<any>(component, 'backClick').and.callThrough();
-        fixture.detectChanges();
-        const btn = fixture.debugElement.nativeElement.querySelector('#return-button');
-        btn.click();
-        fixture.detectChanges();
-        expect(backSpy).toHaveBeenCalledWith();
-    });
-
     it('calling openSettings should set internal attribute opened to true', () => {
         component.openSettings();
         expect(component.opened).toBeTruthy();
@@ -159,16 +150,5 @@ describe('SidebarComponent', () => {
         newDrawingButton.click();
         fixture.detectChanges();
         expect(notifyEditorNewDrawingSpy).toHaveBeenCalledWith(component.isNewDrawing);
-    });
-
-    it('click on return button should return to main page', () => {
-        const backSpy = spyOn<any>(component, 'backClick').and.callThrough();
-
-        fixture.detectChanges();
-        const btn = fixture.debugElement.nativeElement.querySelector('#return-button');
-        btn.click();
-        fixture.detectChanges();
-
-        expect(backSpy).toHaveBeenCalled();
     });
 });
