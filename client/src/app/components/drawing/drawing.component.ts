@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { CanvasResizerService } from '@app/services/canvas/canvas-resizer-service';
@@ -14,7 +14,7 @@ export const DEFAULT_HEIGHT = 800;
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit {
+export class DrawingComponent implements AfterViewInit, OnChanges {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
@@ -57,6 +57,18 @@ export class DrawingComponent implements AfterViewInit {
         this.canvasResizerService.sideResizer = this.sideResizer;
         this.canvasResizerService.cornerResizer = this.cornerResizer;
         this.canvasResizerService.bottomResizer = this.bottomResizer;
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        const newTool = changes.currentTool.currentValue;
+        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
+        if (newTool === this.toolManager.pencilService) {
+            canvasStyle.cursor = 'url(assets/pencil-icon.png) 0 15, auto';
+        } else if (newTool === this.toolManager.eraserService) {
+            canvasStyle.cursor = 'none';
+        } else {
+            canvasStyle.setProperty('cursor', 'crosshair');
+        }
     }
 
     @HostListener('keydown', ['$event'])
