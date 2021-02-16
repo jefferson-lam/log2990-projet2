@@ -7,6 +7,7 @@ import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -14,6 +15,10 @@ import { RectangleService } from '@app/services/tools/rectangle-service';
 export class ToolManagerService {
     keyBindings: Map<string, Tool> = new Map();
     activeTool: Tool;
+
+    activeToolSource: BehaviorSubject<Tool>;
+    // activeToolObservable: Observable<string> = this.activeToolSource.asObservable();
+
     constructor(
         public pencilService: PencilService,
         public eraserService: EraserService,
@@ -23,7 +28,7 @@ export class ToolManagerService {
         public drawingService: DrawingService,
     ) {
         this.bindKeys();
-        this.activeTool = this.lineService;
+        this.activeTool = this.pencilService;
     }
 
     private bindKeys(): void {
