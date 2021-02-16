@@ -74,6 +74,20 @@ export class EraserService extends Tool {
         ctx.stroke();
     }
 
+    onMouseLeave(event: MouseEvent): void {
+        if (this.mouseDown) {
+            this.erase(this.drawingService.baseCtx, this.pathData);
+        }
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.clearPath();
+    }
+
+    onMouseEnter(event: MouseEvent): void {
+        if (event.buttons === MouseConstants.MouseButton.Left) {
+            this.mouseDown = false;
+        }
+    }
+
     private eraseSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.fillStyle = 'white';
