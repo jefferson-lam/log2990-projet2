@@ -32,10 +32,10 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MainPageComponent,
         MainPageCarrouselComponent,
         NewDrawingBoxComponent,
-        ColorPickerModule,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
+        ColorPickerModule,
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,

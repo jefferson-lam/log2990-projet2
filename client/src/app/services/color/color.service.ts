@@ -41,9 +41,8 @@ export class ColorService {
         this.secondaryColorSource.next(this.secondaryColor);
     }
 
-    // TODO: METTRE DES ESPACES APRES LES VIRGULES
     convertRgbaToString(color: Rgba): string {
-        return 'rgba(' + color.red + ',' + color.green + ',' + color.blue + ',' + color.alpha + ')';
+        return 'rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + color.alpha + ')';
     }
 
     // new color opacity is set to 1 to facilitate communication between components

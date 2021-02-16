@@ -7,7 +7,7 @@ describe('ColorService', () => {
     let service: ColorService;
     let newColor: Rgba;
     const colorPlaceholderBlack: Rgba = { red: '0', green: '0', blue: '0', alpha: 1 };
-    const colorPlaceholderBlackString = 'rgba(0,0,0,1)';
+    const colorPlaceholderBlackString = 'rgba(0, 0, 0, 1)';
     let ctx: CanvasRenderingContext2D;
     let canvasTestHelper: CanvasTestHelper;
 
@@ -78,7 +78,7 @@ describe('ColorService', () => {
     });
 
     it('should return rgba to string', () => {
-        const expectedColorString = 'rgba(' + newColor.red + ',' + newColor.green + ',' + newColor.blue + ',' + newColor.alpha + ')';
+        const expectedColorString = 'rgba(' + newColor.red + ', ' + newColor.green + ', ' + newColor.blue + ', ' + newColor.alpha + ')';
         const newColorString = service.convertRgbaToString(newColor);
         expect(newColorString).toBe(expectedColorString);
     });

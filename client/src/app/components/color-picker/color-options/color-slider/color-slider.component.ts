@@ -69,15 +69,6 @@ export class ColorSliderComponent implements AfterViewInit {
         }
     }
 
-    // ngOnChanges(changes: SimpleChanges): void {
-    //     if (changes.rgbSelectorColor) {
-    //         const newHue = this.getHuePositionFromColor(this.rgbSelectorColor);
-    //         this.selectedHeight = newHue;
-    //         this.draw();
-    //         this.emitHue(this.selectedHeight);
-    //     }
-    // }
-
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(evt: MouseEvent): void {
         this.mousedown = false;
@@ -109,34 +100,4 @@ export class ColorSliderComponent implements AfterViewInit {
         const rgbaColor = this.colorService.getColorAtPosition(this.ctx, this.canvas.nativeElement.width / 2, y, 1);
         this.hue.emit(rgbaColor);
     }
-
-    // logic provided by http://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
-    // getHuePositionFromColor(color: Rgba): number {
-    //     let hue;
-    //     const red: number = parseInt(color.red, 10) / 255;
-    //     const green: number = parseInt(color.green, 10) / 255;
-    //     const blue: number = parseInt(color.blue, 10) / 255;
-    //     const min: number = Math.min(red, green, blue);
-    //     const max: number = Math.max(red, green, blue);
-    //     // Max and min will only be equal when all rgb have the same value
-    //     if (max === min) {
-    //         return 0;
-    //     }
-
-    //     if (max === red) {
-    //         hue = (green - blue) / (max - min);
-    //     } else if (max === green) {
-    //         hue = 2 + (blue - red) / (max - min);
-    //     } else {
-    //         hue = 4 + (red - green) / (max - min);
-    //     }
-
-    //     hue *= 60; // find the sector of 60 degrees to which the color belongs
-
-    //     if (hue < 0) {
-    //         hue += 360;
-    //     }
-    //     // find position with current slider dimensions
-    //     return Math.floor((hue * this.canvas.nativeElement.height) / 360);
-    // }
 }
