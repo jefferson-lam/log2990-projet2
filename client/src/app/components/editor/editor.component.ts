@@ -24,20 +24,14 @@ export class EditorComponent {
         if (event.key.match(/^(1|2|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
         }
-        // TODO : disable default listener for ctrl+o
-        // else if (event.key.match('o')) {
-        //
-        //     event.preventDefault();
-        //     this.openModalPopUp();
-        // }
     }
 
     @HostListener('keydown',['$event'])
     onKeyboardDown(event: KeyboardEvent) {
       const keycode = event.keyCode || event.which;
       if(keycode ===79 && event.ctrlKey){
-        this.openModalPopUp();
         event.preventDefault();
+        this.openModalPopUp();
         this.isNewDrawing = false;
       }
     }
