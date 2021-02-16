@@ -6,8 +6,6 @@ import * as ToolConstants from '@app/constants/tool-constants';
     providedIn: 'root',
 })
 export class SettingsManagerService {
-    lineWidth: number;
-    fillMode: FillMode;
     editorComponent: EditorComponent;
 
     setLineWidth(newWidth: number): void {
@@ -25,6 +23,8 @@ export class SettingsManagerService {
     setWithJunction(hasJunction: boolean): void {
         this.editorComponent.currentTool.setWithJunction(hasJunction);
     }
+
+    setChangeColor(color: string): void {}
 
     // TODO: Put these lines in the component containing the event emitter
     // @Output() eraserSizeChanged: EventEmitter<number> = new EventEmitter(); // in the attributes
