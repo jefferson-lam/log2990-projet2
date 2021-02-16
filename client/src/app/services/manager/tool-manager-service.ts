@@ -13,7 +13,7 @@ import { RectangleService } from '@app/services/tools/rectangle-service';
 })
 export class ToolManagerService {
     keyBindings: Map<string, Tool> = new Map();
-    activeTool: Tool;
+    currentTool: Tool;
     constructor(
         public pencilService: PencilService,
         public eraserService: EraserService,
@@ -23,7 +23,7 @@ export class ToolManagerService {
         public drawingService: DrawingService,
     ) {
         this.bindKeys();
-        this.activeTool = this.pencilService;
+        this.currentTool = this.pencilService;
     }
 
     private bindKeys(): void {
@@ -41,6 +41,7 @@ export class ToolManagerService {
 
     getTool(keyShortcut: string): Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.currentTool.onMouseUp({} as MouseEvent);
         if (this.keyBindings.has(keyShortcut)) {
             return this.keyBindings.get(keyShortcut) as Tool;
         } else {
