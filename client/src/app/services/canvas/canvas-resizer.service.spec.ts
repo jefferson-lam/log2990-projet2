@@ -3,22 +3,24 @@ import { ElementRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import * as CanvasConstants from '@app/constants/canvas-constants';
-import { DrawingService } from '../drawing/drawing.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { CanvasResizerService } from './canvas-resizer-service';
 
 export class MockElementRef extends ElementRef {
-    nativeElement = {};
+    nativeElement: ElementRef<HTMLElement> = {} as ElementRef<HTMLElement>;
 }
 
+// tslint:disable:no-any
+// tslint:disable:max-file-line-count
 describe('CanvasResizerService', () => {
     let service: CanvasResizerService;
-    let cdkDragEndEvent: CdkDragEnd;
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawingSpy: jasmine.SpyObj<DrawingService>;
     let baseCtxDrawImageSpy: jasmine.Spy<any>;
     let previewCtxDrawImageSpy: jasmine.Spy<any>;
+    const cdkDragEndEvent: CdkDragEnd = {} as CdkDragEnd;
 
     beforeEach(() => {
         drawingSpy = jasmine.createSpyObj('drawingService', ['clearCanvas'], {});
@@ -35,8 +37,8 @@ describe('CanvasResizerService', () => {
         service = TestBed.inject(CanvasResizerService);
         service.baseCtx = baseCtxStub;
         service.previewCtx = previewCtxStub;
-        service.baseCtx.canvas.width = 20;
-        service.baseCtx.canvas.height = 20;
+        service.baseCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        service.baseCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS;
         service.sideResizer = {
             nativeElement: jasmine.createSpyObj('nativeElement', ['style']),
         };
@@ -65,28 +67,30 @@ describe('CanvasResizerService', () => {
         service.previewCanvasSize.x = CanvasConstants.MIN_LENGTH_CANVAS;
         service.previewCanvasSize.y = CanvasConstants.MIN_HEIGHT_CANVAS;
         service.lockMinCanvasValue();
-        expect(service.sideResizer.nativeElement.style.left).toEqual(250 + 'px');
-        expect(service.cornerResizer.nativeElement.style.left).toEqual(250 + 'px');
-        expect(service.cornerResizer.nativeElement.style.top).toEqual(250 + 'px');
-        expect(service.bottomResizer.nativeElement.style.top).toEqual(250 + 'px');
+        expect(service.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
+        expect(service.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
+        expect(service.cornerResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
+        expect(service.bottomResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
     });
 
     it('lockMinCanvasValue should set canvas width to minimum 250px', () => {
+        const oldCanvasHeight = 400;
         service.previewCanvasSize.x = CanvasConstants.MIN_LENGTH_CANVAS;
-        service.previewCanvasSize.y = 400;
+        service.previewCanvasSize.y = oldCanvasHeight;
         service.lockMinCanvasValue();
-        expect(service.sideResizer.nativeElement.style.left).toEqual(250 + 'px');
-        expect(service.cornerResizer.nativeElement.style.left).toEqual(250 + 'px');
-        expect(service.bottomResizer.nativeElement.style.left).toEqual(125 + 'px');
+        expect(service.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
+        expect(service.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
+        expect(service.bottomResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS / 2 + 'px');
     });
 
     it('lockMinCanvasValue should set canvas height to minimum 250px', () => {
-        service.previewCanvasSize.x = 400;
+        const oldCanvasWidth = 400;
+        service.previewCanvasSize.x = oldCanvasWidth;
         service.previewCanvasSize.y = CanvasConstants.MIN_HEIGHT_CANVAS;
         service.lockMinCanvasValue();
-        expect(service.sideResizer.nativeElement.style.top).toEqual(125 + 'px');
-        expect(service.cornerResizer.nativeElement.style.top).toEqual(250 + 'px');
-        expect(service.bottomResizer.nativeElement.style.top).toEqual(250 + 'px');
+        expect(service.sideResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS / 2 + 'px');
+        expect(service.cornerResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
+        expect(service.bottomResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
     });
 
     // Test: expandCanvas() with sideResizer

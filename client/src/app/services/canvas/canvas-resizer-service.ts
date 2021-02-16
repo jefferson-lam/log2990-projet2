@@ -29,7 +29,8 @@ export class CanvasResizerService {
      * This function is repeatedly called when the user drags one of the sliders, while holding
      * his mouse down. It displays a preview of the size of the canvas defined by the user's
      * mouse position. It also dynamically repositions the sliders to while the preview is ongoing.
-     **/
+     *
+     */
     drawPreviewOfNewSize(event: CdkDragMove): void {
         if (this.isSideResizerDown) {
             this.previewCanvasSize.x = event.pointerPosition.x;
