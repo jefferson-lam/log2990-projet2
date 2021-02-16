@@ -17,6 +17,7 @@ describe('SettingsManagerService', () => {
     let setFillModeSpy: jasmine.Spy<any>;
     let setJunctionRadiusSpy: jasmine.Spy<any>;
     let setWithJunctionSpy: jasmine.Spy<any>;
+    let toolManagerServiceSpy: ToolManagerService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -31,6 +32,7 @@ describe('SettingsManagerService', () => {
         setFillModeSpy = spyOn<any>(service.editorComponent.currentTool, 'setFillMode').and.callThrough();
         setJunctionRadiusSpy = spyOn<any>(service.editorComponent.currentTool, 'setJunctionRadius');
         setWithJunctionSpy = spyOn<any>(service.editorComponent.currentTool, 'setWithJunction');
+        toolManagerServiceSpy = jasmine.createSpyObj<any>(service.toolManagerService, ['setPrimaryColorTools', 'setSecondaryColorTools']);
     });
 
     it('should be created', () => {
@@ -59,5 +61,10 @@ describe('SettingsManagerService', () => {
         const hasJunction = true;
         service.setWithJunction(hasJunction);
         expect(setWithJunctionSpy).toHaveBeenCalled();
+    });
+
+    it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {
+        service.setPrimaryColorTools('blue');
+        expect(toolManagerServiceSpy).toHaveBeenCalled();
     });
 });
