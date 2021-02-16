@@ -24,7 +24,6 @@ describe('SettingsManagerService', () => {
             providers: [{ provide: EditorComponent, useValue: editorComponent }],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-
         editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service);
         toolStub = new ToolStub({} as DrawingService);
         editorComponent.currentTool = toolStub;
