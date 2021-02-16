@@ -111,6 +111,42 @@ describe('EraserService', () => {
         expect(moveCursorSpy).toHaveBeenCalled();
     });
 
+    it('onMouseLeave should call erase if mouse was down', () => {
+        eraseSpy.and.callFake(() => {});
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(eraseSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseLeave should not call erase if mouse was not down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = false;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(eraseSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseEnter should set mouseDown to false if mouse is not down', () => {
+        service.mouseDown = true;
+        const mouseEventNoClick = {
+            buttons: MouseConstants.MouseButton.Left,
+        } as MouseEvent;
+
+        service.onMouseEnter(mouseEventNoClick);
+        expect(service.mouseDown).toBeFalse();
+    });
+
+    it('onMouseEnter should not set mouseDown to false if mouse is down', () => {
+        service.mouseDown = true;
+
+        service.onMouseEnter(mouseEvent);
+        expect(service.mouseDown).toBeTrue();
+    });
+
     it('getCorners of positive vector coordinates product returns bottom left and top right corners', () => {
         const cornersSpy = spyOn<any>(service, 'getCorners').and.callThrough();
         const pathStub = [
