@@ -12,6 +12,7 @@ export class CanvasResizerService {
 
     newBaseCanvasRef: ImageData;
     newPreviewCanvasRef: ImageData;
+    canvasState: ImageData;
 
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
@@ -38,8 +39,6 @@ export class CanvasResizerService {
      * mouse position. It also dynamically repositions the sliders to while the preview is ongoing.
      **/
     drawPreviewOfNewSize(event: CdkDragMove): void {
-        this.putDrawingOnBaseCanvas();
-        this.newBaseCanvasRef = this.baseCtx.getImageData(0, 0, this.baseCtx.canvas.width, this.baseCtx.canvas.height);
         if (this.isSideResizerDown) {
             this.previewCanvasSize.x = event.pointerPosition.x;
             this.cornerResizer.nativeElement.style.left = event.pointerPosition.x + 'px';
@@ -71,6 +70,7 @@ export class CanvasResizerService {
     }
 
     expandCanvas(event: CdkDragEnd): void {
+        this.canvasState = this.baseCtx.getImageData(0, 0, this.previewCtx.canvas.width, this.previewCtx.canvas.height);
         if (this.isSideResizerDown) {
             this.lockMinCanvasValue();
             this.canvasSize.x = this.previewCanvasSize.x;
@@ -89,7 +89,8 @@ export class CanvasResizerService {
             this.bottomResizer.nativeElement.style.top = this.canvasSize.y + 'px';
             this.isBottomResizerDown = false;
         }
-        this.saveDrawingOnPreviewCanvas();
+        this.previewCtx.putImageData(this.canvasState, 0, 0);
+        this.baseCtx.putImageData(this.canvasState, 0, 0);
     }
 
     lockMinCanvasValue(): void {
