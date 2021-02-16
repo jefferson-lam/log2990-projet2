@@ -1,6 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -14,6 +15,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
+import { ColorPickerModule } from './components/color-picker/color-picker.module';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
@@ -30,6 +32,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MainPageComponent,
         MainPageCarrouselComponent,
         NewDrawingBoxComponent,
+        ColorPickerModule,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
@@ -47,6 +50,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatCardModule,
         MatTooltipModule,
         DragDropModule,
+        FormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
