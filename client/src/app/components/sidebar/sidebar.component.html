@@ -37,8 +37,6 @@
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">
         <mat-drawer [mode]="'side'" class="sidenav" [opened]="opened">
-            <app-color-picker></app-color-picker>
-            <!-- TODO: REMOVE APP-COLOR-PICKER -->
             <mat-drawer-content [ngSwitch]="selectedTool"> </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

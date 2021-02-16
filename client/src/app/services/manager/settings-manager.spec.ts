@@ -1,7 +1,9 @@
-import { TestBed } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
+import { ColorService } from '@app/services/color/color.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
 
@@ -65,4 +67,34 @@ describe('SettingsManagerService', () => {
         service.setSecondaryColorTools('blue');
         expect(toolManagerSpy.setSecondaryColorTools).toHaveBeenCalled();
     });
+
+    it('calls setPrimaryColorsTools when size changed', async(() => {
+        const mockColor = {
+            red: '255',
+            green: '10',
+            blue: '2',
+            alpha: 1,
+        } as Rgba;
+        const serviceSetter = spyOn(service, 'setPrimaryColorTools').and.callThrough();
+        const colorService = TestBed.inject(ColorService);
+        colorService.setPrimaryColor(mockColor);
+
+        expect(serviceSetter).toHaveBeenCalled();
+        expect(serviceSetter).toHaveBeenCalledWith(colorService.convertRgbaToString(mockColor));
+    }));
+
+    it('calls setSecondaryColorsTools when size changed', async(() => {
+        const mockColor = {
+            red: '255',
+            green: '10',
+            blue: '2',
+            alpha: 1,
+        } as Rgba;
+        const serviceSetter = spyOn(service, 'setSecondaryColorTools').and.callThrough();
+        const colorService = TestBed.inject(ColorService);
+        colorService.setSecondaryColor(mockColor);
+
+        expect(serviceSetter).toHaveBeenCalled();
+        expect(serviceSetter).toHaveBeenCalledWith(colorService.convertRgbaToString(mockColor));
+    }));
 });
