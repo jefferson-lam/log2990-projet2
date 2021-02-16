@@ -27,12 +27,10 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setWithJunction(hasJunction);
     }
 
-    // TODO tests
     setPrimaryColorTools(color: string): void {
         this.toolManagerService.setPrimaryColorTools(color);
     }
 
-    // TODO tests
     setSecondaryColorTools(color: string): void {
         this.toolManagerService.setSecondaryColorTools(color);
     }
