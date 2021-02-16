@@ -63,7 +63,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         const newTool = changes.currentTool.currentValue;
         const canvasStyle = document.getElementsByTagName('canvas')[1].style;
         if (newTool === this.toolManager.pencilService) {
-            canvasStyle.cursor = 'url(assets/pencil-icon.png) 0 15, auto';
+            canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
         } else if (newTool === this.toolManager.eraserService) {
             canvasStyle.cursor = 'none';
         } else {
