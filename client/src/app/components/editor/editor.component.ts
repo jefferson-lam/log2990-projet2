@@ -25,9 +25,21 @@ export class EditorComponent {
             this.currentTool = this.toolManager.selectTool(event);
         }
         // TODO : disable default listener for ctrl+o
-        else if (event.ctrlKey && event.key.match('o')) {
-            this.openModalPopUp();
-        }
+        // else if (event.key.match('o')) {
+        //
+        //     event.preventDefault();
+        //     this.openModalPopUp();
+        // }
+    }
+
+    @HostListener('keydown',['$event'])
+    onKeyboardDown(event: KeyboardEvent) {
+      const keycode = event.keyCode || event.which;
+      if(keycode ===79 && event.ctrlKey){
+        this.openModalPopUp();
+        event.preventDefault();
+        this.isNewDrawing = false;
+      }
     }
 
     updateToolFromSidebarClick(newTool: Tool): void {
@@ -44,8 +56,8 @@ export class EditorComponent {
         }
     }
 
-    toggleNewDrawing(fun: boolean): void {
-        this.isNewDrawing = fun;
+    toggleNewDrawing(drawingTrue: boolean): void {
+        this.isNewDrawing = drawingTrue;
         this.openModalPopUp();
     }
 }

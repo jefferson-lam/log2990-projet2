@@ -18,6 +18,7 @@ export class SidebarComponent {
     opened: boolean = false;
     shouldRun: boolean;
     isNewDrawing: boolean;
+    selectedNewTool: string;
 
     constructor(public location: Location, public toolManagerService: ToolManagerService) {
         this.shouldRun = false;
@@ -59,5 +60,9 @@ export class SidebarComponent {
 
     openNewDrawing(): void {
         this.notifyEditorNewDrawing.emit(this.isNewDrawing);
+    }
+
+    changeColor(tool: string) : void {
+      this.selectedNewTool = tool;
     }
 }

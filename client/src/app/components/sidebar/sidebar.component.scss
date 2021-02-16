@@ -17,6 +17,7 @@
     display: flex;
     flex-direction: column;
 }
+
 mat-icon{
   position: center;
   margin-left: 7px;
@@ -45,13 +46,15 @@ mat-icon{
   background-color: #DDD;
   left: .1em;
 }
-.tools-sidebar li.selected {
-  background-color: #527382;
-  color: white;
+
+.tools-sidebar li:active{
+  background-color: #4682B4;
+  color:#DDD;
 }
-.tools-sidebar li.selected:hover {
-  background-color: #BBD8DC;
-  color: white;
+
+.selected{
+  background-color: #4682B4;
+  color:#DDD;
 }
 
 .options-sidebar {
@@ -75,14 +78,6 @@ mat-icon{
   background-color: #DDD;
   left: .1em;
 }
-.options-sidebar li.selected {
-  background-color: #527382;
-  color: white;
-}
-.options-sidebar li.selected:hover {
-  background-color: #BBD8DC;
-  color: white;
-}
 
 .tools-option-container {
   position: absolute;
@@ -98,10 +93,6 @@ mat-icon{
   overflow-y: hidden;
 }
 
-mat-card-title{
-  overflow-y: hidden;
-}
-
 mat-drawer {
   box-shadow: 10px 0 28px;
   background-color: #4682B4;
@@ -114,15 +105,9 @@ mat-drawer-content {
   display: flex;
   overflow-y: hidden;
 }
-
-.sidebar-pencil{
-  display: flex;
-  padding-left: 10px;
-  width: 50px;
-  flex-direction: column;
-  align-items: flex-start;
+.tools:focus{
+  background-color: red;
 }
-
 .sidebar-tool-options {
   flex-direction: column;
   align-items: flex-start;
@@ -147,3 +132,4 @@ mat-drawer-content {
 #sidebar{
   z-index:  3;
 }
+
