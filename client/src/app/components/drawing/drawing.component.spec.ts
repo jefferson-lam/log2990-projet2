@@ -90,4 +90,58 @@ describe('DrawingComponent', () => {
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
     });
+
+    it("should call the tool's keyboard down when receiving a keyboard down event", () => {
+        const keyboardEvent = {} as KeyboardEvent;
+        const keyboardEventSpy = spyOn(toolStub, 'onKeyboardDown').and.callThrough();
+        component.onKeyboardDown(keyboardEvent);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
+    });
+
+    it("should call the tool's keyboard up when receiving a keyboard up event", () => {
+        const keyboardEvent = {} as KeyboardEvent;
+        const keyboardEventSpy = spyOn(toolStub, 'onKeyboardUp').and.callThrough();
+        component.onKeyboardUp(keyboardEvent);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
+    });
+
+    it("should call the tool's mouse click when receiving a mouse click event", () => {
+        const mouseEvent = {} as MouseEvent;
+        const mouseEventSpy = spyOn(toolStub, 'onMouseClick').and.callThrough();
+        component.onMouseClick(mouseEvent);
+
+        expect(mouseEventSpy).toHaveBeenCalled();
+        expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it("should call the tool's mouse double click when receiving a mouse double click event", () => {
+        const mouseEvent = {} as MouseEvent;
+        const mouseEventSpy = spyOn(toolStub, 'onMouseDoubleClick').and.callThrough();
+        component.onMouseDoubleClick(mouseEvent);
+
+        expect(mouseEventSpy).toHaveBeenCalled();
+        expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it("should call the tool's mouse leave when receiving a mouse leave event", () => {
+        const mouseEvent = {} as MouseEvent;
+        const mouseEventSpy = spyOn(toolStub, 'onMouseLeave').and.callThrough();
+        component.onMouseLeave(mouseEvent);
+
+        expect(mouseEventSpy).toHaveBeenCalled();
+        expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it("should call the tool's mouse enter when receiving a mouse leave event", () => {
+        const mouseEvent = {} as MouseEvent;
+        const mouseEventSpy = spyOn(toolStub, 'onMouseEnter').and.callThrough();
+        component.onMouseEnter(mouseEvent);
+
+        expect(mouseEventSpy).toHaveBeenCalled();
+        expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
+    });
 });
