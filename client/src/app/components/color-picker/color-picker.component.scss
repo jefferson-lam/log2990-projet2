@@ -1,0 +1,25 @@
+:host {
+    display: block;
+    width: 316px;
+    padding: 16px;
+}
+
+.color-display {
+    display: flex;
+    flex-direction: row;
+}
+
+.colorhistory-wrapper {
+    margin-top: 15px;
+}
+
+.color-preview {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    padding-left: 5px;
+}
+
+.color-preview:hover {
+    cursor: pointer;
+}

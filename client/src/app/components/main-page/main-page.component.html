@@ -1,16 +1,17 @@
 <div class="container">
-    <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
+    <h1 id="main-title" class="header-item">PolyPaint {{ title }}</h1>
 
-    <div id="server-message">
-        <p>Petit message du serveur : {{ message | async }}</p>
-        <button class="button" (click)="getMessagesFromServer()">Récuper un message du serveur</button>
-        <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
+    <div id="main-buttons">
+        <button id="creation-button" mat-raised-button routerLink="/editor">Créer un nouveau dessin</button>
+        <button id="carousel-button" mat-raised-button (click)="openCarousel()">Ouvrir le carrousel de dessins</button>
+        <button id="oldDrawing-button" mat-raised-button *ngIf="oldDrawingTrue">Continuer un dessin</button>
+        <ng-template #oldDrawingFalse>
+            <button mat-flat-button [disabled]="drawingExists">Continuer un dessin</button>
+        </ng-template>
     </div>
-
-    <button class="button" routerLink="/editor">Ouvir Éditeur</button>
 
     <div class="footer-item">
         <h4 class="team-name">Équipe Poly</h4>
-        <p>Coequipier #1, Coequipier #2, Coequipier #3, Coequipier #4, Coequipier #5, Coequipier #6</p>
+        <p>Nathan Ramsay-Vejlens, Danny Tran, Maxime Cote-Lapointe, Hee-Min Yang, Agnes Sam, Jefferson Lam</p>
     </div>
 </div>

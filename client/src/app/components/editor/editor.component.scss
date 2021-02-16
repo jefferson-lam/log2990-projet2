@@ -1,11 +1,13 @@
 .container {
     height: 100%;
     display: flex;
+    background-color: #607d8b;
 }
 
 .drawing-container {
     overflow: auto;
     flex: 1 1 auto;
+    position: relative;
 }
 
 .drawing {
@@ -13,4 +15,10 @@
     width: min-content;
     outline: none;
 }
-  
+
+.top-container {
+    height: 50px;
+    width: 100%;
+    margin-left: 60px;
+    position: absolute;
+}
