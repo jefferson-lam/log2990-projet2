@@ -141,9 +141,9 @@ describe('EditorComponent', () => {
     });
 
     it("openModalPopUp should open newDialog if canvas isn't empty", () => {
-      const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(()=>{
-        return false;
-      })
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return false;
+        });
         component.openModalPopUp();
 
         expect(emptyCanvasSpy).toHaveBeenCalled();

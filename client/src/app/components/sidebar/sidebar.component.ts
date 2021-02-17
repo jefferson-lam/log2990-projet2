@@ -28,8 +28,10 @@ export class SidebarComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         const newTool = changes.currentTool.currentValue;
-        const serviceName = newTool.constructor.name;
-        this.selectedTool = this.sidebarToolButtons.get(serviceName) as SidebarToolButton;
+        if (newTool != undefined) {
+            const serviceName = newTool.constructor.name;
+            this.selectedTool = this.sidebarToolButtons.get(serviceName) as SidebarToolButton;
+        }
     }
 
     onSelectTool(tool: SidebarToolButton): void {

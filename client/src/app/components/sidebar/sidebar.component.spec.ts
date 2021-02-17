@@ -12,7 +12,7 @@ import { SidebarComponent } from './sidebar.component';
 
 class ToolStub extends Tool {}
 
-fdescribe('SidebarComponent', () => {
+describe('SidebarComponent', () => {
     let component: SidebarComponent;
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
