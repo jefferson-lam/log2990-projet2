@@ -1,0 +1,26 @@
+<div
+  #sideResizer
+  id="sideSlider"
+  cdkDrag
+  cdkDragLockAxis="x"
+  (cdkDragEnded)="this.expandCanvas($event)"
+  (cdkDragMoved)="this.setPreviewSize($event)"
+  (mousedown)="this.onSideResizerDown()"
+></div>
+<div
+  #cornerResizer
+  id="cornerSlider"
+  cdkDrag
+  (cdkDragEnded)="this.expandCanvas($event)"
+  (cdkDragMoved)="this.setPreviewSize($event)"
+  (mousedown)="this.onCornerResizerDown()"
+></div>
+<div
+  #bottomResizer
+  id="bottomSlider"
+  cdkDrag
+  cdkDragLockAxis="y"
+  (cdkDragEnded)="this.expandCanvas($event)"
+  (cdkDragMoved)="this.setPreviewSize($event)"
+  (mousedown)="this.onBottomResizerDown()"
+></div>

@@ -2,5 +2,6 @@
     <app-sidebar (notifyOnToolSelect)="updateToolFromSidebarClick($event)" (notifyEditorNewDrawing)="toggleNewDrawing($event)"></app-sidebar>
     <div class="drawing-container">
         <app-drawing class="drawing" tabindex="0" [currentTool]="currentTool"></app-drawing>
+        <app-resizer></app-resizer>
     </div>
 </div>

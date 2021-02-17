@@ -13,6 +13,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ResizerComponent } from '@app/components/resizer/resizer.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { ColorPickerModule } from './components/color-picker/color-picker.module';
@@ -32,6 +33,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MainPageComponent,
         MainPageCarrouselComponent,
         NewDrawingBoxComponent,
+        ResizerComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

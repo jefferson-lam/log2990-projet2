@@ -1,0 +1,22 @@
+#bottomSlider,
+#cornerSlider,
+#sideSlider {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  color: black;
+  border-style: 1px solid black;
+  background-color: black;
+}
+
+#sideSlider {
+  cursor: e-resize;
+}
+
+#cornerSlider {
+  cursor: se-resize;
+}
+
+#bottomSlider {
+  cursor: s-resize;
+}
