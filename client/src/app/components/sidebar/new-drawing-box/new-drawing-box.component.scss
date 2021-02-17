@@ -2,13 +2,13 @@
     font-family: 'Rubik', serif;
 }
 
-#newButton,
-#saveButton {
+#saveButton, #newButton {
     align-content: center;
     font-size: large;
     background-color: coral;
     margin-left: 76px;
     margin-bottom: 30px;
+    width: 125px;
 }
 
 .modal-dialog {

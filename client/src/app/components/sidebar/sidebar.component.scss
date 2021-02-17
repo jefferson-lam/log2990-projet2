@@ -1,149 +1,136 @@
 .container {
-  min-height: 98vh;
-  border: 1px solid black;
-  padding: 0 5px 0 5px;
-  margin-right: 5px;
-  background-color: #5F9EA0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: fixed;
-  width: 46px;
-  height: calc(100vh - 0px);
-  z-index: 1000;
+    min-height: 98vh;
+    border: 1px solid black;
+    padding: 0 5px 0 5px;
+    margin-right: 5px;
+    background-color: #5f9ea0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    width: 46px;
+    height: calc(100vh - 0px);
+    z-index: 1000;
 }
 
 .sidebar-container {
     display: flex;
     flex-direction: column;
 }
-mat-icon{
-  position: center;
-  margin-left: 7px;
-  margin-top: 2px;
+
+mat-icon {
+    position: center;
+    margin-left: 7px;
+    margin-top: 2px;
 }
 
 .tools-sidebar {
-  margin: 0 0 0 -2px;
-  list-style-type: none;
-  padding: 0;
-  width: 60px;
-  position: absolute;
-  top: 210px;
+    margin: 0 0 0 -2px;
+    list-style-type: none;
+    padding: 0;
+    width: 60px;
+    position: absolute;
+    top: 210px;
 }
 .tools-sidebar li {
-  cursor: pointer;
-  position: relative;
-  left: 0;
-  background-color: #EEE;
-  margin: 5px 16px 4px 6px;
-  padding-top: 3px;
-  border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    left: 0;
+    background-color: #eee;
+    margin: 5px 16px 4px 6px;
+    padding-top: 3px;
+    border-radius: 4px;
 }
 .tools-sidebar li:hover {
-  color: #607D8B;
-  background-color: #DDD;
-  left: .1em;
-}
-.tools-sidebar li.selected {
-  background-color: #527382;
-  color: white;
-}
-.tools-sidebar li.selected:hover {
-  background-color: #BBD8DC;
-  color: white;
+    color: #607d8b;
+    background-color: #ddd;
+    left: 0.1em;
 }
 
+.tools-sidebar li:active {
+    background-color: #4682b4;
+    color: #ddd;
+}
+
+.selected {
+    background-color: #4682b4;
+    color: red;
+}
 .options-sidebar {
-  margin: 0 0 0 -2px;
-  list-style-type: none;
-  padding: 0;
-  width: 60px;
-  position: absolute;
+    margin: 0 0 0 -2px;
+    list-style-type: none;
+    padding: 0;
+    width: 60px;
+    position: absolute;
 }
 .options-sidebar li {
-  cursor: pointer;
-  position: relative;
-  left: 0;
-  background-color: #ff7f50;
-  margin: 5px 16px 4px 6px;
-  padding-top: 3px;
-  border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    left: 0;
+    background-color: #ff7f50;
+    margin: 5px 16px 4px 6px;
+    padding-top: 3px;
+    border-radius: 4px;
 }
 .options-sidebar li:hover {
-  color: #607D8B;
-  background-color: #DDD;
-  left: .1em;
+    color: #607d8b;
+    background-color: #ddd;
+    left: 0.1em;
 }
-.options-sidebar li.selected {
-  background-color: #527382;
-  color: white;
-}
-.options-sidebar li.selected:hover {
-  background-color: #BBD8DC;
-  color: white;
-}
-
 .tools-option-container {
-  position: absolute;
-  margin-left: 50px;
-  height: 100%;
-  overflow: visible;
-  -webkit-transition: all;
-  z-index: 2;
+    position: absolute;
+    margin-left: 50px;
+    height: 100%;
+    overflow: visible;
+    -webkit-transition: all;
+    z-index: 2;
 }
 
 .mat-drawer-inner-container {
-  width: 100%;
-  overflow-y: hidden;
-}
-
-mat-card-title{
-  overflow-y: hidden;
+    width: 100%;
+    overflow-y: hidden;
 }
 
 mat-drawer {
-  box-shadow: 10px 0 28px;
-  background-color: #4682B4;
-  width: 350px;
-  overflow-y: hidden;
+    box-shadow: 10px 0 28px;
+    background-color: #4682b4;
+    width: 250px;
+    overflow-y: hidden;
 }
-
 mat-drawer-content {
-  margin: 0 !important;
-  display: flex;
-  overflow-y: hidden;
+    margin: 0 !important;
+    display: flex;
+    overflow-y: hidden;
 }
-
-.sidebar-pencil{
-  display: flex;
-  padding-left: 10px;
-  width: 50px;
-  flex-direction: column;
-  align-items: flex-start;
+.tools:focus {
+    background-color: red;
 }
-
 .sidebar-tool-options {
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 25px;
-  width: 300px;
-  overflow-y: hidden;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    width: 300px;
+    overflow-y: hidden;
 }
 
-#optionsTitle{
-  text-align: center;
-  font-size: medium;
-  margin-top: 10px;
-  padding: 10px;
-  font-family: 'Rubik', serif;
-  overflow: hidden;
+#optionsTitle {
+    text-align: center;
+    font-size: medium;
+    margin-top: 10px;
+    padding: 10px;
+    font-family: 'Rubik', serif;
+    overflow: hidden;
 }
 
-.options-sidebar{
-  padding: 0;
+.options-sidebar {
+    padding: 0;
 }
 
-#sidebar{
-  z-index:  3;
+#sidebar {
+    z-index: 3;
+}
+
+.tools-option-container{
+  display: flex;
+  position: relative;
 }

@@ -1,7 +1,7 @@
 .palette-slider {
     display: flex;
     flex-direction: row;
-    height: 250px;
+    height: 135px;
     margin-top: 10px;
 }
 
@@ -25,4 +25,20 @@
     border-radius: 5px;
     padding: 20px;
     margin-top: 30px;
+}
+
+.opacity-wrap{
+  color: black;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.mat-raised-button{
+  margin-left: 10px;
+  width: 18px;
+  text-align: left;
+}
+
+.mat-button-wrapper{
+  text-align: left;
 }
