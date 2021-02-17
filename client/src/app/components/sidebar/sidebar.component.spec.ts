@@ -25,11 +25,11 @@ fdescribe('SidebarComponent', () => {
     // tslint:disable:no-any
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool']);
-        pencilStub = new ToolStub({} as DrawingService);
-        eraserStub = new ToolStub({} as DrawingService);
-        lineStub = new ToolStub({} as DrawingService);
-        rectangleStub = new ToolStub({} as DrawingService);
-        ellipseStub = new ToolStub({} as DrawingService);
+        pencilStub = new PencilService({} as DrawingService);
+        eraserStub = new EraserService({} as DrawingService);
+        lineStub = new LineService({} as DrawingService);
+        rectangleStub = new RectangleService({} as DrawingService);
+        ellipseStub = new EllipseService({} as DrawingService);
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -136,9 +136,8 @@ fdescribe('SidebarComponent', () => {
 
     it('when changing tool from editor, selected tool should correctly retrieve tool from map', () => {
         component.ngOnChanges({
-            currentTool: new SimpleChange(null, pencilStub, true),
+            currentTool: new SimpleChange(null, eraserStub, false),
         });
-        console.log(component.selectedTool);
         expect(component.selectedTool).toEqual({ name: 'Efface', icon: 'delete_outline', keyShortcut: 'e', helpShortcut: '(Touche E)' });
     });
 
