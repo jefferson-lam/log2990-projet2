@@ -43,16 +43,12 @@ export class EditorComponent {
         }
     }
 
-    isCanvasEmpty(): boolean{
-      // Thanks to user Kaiido on stackoverflow.com
-      // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank/17386803#comment96825186_17386803
-      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-
-      const baseCtx : CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
-      const pixelBuffer = new Uint32Array(
-        baseCtx.getImageData(0,0, canvas.width, canvas.height).data.buffer
-      );
-
-      return !pixelBuffer.some(color => color !== 0);
+    isCanvasEmpty(): boolean {
+        // Thanks to user Kaiido on stackoverflow.com
+        // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank/17386803#comment96825186_17386803
+        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        const baseCtx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
+        const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
+        return !pixelBuffer.some((color) => color !== 0);
     }
 }
