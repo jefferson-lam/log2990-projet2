@@ -1,12 +1,24 @@
 import { Injectable } from '@angular/core';
+import { Rgba } from '@app/classes/rgba';
 import { EditorComponent } from '@app/components/editor/editor.component';
 import * as ToolConstants from '@app/constants/tool-constants';
+import { ColorService } from '@app/services/color/color.service';
+import { ToolManagerService } from './tool-manager-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class SettingsManagerService {
     editorComponent: EditorComponent;
+
+    constructor(public toolManagerService: ToolManagerService, colorService: ColorService) {
+        colorService.primaryObservable.subscribe((color: Rgba) => {
+            this.setPrimaryColorTools(colorService.convertRgbaToString(color));
+        });
+        colorService.secondaryObservable.subscribe((color: Rgba) => {
+            this.setSecondaryColorTools(colorService.convertRgbaToString(color));
+        });
+    }
 
     setLineWidth(newWidth: number): void {
         this.editorComponent.currentTool.setLineWidth(newWidth);
@@ -24,12 +36,11 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setWithJunction(hasJunction);
     }
 
-    setChangeColor(color: string): void {
-        // TODO: when colorpicker will be added
+    setPrimaryColorTools(color: string): void {
+        this.toolManagerService.setPrimaryColorTools(color);
     }
 
-    // TODO: Put these lines in the component containing the event emitter
-    // @Output() eraserSizeChanged: EventEmitter<number> = new EventEmitter(); // in the attributes
-    //  this.eraserSizeChanged.subscribe((newSize: number) => settingsManager.setLineWidths(newSize)); // in the constructor
-    // this.eraserSizeChanged.emit(this.size); // when the size has changed
+    setSecondaryColorTools(color: string): void {
+        this.toolManagerService.setSecondaryColorTools(color);
+    }
 }
