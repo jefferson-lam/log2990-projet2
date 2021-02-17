@@ -104,6 +104,8 @@ export class LineService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, this.linePathData);
             } else if (event.key === 'Escape' && this.isEscapeKeyDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.clearPath();
+                this.isDrawing = false;
                 this.isEscapeKeyDown = false;
             } else if (event.key === 'Backspace' && this.isBackspaceKeyDown) {
                 this.drawingService.baseCtx.putImageData(this.canvasState, 0, 0);
