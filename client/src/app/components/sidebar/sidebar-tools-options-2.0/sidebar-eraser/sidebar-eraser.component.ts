@@ -3,33 +3,32 @@ import { Tool } from '@app/classes/tool';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
-  selector: 'app-sidebar-eraser',
-  templateUrl: './sidebar-eraser.component.html',
-  styleUrls: ['./sidebar-eraser.component.scss']
+    selector: 'app-sidebar-eraser',
+    templateUrl: './sidebar-eraser.component.html',
+    styleUrls: ['./sidebar-eraser.component.scss'],
 })
 export class SidebarEraserComponent implements OnInit {
-  max: number = 200;
-  min: number = 5;
-  tickInterval: number = 1;
-  toolSize: number | undefined;
-  currentTool: Tool;
+    constructor(public settingsManager: SettingsManagerService) {}
+    max: number = 200;
+    min: number = 5;
+    tickInterval: number = 1;
+    toolSize: number | undefined;
+    currentTool: Tool;
 
-  constructor(public settingsManager: SettingsManagerService) {}
+    @Input() newTool: Tool;
+    @Input() selected: number;
 
-  ngOnInit() {
-    this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));
-  }
-  
-  @Input() newTool: Tool;
-  @Input() selected: number;
+    @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
 
-  @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
+    ngOnInit(): void {
+        this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));
+    }
 
-  setMax(numberInput: number) {
-    return numberInput;
-  }
+    setMax(numberInput: number): number {
+        return numberInput;
+    }
 
-  emitToolSize() {
-    this.toolSizeChanged.emit(this.toolSize);
-  }
+    emitToolSize(): void {
+        this.toolSizeChanged.emit(this.toolSize);
+    }
 }

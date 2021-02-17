@@ -22,8 +22,7 @@ export class EditorComponent {
     onKeyboardDown(event: KeyboardEvent): void {
         if (event.key.match(/^(1|2|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
-        }
-        else if (event.ctrlKey && event.key === 'o') {
+        } else if (event.ctrlKey && event.key === 'o') {
             event.preventDefault();
             this.openModalPopUp();
         }

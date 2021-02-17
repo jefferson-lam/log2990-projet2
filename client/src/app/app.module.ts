@@ -32,7 +32,20 @@ import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-op
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
-    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, MainPageCarrouselComponent, NewDrawingBoxComponent, SidebarPencilComponent, SidebarEraserComponent, SidebarRectangleComponent, SidebarEllipseComponent, SidebarLineComponent],
+    declarations: [
+        AppComponent,
+        EditorComponent,
+        SidebarComponent,
+        DrawingComponent,
+        MainPageComponent,
+        MainPageCarrouselComponent,
+        NewDrawingBoxComponent,
+        SidebarPencilComponent,
+        SidebarEraserComponent,
+        SidebarRectangleComponent,
+        SidebarEllipseComponent,
+        SidebarLineComponent,
+    ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
         ColorPickerModule,

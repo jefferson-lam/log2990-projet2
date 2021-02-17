@@ -7,7 +7,7 @@ import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-//import { BehaviorSubject } from 'rxjs';
+// import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
