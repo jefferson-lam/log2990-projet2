@@ -1,0 +1,37 @@
+<div id="settings-container">
+  <h2 id="title"> Options - {{currentToolName}} </h2>
+  <div>
+    <div>
+      <div id="width-setting">
+        <p> Épaisseur : </p>
+        <mat-slider id="width" color="warn"
+                    thumbLabel
+                    [displayWith]="setMax"
+                    [tickInterval]='tickInterval'
+                    [min]="min"
+                    [max]="max"
+                    [(value)]="toolSize"
+                    (change)="setToolSize()">
+        </mat-slider>
+      </div>
+      <div id="junction-settings">
+        <div id="junction-type">
+          <p> Points de jonction : </p>
+          <mat-checkbox id="dot-bool" color="warn"
+                        [(checked)]="withJunction"
+                        (change)="setWithJunction()"
+          ></mat-checkbox>
+        </div>
+        <div id="dot-size">
+          <p> Taille des points : </p>
+          <mat-slider  color="warn"
+                       thumbLabel
+                       [displayWith]="setMax"
+                       [tickInterval]="1"
+                       [min]="1"
+                       [max]="100"
+                       [(value)]="junctionRadius"
+                       (change)="setJunctionRadius()"></mat-slider>
+        </div>
+      </div>
+    </div>

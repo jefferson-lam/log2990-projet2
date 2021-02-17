@@ -24,10 +24,14 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SidebarToolsOptionsComponent } from './components/sidebar/sidebar-tools-options/sidebar-tools-options.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { WidthSettingComponent } from './components/sidebar/sidebar-tools-options/width-setting/width-setting.component';
+import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
+import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
+import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
+import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
+import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
 
 @NgModule({
-    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, MainPageCarrouselComponent, SidebarToolsOptionsComponent, NewDrawingBoxComponent, WidthSettingComponent],
+    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, MainPageCarrouselComponent, SidebarToolsOptionsComponent, NewDrawingBoxComponent, SidebarPencilComponent, SidebarEraserComponent, SidebarRectangleComponent, SidebarEllipseComponent, SidebarLineComponent],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
         BrowserModule,

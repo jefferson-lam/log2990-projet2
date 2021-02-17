@@ -4,6 +4,7 @@
 }
 #settings-container{
   color: #EEE;
+  margin-left: 10px;
 }
 #title{
   font-weight: bolder;
@@ -13,17 +14,12 @@
   display: block;
   margin-top: 10px;
 }
-#trace-type{
-  flex-direction: column-reverse;
-  margin-top: 10px;
-}
+
 #junction-type {
   margin-top: 10px;
   display: flex;
 }
-#color-picker{
-  margin-top: 25px;
-}
+
 .mat-radio-button{
   margin:5px;
 }

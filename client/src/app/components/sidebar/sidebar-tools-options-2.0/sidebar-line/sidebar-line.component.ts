@@ -1,30 +1,21 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 
 @Component({
-  selector: 'app-sidebar-tools-options',
-  templateUrl: './sidebar-tools-options.component.html',
-  styleUrls: ['./sidebar-tools-options.component.scss']
+  selector: 'app-sidebar-line',
+  templateUrl: './sidebar-line.component.html',
+  styleUrls: ['./sidebar-line.component.scss']
 })
-export class SidebarToolsOptionsComponent {
-  max: number = 300;
+export class SidebarLineComponent {
+  max: number = 200;
   min: number = 1;
   tickInterval: number = 1;
   toolSize: number | undefined;
-  fillMode: number | undefined;
   withJunction: boolean;
   junctionRadius: number | undefined;
-  currentTool: Tool;
-
-  radioGroup = document.getElementById('radioGroup');
-
-  @Input() newTool: Tool; // INPUT FROM SIDEBAR
-  @Input() selected: number;
 
   currentToolName: string = 'outil selectionné';
-
 
   constructor(public settingsManager: SettingsManagerService, public toolManagerService: ToolManagerService) {
     this.toolSizeChanged.subscribe((newSize: number) => settingsManager.setLineWidth(newSize));
@@ -39,27 +30,12 @@ export class SidebarToolsOptionsComponent {
   @Output() withJunctionChanged: EventEmitter<boolean> = new EventEmitter();
   @Output() junctionRadiusChanged: EventEmitter<number> = new EventEmitter();
 
-  setMax(muberInput: number) {
-    if (muberInput >= 200) {
-      return Math.round(muberInput / 200) + 'k';
-    }
-    return muberInput;
+  setMax(numberInput: number) {
+    return numberInput;
   }
 
-  setToolSize() {
-    this.toolSizeChanged.emit(this.toolSize);
-  }
-
-  setFillMode(newFillMode: number) {
-    this.fillModeChanged.emit(newFillMode);
-  }
-
-  setWithJunction() {
-    this.withJunctionChanged.emit(this.withJunction);
-  }
-
-  setJunctionRadius() {
-    this.junctionRadiusChanged.emit(this.junctionRadius);
-  }
-
+  setToolSize() {this.toolSizeChanged.emit(this.toolSize);}
+  setFillMode(newFillMode: number) {this.fillModeChanged.emit(newFillMode);}
+  setWithJunction() {this.withJunctionChanged.emit(this.withJunction); console.log(this.withJunction);}
+  setJunctionRadius() {this.junctionRadiusChanged.emit(this.junctionRadius);}
 }

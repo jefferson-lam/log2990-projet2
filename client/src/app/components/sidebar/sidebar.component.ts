@@ -43,6 +43,7 @@ export class SidebarComponent {
         this.currentTool = this.toolManagerService.getTool(keyShortcut);
         this.notifyOnToolSelect.emit(this.currentTool);
         this.selectedTool = keyShortcut;
+        console.log(this.toolManagerService.currentTool.withJunction);
     }
 
     openSettings(): void {

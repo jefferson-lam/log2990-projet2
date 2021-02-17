@@ -4,29 +4,25 @@
 }
 #settings-container{
   color: #EEE;
+  margin-left: 10px;
 }
 #title{
   font-weight: bolder;
   font-size: x-large;
 }
-#width-setting, #dot-size{
+#width-setting{
   display: block;
   margin-top: 10px;
 }
 #trace-type{
   flex-direction: column-reverse;
   margin-top: 10px;
+  margin-left: -10px;
 }
-#junction-type {
-  margin-top: 10px;
-  display: flex;
-}
+
 #color-picker{
   margin-top: 25px;
 }
 .mat-radio-button{
   margin:5px;
-}
-#dot-bool {
-  margin-left: 10px;
 }

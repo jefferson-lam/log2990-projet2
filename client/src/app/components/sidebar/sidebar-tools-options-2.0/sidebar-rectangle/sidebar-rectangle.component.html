@@ -1,0 +1,26 @@
+<div id="settings-container">
+  <h2 id="title"> Options du rectangle </h2>
+  <div>
+    <div>
+      <div id="width-setting">
+        <p> Épaisseur : </p>
+        <mat-slider id="width" color="warn"
+                    thumbLabel
+                    [displayWith]="setMax"
+                    [tickInterval]='tickInterval'
+                    [min]="min"
+                    [max]="max"
+                    [(value)]="toolSize"
+                    (change)="setToolSize()">
+        </mat-slider>
+      </div>
+      <div id="trace-type">
+        <mat-radio-group>
+          <mat-radio-button id="border" value="border" color="warn" (change)="setFillMode(0)"> Contour </mat-radio-button> <br>
+          <mat-radio-button id="filled" value="filled" color="warn" (change)="setFillMode(1)"> Plein </mat-radio-button> <br>
+          <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="setFillMode(2)"> Plein avec contour </mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+  </div>
+</div>
