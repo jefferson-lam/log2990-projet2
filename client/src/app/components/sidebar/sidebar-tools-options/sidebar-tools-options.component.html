@@ -11,11 +11,11 @@
           [min]="min" 
           [max]="max" 
           [(value)]="toolSize" 
-          (change)="setToolSize()"></mat-slider>
-    </div>
+          (change)="setToolSize()">
+        </mat-slider>
   </div>
     <div>
-    <div id="trace-type">
+    <div id="trace-type-rect">
       <mat-radio-group>
         <mat-radio-button id="border" value="border" color="warn" (change)="setFillMode(0)"> Contour </mat-radio-button> <br>
         <mat-radio-button id="filled" value="filled" color="warn" (change)="setFillMode(1)"> Plein </mat-radio-button> <br>
