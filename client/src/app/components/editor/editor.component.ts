@@ -23,7 +23,6 @@ export class EditorComponent {
         if (event.key.match(/^(1|2|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
         }
-        // TODO : problem with openModalPopUp and isNewDrawing value
         else if (event.ctrlKey && event.key === 'o') {
             event.preventDefault();
             this.openModalPopUp();
