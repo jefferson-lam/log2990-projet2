@@ -22,7 +22,7 @@ describe('EditorComponent', () => {
     beforeEach(async(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService);
-        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool']);
+        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
         TestBed.configureTestingModule({
             declarations: [EditorComponent, DrawingComponent, SidebarComponent],

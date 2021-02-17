@@ -49,4 +49,18 @@ export class ToolManagerService {
             return this.currentTool;
         }
     }
+
+    // TODO ADD TESTS
+    setPrimaryColorTools(color: string): void {
+        this.rectangleService.setPrimaryColor(color);
+        this.ellipseService.setPrimaryColor(color);
+        this.lineService.setPrimaryColor(color);
+        this.pencilService.setPrimaryColor(color);
+    }
+
+    // TODO ADD TESTS
+    setSecondaryColorTools(color: string): void {
+        this.rectangleService.setSecondaryColor(color);
+        this.ellipseService.setSecondaryColor(color);
+    }
 }
