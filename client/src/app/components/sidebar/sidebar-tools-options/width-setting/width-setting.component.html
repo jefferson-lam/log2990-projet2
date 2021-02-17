@@ -1,0 +1,10 @@
+<p> Épaisseur : </p>
+      <mat-slider id="width" color="warn"
+          thumbLabel 
+          [displayWith]="setMax" 
+          [tickInterval]='tickInterval'
+          [min]="min" 
+          [max]="max" 
+          [(value)]="toolSize" 
+          (change)="setToolSize()">
+        </mat-slider>

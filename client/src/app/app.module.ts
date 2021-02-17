@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,9 +24,10 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SidebarToolsOptionsComponent } from './components/sidebar/sidebar-tools-options/sidebar-tools-options.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { WidthSettingComponent } from './components/sidebar/sidebar-tools-options/width-setting/width-setting.component';
 
 @NgModule({
-    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, MainPageCarrouselComponent, SidebarToolsOptionsComponent, NewDrawingBoxComponent],
+    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, MainPageCarrouselComponent, SidebarToolsOptionsComponent, NewDrawingBoxComponent, WidthSettingComponent],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
         BrowserModule,
@@ -43,7 +45,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatTooltipModule,
         MatSliderModule,
         MatRadioModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        DragDropModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

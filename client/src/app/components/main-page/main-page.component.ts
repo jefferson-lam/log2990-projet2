@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { IndexService } from '@app/services/index/index.service';
 import { Message } from '@common/communication/message';
 import { BehaviorSubject } from 'rxjs';
@@ -38,5 +39,11 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
+    }
+
+    openCarousel(): void {
+        this.dialog.open(MainPageCarrouselComponent, {
+            width: '400px;',
+        });
     }
 }

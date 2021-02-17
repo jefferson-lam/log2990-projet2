@@ -7,18 +7,14 @@ import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-import { BehaviorSubject } from 'rxjs';
+//import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ToolManagerService {
     keyBindings: Map<string, Tool> = new Map();
-    activeTool: Tool;
-
-    activeToolSource: BehaviorSubject<Tool>;
-    // activeToolObservable: Observable<string> = this.activeToolSource.asObservable();
-
+    currentTool: Tool;
     constructor(
         public pencilService: PencilService,
         public eraserService: EraserService,
@@ -28,7 +24,7 @@ export class ToolManagerService {
         public drawingService: DrawingService,
     ) {
         this.bindKeys();
-        this.activeTool = this.pencilService;
+        this.currentTool = this.pencilService;
     }
 
     private bindKeys(): void {
@@ -46,6 +42,7 @@ export class ToolManagerService {
 
     getTool(keyShortcut: string): Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.currentTool.onMouseUp({} as MouseEvent);
         if (this.keyBindings.has(keyShortcut)) {
             return this.keyBindings.get(keyShortcut) as Tool;
         } else {

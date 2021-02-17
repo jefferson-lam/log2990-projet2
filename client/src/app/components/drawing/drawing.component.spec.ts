@@ -40,8 +40,15 @@ describe('DrawingComponent', () => {
     });
 
     it('should have a default WIDTH and HEIGHT', () => {
-        const height = component.height;
-        const width = component.width;
+        const height = component.baseHeight;
+        const width = component.baseWidth;
+        expect(height).toEqual(DEFAULT_HEIGHT);
+        expect(width).toEqual(DEFAULT_WIDTH);
+    });
+
+    it('previewCanvas should have a default WIDTH and HEIGHT', () => {
+        const height = component.previewHeight;
+        const width = component.previewWidth;
         expect(height).toEqual(DEFAULT_HEIGHT);
         expect(width).toEqual(DEFAULT_WIDTH);
     });

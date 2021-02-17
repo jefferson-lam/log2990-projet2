@@ -15,7 +15,7 @@ export class EditorComponent {
     currentTool: Tool;
 
     constructor(public toolManager: ToolManagerService, public newDialog: MatDialog, public settingsManager: SettingsManagerService) {
-        this.currentTool = toolManager.activeTool;
+        this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
     }
 

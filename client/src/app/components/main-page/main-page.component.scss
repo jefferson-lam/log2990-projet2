@@ -1,10 +1,10 @@
-*{
-  font-family: 'Rubik', serif;
+* {
+    font-family: 'Rubik', serif;
 }
 
 .container {
     background-image: url(x-x-x.jpg);
-  background-size: cover;
+    background-size: cover;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -39,38 +39,39 @@
     min-width: min-content;
 }
 #main-buttons {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  width:200px;
-  margin-bottom: 100px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    margin-bottom: 100px;
 }
 
 #main-buttons > button {
-  margin-bottom: 20px;
-  width: 300px;
-  height: 50px;
-  color: black;
+    margin-bottom: 20px;
+    width: 300px;
+    height: 50px;
+    color: black;
 }
 
-#main-title{
-  margin-top: 100px;
-  font-family: 'Rubik', serif;
-  font-weight: 700;
-  font-size: xx-large;
+#main-title {
+    margin-top: 100px;
+    font-family: 'Rubik', serif;
+    font-weight: 700;
+    font-size: xx-large;
 }
 
-#creation-button{
-  background-color: #ff7f50;
-  font-size: large;
+#creation-button {
+    background-color: #ff7f50;
+    font-size: large;
 }
 
-#carousel-button{
-  background-color: #00b7b7;
-  font-size: large;
+#carousel-button {
+    background-color: #00b7b7;
+    font-size: large;
 }
 
-#oldDrawing-button{
-  background-color: #4682b4;
-  font-size: large;
+#oldDrawing-button {
+    background-color: #4682b4;
+    font-size: large;
+    visibility: hidden;
 }

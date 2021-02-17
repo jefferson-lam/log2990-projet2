@@ -6,8 +6,6 @@ import * as ToolConstants from '@app/constants/tool-constants';
     providedIn: 'root',
 })
 export class SettingsManagerService {
-    lineWidth: number;
-    fillMode: FillMode;
     editorComponent: EditorComponent;
 
     setLineWidth(newWidth: number): void {

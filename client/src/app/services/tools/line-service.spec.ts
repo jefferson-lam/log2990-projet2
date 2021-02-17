@@ -62,6 +62,12 @@ describe('LineService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('setPrimaryColor should correcly set primary color to wanted color', () => {
+        const EXPECTED_COLOR = 'blue';
+        service.setPrimaryColor(EXPECTED_COLOR);
+        expect(service.primaryColor).toEqual(EXPECTED_COLOR);
+    });
+
     it('setLineWidth should correctly set the services internal lineWidth attribute', () => {
         const newLineWidth = 50;
         service.setLineWidth(newLineWidth);

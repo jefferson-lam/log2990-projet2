@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -9,15 +9,20 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
   styleUrls: ['./sidebar-tools-options.component.scss']
 })
 export class SidebarToolsOptionsComponent implements OnInit {
-  max: number = 100;
+  max: number = 300;
   min: number = 1;
   tickInterval: number = 1;
   toolSize: number | undefined;
   fillMode: number | undefined;
   withJunction: boolean;
   junctionRadius: number | undefined;
-
   currentTool: Tool;
+
+  radioGroup = document.getElementById('radioGroup');
+
+  @Input() newTool: Tool; // INPUT FROM SIDEBAR
+  @Input() selected: number;
+
   currentToolName: string = 'outil selectionné';
 
   
@@ -26,6 +31,7 @@ export class SidebarToolsOptionsComponent implements OnInit {
     this.fillModeChanged.subscribe((newFillMode: number) => settingsManager.setFillMode(newFillMode));
     this.withJunctionChanged.subscribe((newWithJunction: boolean) => settingsManager.setWithJunction(newWithJunction));
     this.junctionRadiusChanged.subscribe((newJunctionRadius: number) => settingsManager.setJunctionRadius(newJunctionRadius));
+
   }
 
   @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
@@ -33,14 +39,21 @@ export class SidebarToolsOptionsComponent implements OnInit {
   @Output() withJunctionChanged: EventEmitter<boolean> = new EventEmitter();
   @Output() junctionRadiusChanged: EventEmitter<number> = new EventEmitter();
 
-  ngOnInit(): void {
-    // this.toolManagerService.activeToolSource.subscribe((newTool: Tool) => {
-    //   this.currentTool = newTool;
-    // })
+  ngOnInit() {
+    //this.currentTool = this.settingsManager.getCurrentTool();
   }
 
-  // afterViewInit() {
-  //   this.reset();
+  // afterViewInit(): void {
+  //   // console.log('wat')
+  //   this.currentTool = this.settingsManager.getCurrentTool();
+  //   // console.log(this.currentTool)
+  // }
+
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if(changes.)
+  //   console.log('suh dude')
+  //   console.log(this.newTool.name)
+  //   this.toolSize = this.newTool.lineWidth;
   // }
 
   setMax(muberInput: number) {
@@ -61,7 +74,6 @@ export class SidebarToolsOptionsComponent implements OnInit {
   }
 
   setWithJunction() {
-    console.log("CARRRRYYYY ONNNNNN, CARRYYYYY ONNNNNNN")
     this.withJunctionChanged.emit(this.withJunction);
   }
 
@@ -71,13 +83,8 @@ export class SidebarToolsOptionsComponent implements OnInit {
   }
 
   // reset() {
-  //   this.toolSize = this.settingsManager.getToolSize()
-    
-  //   //this.withJunction = this.settingsManager.getWithJunction();
-  //   this.junctionRadius = this.settingsManager.getJunctionRadius();
-  //   if(this.settingsManager.getFillMode()) {
-  //     this.fillMode = this.settingsManager.getFillMode();
-  //     document.getElementById('border').
-  //   }
+  //   this.fillMode = this.currentTool.fillMode;
   // }
+  
+
 }
