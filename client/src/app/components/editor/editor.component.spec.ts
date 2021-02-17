@@ -140,25 +140,13 @@ describe('EditorComponent', () => {
         expect(component.currentTool).toBe(toolStub);
     });
 
-    it('toggleNewDrawing calls openModalPopUp', () => {
-        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
-        component.toggleNewDrawing(true);
-
-        expect(modalPopUpSpy).toHaveBeenCalled();
-    });
-
-    it('openModalPopUp should toggle newDrawingTrue', () => {
-        component.isNewDrawing = true;
+    it("openModalPopUp should open newDialog if canvas isn't empty", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return false;
+        });
         component.openModalPopUp();
 
-        expect(component.isNewDrawing).toBeFalse();
-    });
-
-    it('openModalPopUp should open newDialog if isNewDrawing', () => {
-        component.isNewDrawing = false;
-        component.openModalPopUp();
-
-        expect(component.isNewDrawing).toBeTrue();
+        expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
     });
 

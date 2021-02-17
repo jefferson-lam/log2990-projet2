@@ -1,5 +1,5 @@
 <div class="container">
-    <app-sidebar (notifyOnToolSelect)="updateToolFromSidebarClick($event)" (notifyEditorNewDrawing)="toggleNewDrawing($event)"></app-sidebar>
+    <app-sidebar (notifyOnToolSelect)="updateToolFromSidebarClick($event)" [currentTool]="currentTool"></app-sidebar>
     <div class="drawing-container">
         <app-drawing class="drawing" tabindex="0" [currentTool]="currentTool"></app-drawing>
     </div>
