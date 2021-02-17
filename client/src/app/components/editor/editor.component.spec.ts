@@ -22,7 +22,7 @@ describe('EditorComponent', () => {
     beforeEach(async(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService);
-        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool']);
+        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
         TestBed.configureTestingModule({
             declarations: [EditorComponent, DrawingComponent, SidebarComponent],
@@ -40,16 +40,16 @@ describe('EditorComponent', () => {
         fixture = TestBed.createComponent(EditorComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        keyboardEventSpy = spyOn(component, 'onKeyboardPress').and.callThrough();
+        keyboardEventSpy = spyOn(component, 'onKeyboardDown').and.callThrough();
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
-    it("should call select tool when '1' key pressed", () => {
+    it("should call select tool when '1' key is down", () => {
         const event = { key: '1' } as KeyboardEvent;
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
@@ -57,9 +57,9 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(event);
     });
 
-    it("should call select tool when '2' key pressed", () => {
+    it("should call select tool when '2' key is down", () => {
         const event = { key: '2' } as KeyboardEvent;
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
@@ -67,9 +67,9 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(event);
     });
 
-    it("should call select tool when 'c' key pressed", () => {
+    it("should call select tool when 'c' key is down", () => {
         const event = { key: 'c' } as KeyboardEvent;
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
@@ -77,9 +77,9 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(event);
     });
 
-    it("should call select tool when 'l' key pressed", () => {
+    it("should call select tool when 'l' key is down", () => {
         const event = { key: 'l' } as KeyboardEvent;
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
@@ -87,9 +87,9 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(event);
     });
 
-    it("should call select tool when 'e' key pressed", () => {
+    it("should call select tool when 'e' key is down", () => {
         const event = { key: 'e' } as KeyboardEvent;
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
@@ -97,29 +97,38 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(event);
     });
 
-    it("should call openModalPopUp when 'ctrl+o' key pressed", () => {
-        const event = { ctrlKey: true, key: 'o' } as KeyboardEvent;
+    it('should prevent keydown default when ctrl+o is down', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, key: 'o' });
+        component.onKeyboardDown(eventSpy);
+
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(eventSpy);
+    });
+
+    it("should call openModalPopUp when 'ctrl+o' key is down", () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, key: 'o' });
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(eventSpy);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
-        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(keyboardEventSpy).toHaveBeenCalledWith(eventSpy);
         expect(modalPopUpSpy).toHaveBeenCalled();
     });
 
-    it("should not call openModalPopUp when only 'ctrl' key pressed", () => {
+    it("should not call openModalPopUp when only 'ctrl' key is down", () => {
         const event = { ctrlKey: true, key: '' } as KeyboardEvent;
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
         expect(modalPopUpSpy).not.toHaveBeenCalled();
     });
-    it("should not call openModalPopUp when only 'o' key pressed", () => {
+    it("should not call openModalPopUp when only 'o' key is down", () => {
         const event = { ctrlKey: false, key: 'o' } as KeyboardEvent;
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
@@ -131,31 +140,19 @@ describe('EditorComponent', () => {
         expect(component.currentTool).toBe(toolStub);
     });
 
-    it('toggleNewDrawing calls openModalPopUp', () => {
-        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
-        component.toggleNewDrawing(true);
-
-        expect(modalPopUpSpy).toHaveBeenCalled();
-    });
-
-    it('openModalPopUp should toggle newDrawingTrue', () => {
-        component.isNewDrawing = true;
+    it("openModalPopUp should open newDialog if canvas isn't empty", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return false;
+        });
         component.openModalPopUp();
 
-        expect(component.isNewDrawing).toBeFalse();
-    });
-
-    it('openModalPopUp should open newDialog if isNewDrawing', () => {
-        component.isNewDrawing = false;
-        component.openModalPopUp();
-
-        expect(component.isNewDrawing).toBeTrue();
+        expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
     });
 
-    it('should not call selectTool if a non tool key is pressed.', () => {
+    it('should not call selectTool if a non tool key is down.', () => {
         const event = { key: 'u' } as KeyboardEvent;
-        component.onKeyboardPress(event);
+        component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);

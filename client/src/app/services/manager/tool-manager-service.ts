@@ -44,9 +44,24 @@ export class ToolManagerService {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.currentTool.onMouseUp({} as MouseEvent);
         if (this.keyBindings.has(keyShortcut)) {
-            return this.keyBindings.get(keyShortcut) as Tool;
+            this.currentTool = this.keyBindings.get(keyShortcut) as Tool;
+            return this.currentTool;
         } else {
-            return this.pencilService;
+            return this.currentTool;
         }
+    }
+
+    // TODO ADD TESTS
+    setPrimaryColorTools(color: string): void {
+        this.rectangleService.setPrimaryColor(color);
+        this.ellipseService.setPrimaryColor(color);
+        this.lineService.setPrimaryColor(color);
+        this.pencilService.setPrimaryColor(color);
+    }
+
+    // TODO ADD TESTS
+    setSecondaryColorTools(color: string): void {
+        this.rectangleService.setSecondaryColor(color);
+        this.ellipseService.setSecondaryColor(color);
     }
 }

@@ -11,7 +11,6 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
     styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent {
-    isNewDrawing: boolean = false;
     currentTool: Tool;
 
     constructor(public toolManager: ToolManagerService, public newDialog: MatDialog, public settingsManager: SettingsManagerService) {
@@ -19,13 +18,13 @@ export class EditorComponent {
         this.settingsManager.editorComponent = this;
     }
 
-    @HostListener('keypress', ['$event'])
-    onKeyboardPress(event: KeyboardEvent): void {
+    @HostListener('window:keydown', ['$event'])
+    onKeyboardDown(event: KeyboardEvent): void {
         if (event.key.match(/^(1|2|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
         }
-        // TODO : disable default listener for ctrl+o
-        else if (event.ctrlKey && event.key.match('o')) {
+        else if (event.ctrlKey && event.key === 'o') {
+            event.preventDefault();
             this.openModalPopUp();
         }
     }
@@ -35,8 +34,7 @@ export class EditorComponent {
     }
 
     openModalPopUp(): void {
-        this.isNewDrawing = !this.isNewDrawing;
-        if (this.isNewDrawing) {
+        if (!this.isCanvasEmpty()) {
             this.newDialog.open(NewDrawingBoxComponent, {
                 width: '100px;',
                 height: '200px',
@@ -44,8 +42,12 @@ export class EditorComponent {
         }
     }
 
-    toggleNewDrawing(toggleDrawing: boolean): void {
-        this.isNewDrawing = toggleDrawing;
-        this.openModalPopUp();
+    isCanvasEmpty(): boolean {
+        // Thanks to user Kaiido on stackoverflow.com
+        // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank/17386803#comment96825186_17386803
+        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        const baseCtx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
+        const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
+        return !pixelBuffer.some((color) => color !== 0);
     }
 }

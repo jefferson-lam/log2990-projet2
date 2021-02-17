@@ -2,12 +2,7 @@
     <div id="sidebar">
         <ul class="options-sidebar">
             <li>
-                <mat-icon
-                    id="return-button"
-                    style="color: white"
-                    matTooltip="Retour"
-                    [matTooltipPosition]="'right'"
-                    (click)="backClick()"
+                <mat-icon id="return-button" style="color: white" matTooltip="Retour" [matTooltipPosition]="'right'" routerLink="/home"
                     >backspace</mat-icon
                 >
             </li>
@@ -26,15 +21,15 @@
             <li><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
         </ul>
         <ul class="tools-sidebar">
-            <li id="toolId" *ngFor="let tool of sidebarToolButtons">
+            <li id="toolId" [class.selected]="tool.value === selectedTool" *ngFor="let tool of sidebarToolButtons | keyvalue" class="listToolsClass">
                 <mat-icon
-                    id="icon-button-{{ tool.name }}"
-                    matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
+                    class="toolClass"
+                    id="icon-button-{{ tool.value.name }}"
+                    matTooltip="{{ tool.value.name }} {{ tool.value.helpShortcut }}"
                     [matTooltipPosition]="'right'"
-                    (click)="onSelectTool(tool.keyShortcut); openSettings()"
-                    [class.selected]="selectedTool === tool.name"
+                    (click)="onSelectTool(tool.value); openSettings()"
                 >
-                    {{ tool.icon }}
+                    {{ tool.value.icon }}
                 </mat-icon>
             </li>
         </ul>
@@ -42,12 +37,13 @@
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">
       <mat-drawer [mode]="'side'" class="sidenav" [opened]="opened">
-        <mat-drawer-content [ngSwitch]="selectedTool">
+        <mat-drawer-content [ngSwitch]="selectedTool.keyShortcut">
           <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="'c'"> </app-sidebar-pencil>
           <app-sidebar-eraser class="sidebar-tool-options" *ngSwitchCase="'e'"></app-sidebar-eraser>
           <app-sidebar-rectangle class="sidebar-tool-options" *ngSwitchCase="'1'"></app-sidebar-rectangle>
           <app-sidebar-ellipse class="sidebar-tool-options" *ngSwitchCase="'2'"></app-sidebar-ellipse>
           <app-sidebar-line class="sidebar-tool-options" *ngSwitchCase="'l'"></app-sidebar-line>
+          <!-- <app-color-picker></app-color-picker> -->
         </mat-drawer-content>
       </mat-drawer>
     </mat-drawer-container>

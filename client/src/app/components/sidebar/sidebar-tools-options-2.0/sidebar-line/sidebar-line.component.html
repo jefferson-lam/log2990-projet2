@@ -1,5 +1,5 @@
 <div id="settings-container">
-  <h2 id="title"> Options - {{currentToolName}} </h2>
+  <h2 id="title"> Options de la ligne </h2>
   <div>
     <div>
       <div id="width-setting">
@@ -11,7 +11,7 @@
                     [min]="min"
                     [max]="max"
                     [(value)]="toolSize"
-                    (change)="setToolSize()">
+                    (change)="emitToolSize()">
         </mat-slider>
       </div>
       <div id="junction-settings">
@@ -19,7 +19,7 @@
           <p> Points de jonction : </p>
           <mat-checkbox id="dot-bool" color="warn"
                         [(checked)]="withJunction"
-                        (change)="setWithJunction()"
+                        (change)="emitWithJunction()"
           ></mat-checkbox>
         </div>
         <div id="dot-size">
@@ -31,7 +31,7 @@
                        [min]="1"
                        [max]="100"
                        [(value)]="junctionRadius"
-                       (change)="setJunctionRadius()"></mat-slider>
+                       (change)="emitJunctionRadius()"></mat-slider>
         </div>
       </div>
     </div>

@@ -1,0 +1,28 @@
+.palette-slider {
+    display: flex;
+    flex-direction: row;
+    height: 250px;
+    margin-top: 10px;
+}
+
+.final-options {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    justify-content: space-around;
+}
+
+.color-preview {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    padding-left: 5px;
+}
+
+.color-picker-window {
+    background-color: whitesmoke;
+    border: 2px solid rgb(68, 68, 68);
+    border-radius: 5px;
+    padding: 20px;
+    margin-top: 30px;
+}
