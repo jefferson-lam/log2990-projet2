@@ -191,7 +191,8 @@ describe('LineService', () => {
         service.isDrawing = true;
         service.isEscapeKeyDown = true;
         service.onKeyboardUp(escapeKeyboardEvent);
-        expect(service.isBackspaceKeyDown).toBeFalsy();
+        expect(service.isEscapeKeyDown).toBeFalsy();
+        expect(service.isDrawing).toBeFalsy();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 

@@ -7,6 +7,7 @@ import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
+// import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -48,5 +49,19 @@ export class ToolManagerService {
         } else {
             return this.currentTool;
         }
+    }
+
+    // TODO ADD TESTS
+    setPrimaryColorTools(color: string): void {
+        this.rectangleService.setPrimaryColor(color);
+        this.ellipseService.setPrimaryColor(color);
+        this.lineService.setPrimaryColor(color);
+        this.pencilService.setPrimaryColor(color);
+    }
+
+    // TODO ADD TESTS
+    setSecondaryColorTools(color: string): void {
+        this.rectangleService.setSecondaryColor(color);
+        this.ellipseService.setSecondaryColor(color);
     }
 }

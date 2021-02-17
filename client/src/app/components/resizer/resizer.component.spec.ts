@@ -453,7 +453,7 @@ describe('DrawingComponent', () => {
         component.ngAfterViewInit();
 
         expect(spyViewInit).toHaveBeenCalled();
-        expect(component.sideResizer).not.toBeDefined();
+        expect(component.sideResizer.nativeElement.style.left).toBe('');
     });
 
     it('setPreviewSize should call drawPreviewOfNewSize with min sizes if under', () => {

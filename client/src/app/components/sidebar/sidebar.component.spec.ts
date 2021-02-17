@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -25,11 +25,11 @@ describe('SidebarComponent', () => {
     // tslint:disable:no-any
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool']);
-        pencilStub = new ToolStub({} as DrawingService);
-        eraserStub = new ToolStub({} as DrawingService);
-        lineStub = new ToolStub({} as DrawingService);
-        rectangleStub = new ToolStub({} as DrawingService);
-        ellipseStub = new ToolStub({} as DrawingService);
+        pencilStub = new PencilService({} as DrawingService);
+        eraserStub = new EraserService({} as DrawingService);
+        lineStub = new LineService({} as DrawingService);
+        rectangleStub = new RectangleService({} as DrawingService);
+        ellipseStub = new EllipseService({} as DrawingService);
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -66,7 +66,7 @@ describe('SidebarComponent', () => {
         pencilButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('c');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Crayon', icon: 'create', keyShortcut: 'c', helpShortcut: '(Touche C)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(pencilStub);
     });
 
@@ -82,7 +82,7 @@ describe('SidebarComponent', () => {
         eraserButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('e');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Efface', icon: 'settings_cell', keyShortcut: 'e', helpShortcut: '(Touche E)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(eraserStub);
     });
 
@@ -98,7 +98,7 @@ describe('SidebarComponent', () => {
         lineButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('l');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Ligne', icon: 'remove', keyShortcut: 'l', helpShortcut: '(Touche L)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(lineStub);
     });
 
@@ -114,7 +114,7 @@ describe('SidebarComponent', () => {
         rectangleButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('1');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Rectangle', icon: 'crop_5_4', keyShortcut: '1', helpShortcut: '(Touche 1)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleStub);
     });
 
@@ -130,17 +130,15 @@ describe('SidebarComponent', () => {
         ellipseButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith('2');
+        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Ellipse', icon: 'panorama_fish_eye', keyShortcut: '2', helpShortcut: '(Touche 2)' });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
     });
 
-    it('on click, return button should return to main page', () => {
-        const backSpy = spyOn<any>(component, 'backClick').and.callThrough();
-        fixture.detectChanges();
-        const btn = fixture.debugElement.nativeElement.querySelector('#return-button');
-        btn.click();
-        fixture.detectChanges();
-        expect(backSpy).toHaveBeenCalledWith();
+    it('when changing tool from editor, selected tool should correctly retrieve tool from map', () => {
+        component.ngOnChanges({
+            currentTool: new SimpleChange(null, eraserStub, false),
+        });
+        expect(component.selectedTool).toEqual({ name: 'Efface', icon: 'settings_cell', keyShortcut: 'e', helpShortcut: '(Touche E)' });
     });
 
     it('calling openSettings should set internal attribute opened to true', () => {
@@ -159,16 +157,5 @@ describe('SidebarComponent', () => {
         newDrawingButton.click();
         fixture.detectChanges();
         expect(notifyEditorNewDrawingSpy).toHaveBeenCalledWith(component.isNewDrawing);
-    });
-
-    it('click on return button should return to main page', () => {
-        const backSpy = spyOn<any>(component, 'backClick').and.callThrough();
-
-        fixture.detectChanges();
-        const btn = fixture.debugElement.nativeElement.querySelector('#return-button');
-        btn.click();
-        fixture.detectChanges();
-
-        expect(backSpy).toHaveBeenCalled();
     });
 });
