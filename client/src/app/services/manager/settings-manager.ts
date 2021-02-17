@@ -32,8 +32,8 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setJunctionRadius(newJunctionRadius);
     }
 
-    setWithJunction(hasJunction: boolean): void {
-        this.editorComponent.currentTool.setWithJunction(hasJunction);
+    setWithJunction(withJunction: boolean): void {
+        this.editorComponent.currentTool.setWithJunction(withJunction);
     }
 
     setPrimaryColorTools(color: string): void {

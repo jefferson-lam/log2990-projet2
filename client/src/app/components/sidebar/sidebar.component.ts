@@ -15,7 +15,7 @@ export class SidebarComponent implements OnChanges {
     @Input() currentTool: Tool;
 
     sidebarToolButtons: Map<string, SidebarToolButton> = new Map();
-    selectedTool: SidebarToolButton;
+    @Input() selectedTool: SidebarToolButton;
     opened: boolean = false;
     shouldRun: boolean;
     isNewDrawing: boolean;
@@ -55,17 +55,17 @@ export class SidebarComponent implements OnChanges {
     private bindSidebarButtons(): void {
         this.sidebarToolButtons
             .set('PencilService', { name: 'Crayon', icon: 'create', keyShortcut: 'c', helpShortcut: '(Touche C)' })
-            .set('EraserService', { name: 'Efface', icon: 'delete_outline', keyShortcut: 'e', helpShortcut: '(Touche E)' })
-            .set('RectangleService', { name: 'Rectangle', icon: 'crop_portrait', keyShortcut: '1', helpShortcut: '(Touche 1)' })
-            .set('EllipseService', { name: 'Ellipse', icon: 'vignette', keyShortcut: '2', helpShortcut: '(Touche 2)' })
-            .set('PolygoneService', { name: 'Polygone', icon: 'brush', keyShortcut: '3', helpShortcut: '(Touche 3)' })
-            .set('LineService', { name: 'Ligne', icon: 'trending_flat', keyShortcut: 'l', helpShortcut: '(Touche L)' })
+            .set('EraserService', { name: 'Efface', icon: 'settings_cell', keyShortcut: 'e', helpShortcut: '(Touche E)' })
+            .set('RectangleService', { name: 'Rectangle', icon: 'crop_5_4', keyShortcut: '1', helpShortcut: '(Touche 1)' })
+            .set('EllipseService', { name: 'Ellipse', icon: 'panorama_fish_eye', keyShortcut: '2', helpShortcut: '(Touche 2)' })
+            .set('PolygoneService', { name: 'Polygone', icon: 'signal_cellular_null', keyShortcut: '3', helpShortcut: '(Touche 3)' })
+            .set('LineService', { name: 'Ligne', icon: 'remove', keyShortcut: 'l', helpShortcut: '(Touche L)' })
             .set('TextService', { name: 'Texte', icon: 'text_format', keyShortcut: 't', helpShortcut: '(Touche T)' })
-            .set('StampService', { name: 'Étampe', icon: 'today', keyShortcut: 'd', helpShortcut: '(Touche D)' })
-            .set('PipetteService', { name: 'Pipette', icon: 'edit_location', keyShortcut: 'i', helpShortcut: '(Touche I)' })
-            .set('SelectRectangleService', { name: 'Rectangle de Selection', icon: 'tab_unselected', keyShortcut: 'r', helpShortcut: '(Touche R)' })
-            .set('SelectEllipseService', { name: 'Ellipse de selection', icon: 'toys', keyShortcut: 's', helpShortcut: '(Touche S)' })
-            .set('SelectLassoService', { name: 'Lasso polygonal', icon: 'gps_off', keyShortcut: 'v', helpShortcut: '(Touche V)' })
+            .set('StampService', { name: 'Étampe', icon: 'how_to_vote', keyShortcut: 'd', helpShortcut: '(Touche D)' })
+            .set('PipetteService', { name: 'Pipette', icon: 'invert_colors', keyShortcut: 'i', helpShortcut: '(Touche I)' })
+            .set('SelectRectangleService', { name: 'Rectangle de Selection', icon: 'blur_linear', keyShortcut: 'r', helpShortcut: '(Touche R)' })
+            .set('SelectEllipseService', { name: 'Ellipse de selection', icon: 'blur_circular', keyShortcut: 's', helpShortcut: '(Touche S)' })
+            .set('SelectLassoService', { name: 'Lasso polygonal', icon: 'gesture', keyShortcut: 'v', helpShortcut: '(Touche V)' })
             .set('PaintBucketService', { name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' });
     }
 }
