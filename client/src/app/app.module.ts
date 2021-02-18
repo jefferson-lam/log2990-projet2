@@ -31,6 +31,7 @@ import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SidebarPipetteComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pipette/sidebar-pipette.component';
 
 @NgModule({
     declarations: [
@@ -47,6 +48,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarRectangleComponent,
         SidebarEllipseComponent,
         SidebarLineComponent,
+        SidebarPipetteComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

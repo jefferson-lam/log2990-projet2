@@ -7,6 +7,7 @@ import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
+import { PipetteService } from '@app/services/tools/pipette-service';
 // import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -22,6 +23,7 @@ export class ToolManagerService {
         public rectangleService: RectangleService,
         public ellipseService: EllipseService,
         public drawingService: DrawingService,
+        public pipetteService: PipetteService
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -33,7 +35,8 @@ export class ToolManagerService {
             .set(ToolManagerConstants.ERASER_KEY, this.eraserService)
             .set(ToolManagerConstants.LINE_KEY, this.lineService)
             .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
-            .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService);
+            .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
+            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService);
     }
 
     selectTool(event: KeyboardEvent): Tool {

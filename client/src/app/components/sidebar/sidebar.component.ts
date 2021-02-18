@@ -38,6 +38,7 @@ export class SidebarComponent implements OnChanges {
         this.currentTool = this.toolManagerService.getTool(tool.keyShortcut);
         this.notifyOnToolSelect.emit(this.currentTool);
         this.selectedTool = tool;
+        console.log(this.currentTool);
     }
 
     openSettings(): void {
