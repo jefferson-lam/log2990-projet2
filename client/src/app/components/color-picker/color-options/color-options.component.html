@@ -1,16 +1,16 @@
 <div class="color-picker-window">
     <div class="palette-slider">
-        <app-color-palette [hue]="hue" [currentOpacity]="color.alpha" (color)="color = $event"></app-color-palette>
-        <app-color-slider (hue)="hue = $event" style="margin-left: 16px"></app-color-slider>
+        <app-color-palette [hue]="hue" [currentOpacity]="color.alpha" (color)="color = $event" style="margin-left: 10px" ></app-color-palette>
+        <app-color-slider (hue)="hue = $event" style="margin-right: 10px"></app-color-slider>
     </div>
-    <app-rgb-selector [initialColor]="color" (newColor)="color = $event"></app-rgb-selector>
+    <app-rgb-selector [initialColor]="color" (newColor)="color = $event" ></app-rgb-selector>
     <div class="opacity-wrap">
         <span type="text">Opacité</span>
         <mat-slider thumbLabel [step]="step" [min]="min" [max]="max" [(value)]="color.alpha"></mat-slider>
     </div>
     <div class="final-options">
         <div class="color-preview" [ngStyle]="{ 'background-color': colorService.convertRgbaToString(color) }"></div>
-        <button mat-raised-button (click)="confirmColorPick()">Confirmer</button>
-        <button mat-raised-button (click)="showOptions.emit(false)">Annuler</button>
+        <button mat-raised-button (click)="confirmColorPick()" id="confirmButton">Confirmer</button>
+        <button mat-raised-button (click)="showOptions.emit(false)" id="cancelButton">Annuler</button>
     </div>
 </div>

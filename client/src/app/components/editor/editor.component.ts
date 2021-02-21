@@ -35,7 +35,7 @@ export class EditorComponent {
     openModalPopUp(): void {
         if (!this.isCanvasEmpty()) {
             this.newDialog.open(NewDrawingBoxComponent, {
-                width: '100px;',
+                width: '130px;',
                 height: '200px',
             });
         }
