@@ -20,7 +20,7 @@ export class EditorComponent {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (event.key.match(/^(1|2|c|l|e)$/)) {
+        if (event.key.match(/^(1|2|3|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
         } else if (event.ctrlKey && event.key === 'o') {
             event.preventDefault();
