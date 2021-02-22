@@ -20,27 +20,31 @@ export class SidebarPolygoneComponent implements OnInit {
 
   @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
   @Output() fillModeChanged: EventEmitter<number> = new EventEmitter();
+  @Output() numberOfPolySides: EventEmitter<number> = new EventEmitter();
 
   constructor(public settingsManager: SettingsManagerService) {}
 
   ngOnInit(): void {
     this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));
     this.fillModeChanged.subscribe((newFillMode: number) => this.settingsManager.setFillMode(newFillMode));
+    this.numberOfPolySides.subscribe((newSidesCount: number) => this.settingsManager.setSidesCount(newSidesCount));
   }
 
-  setMaxSidesPolygone(numberInput: number): number {
-    return numberInput;
+  setMaxSidesPolygone(numberOfSidesInput: number): number {
+    return numberOfSidesInput;
   }
-  setMaxThickness(numberInput: number): number {
+
+  setMax(numberInput: number): number {
     return numberInput;
   }
 
   emitToolSize(): void {
     this.toolSizeChanged.emit(this.toolSize);
+    console.log(this.toolSize);
   }
 
   emitPolygoneSideNumber(): void{
-
+    this.numberOfPolySides.emit(this.polygoneSidesCount);
   }
 
   emitFillMode(newFillMode: number): void {

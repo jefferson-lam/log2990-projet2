@@ -11,6 +11,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 
 export class PolygoneService extends Tool{
+  initNumberSides: number = 5;
   cornerCoords: Vec2[];
   isCircle: boolean = false;
   lineWidth: number = 20;
@@ -37,7 +38,7 @@ export class PolygoneService extends Tool{
     if (this.mouseDown) {
       const mousePosition = this.getPositionFromMouse(event);
       this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
-      this.drawEllipse(this.drawingService.baseCtx, this.cornerCoords);
+      this.drawPolygone(this.drawingService.baseCtx, this.cornerCoords, this.initNumberSides);
     }
     this.mouseDown = false;
     this.clearCornerCoords();
@@ -49,8 +50,8 @@ export class PolygoneService extends Tool{
       const mousePosition = this.getPositionFromMouse(event);
       this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
       this.drawingService.clearCanvas(this.drawingService.previewCtx);
-      this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
-      this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
+      this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
+      this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
     }
   }
 
@@ -59,8 +60,8 @@ export class PolygoneService extends Tool{
       this.drawingService.clearCanvas(this.drawingService.previewCtx);
       const exitCoords = this.getPositionFromMouse(event);
       this.cornerCoords[EllipseConstants.END_INDEX] = exitCoords;
-      this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
-      this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
+      this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
+      this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
     }
   }
 
@@ -79,8 +80,8 @@ export class PolygoneService extends Tool{
       if (event.key === 'Shift') {
         this.isCircle = true;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
-        this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
+        this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
+        this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
       }
     }
   }
@@ -90,8 +91,8 @@ export class PolygoneService extends Tool{
       if (event.key === 'Shift') {
         this.isCircle = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
-        this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
+        this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
+        this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
       }
     } else {
       this.isCircle = false;
@@ -99,26 +100,22 @@ export class PolygoneService extends Tool{
   }
 
   setLineWidth(width: number): void {
-    if (width < EllipseConstants.MIN_BORDER_WIDTH) {
-      this.lineWidth = EllipseConstants.MIN_BORDER_WIDTH;
-    } else if (width > EllipseConstants.MAX_BORDER_WIDTH) {
-      this.lineWidth = EllipseConstants.MAX_BORDER_WIDTH;
-    } else {
-      this.lineWidth = width;
-    }
+    this.lineWidth = width;
   }
 
   setFillMode(newFillMode: ToolConstants.FillMode): void {
     this.fillMode = newFillMode;
   }
 
+  setSidesCount(newSidesCount: number): void {
+    this.initNumberSides = newSidesCount;
+  }
+
   setPrimaryColor(newColor: string): void {
-    // TODO: add color check
     this.primaryColor = newColor;
   }
 
   setSecondaryColor(newColor: string): void {
-    // TODO: add color check
     this.secondaryColor = newColor;
   }
 
@@ -133,35 +130,29 @@ export class PolygoneService extends Tool{
     return [xRadius, yRadius];
   }
 
-  private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-    const ellipseCenter = this.getEllipseCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
-    const startX = ellipseCenter.x;
-    const startY = ellipseCenter.y;
-
+  private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[], sides: number): void {
+    const polygoneCenter = this.getPolygoneCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
+    const startX = polygoneCenter.x;
+    const startY = polygoneCenter.y;
     const radiiXAndY = this.getRadiiXAndY(path);
     let xRadius = radiiXAndY[EllipseConstants.X_INDEX];
-    let yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
+    let yRadius = radiiXAndY[EllipseConstants.X_INDEX];
     const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-    if (xRadius > this.lineWidth / 2 && yRadius > this.lineWidth / 2) {
-      xRadius -= this.lineWidth / 2;
-      yRadius -= this.lineWidth / 2;
-      this.drawTypeEllipse(ctx, startX, startY, xRadius, yRadius, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
-    } else {
-      this.drawTypeEllipse(
-        ctx,
-        startX,
-        startY,
-        xRadius,
-        yRadius,
-        ToolConstants.FillMode.OUTLINE_FILL,
-        borderColor,
-        borderColor,
-        EllipseConstants.HIDDEN_BORDER_WIDTH,
-      );
-    }
+    this.drawTypePolygone(
+      ctx,
+      startX,
+      startY,
+      xRadius,
+      yRadius,
+      sides,
+      this.fillMode,
+      this.primaryColor,
+      borderColor,
+      this.lineWidth,
+    );
   }
 
-  private getEllipseCenter(start: Vec2, end: Vec2, isCircle: boolean): Vec2 {
+  private getPolygoneCenter(start: Vec2, end: Vec2, isCircle: boolean): Vec2 {
     let displacementX: number;
     let displacementY: number;
     const radiusX = Math.abs(end.x - start.x) / 2;
@@ -180,12 +171,13 @@ export class PolygoneService extends Tool{
     return { x: centerX, y: centerY };
   }
 
-  private drawTypeEllipse(
+  private drawTypePolygone(
     ctx: CanvasRenderingContext2D,
     startX: number,
     startY: number,
     xRadius: number,
     yRadius: number,
+    sides: number,
     fillMethod: number,
     primaryColor: string,
     secondaryColor: string,
@@ -194,8 +186,12 @@ export class PolygoneService extends Tool{
     ctx.beginPath();
     ctx.setLineDash([]);
     ctx.lineJoin = 'round';
-    ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, EllipseConstants.START_ANGLE, EllipseConstants.END_ANGLE);
-
+    const a = (Math.PI * 2) / sides;
+    ctx.moveTo(startX + xRadius * Math.cos(0),startY + xRadius * Math.sin(0));
+    for (var i = 1; i < sides; i++) {
+      ctx.lineTo(startX + xRadius * Math.cos(a * i), startY + xRadius * Math.sin(a * i));
+    }
+    ctx.closePath();
     ctx.strokeStyle = secondaryColor;
     ctx.lineWidth = lineWidth;
     ctx.stroke();
@@ -205,24 +201,17 @@ export class PolygoneService extends Tool{
     }
   }
 
-  private drawPredictionRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-    const start = path[EllipseConstants.START_INDEX];
-    const xDifference = path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x;
-    const xFactor = Math.sign(xDifference);
-    const yDifference = path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y;
-    const yFactor = Math.sign(yDifference);
-
+  private drawPredictionCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
     const radiiXAndY = this.getRadiiXAndY(path);
     const xRadius = radiiXAndY[EllipseConstants.X_INDEX];
-    const yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
-    const width = xRadius * 2 * xFactor;
-    const height = yRadius * 2 * yFactor;
+    // const yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
+    const polygoneCenter = this.getPolygoneCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
 
     ctx.beginPath();
     ctx.strokeStyle = 'black';
     ctx.lineWidth = EllipseConstants.PREDICTION_RECTANGLE_WIDTH;
     ctx.setLineDash([EllipseConstants.LINE_DISTANCE]);
-    ctx.rect(start.x, start.y, width, height);
+    ctx.arc(polygoneCenter.x, polygoneCenter.y, xRadius + (this.lineWidth/2),0, 2 * Math.PI);
     ctx.stroke();
     ctx.setLineDash([]);
   }

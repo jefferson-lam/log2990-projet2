@@ -57,13 +57,15 @@ export class ToolManagerService {
     setPrimaryColorTools(color: string): void {
         this.rectangleService.setPrimaryColor(color);
         this.ellipseService.setPrimaryColor(color);
-        this.lineService.setPrimaryColor(color);
-        this.pencilService.setPrimaryColor(color);
+        this.polygoneService.setPrimaryColor(color);
     }
 
     // TODO ADD TESTS
     setSecondaryColorTools(color: string): void {
         this.rectangleService.setSecondaryColor(color);
         this.ellipseService.setSecondaryColor(color);
+        this.pencilService.setSecondaryColor(color);
+        this.lineService.setSecondaryColor(color);
+        this.polygoneService.setSecondaryColor(color);
     }
 }

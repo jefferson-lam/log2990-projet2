@@ -21,15 +21,15 @@ export class LineService extends Tool {
     withJunction: boolean = true;
     junctionRadius: number = LineConstants.MIN_LINE_WIDTH;
     lineWidth: number = LineConstants.MIN_LINE_WIDTH;
-    primaryColor: string = LineConstants.DEFAULT_PRIMARY_COLOR;
+    secondaryColor: string = LineConstants.DEFAULT_PRIMARY_COLOR;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
     }
 
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
+    setSecondaryColor(newColor: string): void {
+        this.secondaryColor = newColor;
     }
 
     setLineWidth(width: number): void {
@@ -160,13 +160,13 @@ export class LineService extends Tool {
                 LineConstants.DEGREES_0,
                 LineConstants.DEGREES_360,
             );
-            ctx.fillStyle = this.primaryColor;
+            ctx.fillStyle = this.secondaryColor;
             ctx.fill();
         }
         ctx.lineWidth = this.lineWidth;
         ctx.moveTo(path[LineConstants.STARTING_POINT].x, path[LineConstants.STARTING_POINT].y);
         ctx.lineTo(path[LineConstants.ENDING_POINT].x, path[LineConstants.ENDING_POINT].y);
-        ctx.strokeStyle = this.primaryColor;
+        ctx.strokeStyle = this.secondaryColor;
         ctx.stroke();
     }
 

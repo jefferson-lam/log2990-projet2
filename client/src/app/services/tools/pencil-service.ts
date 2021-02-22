@@ -12,7 +12,7 @@ import { Observable, Subject } from 'rxjs';
 export class PencilService extends Tool {
     private pathData: Vec2[];
     lineWidth: number;
-    primaryColor: string = 'black';
+    secondaryColor: string = 'black';
 
     // Observables
     private pencilSizeChangedSource: Subject<number> = new Subject<number>();
@@ -24,8 +24,8 @@ export class PencilService extends Tool {
         this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
     }
 
-    setPrimaryColor(color: string): void {
-        this.primaryColor = color;
+    setSecondaryColor(color: string): void {
+        this.secondaryColor = color;
     }
 
     setLineWidth(width: number): void {
@@ -95,7 +95,7 @@ export class PencilService extends Tool {
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
-        ctx.strokeStyle = this.primaryColor;
+        ctx.strokeStyle = this.secondaryColor;
         ctx.stroke();
     }
 

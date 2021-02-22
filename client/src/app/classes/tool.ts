@@ -44,6 +44,8 @@ export abstract class Tool {
 
     setWithJunction(hasJunction: boolean): void {}
 
+    setSidesCount(newSidesCount: number): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }
