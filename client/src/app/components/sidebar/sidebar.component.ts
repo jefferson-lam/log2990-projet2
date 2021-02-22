@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { Tool } from '@app/classes/tool';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -13,6 +14,8 @@ export class SidebarComponent implements OnChanges {
     @Output() notifyOnToolSelect: EventEmitter<Tool> = new EventEmitter<Tool>();
     @Output() notifyEditorNewDrawing: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Input() currentTool: Tool;
+    @Input() isUndoPossible: boolean = false;
+    @Input() isRedoPossible: boolean = false;
 
     sidebarToolButtons: Map<string, SidebarToolButton> = new Map();
     @Input() selectedTool: SidebarToolButton;
@@ -20,10 +23,15 @@ export class SidebarComponent implements OnChanges {
     shouldRun: boolean;
     isNewDrawing: boolean;
 
-    constructor(public location: Location, public toolManagerService: ToolManagerService) {
+    // TODO : public location: Location unused??
+    constructor(public location: Location, public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService) {
         this.shouldRun = false;
         this.bindSidebarButtons();
         this.selectedTool = this.sidebarToolButtons.get('PencilService') as SidebarToolButton;
+        this.undoRedoService.pileSizeObservable.subscribe((sizes: number[]) => {
+            this.isUndoPossible = sizes[0] > 0;
+            this.isRedoPossible = sizes[1] > 0;
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -67,5 +75,13 @@ export class SidebarComponent implements OnChanges {
             .set('SelectEllipseService', { name: 'Ellipse de selection', icon: 'blur_circular', keyShortcut: 's', helpShortcut: '(Touche S)' })
             .set('SelectLassoService', { name: 'Lasso polygonal', icon: 'gesture', keyShortcut: 'v', helpShortcut: '(Touche V)' })
             .set('PaintBucketService', { name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' });
+    }
+
+    undo(): void {
+        this.undoRedoService.undo();
+    }
+
+    redo(): void {
+        this.undoRedoService.redo();
     }
 }

@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { LineCommand } from '@app/services/tools/line/line-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -23,8 +26,8 @@ export class LineService extends Tool {
     lineWidth: number = LineConstants.MIN_LINE_WIDTH;
     primaryColor: string = LineConstants.DEFAULT_PRIMARY_COLOR;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         this.clearPath();
     }
 
@@ -128,7 +131,10 @@ export class LineService extends Tool {
             }
             // We do a save of the current state of the canvas in order to deal with the user's 'undo last line' option on backspace.
             this.canvasState = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
-            this.drawLine(this.drawingService.baseCtx, this.linePathData);
+            const command: Command = new LineCommand(this.drawingService.baseCtx, this);
+            if (this.linePathData[LineConstants.STARTING_POINT] !== this.linePathData[LineConstants.ENDING_POINT])
+                this.undoRedoService.executeCommand(command);
+            // this.drawLine(this.drawingService.baseCtx, this.linePathData);
             this.linePathData[LineConstants.STARTING_POINT] = this.linePathData[LineConstants.ENDING_POINT];
         }
     }
@@ -150,23 +156,35 @@ export class LineService extends Tool {
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(
+        ctx: CanvasRenderingContext2D,
+        path: Vec2[],
+        withJunction?: boolean,
+        junctionRadius?: number,
+        lineWidth?: number,
+        primaryColor?: string,
+    ): void {
+        if (!withJunction) withJunction = this.withJunction;
+        if (!junctionRadius) junctionRadius = this.junctionRadius;
+        if (!lineWidth) lineWidth = this.lineWidth;
+        if (!primaryColor) primaryColor = this.primaryColor;
+
         ctx.beginPath();
-        if (this.withJunction) {
+        if (withJunction) {
             ctx.arc(
                 path[LineConstants.ENDING_POINT].x,
                 path[LineConstants.ENDING_POINT].y,
-                this.junctionRadius,
+                junctionRadius,
                 LineConstants.DEGREES_0,
                 LineConstants.DEGREES_360,
             );
-            ctx.fillStyle = this.primaryColor;
+            ctx.fillStyle = primaryColor;
             ctx.fill();
         }
-        ctx.lineWidth = this.lineWidth;
+        ctx.lineWidth = lineWidth;
         ctx.moveTo(path[LineConstants.STARTING_POINT].x, path[LineConstants.STARTING_POINT].y);
         ctx.lineTo(path[LineConstants.ENDING_POINT].x, path[LineConstants.ENDING_POINT].y);
-        ctx.strokeStyle = this.primaryColor;
+        ctx.strokeStyle = primaryColor;
         ctx.stroke();
     }
 

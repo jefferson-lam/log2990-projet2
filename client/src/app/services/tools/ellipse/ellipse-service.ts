@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EllipseCommand } from '@app/services/tools/ellipse/ellipse-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -17,8 +20,8 @@ export class EllipseService extends Tool {
     primaryColor: string = '#B5CF60';
     secondaryColor: string = '#2F2A36';
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         const MAX_PATH_DATA_SIZE = 2;
         this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
@@ -36,7 +39,9 @@ export class EllipseService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
-            this.drawEllipse(this.drawingService.baseCtx, this.cornerCoords);
+            const command: Command = new EllipseCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
+            // this.drawEllipse(this.drawingService.baseCtx, this.cornerCoords);
         }
         this.mouseDown = false;
         this.clearCornerCoords();
@@ -132,19 +137,33 @@ export class EllipseService extends Tool {
         return [xRadius, yRadius];
     }
 
-    private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const ellipseCenter = this.getEllipseCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
+    drawEllipse(
+        ctx: CanvasRenderingContext2D,
+        path: Vec2[],
+        isCircle?: boolean,
+        fillMode?: ToolConstants.FillMode,
+        lineWidth?: number,
+        primaryColor?: string,
+        secondaryColor?: string,
+    ): void {
+        if (!isCircle) isCircle = this.isCircle;
+        if (!fillMode) fillMode = this.fillMode;
+        if (!lineWidth) lineWidth = this.lineWidth;
+        if (!primaryColor) primaryColor = this.primaryColor;
+        if (!secondaryColor) secondaryColor = this.secondaryColor;
+
+        const ellipseCenter = this.getEllipseCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], isCircle);
         const startX = ellipseCenter.x;
         const startY = ellipseCenter.y;
 
         const radiiXAndY = this.getRadiiXAndY(path);
         let xRadius = radiiXAndY[EllipseConstants.X_INDEX];
         let yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
-        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (xRadius > this.lineWidth / 2 && yRadius > this.lineWidth / 2) {
-            xRadius -= this.lineWidth / 2;
-            yRadius -= this.lineWidth / 2;
-            this.drawTypeEllipse(ctx, startX, startY, xRadius, yRadius, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
+        const borderColor: string = fillMode === ToolConstants.FillMode.FILL_ONLY ? primaryColor : secondaryColor;
+        if (xRadius > lineWidth / 2 && yRadius > lineWidth / 2) {
+            xRadius -= lineWidth / 2;
+            yRadius -= lineWidth / 2;
+            this.drawTypeEllipse(ctx, startX, startY, xRadius, yRadius, fillMode, primaryColor, borderColor, lineWidth);
         } else {
             this.drawTypeEllipse(
                 ctx,

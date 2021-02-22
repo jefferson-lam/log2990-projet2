@@ -17,8 +17,8 @@
                 >
             </li>
             <li><mat-icon style="color: white" matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
-            <li><mat-icon style="color: white" matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon></li>
-            <li><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
+            <li [class.unclickable]="!isUndoPossible"><mat-icon style="color: white" matTooltip="Annuler" [matTooltipPosition]="'right'" (click)="undo()">undo</mat-icon></li>
+            <li [class.unclickable]="!isRedoPossible"><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'" (click)="redo()">redo</mat-icon></li>
         </ul>
         <ul class="tools-sidebar">
             <li id="toolId" [class.selected]="tool.value === selectedTool" *ngFor="let tool of sidebarToolButtons | keyvalue" class="listToolsClass">

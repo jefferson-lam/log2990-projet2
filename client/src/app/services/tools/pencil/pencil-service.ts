@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PencilConstants from '@app/constants/pencil-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class PencilService extends Tool {
-    private pathData: Vec2[];
+    pathData: Vec2[];
     lineWidth: number;
     primaryColor: string = 'black';
 
@@ -18,8 +21,8 @@ export class PencilService extends Tool {
     private pencilSizeChangedSource: Subject<number> = new Subject<number>();
     pencilSizeChanged$: Observable<number> = this.pencilSizeChangedSource.asObservable();
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         this.clearPath();
         this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
     }
@@ -53,7 +56,9 @@ export class PencilService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            const command: Command = new PencilCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
+            // this.drawLine(this.drawingService.baseCtx, this.pathData);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
         this.mouseDown = false;
@@ -85,17 +90,20 @@ export class PencilService extends Tool {
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[], lineWidth?: number, primaryColor?: string): void {
+        if (!lineWidth) lineWidth = this.lineWidth;
+        if (!primaryColor) primaryColor = this.primaryColor;
+
         ctx.beginPath();
 
-        ctx.lineWidth = this.lineWidth;
+        ctx.lineWidth = lineWidth;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
-        ctx.strokeStyle = this.primaryColor;
+        ctx.strokeStyle = primaryColor;
         ctx.stroke();
     }
 

@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as RectangleConstants from '@app/constants/rectangle-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { RectangleCommand } from '@app/services/tools/rectangle/rectangle-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -18,8 +21,8 @@ export class RectangleService extends Tool {
     primaryColor: string = 'red';
     secondaryColor: string = 'grey';
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         this.clearCorners();
     }
 
@@ -35,7 +38,9 @@ export class RectangleService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.END_INDEX] = mousePosition;
-            this.drawRectangle(this.drawingService.baseCtx, this.cornerCoords);
+            const command: Command = new RectangleCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
+            // this.drawRectangle(this.drawingService.baseCtx, this.cornerCoords);
         }
         this.mouseDown = false;
         this.clearCorners();
@@ -120,19 +125,33 @@ export class RectangleService extends Tool {
         this.secondaryColor = newColor;
     }
 
-    private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawRectangle(
+        ctx: CanvasRenderingContext2D,
+        path: Vec2[],
+        isSquare?: boolean,
+        fillMode?: ToolConstants.FillMode,
+        lineWidth?: number,
+        primaryColor?: string,
+        secondaryColor?: string,
+    ): void {
+        if (!isSquare) isSquare = this.isSquare;
+        if (!fillMode) fillMode = this.fillMode;
+        if (!lineWidth) lineWidth = this.lineWidth;
+        if (!primaryColor) primaryColor = this.primaryColor;
+        if (!secondaryColor) secondaryColor = this.secondaryColor;
+
         let width = path[RectangleConstants.END_INDEX].x - path[RectangleConstants.START_INDEX].x;
         let height = path[RectangleConstants.END_INDEX].y - path[RectangleConstants.START_INDEX].y;
-        if (this.isSquare) {
+        if (isSquare) {
             const longestSide = Math.min(Math.abs(width), Math.abs(height));
             width = Math.sign(width) * longestSide;
             height = Math.sign(height) * longestSide;
         }
-        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (Math.abs(width) > this.lineWidth && Math.abs(height) > this.lineWidth) {
-            width -= Math.sign(width) * this.lineWidth;
-            height -= Math.sign(height) * this.lineWidth;
-            this.drawTypeRectangle(ctx, path, width, height, this.fillMode, this.lineWidth, this.primaryColor, borderColor);
+        const borderColor: string = fillMode === ToolConstants.FillMode.FILL_ONLY ? primaryColor : secondaryColor;
+        if (Math.abs(width) > lineWidth && Math.abs(height) > lineWidth) {
+            width -= Math.sign(width) * lineWidth;
+            height -= Math.sign(height) * lineWidth;
+            this.drawTypeRectangle(ctx, path, width, height, fillMode, lineWidth, primaryColor, borderColor);
         } else {
             this.drawTypeRectangle(
                 ctx,
