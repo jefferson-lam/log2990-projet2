@@ -7,7 +7,6 @@ import * as PencilConstants from '@app/constants/pencil-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { Observable, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -16,15 +15,13 @@ export class PencilService extends Tool {
     pathData: Vec2[];
     lineWidth: number;
     primaryColor: string = 'black';
-
-    // Observables
-    private pencilSizeChangedSource: Subject<number> = new Subject<number>();
-    pencilSizeChanged$: Observable<number> = this.pencilSizeChangedSource.asObservable();
+    previewCommand: PencilCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
         this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
+        this.previewCommand = new PencilCommand(drawingService.previewCtx, this);
     }
 
     setPrimaryColor(color: string): void {
@@ -39,7 +36,6 @@ export class PencilService extends Tool {
         } else {
             this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
         }
-        this.pencilSizeChangedSource.next(this.lineWidth);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -56,9 +52,10 @@ export class PencilService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
+
             const command: Command = new PencilCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
-            // this.drawLine(this.drawingService.baseCtx, this.pathData);
+
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
         this.mouseDown = false;
@@ -72,13 +69,16 @@ export class PencilService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            const command: Command = new PencilCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
         this.clearPath();
@@ -88,23 +88,6 @@ export class PencilService extends Tool {
         if (event.buttons === MouseConstants.MouseButton.Left) {
             this.mouseDown = false;
         }
-    }
-
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[], lineWidth?: number, primaryColor?: string): void {
-        if (!lineWidth) lineWidth = this.lineWidth;
-        if (!primaryColor) primaryColor = this.primaryColor;
-
-        ctx.beginPath();
-
-        ctx.lineWidth = lineWidth;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
-        }
-        ctx.strokeStyle = primaryColor;
-        ctx.stroke();
     }
 
     private clearPath(): void {

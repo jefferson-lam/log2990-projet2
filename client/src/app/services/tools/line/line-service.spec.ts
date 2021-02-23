@@ -3,6 +3,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { LineService } from './line-service';
 
 // tslint:disable:no-any
@@ -15,12 +16,17 @@ describe('LineService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawLineSpy: jasmine.Spy<any>;
+    // let drawLineSpy: jasmine.Spy<any>;
     let rotateLineSpy: jasmine.Spy<any>;
 
     let getImageDataSpy: jasmine.Spy<any>;
     let putImageDataSpy: jasmine.Spy<any>;
     let ctxArcSpy: jasmine.Spy<any>;
+
+    let executeSpy: jasmine.Spy;
+    let previewExecuteSpy: jasmine.Spy;
+    let setPreviewValuesSpy: jasmine.Spy;
+    let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -32,8 +38,12 @@ describe('LineService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(LineService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
         rotateLineSpy = spyOn<any>(service, 'rotateLine').and.callThrough();
+
+        undoRedoService = TestBed.inject(UndoRedoService);
+        executeSpy = spyOn(undoRedoService, 'executeCommand');
+        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
+        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
@@ -163,6 +173,41 @@ describe('LineService', () => {
         }).not.toThrow();
     });
 
+    it('on shift keyboard down event should call rotate line if shift key is not down and is drawing', () => {
+        const shiftKeyboardEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.shiftDown = false;
+        service.isDrawing = true;
+        service.onKeyboardDown(shiftKeyboardEvent);
+        expect(rotateLineSpy).toHaveBeenCalled();
+        expect(setPreviewValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
+    });
+    it('on shift keyboard down event should not rotateline if shift key is already pressed', () => {
+        const shiftKeyboardEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.shiftDown = true;
+        service.isDrawing = true;
+        service.onKeyboardDown(shiftKeyboardEvent);
+        expect(rotateLineSpy).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
+    });
+
+    it('on shift keyup should set preview line back to mouse position only if user is drawing', () => {
+        const shiftKeyboardEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.isDrawing = true;
+        service.shiftDown = true;
+        service.onKeyboardUp(shiftKeyboardEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(setPreviewValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
+    });
+
     it('keyboard up events should not trigger if user is not drawing', () => {
         const keyboardEvent = {
             key: 'Shift',
@@ -228,39 +273,6 @@ describe('LineService', () => {
         expect(putImageDataSpy).not.toHaveBeenCalled();
     });
 
-    it('on shift keyboard down event should call rotate line if shift key is not down and is drawing', () => {
-        const shiftKeyboardEvent = {
-            key: 'Shift',
-        } as KeyboardEvent;
-        service.shiftDown = false;
-        service.isDrawing = true;
-        service.onKeyboardDown(shiftKeyboardEvent);
-        expect(rotateLineSpy).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
-    });
-
-    it('on shift keyboard down event should not rotateline if shift key is already pressed', () => {
-        const shiftKeyboardEvent = {
-            key: 'Shift',
-        } as KeyboardEvent;
-        service.shiftDown = true;
-        service.isDrawing = true;
-        service.onKeyboardDown(shiftKeyboardEvent);
-        expect(rotateLineSpy).not.toHaveBeenCalled();
-        expect(drawLineSpy).not.toHaveBeenCalled();
-    });
-
-    it('on shift keyup should set preview line back to mouse position only if user is drawing', () => {
-        const shiftKeyboardEvent = {
-            key: 'Shift',
-        } as KeyboardEvent;
-        service.isDrawing = true;
-        service.shiftDown = true;
-        service.onKeyboardUp(shiftKeyboardEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalledWith(previewCtxStub, [service.linePathData[0], service.mousePosition]);
-    });
-
     it('on mouse click should start drawing if user has not started a drawing yet', () => {
         service.onMouseClick(mouseEvent);
         expect(service.isDrawing).toBeTruthy();
@@ -274,10 +286,22 @@ describe('LineService', () => {
         expect(getImageDataSpy).toHaveBeenCalled();
     });
 
+    it('on mouse click, if withJunction is set to false, will only draw line and not draw arcs', () => {
+        const mouseMoveEvent = {
+            offsetX: 399,
+            offsetY: 420,
+        } as MouseEvent;
+        service.isDrawing = true;
+        service.withJunction = false;
+        service.onMouseMove(mouseMoveEvent);
+        service.onMouseClick(mouseMoveEvent);
+        expect(ctxArcSpy).not.toHaveBeenCalled();
+    });
+
     it('on mouse click should draw a line to the mouse position when user has started a drawing', () => {
         service.isDrawing = true;
         service.onMouseClick(mouseEvent);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalled();
         expect(service.linePathData[0]).toEqual({ x: 257, y: 399 });
     });
 
@@ -289,37 +313,15 @@ describe('LineService', () => {
         service.isDrawing = true;
         service.onMouseMove(mouseMoveEvent);
         service.onMouseClick(mouseMoveEvent);
-        expect(drawLineSpy).toHaveBeenCalledWith(previewCtxStub, [service.linePathData[0], service.initialPoint]);
+        expect(executeSpy).toHaveBeenCalled();
     });
 
-    it('on mouse click, if withJunction is set to true, will draw lines connected by a circular junction', () => {
-        const mouseMoveEvent = {
-            offsetX: 399,
-            offsetY: 425,
-        } as MouseEvent;
+    it('on mouse click, should call executeCommand only if point is different from previous', () => {
         service.isDrawing = true;
-        service.withJunction = true;
-        service.onMouseMove(mouseMoveEvent);
-        service.onMouseClick(mouseMoveEvent);
-        expect(ctxArcSpy).toHaveBeenCalledWith(
-            service.linePathData[LineConstants.ENDING_POINT].x,
-            service.linePathData[LineConstants.ENDING_POINT].y,
-            service.junctionRadius,
-            LineConstants.DEGREES_0,
-            LineConstants.DEGREES_360,
-        );
-    });
-
-    it('on mouse click, if withJunction is set to false, will only draw line and not draw arcs', () => {
-        const mouseMoveEvent = {
-            offsetX: 399,
-            offsetY: 420,
-        } as MouseEvent;
-        service.isDrawing = true;
-        service.withJunction = false;
-        service.onMouseMove(mouseMoveEvent);
-        service.onMouseClick(mouseMoveEvent);
-        expect(ctxArcSpy).not.toHaveBeenCalled();
+        service.onMouseClick(mouseEvent);
+        service.onMouseClick(mouseEvent);
+        expect(executeSpy).toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalledTimes(1);
     });
 
     it('on mouse dblclick should clear linePathData and stop drawing', () => {
@@ -335,17 +337,6 @@ describe('LineService', () => {
         expect((): void => {
             service.onMouseDoubleClick(mouseEvent);
         }).not.toThrow();
-    });
-
-    it('on mouse move should only draw on preview layer', () => {
-        service.isDrawing = true;
-        service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalledWith(previewCtxStub, [
-            { x: 133, y: 256 },
-            { x: 25, y: 25 },
-        ]);
     });
 
     it('on mouse move should not draw if user is not drawing', () => {
@@ -770,4 +761,15 @@ describe('LineService', () => {
 
         expect(service.rotateLine(initialPoint, currentPoint, LineConstants.DEGREES_315)).toEqual(expectedPoint);
     });
+
+    /*it('on mouse move should only draw on preview layer', () => {
+      service.isDrawing = true;
+      service.onMouseMove(mouseEvent);
+      expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+      expect(drawLineSpy).toHaveBeenCalled();
+      expect(drawLineSpy).toHaveBeenCalledWith(previewCtxStub, [
+          { x: 133, y: 256 },
+          { x: 25, y: 25 },
+      ]);
+  });*/
 });

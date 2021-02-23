@@ -1,7 +1,6 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import * as LineConstants from '@app/constants/line-constants';
-import { ENDING_POINT, STARTING_POINT } from '@app/constants/line-constants';
 import { LineService } from './line-service';
 
 export class LineCommand extends Command {
@@ -11,10 +10,16 @@ export class LineCommand extends Command {
     private primaryColor: string;
     private path: Vec2[] = [];
 
-    constructor(canvasContext: CanvasRenderingContext2D, private lineService: LineService) {
-        super(canvasContext);
-        this.path[LineConstants.STARTING_POINT] = lineService.linePathData[STARTING_POINT];
-        this.path[LineConstants.ENDING_POINT] = lineService.linePathData[ENDING_POINT];
+    constructor(canvasContext: CanvasRenderingContext2D, lineService: LineService) {
+        super();
+        this.setValues(canvasContext, lineService);
+    }
+
+    setValues(canvasContext: CanvasRenderingContext2D, lineService: LineService): void {
+        this.ctx = canvasContext;
+
+        this.path[LineConstants.STARTING_POINT] = lineService.linePathData[LineConstants.STARTING_POINT];
+        this.path[LineConstants.ENDING_POINT] = lineService.linePathData[LineConstants.ENDING_POINT];
 
         this.withJunction = lineService.withJunction;
         this.junctionRadius = lineService.junctionRadius;
@@ -23,10 +28,10 @@ export class LineCommand extends Command {
     }
 
     execute(): void {
-        this.lineService.drawLine(this.ctx, this.path, this.withJunction, this.junctionRadius, this.lineWidth, this.primaryColor);
+        this.drawLine(this.ctx, this.path);
     }
 
-    /*private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         if (this.withJunction) {
             ctx.arc(
@@ -44,5 +49,5 @@ export class LineCommand extends Command {
         ctx.lineTo(path[LineConstants.ENDING_POINT].x, path[LineConstants.ENDING_POINT].y);
         ctx.strokeStyle = this.primaryColor;
         ctx.stroke();
-    }*/
+    }
 }

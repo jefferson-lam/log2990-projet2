@@ -1,7 +1,8 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
+import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
-import { EllipseService } from './ellipse-service';
+import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 
 export class EllipseCommand extends Command {
     isCircle: boolean;
@@ -11,30 +12,26 @@ export class EllipseCommand extends Command {
     secondaryColor: string;
     cornerCoords: Vec2[] = [];
 
-    constructor(canvasContext: CanvasRenderingContext2D, private ellipseService: EllipseService) {
-        super(canvasContext);
+    constructor(canvasContext: CanvasRenderingContext2D, ellipseService: EllipseService) {
+        super();
+        this.setValues(canvasContext, ellipseService);
+    }
+
+    execute(): void {
+        this.drawEllipse(this.ctx, this.cornerCoords);
+    }
+
+    setValues(canvasContext: CanvasRenderingContext2D, ellipseService: EllipseService): void {
+        this.ctx = canvasContext;
         this.isCircle = ellipseService.isCircle;
         this.fillMode = ellipseService.fillMode;
         this.primaryColor = ellipseService.primaryColor;
         this.secondaryColor = ellipseService.secondaryColor;
         this.lineWidth = ellipseService.lineWidth;
-        this.cornerCoords[0] = ellipseService.cornerCoords[0];
-        this.cornerCoords[1] = ellipseService.cornerCoords[1];
+        Object.assign(this.cornerCoords, ellipseService.cornerCoords);
     }
 
-    execute(): void {
-        this.ellipseService.drawEllipse(
-            this.ctx,
-            this.cornerCoords,
-            this.isCircle,
-            this.fillMode,
-            this.lineWidth,
-            this.primaryColor,
-            this.secondaryColor,
-        );
-    }
-
-    /*private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         const ellipseCenter = this.getEllipseCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
         const startX = ellipseCenter.x;
         const startY = ellipseCenter.y;
@@ -115,5 +112,5 @@ export class EllipseCommand extends Command {
             xRadius = yRadius = shortestSide;
         }
         return [xRadius, yRadius];
-    }*/
+    }
 }

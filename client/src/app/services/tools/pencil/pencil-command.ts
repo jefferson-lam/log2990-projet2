@@ -7,18 +7,23 @@ export class PencilCommand extends Command {
     private primaryColor: string;
     private path: Vec2[];
 
-    constructor(canvasContext: CanvasRenderingContext2D, private pencilService: PencilService) {
-        super(canvasContext);
+    constructor(canvasContext: CanvasRenderingContext2D, pencilService: PencilService) {
+        super();
+        this.setValues(canvasContext, pencilService);
+    }
+
+    setValues(canvasContext: CanvasRenderingContext2D, pencilService: PencilService) {
+        this.ctx = canvasContext;
         this.path = pencilService.pathData;
         this.lineWidth = pencilService.lineWidth;
         this.primaryColor = pencilService.primaryColor;
     }
 
     execute(): void {
-        this.pencilService.drawLine(this.ctx, this.path, this.lineWidth, this.primaryColor);
+        this.drawLine(this.ctx, this.path);
     }
 
-    /*private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
 
         ctx.lineWidth = this.lineWidth;
@@ -30,5 +35,5 @@ export class PencilCommand extends Command {
         }
         ctx.strokeStyle = this.primaryColor;
         ctx.stroke();
-    }*/
+    }
 }

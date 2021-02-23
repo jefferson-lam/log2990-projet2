@@ -14,11 +14,13 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class EraserService extends Tool {
     pathData: Vec2[];
     lineWidth: number;
+    previewCommand: EraserCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
         this.lineWidth = EraserConstants.MIN_SIZE_ERASER;
+        this.previewCommand = new EraserCommand(this.drawingService.previewCtx, this);
     }
 
     setLineWidth(width: number): void {
@@ -38,7 +40,8 @@ export class EraserService extends Tool {
 
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
-            this.eraseSquare(this.drawingService.baseCtx, this.pathData);
+            this.previewCommand.setValues(this.drawingService.baseCtx, this);
+            this.previewCommand.execute();
         }
     }
 
@@ -48,7 +51,6 @@ export class EraserService extends Tool {
             this.pathData.push(mousePosition);
             const command: Command = new EraserCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
-            // this.erase(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -60,13 +62,13 @@ export class EraserService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.erase(this.drawingService.baseCtx, this.pathData);
+            this.previewCommand.setValues(this.drawingService.baseCtx, this);
+            this.previewCommand.execute();
         }
     }
 
     private moveCursor(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-
         this.drawingService.clearCanvas(ctx);
 
         ctx.lineWidth = 1;
@@ -96,64 +98,5 @@ export class EraserService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
-    }
-
-    erase(ctx: CanvasRenderingContext2D, path: Vec2[], lineWidth?: number, index?: number): void {
-        if (!lineWidth) lineWidth = this.lineWidth;
-        if (!index) index = 1;
-
-        const beforeLastPoint = path[path.length - (index + 1)];
-        const lastPoint = path[path.length - index];
-        const corners = this.getCorners(lastPoint, beforeLastPoint, lineWidth);
-        const bottomBefore = corners[EraserConstants.CornerIndex.BOTTOM_BEFORE];
-        const topBefore = corners[EraserConstants.CornerIndex.TOP_BEFORE];
-        const bottomLast = corners[EraserConstants.CornerIndex.BOTTOM_LAST];
-        const topLast = corners[EraserConstants.CornerIndex.TOP_LAST];
-
-        ctx.beginPath();
-        ctx.fillStyle = 'white';
-        ctx.moveTo(bottomBefore.x, bottomBefore.y);
-        ctx.lineTo(topBefore.x, topBefore.y);
-        ctx.lineTo(topLast.x, topLast.y);
-        ctx.lineTo(bottomLast.x, bottomLast.y);
-        ctx.closePath();
-        ctx.fill();
-
-        this.eraseSquare(ctx, path, lineWidth, index + 1);
-    }
-
-    eraseSquare(ctx: CanvasRenderingContext2D, path: Vec2[], lineWidth?: number, index?: number): void {
-        if (!lineWidth) lineWidth = this.lineWidth;
-        if (!index) index = 1;
-        ctx.beginPath();
-        ctx.fillStyle = 'white';
-        ctx.rect(path[path.length - index].x - lineWidth / 2, path[path.length - index].y - lineWidth / 2, lineWidth, lineWidth);
-        ctx.fill();
-    }
-
-    private getCorners(lastPoint: Vec2, beforeLastPoint: Vec2, lineWidth: number): Vec2[] {
-        const beforeLastRectangle = beforeLastPoint;
-        const lastRectangle = lastPoint;
-        const vectorCenter: Vec2 = { x: lastRectangle.x - beforeLastRectangle.x, y: lastRectangle.y - beforeLastRectangle.y };
-        let bottomBefore: Vec2;
-        let topBefore: Vec2;
-        let bottomLast: Vec2;
-        let topLast: Vec2;
-        const displacement = Math.floor(lineWidth / 2);
-
-        if (vectorCenter.x * vectorCenter.y >= 0) {
-            // Take bottom left and top right corners
-            bottomBefore = { x: beforeLastRectangle.x - displacement, y: beforeLastRectangle.y + displacement };
-            topBefore = { x: beforeLastRectangle.x + displacement, y: beforeLastRectangle.y - displacement };
-            bottomLast = { x: lastRectangle.x - displacement, y: lastRectangle.y + displacement };
-            topLast = { x: lastRectangle.x + displacement, y: lastRectangle.y - displacement };
-        } else {
-            // Take bottom right and top left corners
-            bottomBefore = { x: beforeLastRectangle.x + displacement, y: beforeLastRectangle.y + displacement };
-            topBefore = { x: beforeLastRectangle.x - displacement, y: beforeLastRectangle.y - displacement };
-            bottomLast = { x: lastRectangle.x + displacement, y: lastRectangle.y + displacement };
-            topLast = { x: lastRectangle.x - displacement, y: lastRectangle.y - displacement };
-        }
-        return [bottomBefore, topBefore, bottomLast, topLast];
     }
 }

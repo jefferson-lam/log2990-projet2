@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PencilConstants from '@app/constants/pencil-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { PencilService } from './pencil-service';
 
 // tslint:disable:no-any
@@ -15,7 +16,11 @@ describe('PencilService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawLineSpy: jasmine.Spy<any>;
+
+    let executeSpy: jasmine.Spy;
+    let previewExecuteSpy: jasmine.Spy;
+    let setPreviewValuesSpy: jasmine.Spy;
+    let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -28,7 +33,11 @@ describe('PencilService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(PencilService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+
+        undoRedoService = TestBed.inject(UndoRedoService);
+        executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
+        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
+        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -89,56 +98,52 @@ describe('PencilService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it('onMouseUp should call drawLine if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseUp should call executeCommand if mouse was already down', () => {
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should not call drawLine if mouse was not already down', () => {
+    it('onMouseUp should not call executeCommand if mouse was not already down', () => {
         service.mouseDown = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseMove should call drawLine if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseMove should call setValues and execute of previewCommand if mouse was already down', () => {
         service.mouseDown = true;
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(setPreviewValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
     });
 
-    it('onMouseMove should not call drawLine if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseMove should not call setValues and execute of previewCommand if mouse was not already down', () => {
         service.mouseDown = false;
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseLeave should call drawLine if mouse was down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseLeave should call executeCommand if mouse was down', () => {
         service.mouseDown = true;
 
         service.onMouseLeave(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalled();
     });
 
-    it('onMouseLeave should not call drawLine if mouse was not down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseLeave should not call executeCommand if mouse was not down', () => {
         service.mouseDown = false;
 
         service.onMouseLeave(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseEnter should set mouseDown to false if mouse is not down', () => {
@@ -158,24 +163,6 @@ describe('PencilService', () => {
         expect(service.mouseDown).toBeTrue();
     });
 
-    it('onKeyboardDown should not call drawLine if any key is pressed', () => {
-        const keyEvent = {
-            key: 'e',
-        } as KeyboardEvent;
-
-        service.onKeyboardDown(keyEvent);
-        expect(drawLineSpy).not.toHaveBeenCalled();
-    });
-
-    it(' onKeyboardUp should not call drawLine if any key is pressed', () => {
-        const keyEvent = {
-            key: 'e',
-        } as KeyboardEvent;
-
-        service.onKeyboardUp(keyEvent);
-        expect(drawLineSpy).not.toHaveBeenCalled();
-    });
-
     // Exemple de test d'intégration qui est quand même utile
     it('should change the pixel of the canvas ', () => {
         mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
@@ -190,5 +177,23 @@ describe('PencilService', () => {
         expect(imageData.data[2]).toEqual(0); // B
         // tslint:disable-next-line:no-magic-numbers
         expect(imageData.data[3]).not.toEqual(0); // A
+    });
+
+    it('onKeyboardDown should not call executeCommand if any key is pressed', () => {
+        const keyEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+
+        service.onKeyboardDown(keyEvent);
+        expect(executeSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onKeyboardUp should not call executeCommand if any key is pressed', () => {
+        const keyEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+
+        service.onKeyboardUp(keyEvent);
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 });

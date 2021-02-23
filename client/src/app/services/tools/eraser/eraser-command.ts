@@ -1,34 +1,47 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
+import * as EraserConstants from '@app/constants/eraser-constants';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 
 export class EraserCommand extends Command {
-    private path: Vec2[];
+    private path: Vec2[] = [];
     private lineWidth: number;
+    private preview: boolean = false;
 
-    constructor(canvasContext: CanvasRenderingContext2D, private eraserService: EraserService) {
-        super(canvasContext);
-        this.path = this.eraserService.pathData;
-        this.lineWidth = this.eraserService.lineWidth;
+    constructor(canvasContext: CanvasRenderingContext2D, eraserService: EraserService) {
+        super();
+        this.ctx = canvasContext;
+        this.path = Object.assign([], eraserService.pathData);
+        this.lineWidth = eraserService.lineWidth;
+    }
+
+    setValues(canvasContext: CanvasRenderingContext2D, eraserService: EraserService): void {
+        this.preview = true;
+        this.ctx = canvasContext;
+        this.path = [];
+        Object.assign(this.path, eraserService.pathData);
+        this.lineWidth = eraserService.lineWidth;
     }
 
     execute(): void {
         if (this.path.length > 1) {
-            for (let i = 1; i < this.path.length; i++) {
-                this.eraserService.erase(this.ctx, this.path, this.lineWidth, i);
+            if (!this.preview) {
+                for (let i = 1; i < this.path.length; i++) {
+                    this.erase(this.ctx, this.path, i);
+                }
+            } else {
+                this.erase(this.ctx, this.path);
             }
         }
-        this.eraserService.eraseSquare(this.ctx, this.path, this.lineWidth);
+        this.eraseSquare(this.ctx, this.path);
     }
 
-    /*
-    private erase(ctx: CanvasRenderingContext2D, path: Vec2[], lineWidth?: number, index?: number): void {
-        if (!lineWidth) lineWidth = this.lineWidth;
+    private erase(ctx: CanvasRenderingContext2D, path: Vec2[], index?: number): void {
         if (!index) index = 1;
 
         const beforeLastPoint = path[path.length - (index + 1)];
         const lastPoint = path[path.length - index];
-        const corners = this.getCorners(lastPoint, beforeLastPoint, lineWidth);
+        const corners = this.getCorners(lastPoint, beforeLastPoint, this.lineWidth);
         const bottomBefore = corners[EraserConstants.CornerIndex.BOTTOM_BEFORE];
         const topBefore = corners[EraserConstants.CornerIndex.TOP_BEFORE];
         const bottomLast = corners[EraserConstants.CornerIndex.BOTTOM_LAST];
@@ -43,15 +56,14 @@ export class EraserCommand extends Command {
         ctx.closePath();
         ctx.fill();
 
-        this.eraseSquare(ctx, path, lineWidth, index + 1);
+        this.eraseSquare(ctx, path, index + 1);
     }
 
-    private eraseSquare(ctx: CanvasRenderingContext2D, path: Vec2[], lineWidth?: number, index?: number): void {
-        if (!lineWidth) lineWidth = this.lineWidth;
+    private eraseSquare(ctx: CanvasRenderingContext2D, path: Vec2[], index?: number): void {
         if (!index) index = 1;
         ctx.beginPath();
         ctx.fillStyle = 'white';
-        ctx.rect(path[path.length - index].x - lineWidth / 2, path[path.length - index].y - lineWidth / 2, lineWidth, lineWidth);
+        ctx.rect(path[path.length - index].x - this.lineWidth / 2, path[path.length - index].y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
         ctx.fill();
     }
 
@@ -79,5 +91,5 @@ export class EraserCommand extends Command {
             topLast = { x: lastRectangle.x - displacement, y: lastRectangle.y - displacement };
         }
         return [bottomBefore, topBefore, bottomLast, topLast];
-    }*/
+    }
 }

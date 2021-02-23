@@ -1,13 +1,16 @@
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
+import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SidebarComponent } from './sidebar.component';
 
 class ToolStub extends Tool {}
@@ -21,15 +24,18 @@ describe('SidebarComponent', () => {
     let ellipseStub: ToolStub;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
+    let undoRedoService: UndoRedoService;
+    let mockCommand: Command;
+    let commandExecuteSpy: jasmine.Spy;
 
     // tslint:disable:no-any
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool']);
-        pencilStub = new PencilService({} as DrawingService);
-        eraserStub = new EraserService({} as DrawingService);
-        lineStub = new LineService({} as DrawingService);
-        rectangleStub = new RectangleService({} as DrawingService);
-        ellipseStub = new EllipseService({} as DrawingService);
+        pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService);
+        eraserStub = new EraserService({} as DrawingService, {} as UndoRedoService);
+        lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
+        rectangleStub = new RectangleService({} as DrawingService, {} as UndoRedoService);
+        ellipseStub = new EllipseService({} as DrawingService, {} as UndoRedoService);
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -48,6 +54,9 @@ describe('SidebarComponent', () => {
                 component = fixture.componentInstance;
                 fixture.detectChanges();
             });
+        undoRedoService = TestBed.inject(UndoRedoService);
+        mockCommand = new PencilCommand({} as CanvasRenderingContext2D, pencilStub as PencilService);
+        commandExecuteSpy = spyOn(mockCommand, 'execute');
     }));
 
     it('should create', () => {
@@ -157,5 +166,45 @@ describe('SidebarComponent', () => {
         newDrawingButton.click();
         fixture.detectChanges();
         expect(notifyEditorNewDrawingSpy).toHaveBeenCalledWith(component.isNewDrawing);
+    });
+
+    it('clicking on undo button when undo pile is not empty should call undoRedoService.undo', () => {
+        const undoServiceSpy = spyOn(undoRedoService, 'undo');
+        undoRedoService.executeCommand(mockCommand);
+
+        fixture.detectChanges();
+        const undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
+        undoButton.click();
+        fixture.detectChanges();
+
+        expect(undoButton.classes).toBeUndefined();
+        expect(undoServiceSpy).toHaveBeenCalled();
+        expect(commandExecuteSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on undo button when undo pile is empty should not be possible', () => {
+        const undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
+
+        expect(undoButton).toHaveClass('unclickable');
+    });
+
+    it('clicking on redo button when redo pile is not empty should call undoRedoService.redo', () => {
+        const redoServiceSpy = spyOn(undoRedoService, 'redo');
+        undoRedoService.executeCommand(mockCommand);
+
+        fixture.detectChanges();
+        const redoButton = fixture.debugElement.nativeElement.querySelector('#redoButton');
+        redoButton.click();
+        fixture.detectChanges();
+
+        expect(redoButton.classes).toBeUndefined();
+        expect(redoServiceSpy).toHaveBeenCalled();
+        expect(commandExecuteSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on redo button when redo pile is empty should not be possible', () => {
+        const redoButton = fixture.debugElement.nativeElement.querySelector('#redoButton');
+
+        expect(redoButton).toHaveClass('unclickable');
     });
 });

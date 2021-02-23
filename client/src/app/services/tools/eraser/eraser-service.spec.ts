@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as EraserConstants from '@app/constants/eraser-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EraserService } from './eraser-service';
 
 // tslint:disable:no-any
@@ -15,7 +16,11 @@ describe('EraserService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let eraseSpy: jasmine.Spy<any>;
+
+    let executeSpy: jasmine.Spy;
+    let previewExecuteSpy: jasmine.Spy;
+    let setPreviewValuesSpy: jasmine.Spy;
+    let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -28,7 +33,11 @@ describe('EraserService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(EraserService);
-        eraseSpy = spyOn<any>(service, 'erase').and.callThrough();
+
+        undoRedoService = TestBed.inject(UndoRedoService);
+        executeSpy = spyOn(undoRedoService, 'executeCommand');
+        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
+        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -67,38 +76,34 @@ describe('EraserService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it('onMouseUp should call erase if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service['pathData'].push(service.mouseDownCoord);
+    it('onMouseUp should call executeCommand if mouse was already down', () => {
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
-        expect(eraseSpy).toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should not call erase if mouse was not already down', () => {
+    it('onMouseUp should not call executeCommand if mouse was not already down', () => {
         service.mouseDown = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(eraseSpy).not.toHaveBeenCalled();
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseMove should call erase if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service['pathData'].push(service.mouseDownCoord);
+    it('onMouseMove should call setValues and execute previewcommand if mouse was already down', () => {
         service.mouseDown = true;
 
         service.onMouseMove(mouseEvent);
-        expect(eraseSpy).toHaveBeenCalled();
+        expect(setPreviewValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
     });
 
-    it('onMouseMove should not call erase if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseMove should not call setValues and execute previewcommand if mouse was not already down', () => {
         service.mouseDown = false;
 
         service.onMouseMove(mouseEvent);
-        expect(eraseSpy).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseMove should call moveCursor', () => {
@@ -111,24 +116,20 @@ describe('EraserService', () => {
         expect(moveCursorSpy).toHaveBeenCalled();
     });
 
-    it('onMouseLeave should call erase if mouse was down', () => {
-        // tslint:disable-next-line:no-empty
-        eraseSpy.and.callFake(() => {});
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseLeave should call executeCommand if mouse was down', () => {
         service.mouseDown = true;
 
         service.onMouseLeave(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(eraseSpy).toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalled();
     });
 
-    it('onMouseLeave should not call erase if mouse was not down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseLeave should not call executeCommand if mouse was not down', () => {
         service.mouseDown = false;
 
         service.onMouseLeave(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(eraseSpy).not.toHaveBeenCalled();
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseEnter should set mouseDown to false if mouse is not down', () => {
@@ -146,66 +147,6 @@ describe('EraserService', () => {
 
         service.onMouseEnter(mouseEvent);
         expect(service.mouseDown).toBeTrue();
-    });
-
-    it('getCorners of positive vector coordinates product returns bottom left and top right corners', () => {
-        const cornersSpy = spyOn<any>(service, 'getCorners').and.callThrough();
-        const pathStub = [
-            { x: 5, y: 5 },
-            { x: 10, y: 10 },
-        ] as Vec2[];
-        service.lineWidth = 2;
-        const corners: Vec2[] = service['getCorners'](pathStub[pathStub.length - 1], pathStub[pathStub.length - 2]);
-        const expectedCorners = [
-            { x: 4, y: 6 },
-            { x: 6, y: 4 },
-            { x: 9, y: 11 },
-            { x: 11, y: 9 },
-        ] as Vec2[];
-
-        expect(cornersSpy).toHaveBeenCalled();
-        expect(cornersSpy).toHaveBeenCalledWith(pathStub[pathStub.length - 1], pathStub[pathStub.length - 2]);
-        expect(corners).toEqual(expectedCorners);
-    });
-
-    it('getCorners of negative vector coordinates product returns bottom right and top left corners', () => {
-        const cornersSpy = spyOn<any>(service, 'getCorners').and.callThrough();
-        const pathStub = [
-            { x: 5, y: 10 },
-            { x: 10, y: 5 },
-        ] as Vec2[];
-        service.lineWidth = 2;
-        const corners: Vec2[] = service['getCorners'](pathStub[pathStub.length - 1], pathStub[pathStub.length - 2]);
-        const expectedCorners = [
-            { x: 6, y: 11 },
-            { x: 4, y: 9 },
-            { x: 11, y: 6 },
-            { x: 9, y: 4 },
-        ] as Vec2[];
-
-        expect(cornersSpy).toHaveBeenCalled();
-        expect(cornersSpy).toHaveBeenCalledWith(pathStub[pathStub.length - 1], pathStub[pathStub.length - 2]);
-        expect(corners).toEqual(expectedCorners);
-    });
-
-    it('erase should call canvas functions', () => {
-        const pathStub = [
-            { x: 0, y: 0 },
-            { x: 1, y: 1 },
-        ] as Vec2[];
-        const beginSpy = spyOn(baseCtxStub, 'beginPath').and.callThrough();
-        const moveToSpy = spyOn(baseCtxStub, 'moveTo').and.callThrough();
-        const lineToSpy = spyOn(baseCtxStub, 'lineTo').and.callThrough();
-        const closeSpy = spyOn(baseCtxStub, 'closePath').and.callThrough();
-        const fillSpy = spyOn(baseCtxStub, 'fill').and.callThrough();
-        service['erase'](baseCtxStub, pathStub);
-
-        expect(eraseSpy).toHaveBeenCalledWith(baseCtxStub, pathStub);
-        expect(beginSpy).toHaveBeenCalled();
-        expect(moveToSpy).toHaveBeenCalled();
-        expect(lineToSpy).toHaveBeenCalled();
-        expect(closeSpy).toHaveBeenCalled();
-        expect(fillSpy).toHaveBeenCalled();
     });
 
     it('setLineWidth should not be able to set size under minimum 5', () => {

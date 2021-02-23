@@ -5,6 +5,7 @@ import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseService } from './ellipse-service';
 
 // tslint:disable:max-file-line-count
@@ -17,9 +18,16 @@ describe('EllipseService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawEllipseSpy: jasmine.Spy<any>;
-    let testCanvas: HTMLCanvasElement;
-    let testCtx: CanvasRenderingContext2D;
+    let predictionRectangleSpy: jasmine.Spy;
+
+    let executeSpy: jasmine.Spy;
+    let previewExecuteSpy: jasmine.Spy;
+    let setPreviewValuesSpy: jasmine.Spy;
+    let undoRedoService: UndoRedoService;
+
+    // let drawEllipseSpy: jasmine.Spy<any>;
+    // let testCanvas: HTMLCanvasElement;
+    // let testCtx: CanvasRenderingContext2D;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -30,11 +38,14 @@ describe('EllipseService', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-        testCanvas = document.createElement('canvas');
-        testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D;
-
         service = TestBed.inject(EllipseService);
-        drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.callThrough();
+        predictionRectangleSpy = spyOn<any>(service, 'drawPredictionRectangle').and.callThrough();
+
+        undoRedoService = TestBed.inject(UndoRedoService);
+        executeSpy = spyOn(undoRedoService, 'executeCommand');
+        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
+        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
+
         // Configuration of spy of service
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
@@ -72,54 +83,50 @@ describe('EllipseService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it(' onMouseUp should call drawEllipse if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it(' onMouseUp should call executeCommand if mouse was already down', () => {
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseUp should not call drawEllipse if mouse was not already down', () => {
+    it(' onMouseUp should not call executeCommand if mouse was not already down', () => {
         service.mouseDown = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it(' onMouseMove should call drawEllipse if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it(' onMouseMove should call drawPredictionRectangle if mouse was already down', () => {
         service.mouseDown = true;
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(predictionRectangleSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseMove should not call Rectangle if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it(' onMouseMove should not call drawPredictionRectangle if mouse was not already down', () => {
         service.mouseDown = false;
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseLeave should call drawEllipse if mouse was pressed', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseLeave should call setValues and execute of previewCommand if mouse was pressed', () => {
         service.mouseDown = true;
 
         service.onMouseLeave(mouseEvent);
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(setPreviewValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
     });
 
-    it('onMouseLeave should not call drawEllipse if mouse was not pressed', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it('onMouseLeave should not call setValues and execute of previewCommand if mouse was not pressed', () => {
         service.mouseDown = false;
 
         service.onMouseLeave(mouseEvent);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseEnter should make service.mouseDown true if left mouse was pressed and mouse was pressed before leaving', () => {
@@ -158,7 +165,7 @@ describe('EllipseService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it(' onKeyboardDown should call drawEllipse if mouse was down and then Shift was pressed', () => {
+    it(' onKeyboardDown should call setValues and execute of previewCommand if mouse was down and then Shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -168,10 +175,11 @@ describe('EllipseService', () => {
 
         service.onKeyboardDown(keyEvent);
         expect(service.isCircle).toEqual(true);
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(setPreviewValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
     });
 
-    it(' onKeyboardDown should not call drawEllipse if mouse was not down and then Shift was pressed', () => {
+    it(' onKeyboardDown should not call setValues and execute of previewCommand if mouse was not down and then Shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
@@ -181,10 +189,11 @@ describe('EllipseService', () => {
 
         service.onKeyboardDown(keyEvent);
         expect(service.isCircle).toEqual(false);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyboardDown should not call drawEllipse if Shift was not pressed while mouse was already down', () => {
+    it(' onKeyboardDown should not call setValues and execute of previewCommand if Shift was not pressed while mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -194,10 +203,11 @@ describe('EllipseService', () => {
 
         service.onKeyboardDown(keyEvent);
         expect(service.isCircle).toEqual(false);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyboardUp should call drawEllipse if mouse was down and then shift was pressed', () => {
+    it(' onKeyboardUp should call setValues and execute of previewCommand if mouse was down and then shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -207,10 +217,11 @@ describe('EllipseService', () => {
 
         service.onKeyboardUp(keyEvent);
         expect(service.isCircle).toEqual(false);
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(setPreviewValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
     });
 
-    it(' onKeyboardUp should not call drawEllipse if mouse was down and then keyboard key was released', () => {
+    it(' onKeyboardUp should not call setValues and execute of previewCommand if mouse was down and then keyboard key was released', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -219,10 +230,11 @@ describe('EllipseService', () => {
         } as KeyboardEvent;
 
         service.onKeyboardUp(keyEvent);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyboardUp should not call drawEllipse if mouse was not down when keyboard key was released', () => {
+    it(' onKeyboardUp should not call setValues and execute of previewCommand if mouse was not down when keyboard key was released', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
@@ -231,7 +243,8 @@ describe('EllipseService', () => {
         } as KeyboardEvent;
 
         service.onKeyboardUp(keyEvent);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
     it('setLineWidth should change size of lineWidth if within min and max width allowed', () => {
@@ -282,7 +295,7 @@ describe('EllipseService', () => {
         expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
     });
 
-    it('should make an ellipse with border and fill color of same color on FillMode.FILL_ONLY', () => {
+    /*it('should make an ellipse with border and fill color of same color on FillMode.FILL_ONLY', () => {
         const RED_VALUE = 110;
         const GREEN_VALUE = 225;
         const BLUE_VALUE = 202;
@@ -433,5 +446,5 @@ describe('EllipseService', () => {
         for (let i = 0; i < imageData.data.length; i++) {
             expect(imageData.data[i]).toEqual(testData.data[i]);
         }
-    });
+    });*/
 });

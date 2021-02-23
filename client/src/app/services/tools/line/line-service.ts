@@ -16,6 +16,8 @@ export class LineService extends Tool {
     linePathData: Vec2[];
     canvasState: ImageData;
 
+    previewCommand: LineCommand;
+
     shiftDown: boolean = false;
     isDrawing: boolean = false;
     isEscapeKeyDown: boolean = false;
@@ -29,6 +31,7 @@ export class LineService extends Tool {
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
+        this.previewCommand = new LineCommand(drawingService.previewCtx, this);
     }
 
     setPrimaryColor(newColor: string): void {
@@ -88,7 +91,8 @@ export class LineService extends Tool {
                     finalAngle,
                 );
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawLine(this.drawingService.previewCtx, this.linePathData);
+                this.previewCommand.setValues(this.drawingService.previewCtx, this);
+                this.previewCommand.execute();
                 this.shiftDown = true;
             } else if (event.key === 'Escape') {
                 this.isEscapeKeyDown = true;
@@ -104,7 +108,8 @@ export class LineService extends Tool {
                 this.shiftDown = false;
                 this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawLine(this.drawingService.previewCtx, this.linePathData);
+                this.previewCommand.setValues(this.drawingService.previewCtx, this);
+                this.previewCommand.execute();
             } else if (event.key === 'Escape' && this.isEscapeKeyDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.clearPath();
@@ -134,7 +139,6 @@ export class LineService extends Tool {
             const command: Command = new LineCommand(this.drawingService.baseCtx, this);
             if (this.linePathData[LineConstants.STARTING_POINT] !== this.linePathData[LineConstants.ENDING_POINT])
                 this.undoRedoService.executeCommand(command);
-            // this.drawLine(this.drawingService.baseCtx, this.linePathData);
             this.linePathData[LineConstants.STARTING_POINT] = this.linePathData[LineConstants.ENDING_POINT];
         }
     }
@@ -152,40 +156,9 @@ export class LineService extends Tool {
             this.mousePosition = this.getPositionFromMouse(event);
             this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.linePathData);
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
         }
-    }
-
-    drawLine(
-        ctx: CanvasRenderingContext2D,
-        path: Vec2[],
-        withJunction?: boolean,
-        junctionRadius?: number,
-        lineWidth?: number,
-        primaryColor?: string,
-    ): void {
-        if (!withJunction) withJunction = this.withJunction;
-        if (!junctionRadius) junctionRadius = this.junctionRadius;
-        if (!lineWidth) lineWidth = this.lineWidth;
-        if (!primaryColor) primaryColor = this.primaryColor;
-
-        ctx.beginPath();
-        if (withJunction) {
-            ctx.arc(
-                path[LineConstants.ENDING_POINT].x,
-                path[LineConstants.ENDING_POINT].y,
-                junctionRadius,
-                LineConstants.DEGREES_0,
-                LineConstants.DEGREES_360,
-            );
-            ctx.fillStyle = primaryColor;
-            ctx.fill();
-        }
-        ctx.lineWidth = lineWidth;
-        ctx.moveTo(path[LineConstants.STARTING_POINT].x, path[LineConstants.STARTING_POINT].y);
-        ctx.lineTo(path[LineConstants.ENDING_POINT].x, path[LineConstants.ENDING_POINT].y);
-        ctx.strokeStyle = primaryColor;
-        ctx.stroke();
     }
 
     private clearPath(): void {
