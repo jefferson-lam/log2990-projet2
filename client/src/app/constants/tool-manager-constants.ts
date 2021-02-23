@@ -1,3 +1,5 @@
+export const AEROSOL_KEY = 'a';
+
 export const PENCIL_KEY = 'c';
 
 export const ERASER_KEY = 'e';

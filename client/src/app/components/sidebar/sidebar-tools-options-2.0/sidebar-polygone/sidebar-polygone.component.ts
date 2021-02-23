@@ -13,8 +13,8 @@ export class SidebarPolygoneComponent implements OnInit {
   minPolygone: number = 3;
   maxPolygone: number = 12;
   tickInterval: number = 1;
-  toolSize: number | undefined;
-  polygoneSidesCount: number | undefined;
+  toolSize: number = 7;
+  polygoneSidesCount: number = 5;
   fillMode: number | undefined;
   currentTool: Tool;
 
@@ -30,17 +30,12 @@ export class SidebarPolygoneComponent implements OnInit {
     this.numberOfPolySides.subscribe((newSidesCount: number) => this.settingsManager.setSidesCount(newSidesCount));
   }
 
-  setMaxSidesPolygone(numberOfSidesInput: number): number {
-    return numberOfSidesInput;
-  }
-
   setMax(numberInput: number): number {
     return numberInput;
   }
 
   emitToolSize(): void {
     this.toolSizeChanged.emit(this.toolSize);
-    console.log(this.toolSize);
   }
 
   emitPolygoneSideNumber(): void{

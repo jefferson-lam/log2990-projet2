@@ -22,8 +22,6 @@ export class SettingsManagerService {
 
     setLineWidth(newWidth: number): void {
         this.editorComponent.currentTool.setLineWidth(newWidth);
-        console.log(newWidth);
-        console.log(this.editorComponent.currentTool);
     }
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {
@@ -40,6 +38,14 @@ export class SettingsManagerService {
 
     setSidesCount(newSidesCount: number): void {
         this.editorComponent.currentTool.setSidesCount(newSidesCount);
+    }
+
+    setWaterDropWidth(newSize: number): void {
+        this.editorComponent.currentTool.setWaterDropWidth(newSize);
+    }
+
+    setEmissionCount(newEmissionCount: number): void {
+        this.editorComponent.currentTool.setEmissionCount(newEmissionCount);
     }
 
     setPrimaryColorTools(color: string): void {

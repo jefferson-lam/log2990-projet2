@@ -32,6 +32,7 @@ import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-optio
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-polygone/sidebar-polygone.component';
+import { SidebarAerosolComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-aerosol/sidebar-aerosol.component';
 
 @NgModule({
     declarations: [
@@ -49,6 +50,7 @@ import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-opt
         SidebarEllipseComponent,
         SidebarLineComponent,
         SidebarPolygoneComponent,
+        SidebarAerosolComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

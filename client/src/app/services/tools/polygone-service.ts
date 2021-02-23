@@ -14,7 +14,7 @@ export class PolygoneService extends Tool{
   initNumberSides: number = 5;
   cornerCoords: Vec2[];
   isCircle: boolean = false;
-  lineWidth: number = 20;
+  lineWidth: number = 7;
   fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
   primaryColor: string = '#B5CF60';
   secondaryColor: string = '#2F2A36';

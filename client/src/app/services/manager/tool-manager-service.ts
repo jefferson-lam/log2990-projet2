@@ -8,6 +8,8 @@ import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { PolygoneService } from '@app/services/tools/polygone-service';
+import { AerosolService } from '@app/services/tools/aerosol-service';
+
 
 @Injectable({
     providedIn: 'root',
@@ -23,6 +25,7 @@ export class ToolManagerService {
         public ellipseService: EllipseService,
         public drawingService: DrawingService,
         public polygoneService: PolygoneService,
+        public aerosolService: AerosolService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -35,7 +38,8 @@ export class ToolManagerService {
             .set(ToolManagerConstants.LINE_KEY, this.lineService)
             .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
             .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
-            .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService);
+            .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
+            .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService);
     }
 
     selectTool(event: KeyboardEvent): Tool {
@@ -67,5 +71,6 @@ export class ToolManagerService {
         this.pencilService.setSecondaryColor(color);
         this.lineService.setSecondaryColor(color);
         this.polygoneService.setSecondaryColor(color);
+        this.aerosolService.setSecondaryColor(color);
     }
 }
