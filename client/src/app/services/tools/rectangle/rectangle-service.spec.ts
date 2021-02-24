@@ -8,8 +8,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { RectangleService } from './rectangle-service';
 
-// tslint:disable:max-file-line-count
-// tslint:disable:no-any
 describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
@@ -163,7 +161,7 @@ describe('RectangleService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it(' onKeyboardDown should call setValues and execute of previewCommand if mouse was down and Shift was not pressed before shift was pressed', () => {
+    it('onKeyboardDown should call setValues and execute of previewCommand if mouse was down and Shift was just pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
         service.isShiftDown = false;
@@ -178,7 +176,7 @@ describe('RectangleService', () => {
         expect(previewExecuteSpy).toHaveBeenCalled();
     });
 
-    it(' onKeyboardDown should not call setValues and execute of previewCommand if mouse was down and Shift was pressed before shift was pressed.', () => {
+    it('onKeyboardDown should not call setValues and execute of previewCommand if mouse was down and Shift was just pressed.', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
         service.isShiftDown = true;
@@ -193,7 +191,7 @@ describe('RectangleService', () => {
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
-    it(' onKeyboardDown should not call setValues and execute of previewCommand if mouse was not down and Shift was pressed before shift was pressed.', () => {
+    it('onKeyboardDown should not call setValues and execute of previewCommand if mouse was not down and Shift was just pressed.', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
         service.isShiftDown = true;

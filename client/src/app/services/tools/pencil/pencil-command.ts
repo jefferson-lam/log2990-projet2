@@ -12,7 +12,7 @@ export class PencilCommand extends Command {
         this.setValues(canvasContext, pencilService);
     }
 
-    setValues(canvasContext: CanvasRenderingContext2D, pencilService: PencilService) {
+    setValues(canvasContext: CanvasRenderingContext2D, pencilService: PencilService): void {
         this.ctx = canvasContext;
         this.path = pencilService.pathData;
         this.lineWidth = pencilService.lineWidth;

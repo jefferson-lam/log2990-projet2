@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { LineCommand } from '@app/services/tools/line/line-command';
 import { LineService } from '@app/services/tools/line/line-service';
 
+// tslint:disable:no-any
 describe('LineCommand', () => {
     let command: LineCommand;
     let lineService: LineService;

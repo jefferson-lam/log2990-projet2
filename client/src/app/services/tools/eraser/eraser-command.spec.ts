@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { EraserCommand } from './eraser-command';
 
+// tslint:disable:no-any
 describe('EraserCommand', () => {
     let command: EraserCommand;
     let eraserService: EraserService;
@@ -12,6 +13,7 @@ describe('EraserCommand', () => {
 
     let eraseSpy: jasmine.Spy;
     let eraseSquareSpy: jasmine.Spy;
+    let cornersSpy: jasmine.Spy;
 
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -35,6 +37,7 @@ describe('EraserCommand', () => {
         command = new EraserCommand(baseCtxStub, eraserService);
         eraseSquareSpy = spyOn<any>(command, 'eraseSquare').and.callThrough();
         eraseSpy = spyOn<any>(command, 'erase').and.callThrough();
+        cornersSpy = spyOn<any>(command, 'getCorners').and.callThrough();
     });
 
     it('should be created', () => {
@@ -76,12 +79,9 @@ describe('EraserCommand', () => {
     });
 
     it('erase should call getCorners and eraseSquare', () => {
-        const getCornersSpy = spyOn<any>(command, 'getCorners').and.callThrough();
-
-        // tslint:disable:no-string-literal
         command['erase'](command['ctx'], command['path']);
 
-        expect(getCornersSpy).toHaveBeenCalled();
+        expect(cornersSpy).toHaveBeenCalled();
         expect(eraseSquareSpy).toHaveBeenCalled();
     });
 
@@ -112,8 +112,6 @@ describe('EraserCommand', () => {
     });
 
     it('getCorners of positive vector coordinates product returns bottom left and top right corners', () => {
-        const cornersSpy = spyOn<any>(command, 'getCorners').and.callThrough();
-
         const corners: Vec2[] = command['getCorners'](pathStub[pathStub.length - 1], pathStub[pathStub.length - 2], command['lineWidth']);
         const expectedCorners = [
             { x: 9, y: 11 },
@@ -127,15 +125,14 @@ describe('EraserCommand', () => {
     });
 
     it('getCorners of negative vector coordinates product returns bottom right and top left corners', () => {
-        const cornersSpy = spyOn<any>(command, 'getCorners').and.callThrough();
-        const pathStub = [
+        const mockPath = [
             { x: 5, y: 10 },
             { x: 10, y: 5 },
         ] as Vec2[];
 
-        command['path'] = Object.assign([], pathStub);
+        command['path'] = Object.assign([], mockPath);
 
-        const corners: Vec2[] = command['getCorners'](pathStub[pathStub.length - 1], pathStub[pathStub.length - 2], command['lineWidth']);
+        const corners: Vec2[] = command['getCorners'](mockPath[mockPath.length - 1], mockPath[mockPath.length - 2], command['lineWidth']);
         const expectedCorners = [
             { x: 6, y: 11 },
             { x: 4, y: 9 },

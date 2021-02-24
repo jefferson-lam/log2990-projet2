@@ -6,6 +6,7 @@ import * as ToolConstants from '@app/constants/tool-constants';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EllipseCommand } from './ellipse-command';
 
+// tslint:disable:no-any
 describe('EllipseCommand', () => {
     let command: EllipseCommand;
     let ellipseService: EllipseService;
@@ -41,7 +42,7 @@ describe('EllipseCommand', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
 
         mockPoint = { x: 10, y: 10 };
-        mockRadii = [5, 5];
+        mockRadii = [END_X, END_Y];
 
         // Test ellipse to compare
         testCanvas = document.createElement('canvas');

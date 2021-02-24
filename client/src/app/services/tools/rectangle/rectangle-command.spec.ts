@@ -6,6 +6,7 @@ import * as ToolConstants from '@app/constants/tool-constants';
 import { RectangleCommand } from '@app/services/tools/rectangle/rectangle-command';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 
+// tslint:disable:no-any
 describe('RectangleCommand', () => {
     let command: RectangleCommand;
     let rectangleService: RectangleService;

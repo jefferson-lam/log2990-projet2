@@ -4,6 +4,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PencilCommand } from './pencil-command';
 
+// tslint:disable:no-any
 describe('PencilCommandService', () => {
     let command: PencilCommand;
     let pencilService: PencilService;

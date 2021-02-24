@@ -13,12 +13,12 @@ describe('UndoRedoService', () => {
     let service: UndoRedoService;
     let mockPile: Command[];
     let mockEmptyPile: Command[];
-    let refreshSpy: jasmine.Spy<any>;
-    let emitSpy: jasmine.Spy<any>;
-    let undoPopSpy: jasmine.Spy<any>;
-    let undoPushSpy: jasmine.Spy<any>;
-    let redoPopSpy: jasmine.Spy<any>;
-    let redoPushSpy: jasmine.Spy<any>;
+    let refreshSpy: jasmine.Spy;
+    let emitSpy: jasmine.Spy;
+    let undoPopSpy: jasmine.Spy;
+    let undoPushSpy: jasmine.Spy;
+    let redoPopSpy: jasmine.Spy;
+    let redoPushSpy: jasmine.Spy;
 
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
