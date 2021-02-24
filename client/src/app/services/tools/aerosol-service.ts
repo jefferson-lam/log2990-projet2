@@ -29,7 +29,6 @@ export class AerosolService extends Tool{
     this.mouseDown = event.button === MouseConstants.MouseButton.Left;
     if (this.mouseDown) {
       this.clearPath();
-
       this.mouseDownCoord = this.getPositionFromMouse(event);
       this.pathData.push(this.mouseDownCoord);
       this.airBrushCircle(this.drawingService.baseCtx, event);
@@ -40,6 +39,7 @@ export class AerosolService extends Tool{
     if (this.mouseDown) {
       const mousePosition = this.getPositionFromMouse(event);
       this.pathData.push(mousePosition);
+      this.mouseDown = true;
     }
     this.mouseDown = false;
     this.clearPath();
@@ -84,7 +84,7 @@ export class AerosolService extends Tool{
     };
   }
 
-  private clearPath(): void {
+  clearPath(): void {
     this.pathData = [];
   }
 

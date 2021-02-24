@@ -21,8 +21,8 @@ describe('ToolManagerService', () => {
         rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['setPrimaryColor', 'setSecondaryColor', 'onMouseUp']);
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['setPrimaryColor', 'setSecondaryColor', 'onMouseUp']);
         eraserServiceSpy = jasmine.createSpyObj('EraserService', ['setPrimaryColor', 'onMouseUp']);
-        pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setPrimaryColor', 'onMouseUp']);
-        lineServiceSpy = jasmine.createSpyObj('LineService', ['setPrimaryColor', 'onMouseUp']);
+        pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setSecondaryColor', 'onMouseUp']);
+        lineServiceSpy = jasmine.createSpyObj('LineService', ['setSecondaryColor', 'onMouseUp']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
@@ -97,8 +97,6 @@ describe('ToolManagerService', () => {
         service.setPrimaryColorTools(RANDOM_COLOR);
         expect(rectangleServiceSpy.setPrimaryColor).toHaveBeenCalled();
         expect(ellipseServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(pencilServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(lineServiceSpy.setPrimaryColor).toHaveBeenCalled();
     });
 
     it('should call all needed setSecondaryColor methods when setSecondaryColor is called', () => {
@@ -106,5 +104,7 @@ describe('ToolManagerService', () => {
         service.setSecondaryColorTools(RANDOM_COLOR);
         expect(rectangleServiceSpy.setSecondaryColor).toHaveBeenCalled();
         expect(ellipseServiceSpy.setSecondaryColor).toHaveBeenCalled();
+        expect(pencilServiceSpy.setSecondaryColor).toHaveBeenCalled();
+        expect(lineServiceSpy.setSecondaryColor).toHaveBeenCalled();
     });
 });

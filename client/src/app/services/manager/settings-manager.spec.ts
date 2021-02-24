@@ -15,7 +15,7 @@ describe('SettingsManagerService', () => {
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
 
     beforeEach(() => {
-        toolSpy = jasmine.createSpyObj('Tool', ['setLineWidth', 'setFillMode', 'setJunctionRadius', 'setWithJunction']);
+        toolSpy = jasmine.createSpyObj('Tool', ['setLineWidth', 'setFillMode', 'setJunctionRadius', 'setWithJunction','setSidesCount','setWaterDropWidth','setEmissionCount']);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
         TestBed.configureTestingModule({
             declarations: [EditorComponent],
@@ -56,6 +56,24 @@ describe('SettingsManagerService', () => {
         const hasJunction = true;
         service.setWithJunction(hasJunction);
         expect(toolSpy.setWithJunction).toHaveBeenCalled();
+    });
+
+    it('setSidesCount should set the sides count correctly of current tool', () => {
+      const EXPECTED_SIDES_COUNT = 10;
+      service.setSidesCount(EXPECTED_SIDES_COUNT);
+      expect(toolSpy.setSidesCount).toHaveBeenCalled();
+    });
+
+    it('setWaterDropWidth should set the particle width correctly of current tool', () => {
+      const EXPECTED_PARTICLE_WIDTH = 10;
+      service.setWaterDropWidth(EXPECTED_PARTICLE_WIDTH);
+      expect(toolSpy.setWaterDropWidth).toHaveBeenCalled();
+    });
+
+    it('setEmissionCount should set the emission count correctly of current tool', () => {
+      const EXPECTED_EMISSION_COUNT = 10;
+      service.setEmissionCount(EXPECTED_EMISSION_COUNT);
+      expect(toolSpy.setEmissionCount).toHaveBeenCalled();
     });
 
     it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {

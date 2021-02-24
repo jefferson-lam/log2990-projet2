@@ -48,8 +48,8 @@ describe('PencilService', () => {
 
     it('setPrimaryColor should set primary color to wanted color', () => {
         const EXPECTED_COLOR_RANDOM = 'blue';
-        service.setPrimaryColor(EXPECTED_COLOR_RANDOM);
-        expect(service.primaryColor).toEqual(EXPECTED_COLOR_RANDOM);
+        service.setSecondaryColor(EXPECTED_COLOR_RANDOM);
+        expect(service.secondaryColor).toEqual(EXPECTED_COLOR_RANDOM);
     });
 
     it('setLineWidth should set size to MIN_SIZE_PENCIL if under MIN_SIZE_PENCIL', () => {

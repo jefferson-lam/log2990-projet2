@@ -13,7 +13,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class PolygoneService extends Tool{
   initNumberSides: number = 5;
   cornerCoords: Vec2[];
-  isCircle: boolean = false;
   lineWidth: number = 7;
   fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
   primaryColor: string = '#B5CF60';
@@ -75,30 +74,6 @@ export class PolygoneService extends Tool{
     }
   }
 
-  onKeyboardDown(event: KeyboardEvent): void {
-    if (this.mouseDown) {
-      if (event.key === 'Shift') {
-        this.isCircle = true;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
-        this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
-      }
-    }
-  }
-
-  onKeyboardUp(event: KeyboardEvent): void {
-    if (this.mouseDown) {
-      if (event.key === 'Shift') {
-        this.isCircle = false;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
-        this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
-      }
-    } else {
-      this.isCircle = false;
-    }
-  }
-
   setLineWidth(width: number): void {
     this.lineWidth = width;
   }
@@ -122,16 +97,11 @@ export class PolygoneService extends Tool{
   private getRadiiXAndY(path: Vec2[]): number[] {
     let xRadius = Math.abs(path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x) / 2;
     let yRadius = Math.abs(path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y) / 2;
-
-    if (this.isCircle) {
-      const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
-      xRadius = yRadius = shortestSide;
-    }
     return [xRadius, yRadius];
   }
 
   private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[], sides: number): void {
-    const polygoneCenter = this.getPolygoneCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
+    const polygoneCenter = this.getPolygoneCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX]);
     const startX = polygoneCenter.x;
     const startY = polygoneCenter.y;
     const radiiXAndY = this.getRadiiXAndY(path);
@@ -152,18 +122,15 @@ export class PolygoneService extends Tool{
     );
   }
 
-  private getPolygoneCenter(start: Vec2, end: Vec2, isCircle: boolean): Vec2 {
+  private getPolygoneCenter(start: Vec2, end: Vec2): Vec2 {
     let displacementX: number;
     let displacementY: number;
     const radiusX = Math.abs(end.x - start.x) / 2;
     const radiusY = Math.abs(end.y - start.y) / 2;
-    if (isCircle) {
-      const shortestSide = Math.min(radiusX, radiusY);
-      displacementX = displacementY = shortestSide;
-    } else {
+
       displacementX = radiusX;
       displacementY = radiusY;
-    }
+
     const xVector = end.x - start.x;
     const yVector = end.y - start.y;
     const centerX = start.x + Math.sign(xVector) * displacementX;
@@ -205,7 +172,7 @@ export class PolygoneService extends Tool{
     const radiiXAndY = this.getRadiiXAndY(path);
     const xRadius = radiiXAndY[EllipseConstants.X_INDEX];
     // const yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
-    const polygoneCenter = this.getPolygoneCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
+    const polygoneCenter = this.getPolygoneCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX]);
 
     ctx.beginPath();
     ctx.strokeStyle = 'black';
