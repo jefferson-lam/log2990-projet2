@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import * as AerosolConstants from '@app/constants/aerosol-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -20,9 +21,9 @@ export class AerosolService extends Tool{
   constructor(drawingService: DrawingService) {
     super(drawingService);
     this.clearPath();
-    this.lineWidth = 70;
-    this.emissionCount = 50
-    this.waterDropWidth = 1;
+    this.lineWidth = AerosolConstants.INIT_LINE_WIDTH;
+    this.emissionCount = AerosolConstants.INIT_EMISSION_COUNT;
+    this.waterDropWidth = AerosolConstants.INIT_WATERDROP_WIDTH;
   }
 
   onMouseDown(event: MouseEvent): void {
@@ -74,7 +75,6 @@ export class AerosolService extends Tool{
 
   private airBrushCircle(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
     const mousePosition = this.getPositionFromMouse(event);
-    console.log(this.emissionCount);
     for (var i = 0; i < this.emissionCount; i++){
       let randomEmission = this.getRandomEmission(this.lineWidth/2);
       let x = mousePosition.x + randomEmission.x;

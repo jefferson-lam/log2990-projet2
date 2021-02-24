@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import * as EllipseConstants from '@app/constants/ellipse-constants';
+import * as PolygoneConstants from '@app/constants/polygone-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -11,11 +11,11 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 
 export class PolygoneService extends Tool{
-  initNumberSides: number = 5;
+  initNumberSides: number = PolygoneConstants.INIT_NUMBER_SIDES;
   cornerCoords: Vec2[];
-  lineWidth: number = 7;
+  lineWidth: number = PolygoneConstants.INIT_LINE_WIDTH;
   fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
-  primaryColor: string = '#B5CF60';
+  primaryColor: string = '#b5cf60';
   secondaryColor: string = '#2F2A36';
 
   constructor(drawingService: DrawingService) {
@@ -29,14 +29,14 @@ export class PolygoneService extends Tool{
     this.mouseDown = event.button === MouseConstants.MouseButton.Left;
     if (this.mouseDown) {
       this.mouseDownCoord = this.getPositionFromMouse(event);
-      this.cornerCoords[EllipseConstants.START_INDEX] = this.mouseDownCoord;
+      this.cornerCoords[PolygoneConstants.START_INDEX] = this.mouseDownCoord;
     }
   }
 
   onMouseUp(event: MouseEvent): void {
     if (this.mouseDown) {
       const mousePosition = this.getPositionFromMouse(event);
-      this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
+      this.cornerCoords[PolygoneConstants.END_INDEX] = mousePosition;
       this.drawPolygone(this.drawingService.baseCtx, this.cornerCoords, this.initNumberSides);
     }
     this.mouseDown = false;
@@ -47,7 +47,7 @@ export class PolygoneService extends Tool{
   onMouseMove(event: MouseEvent): void {
     if (this.mouseDown) {
       const mousePosition = this.getPositionFromMouse(event);
-      this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
+      this.cornerCoords[PolygoneConstants.END_INDEX] = mousePosition;
       this.drawingService.clearCanvas(this.drawingService.previewCtx);
       this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
       this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
@@ -58,7 +58,7 @@ export class PolygoneService extends Tool{
     if (this.mouseDown) {
       this.drawingService.clearCanvas(this.drawingService.previewCtx);
       const exitCoords = this.getPositionFromMouse(event);
-      this.cornerCoords[EllipseConstants.END_INDEX] = exitCoords;
+      this.cornerCoords[PolygoneConstants.END_INDEX] = exitCoords;
       this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
       this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
     }
@@ -95,18 +95,18 @@ export class PolygoneService extends Tool{
   }
 
   private getRadiiXAndY(path: Vec2[]): number[] {
-    let xRadius = Math.abs(path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x) / 2;
-    let yRadius = Math.abs(path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y) / 2;
+    let xRadius = Math.abs(path[PolygoneConstants.END_INDEX].x - path[PolygoneConstants.START_INDEX].x) / 2;
+    let yRadius = Math.abs(path[PolygoneConstants.END_INDEX].y - path[PolygoneConstants.START_INDEX].y) / 2;
     return [xRadius, yRadius];
   }
 
   private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[], sides: number): void {
-    const polygoneCenter = this.getPolygoneCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX]);
+    const polygoneCenter = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]);
     const startX = polygoneCenter.x;
     const startY = polygoneCenter.y;
     const radiiXAndY = this.getRadiiXAndY(path);
-    let xRadius = radiiXAndY[EllipseConstants.X_INDEX];
-    let yRadius = radiiXAndY[EllipseConstants.X_INDEX];
+    let xRadius = radiiXAndY[PolygoneConstants.X_INDEX];
+    let yRadius = radiiXAndY[PolygoneConstants.X_INDEX];
     const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
     this.drawTypePolygone(
       ctx,
@@ -153,10 +153,10 @@ export class PolygoneService extends Tool{
     ctx.beginPath();
     ctx.setLineDash([]);
     ctx.lineJoin = 'round';
-    const a = (Math.PI * 2) / sides;
+    const ANGLE = (PolygoneConstants.END_ANGLE) / sides;
     ctx.moveTo(startX + xRadius * Math.cos(0),startY + xRadius * Math.sin(0));
     for (var i = 1; i < sides; i++) {
-      ctx.lineTo(startX + xRadius * Math.cos(a * i), startY + xRadius * Math.sin(a * i));
+      ctx.lineTo(startX + xRadius * Math.cos(ANGLE * i), startY + xRadius * Math.sin(ANGLE * i));
     }
     ctx.closePath();
     ctx.strokeStyle = secondaryColor;
@@ -170,14 +170,14 @@ export class PolygoneService extends Tool{
 
   private drawPredictionCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
     const radiiXAndY = this.getRadiiXAndY(path);
-    const xRadius = radiiXAndY[EllipseConstants.X_INDEX];
-    // const yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
-    const polygoneCenter = this.getPolygoneCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX]);
+    const xRadius = radiiXAndY[PolygoneConstants.X_INDEX];
+    // const yRadius = radiiXAndY[PolygoneConstants.Y_INDEX];
+    const polygoneCenter = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]);
 
     ctx.beginPath();
     ctx.strokeStyle = 'black';
-    ctx.lineWidth = EllipseConstants.PREDICTION_RECTANGLE_WIDTH;
-    ctx.setLineDash([EllipseConstants.LINE_DISTANCE]);
+    ctx.lineWidth = PolygoneConstants.PREDICTION_RECTANGLE_WIDTH;
+    ctx.setLineDash([PolygoneConstants.LINE_DISTANCE]);
     ctx.arc(polygoneCenter.x, polygoneCenter.y, xRadius + (this.lineWidth/2),0, 2 * Math.PI);
     ctx.stroke();
     ctx.setLineDash([]);

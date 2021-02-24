@@ -28,7 +28,7 @@ describe('PolygoneService', () => {
     previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
     service = TestBed.inject(PolygoneService);
     drawPolygoneSpy = spyOn<any>(service, 'drawPolygone').and.callThrough();
-    // Configuration of spy of service
+
     // tslint:disable:no-string-literal
     service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
     service['drawingService'].previewCtx = previewCtxStub;
@@ -68,8 +68,10 @@ describe('PolygoneService', () => {
   it('onMouseUp should call drawPolygone if mouse was already down', () => {
     service.mouseDownCoord = { x: 0, y: 0 };
     service.mouseDown = true;
+    service.fillMode = 1;
     service.onMouseUp(mouseEvent);
     expect(drawPolygoneSpy).toHaveBeenCalled();
+    expect(baseCtxStub.fillStyle).toEqual(service.primaryColor);
   });
 
   it('onMouseUp should not call drawPolygone if mouse was not already down', () => {
@@ -142,13 +144,13 @@ describe('PolygoneService', () => {
     expect(service.mouseDown).toEqual(false);
   });
 
-  it('setLineWidth should change size of lineWidth if within min and max width allowed', () => {
+  it('setLineWidth should change size of lineWidth', () => {
     const RANDOM_TEST_WIDTH = 10;
     service.setLineWidth(RANDOM_TEST_WIDTH);
     expect(service.lineWidth).toEqual(RANDOM_TEST_WIDTH);
   });
 
-  it('setLineWidth should change size of lineWidth if within min and max width allowed', () => {
+  it('setSidesCount should change sides count', () => {
     const RANDOM_TEST_COUNT = 10;
     service.setSidesCount(RANDOM_TEST_COUNT);
     expect(service.initNumberSides).toEqual(RANDOM_TEST_COUNT);
