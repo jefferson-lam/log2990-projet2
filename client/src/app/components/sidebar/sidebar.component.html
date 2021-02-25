@@ -21,15 +21,15 @@
             <li id='redoButton' [class.unclickable]="!isRedoPossible" (click)="redo()"><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
         </ul>
         <ul class="tools-sidebar">
-            <li id="toolId" [class.selected]="tool.value === selectedTool" *ngFor="let tool of sidebarToolButtons | keyvalue" class="listToolsClass">
+            <li id="toolId" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons" class="listToolsClass">
                 <mat-icon
                     class="toolClass"
-                    id="icon-button-{{ tool.value.name }}"
-                    matTooltip="{{ tool.value.name }} {{ tool.value.helpShortcut }}"
+                    id="icon-button-{{ tool.name }}"
+                    matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
                     [matTooltipPosition]="'right'"
-                    (click)="onSelectTool(tool.value); openSettings()"
+                    (click)="onSelectTool(tool); openSettings()"
                 >
-                    {{ tool.value.icon }}
+                    {{ tool.icon }}
                 </mat-icon>
             </li>
         </ul>

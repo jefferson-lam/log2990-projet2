@@ -75,7 +75,13 @@ describe('SidebarComponent', () => {
         pencilButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Crayon', icon: 'create', keyShortcut: 'c', helpShortcut: '(Touche C)' });
+        expect(selectToolSpy).toHaveBeenCalledWith({
+            service: 'PencilService',
+            name: 'Crayon',
+            icon: 'create',
+            keyShortcut: 'c',
+            helpShortcut: '(Touche C)',
+        });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(pencilStub);
     });
 
@@ -91,7 +97,13 @@ describe('SidebarComponent', () => {
         eraserButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Efface', icon: 'settings_cell', keyShortcut: 'e', helpShortcut: '(Touche E)' });
+        expect(selectToolSpy).toHaveBeenCalledWith({
+            service: 'EraserService',
+            name: 'Efface',
+            icon: 'settings_cell',
+            keyShortcut: 'e',
+            helpShortcut: '(Touche E)',
+        });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(eraserStub);
     });
 
@@ -107,7 +119,13 @@ describe('SidebarComponent', () => {
         lineButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Ligne', icon: 'remove', keyShortcut: 'l', helpShortcut: '(Touche L)' });
+        expect(selectToolSpy).toHaveBeenCalledWith({
+            service: 'LineService',
+            name: 'Ligne',
+            icon: 'remove',
+            keyShortcut: 'l',
+            helpShortcut: '(Touche L)',
+        });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(lineStub);
     });
 
@@ -123,7 +141,13 @@ describe('SidebarComponent', () => {
         rectangleButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Rectangle', icon: 'crop_5_4', keyShortcut: '1', helpShortcut: '(Touche 1)' });
+        expect(selectToolSpy).toHaveBeenCalledWith({
+            service: 'RectangleService',
+            name: 'Rectangle',
+            icon: 'crop_5_4',
+            keyShortcut: '1',
+            helpShortcut: '(Touche 1)',
+        });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleStub);
     });
 
@@ -139,15 +163,27 @@ describe('SidebarComponent', () => {
         ellipseButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith({ name: 'Ellipse', icon: 'panorama_fish_eye', keyShortcut: '2', helpShortcut: '(Touche 2)' });
+        expect(selectToolSpy).toHaveBeenCalledWith({
+            service: 'EllipseService',
+            name: 'Ellipse',
+            icon: 'panorama_fish_eye',
+            keyShortcut: '2',
+            helpShortcut: '(Touche 2)',
+        });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
     });
 
-    it('when changing tool from editor, selected tool should correctly retrieve tool from map', () => {
+    it('when changing tool from editor, selected tool should correctly retrieve tool', () => {
         component.ngOnChanges({
             currentTool: new SimpleChange(null, eraserStub, false),
         });
-        expect(component.selectedTool).toEqual({ name: 'Efface', icon: 'settings_cell', keyShortcut: 'e', helpShortcut: '(Touche E)' });
+        expect(component.selectedTool).toEqual({
+            service: 'EraserService',
+            name: 'Efface',
+            icon: 'settings_cell',
+            keyShortcut: 'e',
+            helpShortcut: '(Touche E)',
+        });
     });
 
     it('calling openSettings should set internal attribute opened to true', () => {
