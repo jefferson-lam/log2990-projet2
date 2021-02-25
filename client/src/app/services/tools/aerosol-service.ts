@@ -6,101 +6,99 @@ import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
+export class AerosolService extends Tool {
+    private pathData: Vec2[];
+    lineWidth: number;
+    waterDropWidth: number;
+    emissionCount: number;
+    randomAngle: number;
+    randomRadius: number;
+    secondaryColor: string = '#2F2A36';
 
-export class AerosolService extends Tool{
-  private pathData: Vec2[];
-  lineWidth: number;
-  waterDropWidth: number;
-  emissionCount: number;
-  randomAngle: number;
-  randomRadius: number;
-  secondaryColor: string = '#2F2A36';
-
-  constructor(drawingService: DrawingService) {
-    super(drawingService);
-    this.clearPath();
-    this.lineWidth = AerosolConstants.INIT_LINE_WIDTH;
-    this.emissionCount = AerosolConstants.INIT_EMISSION_COUNT;
-    this.waterDropWidth = AerosolConstants.INIT_WATERDROP_WIDTH;
-  }
-
-  onMouseDown(event: MouseEvent): void {
-    this.mouseDown = event.button === MouseConstants.MouseButton.Left;
-    if (this.mouseDown) {
-      this.clearPath();
-      this.mouseDownCoord = this.getPositionFromMouse(event);
-      this.pathData.push(this.mouseDownCoord);
-      this.airBrushCircle(this.drawingService.baseCtx, event);
+    constructor(drawingService: DrawingService) {
+        super(drawingService);
+        this.clearPath();
+        this.lineWidth = AerosolConstants.INIT_LINE_WIDTH;
+        this.emissionCount = AerosolConstants.INIT_EMISSION_COUNT;
+        this.waterDropWidth = AerosolConstants.INIT_WATERDROP_WIDTH;
     }
-  }
 
-  onMouseUp(event: MouseEvent): void {
-    if (this.mouseDown) {
-      const mousePosition = this.getPositionFromMouse(event);
-      this.pathData.push(mousePosition);
-      this.mouseDown = true;
+    onMouseDown(event: MouseEvent): void {
+        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
+        if (this.mouseDown) {
+            this.clearPath();
+            this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.pathData.push(this.mouseDownCoord);
+            this.airBrushCircle(this.drawingService.baseCtx, event);
+        }
     }
-    this.mouseDown = false;
-    this.clearPath();
-  }
 
-  onMouseMove(event: MouseEvent): void {
-    if (this.mouseDown) {
-      const mousePosition = this.getPositionFromMouse(event);
-      this.pathData.push(mousePosition);
-      this.airBrushCircle(this.drawingService.baseCtx, event);
+    onMouseUp(event: MouseEvent): void {
+        if (this.mouseDown) {
+            const mousePosition = this.getPositionFromMouse(event);
+            this.pathData.push(mousePosition);
+            this.mouseDown = true;
+        }
+        this.mouseDown = false;
+        this.clearPath();
     }
-  }
 
-  onMouseLeave(event: MouseEvent): void {
-    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    this.clearPath();
-  }
-
-  onMouseEnter(event: MouseEvent): void {
-    if (event.buttons === MouseConstants.MouseButton.Left) {
-      this.mouseDown = false;
+    onMouseMove(event: MouseEvent): void {
+        if (this.mouseDown) {
+            const mousePosition = this.getPositionFromMouse(event);
+            this.pathData.push(mousePosition);
+            this.airBrushCircle(this.drawingService.baseCtx, event);
+        }
     }
-  }
 
-  private getRandomEmission(radius: number): Vec2 {
-    this.randomAngle = Math.random() * (2 * Math.PI);
-    this.randomRadius = Math.random() * radius;
+    onMouseLeave(event: MouseEvent): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.clearPath();
+    }
 
-    return {x: Math.cos(this.randomAngle) * this.randomRadius,
-            y: Math.sin(this.randomAngle) * this.randomRadius};
-  }
+    onMouseEnter(event: MouseEvent): void {
+        if (event.buttons === MouseConstants.MouseButton.Left) {
+            this.mouseDown = false;
+        }
+    }
 
-  private airBrushCircle(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
-    const mousePosition = this.getPositionFromMouse(event);
-    for (var i = 0; i < this.emissionCount; i++){
-      let randomEmission = this.getRandomEmission(this.lineWidth/2);
-      let x = mousePosition.x + randomEmission.x;
-      let y = mousePosition.y + randomEmission.y;
-      ctx.fillStyle = this.secondaryColor;
-      ctx.fillRect(x, y, this.waterDropWidth, this.waterDropWidth);
-    };
-  }
+    private getRandomEmission(radius: number): Vec2 {
+        this.randomAngle = Math.random() * (2 * Math.PI);
+        this.randomRadius = Math.random() * radius;
 
-  clearPath(): void {
-    this.pathData = [];
-  }
+        return { x: Math.cos(this.randomAngle) * this.randomRadius, y: Math.sin(this.randomAngle) * this.randomRadius };
+    }
 
-  setWaterDropWidth(width: number): void {
-    this.waterDropWidth = width;
-  }
+    private airBrushCircle(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+        for (let i = 0; i < this.emissionCount; i++) {
+            const randomEmission = this.getRandomEmission(this.lineWidth / 2);
+            const x = mousePosition.x + randomEmission.x;
+            const y = mousePosition.y + randomEmission.y;
+            ctx.fillStyle = this.secondaryColor;
+            ctx.fillRect(x, y, this.waterDropWidth, this.waterDropWidth);
+        }
+    }
 
-  setEmissionCount(newEmissionCount: number): void {
-    this.emissionCount = newEmissionCount;
-  }
+    clearPath(): void {
+        this.pathData = [];
+    }
 
-  setLineWidth(width: number): void {
-    this.lineWidth = width;
-  }
+    setWaterDropWidth(width: number): void {
+        this.waterDropWidth = width;
+    }
 
-  setSecondaryColor(newColor: string): void {
-    this.secondaryColor = newColor;
-  }
+    setEmissionCount(newEmissionCount: number): void {
+        this.emissionCount = newEmissionCount;
+    }
+
+    setLineWidth(width: number): void {
+        this.lineWidth = width;
+    }
+
+    setSecondaryColor(newColor: string): void {
+        this.secondaryColor = newColor;
+    }
 }

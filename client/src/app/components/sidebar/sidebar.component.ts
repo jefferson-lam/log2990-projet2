@@ -68,6 +68,5 @@ export class SidebarComponent implements OnChanges {
             .set('SelectLassoService', { name: 'Lasso polygonal', icon: 'gesture', keyShortcut: 'v', helpShortcut: '(Touche V)' })
             .set('PaintBucketService', { name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' })
             .set('AerosolService', { name: 'Aerosol', icon: 'blur_on', keyShortcut: 'a', helpShortcut: '(Touche A)' });
-
     }
 }

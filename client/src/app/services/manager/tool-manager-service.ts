@@ -2,14 +2,13 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { AerosolService } from '@app/services/tools/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
-import { RectangleService } from '@app/services/tools/rectangle-service';
 import { PolygoneService } from '@app/services/tools/polygone-service';
-import { AerosolService } from '@app/services/tools/aerosol-service';
-
+import { RectangleService } from '@app/services/tools/rectangle-service';
 
 @Injectable({
     providedIn: 'root',
