@@ -42,6 +42,7 @@ describe('EditorComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         keyboardEventSpy = spyOn(component, 'onKeyboardDown').and.callThrough();
+        component.currentTool = toolStub;
     });
 
     it('should create', () => {
@@ -99,7 +100,7 @@ describe('EditorComponent', () => {
     });
 
     it('should prevent keydown default when ctrl+o is down', () => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, key: 'o' });
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: '' });
         component.onKeyboardDown(eventSpy);
 
         expect(eventSpy.preventDefault).toHaveBeenCalled();
@@ -108,7 +109,7 @@ describe('EditorComponent', () => {
     });
 
     it("should call openModalPopUp when 'ctrl+o' key is down", () => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, key: 'o' });
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: '' });
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
         component.onKeyboardDown(eventSpy);
 
@@ -118,7 +119,7 @@ describe('EditorComponent', () => {
     });
 
     it("should not call openModalPopUp when only 'ctrl' key is down", () => {
-        const event = { ctrlKey: true, key: '' } as KeyboardEvent;
+        const event = { ctrlKey: true, code: '', key: '' } as KeyboardEvent;
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
         component.onKeyboardDown(event);
 
@@ -127,13 +128,101 @@ describe('EditorComponent', () => {
         expect(modalPopUpSpy).not.toHaveBeenCalled();
     });
     it("should not call openModalPopUp when only 'o' key is down", () => {
-        const event = { ctrlKey: false, key: 'o' } as KeyboardEvent;
+        const event = { ctrlKey: false, code: 'KeyO', key: '' } as KeyboardEvent;
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
         component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(event);
         expect(modalPopUpSpy).not.toHaveBeenCalled();
+    });
+
+    it("should call undo when 'ctrl+z' keys are down and tool isn't used", () => {
+        const event = { ctrlKey: true, code: 'KeyZ', key: '' } as KeyboardEvent;
+        const undoSpy = spyOn(component.undoRedoService, 'undo');
+        const redoSpy = spyOn(component.undoRedoService, 'redo');
+        component.currentTool.mouseDown = false;
+        component.onKeyboardDown(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(undoSpy).toHaveBeenCalled();
+        expect(redoSpy).not.toHaveBeenCalled();
+    });
+
+    it("should call redo when 'ctrl+shift+z' keys are down and tool isn't used", () => {
+        const event = { ctrlKey: true, shiftKey: true, code: 'KeyZ', key: '' } as KeyboardEvent;
+        const undoSpy = spyOn(component.undoRedoService, 'undo');
+        const redoSpy = spyOn(component.undoRedoService, 'redo');
+        component.currentTool.mouseDown = false;
+        component.onKeyboardDown(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(undoSpy).not.toHaveBeenCalled();
+        expect(redoSpy).toHaveBeenCalled();
+    });
+
+    it("should not call undo when 'ctrl+z' keys are down and tool is used", () => {
+        const event = { ctrlKey: true, code: 'KeyZ', key: '' } as KeyboardEvent;
+        const undoSpy = spyOn(component.undoRedoService, 'undo');
+        const redoSpy = spyOn(component.undoRedoService, 'redo');
+        component.currentTool.mouseDown = true;
+        component.onKeyboardDown(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(undoSpy).not.toHaveBeenCalled();
+        expect(redoSpy).not.toHaveBeenCalled();
+    });
+
+    it("should not call redo when 'ctrl+shift+z' keys are down and tool is used", () => {
+        const event = { ctrlKey: true, shiftKey: true, code: 'KeyZ', key: '' } as KeyboardEvent;
+        const undoSpy = spyOn(component.undoRedoService, 'undo');
+        const redoSpy = spyOn(component.undoRedoService, 'redo');
+        component.currentTool.mouseDown = true;
+        component.onKeyboardDown(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(undoSpy).not.toHaveBeenCalled();
+        expect(redoSpy).not.toHaveBeenCalled();
+    });
+
+    it("should not call undo or redo when only 'z' key is down", () => {
+        const event = { ctrlKey: false, code: 'KeyZ', key: '' } as KeyboardEvent;
+        const undoSpy = spyOn(component.undoRedoService, 'undo');
+        const redoSpy = spyOn(component.undoRedoService, 'redo');
+        component.onKeyboardDown(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(undoSpy).not.toHaveBeenCalled();
+        expect(redoSpy).not.toHaveBeenCalled();
+    });
+
+    it("should not call undo or redo when only 'ctrl' key is down", () => {
+        const event = { ctrlKey: true, code: '', key: '' } as KeyboardEvent;
+        const undoSpy = spyOn(component.undoRedoService, 'undo');
+        const redoSpy = spyOn(component.undoRedoService, 'redo');
+        component.onKeyboardDown(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(undoSpy).not.toHaveBeenCalled();
+        expect(redoSpy).not.toHaveBeenCalled();
+    });
+
+    it("should not call undo or redo when only 'shift' key is down", () => {
+        const event = { ctrlKey: false, shiftKey: true, code: '', key: '' } as KeyboardEvent;
+        const undoSpy = spyOn(component.undoRedoService, 'undo');
+        const redoSpy = spyOn(component.undoRedoService, 'redo');
+        component.onKeyboardDown(event);
+
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+        expect(undoSpy).not.toHaveBeenCalled();
+        expect(redoSpy).not.toHaveBeenCalled();
     });
 
     it('updateToolFromSidebarClick should set current tool', () => {
