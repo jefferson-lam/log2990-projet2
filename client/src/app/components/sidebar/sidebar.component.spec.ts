@@ -27,6 +27,9 @@ describe('SidebarComponent', () => {
     let undoRedoService: UndoRedoService;
     let mockCommand: Command;
     let commandExecuteSpy: jasmine.Spy;
+    let selectToolEmitterSpy: jasmine.Spy;
+    let selectToolSpy: jasmine.Spy;
+    let newDrawingClickedSpy: jasmine.Spy;
 
     // tslint:disable:no-any
     beforeEach(async(() => {
@@ -47,25 +50,27 @@ describe('SidebarComponent', () => {
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        })
-            .compileComponents()
-            .then(() => {
-                fixture = TestBed.createComponent(SidebarComponent);
-                component = fixture.componentInstance;
-                fixture.detectChanges();
-            });
+        }).compileComponents();
+    }));
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(SidebarComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+
         undoRedoService = TestBed.inject(UndoRedoService);
         mockCommand = new PencilCommand({} as CanvasRenderingContext2D, pencilStub as PencilService);
         commandExecuteSpy = spyOn(mockCommand, 'execute');
-    }));
+        selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
+        selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
+        newDrawingClickedSpy = spyOn(component.newDrawingClicked, 'emit');
+    });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
     it('clicking on pencil button should select the pencil tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return pencilStub;
         });
@@ -86,8 +91,6 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on eraser button should select the eraser tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn<any>(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return eraserStub;
         });
@@ -108,8 +111,6 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on line button should select the line tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn<any>(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return lineStub;
         });
@@ -130,8 +131,6 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on rectangle button should select the rectangle tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn<any>(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return rectangleStub;
         });
@@ -152,8 +151,6 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on ellipse button should select the ellipse tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn<any>(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return ellipseStub;
         });
@@ -197,11 +194,11 @@ describe('SidebarComponent', () => {
     });
 
     it('pressing on newDrawing should emit to editor', () => {
-        const notifyEditorNewDrawingSpy = spyOn<any>(component.notifyEditorNewDrawing, 'emit');
         const newDrawingButton = fixture.debugElement.nativeElement.querySelector('#new-drawing-button');
         newDrawingButton.click();
         fixture.detectChanges();
-        expect(notifyEditorNewDrawingSpy).toHaveBeenCalledWith(component.isNewDrawing);
+        expect(newDrawingClickedSpy).toHaveBeenCalled();
+        expect(newDrawingClickedSpy).toHaveBeenCalledWith(true);
     });
 
     it('clicking on undo button when undo pile is not empty should call undoRedoService.undo', () => {

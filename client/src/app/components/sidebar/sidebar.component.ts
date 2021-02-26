@@ -11,14 +11,14 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class SidebarComponent implements OnChanges {
     @Output() notifyOnToolSelect: EventEmitter<Tool> = new EventEmitter<Tool>();
-    @Output() notifyEditorNewDrawing: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() newDrawingClicked: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Input() currentTool: Tool;
     @Input() isUndoPossible: boolean = false;
     @Input() isRedoPossible: boolean = false;
     @Input() selectedTool: SidebarToolButton;
+    @Input() isCanvasEmpty: boolean;
     opened: boolean = false;
     shouldRun: boolean;
-    isNewDrawing: boolean;
 
     sidebarToolButtons: SidebarToolButton[] = [
         { service: 'PencilService', name: 'Crayon', icon: 'create', keyShortcut: 'c', helpShortcut: '(Touche C)' },
@@ -70,7 +70,7 @@ export class SidebarComponent implements OnChanges {
     }
 
     openNewDrawing(): void {
-        this.notifyEditorNewDrawing.emit(this.isNewDrawing);
+        this.newDrawingClicked.emit(true);
     }
 
     undo(): void {
