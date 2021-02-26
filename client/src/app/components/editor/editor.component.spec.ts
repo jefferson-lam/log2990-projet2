@@ -167,7 +167,7 @@ describe('EditorComponent', () => {
         const event = { ctrlKey: true, code: 'KeyZ', key: '' } as KeyboardEvent;
         const undoSpy = spyOn(component.undoRedoService, 'undo');
         const redoSpy = spyOn(component.undoRedoService, 'redo');
-        component.currentTool.mouseDown = true;
+        component.currentTool.inUse = true;
         component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();
@@ -180,7 +180,7 @@ describe('EditorComponent', () => {
         const event = { ctrlKey: true, shiftKey: true, code: 'KeyZ', key: '' } as KeyboardEvent;
         const undoSpy = spyOn(component.undoRedoService, 'undo');
         const redoSpy = spyOn(component.undoRedoService, 'redo');
-        component.currentTool.mouseDown = true;
+        component.currentTool.inUse = true;
         component.onKeyboardDown(event);
 
         expect(keyboardEventSpy).toHaveBeenCalled();

@@ -19,7 +19,6 @@ export class LineService extends Tool {
     previewCommand: LineCommand;
 
     shiftDown: boolean = false;
-    isDrawing: boolean = false;
     isEscapeKeyDown: boolean = false;
     isBackspaceKeyDown: boolean = false;
 
@@ -76,7 +75,7 @@ export class LineService extends Tool {
      * event does not work for these modifiers.
      */
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.isDrawing) {
+        if (this.inUse) {
             if (event.key === 'Shift' && !this.shiftDown) {
                 const angle = this.calculateAngle(this.linePathData[LineConstants.STARTING_POINT], this.mousePosition);
                 const finalAngle = this.roundAngleToNearestMultiple(angle, LineConstants.DEGREES_45);
@@ -103,7 +102,7 @@ export class LineService extends Tool {
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
-        if (this.isDrawing) {
+        if (this.inUse) {
             if (event.key === 'Shift') {
                 this.shiftDown = false;
                 this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
@@ -113,18 +112,20 @@ export class LineService extends Tool {
             } else if (event.key === 'Escape' && this.isEscapeKeyDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.clearPath();
-                this.isDrawing = false;
+                this.inUse = false;
                 this.isEscapeKeyDown = false;
             } else if (event.key === 'Backspace' && this.isBackspaceKeyDown) {
                 this.drawingService.baseCtx.putImageData(this.canvasState, 0, 0);
+                // TODO : decide if backspace is considered an undo or not?
+                this.undoRedoService.undoPile.pop();
             }
         }
     }
 
     onMouseClick(event: MouseEvent): void {
-        if (!this.isDrawing) {
+        if (!this.inUse) {
             this.clearPath();
-            this.isDrawing = true;
+            this.inUse = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.initialPoint = this.mouseDownCoord;
             this.linePathData[LineConstants.STARTING_POINT] = this.mouseDownCoord;
@@ -144,15 +145,15 @@ export class LineService extends Tool {
     }
 
     onMouseDoubleClick(event: MouseEvent): void {
-        if (this.isDrawing) {
+        if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.clearPath();
-            this.isDrawing = false;
+            this.inUse = false;
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.isDrawing) {
+        if (this.inUse) {
             this.mousePosition = this.getPositionFromMouse(event);
             this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);

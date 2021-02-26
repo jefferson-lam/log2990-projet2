@@ -13,6 +13,7 @@ export abstract class Tool {
     withJunction?: boolean;
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
+    inUse: boolean = false;
     name: string;
 
     constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {}

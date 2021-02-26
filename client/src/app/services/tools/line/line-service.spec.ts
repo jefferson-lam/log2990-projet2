@@ -167,7 +167,7 @@ describe('LineService', () => {
         const keyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
-        service.isDrawing = false;
+        service.inUse = false;
         expect((): void => {
             service.onKeyboardDown(keyboardEvent);
         }).not.toThrow();
@@ -178,7 +178,7 @@ describe('LineService', () => {
             key: 'Shift',
         } as KeyboardEvent;
         service.shiftDown = false;
-        service.isDrawing = true;
+        service.inUse = true;
         service.onKeyboardDown(shiftKeyboardEvent);
         expect(rotateLineSpy).toHaveBeenCalled();
         expect(setPreviewValuesSpy).toHaveBeenCalled();
@@ -189,7 +189,7 @@ describe('LineService', () => {
             key: 'Shift',
         } as KeyboardEvent;
         service.shiftDown = true;
-        service.isDrawing = true;
+        service.inUse = true;
         service.onKeyboardDown(shiftKeyboardEvent);
         expect(rotateLineSpy).not.toHaveBeenCalled();
         expect(setPreviewValuesSpy).not.toHaveBeenCalled();
@@ -200,7 +200,7 @@ describe('LineService', () => {
         const shiftKeyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
-        service.isDrawing = true;
+        service.inUse = true;
         service.shiftDown = true;
         service.onKeyboardUp(shiftKeyboardEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
@@ -212,7 +212,7 @@ describe('LineService', () => {
         const keyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
-        service.isDrawing = false;
+        service.inUse = false;
         expect((): void => {
             service.onKeyboardUp(keyboardEvent);
         }).not.toThrow();
@@ -223,7 +223,7 @@ describe('LineService', () => {
             key: 'Escape',
         } as KeyboardEvent;
 
-        service.isDrawing = true;
+        service.inUse = true;
         service.onKeyboardDown(escapeKeyboardEvent);
         expect(service.isEscapeKeyDown).toBeTruthy();
     });
@@ -233,11 +233,11 @@ describe('LineService', () => {
             key: 'Escape',
         } as KeyboardEvent;
 
-        service.isDrawing = true;
+        service.inUse = true;
         service.isEscapeKeyDown = true;
         service.onKeyboardUp(escapeKeyboardEvent);
         expect(service.isEscapeKeyDown).toBeFalsy();
-        expect(service.isDrawing).toBeFalsy();
+        expect(service.inUse).toBeFalsy();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
@@ -245,7 +245,7 @@ describe('LineService', () => {
         const backspaceKeyboardEvent = {
             key: 'Backspace',
         } as KeyboardEvent;
-        service.isDrawing = true;
+        service.inUse = true;
         service.onKeyboardDown(backspaceKeyboardEvent);
         expect(service.isBackspaceKeyDown).toBeTruthy();
     });
@@ -256,7 +256,7 @@ describe('LineService', () => {
         } as KeyboardEvent;
         const canvasWidth = 350;
         const canvasHeight = 350;
-        service.isDrawing = true;
+        service.inUse = true;
         service.isBackspaceKeyDown = true;
         service.canvasState = drawServiceSpy.baseCtx.getImageData(0, 0, canvasWidth, canvasHeight);
         service.onKeyboardUp(backspaceKeyboardEvent);
@@ -267,7 +267,7 @@ describe('LineService', () => {
         const backspaceKeyboardEvent = {
             key: 'Backspace',
         } as KeyboardEvent;
-        service.isDrawing = true;
+        service.inUse = true;
         service.isBackspaceKeyDown = false;
         service.onKeyboardUp(backspaceKeyboardEvent);
         expect(putImageDataSpy).not.toHaveBeenCalled();
@@ -275,13 +275,13 @@ describe('LineService', () => {
 
     it('on mouse click should start drawing if user has not started a drawing yet', () => {
         service.onMouseClick(mouseEvent);
-        expect(service.isDrawing).toBeTruthy();
+        expect(service.inUse).toBeTruthy();
         expect(service.mouseDownCoord).toEqual({ x: 25, y: 25 });
         expect(service.linePathData[0]).toEqual({ x: 25, y: 25 });
     });
 
     it('on mouse click, canvas should save its state to allow undo', () => {
-        service.isDrawing = true;
+        service.inUse = true;
         service.onMouseClick(mouseEvent);
         expect(getImageDataSpy).toHaveBeenCalled();
     });
@@ -291,7 +291,7 @@ describe('LineService', () => {
             offsetX: 399,
             offsetY: 420,
         } as MouseEvent;
-        service.isDrawing = true;
+        service.inUse = true;
         service.withJunction = false;
         service.onMouseMove(mouseMoveEvent);
         service.onMouseClick(mouseMoveEvent);
@@ -299,7 +299,7 @@ describe('LineService', () => {
     });
 
     it('on mouse click should draw a line to the mouse position when user has started a drawing', () => {
-        service.isDrawing = true;
+        service.inUse = true;
         service.onMouseClick(mouseEvent);
         expect(executeSpy).toHaveBeenCalled();
         expect(service.linePathData[0]).toEqual({ x: 257, y: 399 });
@@ -310,14 +310,14 @@ describe('LineService', () => {
             offsetX: 399,
             offsetY: 425,
         } as MouseEvent;
-        service.isDrawing = true;
+        service.inUse = true;
         service.onMouseMove(mouseMoveEvent);
         service.onMouseClick(mouseMoveEvent);
         expect(executeSpy).toHaveBeenCalled();
     });
 
     it('on mouse click, should call executeCommand only if point is different from previous', () => {
-        service.isDrawing = true;
+        service.inUse = true;
         service.onMouseClick(mouseEvent);
         service.onMouseClick(mouseEvent);
         expect(executeSpy).toHaveBeenCalled();
@@ -325,22 +325,22 @@ describe('LineService', () => {
     });
 
     it('on mouse dblclick should clear linePathData and stop drawing', () => {
-        service.isDrawing = true;
+        service.inUse = true;
         service.onMouseDoubleClick(mouseEvent);
         expect(service.linePathData).toEqual([]);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(service.isDrawing).toBeFalsy();
+        expect(service.inUse).toBeFalsy();
     });
 
     it('mouse double click should not do anything if user is not drawing', () => {
-        service.isDrawing = false;
+        service.inUse = false;
         expect((): void => {
             service.onMouseDoubleClick(mouseEvent);
         }).not.toThrow();
     });
 
     it('on mouse move should not draw if user is not drawing', () => {
-        service.isDrawing = false;
+        service.inUse = false;
         expect((): void => {
             service.onMouseMove(mouseEvent);
         }).not.toThrow();
@@ -761,15 +761,4 @@ describe('LineService', () => {
 
         expect(service.rotateLine(initialPoint, currentPoint, LineConstants.DEGREES_315)).toEqual(expectedPoint);
     });
-
-    /*it('on mouse move should only draw on preview layer', () => {
-      service.isDrawing = true;
-      service.onMouseMove(mouseEvent);
-      expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-      expect(drawLineSpy).toHaveBeenCalled();
-      expect(drawLineSpy).toHaveBeenCalledWith(previewCtxStub, [
-          { x: 133, y: 256 },
-          { x: 25, y: 25 },
-      ]);
-  });*/
 });

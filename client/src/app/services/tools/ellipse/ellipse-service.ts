@@ -31,27 +31,27 @@ export class EllipseService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
-        if (this.mouseDown) {
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
+        if (this.inUse) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.START_INDEX] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
             const command: Command = new EllipseCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
-        this.mouseDown = false;
+        this.inUse = false;
         this.clearCornerCoords();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -64,7 +64,7 @@ export class EllipseService extends Tool {
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             const exitCoords = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.END_INDEX] = exitCoords;
@@ -79,16 +79,16 @@ export class EllipseService extends Tool {
 
     onMouseEnter(event: MouseEvent): void {
         const LEFT_CLICK_BUTTONS = 1;
-        if (event.buttons === LEFT_CLICK_BUTTONS && this.mouseDown) {
-            this.mouseDown = true;
+        if (event.buttons === LEFT_CLICK_BUTTONS && this.inUse) {
+            this.inUse = true;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.mouseDown = false;
+            this.inUse = false;
         }
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             if (event.key === 'Shift') {
                 this.isCircle = true;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -103,7 +103,7 @@ export class EllipseService extends Tool {
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             if (event.key === 'Shift') {
                 this.isCircle = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);

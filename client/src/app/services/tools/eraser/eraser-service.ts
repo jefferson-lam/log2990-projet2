@@ -34,8 +34,8 @@ export class EraserService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
-        if (this.mouseDown) {
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
+        if (this.inUse) {
             this.clearPath();
 
             this.mouseDownCoord = this.getPositionFromMouse(event);
@@ -46,20 +46,20 @@ export class EraserService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             const command: Command = new EraserCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
-        this.mouseDown = false;
+        this.inUse = false;
         this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
         this.moveCursor(this.drawingService.previewCtx, event);
 
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.previewCommand.setValues(this.drawingService.baseCtx, this);
@@ -82,7 +82,7 @@ export class EraserService extends Tool {
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const command: Command = new EraserCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
@@ -92,7 +92,7 @@ export class EraserService extends Tool {
 
     onMouseEnter(event: MouseEvent): void {
         if (event.buttons === MouseConstants.MouseButton.Left) {
-            this.mouseDown = false;
+            this.inUse = false;
         }
     }
 

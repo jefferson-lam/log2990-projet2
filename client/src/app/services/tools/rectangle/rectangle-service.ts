@@ -30,27 +30,27 @@ export class RectangleService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
-        if (this.mouseDown) {
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
+        if (this.inUse) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.START_INDEX] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.END_INDEX] = mousePosition;
             const command: Command = new RectangleCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
-        this.mouseDown = false;
+        this.inUse = false;
         this.clearCorners();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             const exitCoords = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.END_INDEX] = exitCoords;
@@ -61,16 +61,16 @@ export class RectangleService extends Tool {
 
     onMouseEnter(event: MouseEvent): void {
         const LEFT_CLICK_BUTTONS = 1;
-        if (event.buttons === LEFT_CLICK_BUTTONS && this.mouseDown) {
-            this.mouseDown = true;
+        if (event.buttons === LEFT_CLICK_BUTTONS && this.inUse) {
+            this.inUse = true;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.mouseDown = false;
+            this.inUse = false;
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.END_INDEX] = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -82,7 +82,7 @@ export class RectangleService extends Tool {
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             if (event.key === 'Shift' && !this.isShiftDown) {
                 this.isShiftDown = true;
                 this.isSquare = true;
@@ -94,7 +94,7 @@ export class RectangleService extends Tool {
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             if (event.key === 'Shift') {
                 this.isShiftDown = false;
                 this.isSquare = false;

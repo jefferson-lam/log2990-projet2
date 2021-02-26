@@ -33,7 +33,7 @@ export class EditorComponent {
             this.openModalPopUp();
         } else if (event.ctrlKey && event.code === 'KeyZ') {
             // TODO : lineTool can have mouseup and be drawing
-            if (!this.currentTool.mouseDown) {
+            if (!this.currentTool.inUse) {
                 if (event.shiftKey) {
                     this.undoRedoService.redo();
                 } else {

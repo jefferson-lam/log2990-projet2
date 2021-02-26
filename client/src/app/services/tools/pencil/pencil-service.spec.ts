@@ -83,37 +83,37 @@ describe('PencilService', () => {
         expect(service.mouseDownCoord).toEqual(expectedResult);
     });
 
-    it('mouseDown should set mouseDown property to true on left click', () => {
+    it('mouseDown should set inUse property to true on left click', () => {
         service.onMouseDown(mouseEvent);
-        expect(service.mouseDown).toEqual(true);
+        expect(service.inUse).toEqual(true);
     });
 
-    it('mouseDown should set mouseDown property to false on right click', () => {
+    it('mouseDown should set inUse property to false on right click', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
             button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
-        expect(service.mouseDown).toEqual(false);
+        expect(service.inUse).toEqual(false);
     });
 
     it('onMouseUp should call executeCommand if mouse was already down', () => {
-        service.mouseDown = true;
+        service.inUse = true;
 
         service.onMouseUp(mouseEvent);
         expect(executeSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should not call executeCommand if mouse was not already down', () => {
-        service.mouseDown = false;
+        service.inUse = false;
 
         service.onMouseUp(mouseEvent);
         expect(executeSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseMove should call setValues and execute of previewCommand if mouse was already down', () => {
-        service.mouseDown = true;
+        service.inUse = true;
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
@@ -122,7 +122,7 @@ describe('PencilService', () => {
     });
 
     it('onMouseMove should not call setValues and execute of previewCommand if mouse was not already down', () => {
-        service.mouseDown = false;
+        service.inUse = false;
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('PencilService', () => {
     });
 
     it('onMouseLeave should call executeCommand if mouse was down', () => {
-        service.mouseDown = true;
+        service.inUse = true;
 
         service.onMouseLeave(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
@@ -139,28 +139,28 @@ describe('PencilService', () => {
     });
 
     it('onMouseLeave should not call executeCommand if mouse was not down', () => {
-        service.mouseDown = false;
+        service.inUse = false;
 
         service.onMouseLeave(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseEnter should set mouseDown to false if mouse is not down', () => {
-        service.mouseDown = true;
+    it('onMouseEnter should set inUse to false if mouse is not down', () => {
+        service.inUse = true;
         const mouseEventNoClick = {
             buttons: MouseConstants.MouseButton.Left,
         } as MouseEvent;
 
         service.onMouseEnter(mouseEventNoClick);
-        expect(service.mouseDown).toBeFalse();
+        expect(service.inUse).toBeFalse();
     });
 
-    it('onMouseEnter should not set mouseDown to false if mouse is down', () => {
-        service.mouseDown = true;
+    it('onMouseEnter should not set inUse to false if mouse is down', () => {
+        service.inUse = true;
 
         service.onMouseEnter(mouseEvent);
-        expect(service.mouseDown).toBeTrue();
+        expect(service.inUse).toBeTrue();
     });
 
     // Exemple de test d'intégration qui est quand même utile

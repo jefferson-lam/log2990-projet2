@@ -27,6 +27,14 @@ describe('SidebarComponent', () => {
     let undoRedoService: UndoRedoService;
     let mockCommand: Command;
     let commandExecuteSpy: jasmine.Spy;
+    let selectToolEmitterSpy: jasmine.Spy;
+    let selectToolSpy: jasmine.Spy;
+    let newDrawingClickedSpy: jasmine.Spy;
+    let undoServiceSpy: jasmine.Spy;
+    let redoServiceSpy: jasmine.Spy;
+    let refreshSpy: jasmine.Spy;
+    let redoButton: HTMLElement;
+    let undoButton: HTMLElement;
 
     // tslint:disable:no-any
     beforeEach(async(() => {
@@ -47,25 +55,33 @@ describe('SidebarComponent', () => {
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        })
-            .compileComponents()
-            .then(() => {
-                fixture = TestBed.createComponent(SidebarComponent);
-                component = fixture.componentInstance;
-                fixture.detectChanges();
-            });
+        }).compileComponents();
+    }));
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(SidebarComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+
         undoRedoService = TestBed.inject(UndoRedoService);
         mockCommand = new PencilCommand({} as CanvasRenderingContext2D, pencilStub as PencilService);
         commandExecuteSpy = spyOn(mockCommand, 'execute');
-    }));
+        selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
+        selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
+        newDrawingClickedSpy = spyOn(component.newDrawingClicked, 'emit');
+        component.currentTool = pencilStub;
+        undoServiceSpy = spyOn(undoRedoService, 'undo').and.callThrough();
+        redoServiceSpy = spyOn(undoRedoService, 'redo').and.callThrough();
+        refreshSpy = spyOn(undoRedoService, 'refresh');
+        redoButton = fixture.debugElement.nativeElement.querySelector('#redoButton');
+        undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
+    });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
     it('clicking on pencil button should select the pencil tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return pencilStub;
         });
@@ -86,8 +102,6 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on eraser button should select the eraser tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn<any>(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return eraserStub;
         });
@@ -108,8 +122,6 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on line button should select the line tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn<any>(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return lineStub;
         });
@@ -130,8 +142,6 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on rectangle button should select the rectangle tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn<any>(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return rectangleStub;
         });
@@ -152,8 +162,6 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on ellipse button should select the ellipse tool for user', () => {
-        const selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
-        const selectToolSpy = spyOn<any>(component, 'onSelectTool').and.callThrough();
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return ellipseStub;
         });
@@ -197,50 +205,82 @@ describe('SidebarComponent', () => {
     });
 
     it('pressing on newDrawing should emit to editor', () => {
-        const notifyEditorNewDrawingSpy = spyOn<any>(component.notifyEditorNewDrawing, 'emit');
         const newDrawingButton = fixture.debugElement.nativeElement.querySelector('#new-drawing-button');
         newDrawingButton.click();
         fixture.detectChanges();
-        expect(notifyEditorNewDrawingSpy).toHaveBeenCalledWith(component.isNewDrawing);
+        expect(newDrawingClickedSpy).toHaveBeenCalled();
+        expect(newDrawingClickedSpy).toHaveBeenCalledWith(true);
     });
 
-    it('clicking on undo button when undo pile is not empty should call undoRedoService.undo', () => {
-        const undoServiceSpy = spyOn(undoRedoService, 'undo');
+    it('clicking on undo button when undo pile is not empty and tool is not used should call undoRedoService.undo', () => {
         undoRedoService.executeCommand(mockCommand);
+        component.currentTool.inUse = false;
 
         fixture.detectChanges();
-        const undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
+        expect(undoButton).not.toHaveClass('unclickable');
+
         undoButton.click();
         fixture.detectChanges();
 
-        expect(undoButton.classes).toBeUndefined();
-        expect(undoServiceSpy).toHaveBeenCalled();
         expect(commandExecuteSpy).toHaveBeenCalled();
+        expect(undoServiceSpy).toHaveBeenCalled();
     });
 
     it('clicking on undo button when undo pile is empty should not be possible', () => {
-        const undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
-
         expect(undoButton).toHaveClass('unclickable');
     });
 
-    it('clicking on redo button when redo pile is not empty should call undoRedoService.redo', () => {
-        const redoServiceSpy = spyOn(undoRedoService, 'redo');
+    it('clicking on undo button when undo pile is not empty and tool is used should not call undoRedoService.undo', () => {
         undoRedoService.executeCommand(mockCommand);
+        component.currentTool.inUse = true;
 
         fixture.detectChanges();
-        const redoButton = fixture.debugElement.nativeElement.querySelector('#redoButton');
+        expect(undoButton).not.toHaveClass('unclickable');
+
+        undoButton.click();
+        fixture.detectChanges();
+
+        expect(commandExecuteSpy).toHaveBeenCalled();
+        expect(undoServiceSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on redo button when redo pile is not empty and tool is not used should call undoRedoService.redo', () => {
+        refreshSpy.and.callFake(() => {
+            component.isRedoPossible = undoRedoService.redoPile.length !== 0;
+        });
+        undoRedoService.executeCommand(mockCommand);
+        undoRedoService.undo();
+        component.currentTool.inUse = false;
+
+        fixture.detectChanges();
+        expect(redoButton).not.toHaveClass('unclickable');
+
         redoButton.click();
         fixture.detectChanges();
 
-        expect(redoButton.classes).toBeUndefined();
-        expect(redoServiceSpy).toHaveBeenCalled();
         expect(commandExecuteSpy).toHaveBeenCalled();
+        expect(redoServiceSpy).toHaveBeenCalled();
     });
 
     it('clicking on redo button when redo pile is empty should not be possible', () => {
-        const redoButton = fixture.debugElement.nativeElement.querySelector('#redoButton');
-
         expect(redoButton).toHaveClass('unclickable');
+    });
+
+    it('clicking on redo button when redo pile is not empty and tool is used should not call undoRedoService.redo', () => {
+        refreshSpy.and.callFake(() => {
+            component.isRedoPossible = undoRedoService.redoPile.length !== 0;
+        });
+        undoRedoService.executeCommand(mockCommand);
+        undoRedoService.undo();
+        component.currentTool.inUse = true;
+
+        fixture.detectChanges();
+        expect(redoButton).not.toHaveClass('unclickable');
+
+        redoButton.click();
+        fixture.detectChanges();
+
+        expect(commandExecuteSpy).toHaveBeenCalled();
+        expect(redoServiceSpy).not.toHaveBeenCalled();
     });
 });
