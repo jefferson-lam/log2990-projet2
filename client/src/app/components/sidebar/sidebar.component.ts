@@ -49,9 +49,9 @@ export class SidebarComponent implements OnChanges {
         const newTool = changes.currentTool.currentValue;
         if (newTool != undefined) {
             const serviceName = newTool.constructor.name;
-            this.selectedTool = this.sidebarToolButtons.filter((sidebarToolButton) => {
+            this.selectedTool = this.sidebarToolButtons.find((sidebarToolButton) => {
                 return sidebarToolButton.service === serviceName;
-            })[0];
+            }) as SidebarToolButton;
         }
     }
 

@@ -193,7 +193,7 @@ describe('RectangleCommand', () => {
 
         testCtx.beginPath();
         testCtx.lineJoin = 'miter';
-        testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
+        testCtx.rect(START_X, START_Y, TEST_X_OFFSET, TEST_Y_OFFSET);
         testCtx.strokeStyle = TEST_SECONDARY_COLOR;
         testCtx.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
         testCtx.stroke();
