@@ -4,6 +4,7 @@ import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
 import { ColorService } from '@app/services/color/color.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
 
@@ -15,7 +16,7 @@ describe('SettingsManagerService', () => {
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
 
     beforeEach(() => {
-        toolSpy = jasmine.createSpyObj('Tool', ['setLineWidth', 'setFillMode', 'setJunctionRadius', 'setWithJunction']);
+        toolSpy = jasmine.createSpyObj('Tool', ['setLineWidth', 'setFillMode', 'setJunctionRadius', 'setWithJunction', 'setSidesCount']);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
         TestBed.configureTestingModule({
             declarations: [EditorComponent],
@@ -26,7 +27,7 @@ describe('SettingsManagerService', () => {
             ],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service);
+        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService);
         editorComponent.currentTool = toolSpy;
     });
 
@@ -56,6 +57,12 @@ describe('SettingsManagerService', () => {
         const hasJunction = true;
         service.setWithJunction(hasJunction);
         expect(toolSpy.setWithJunction).toHaveBeenCalled();
+    });
+
+    it('setSidesCount should set the sides count correctly of current tool', () => {
+        const EXPECTED_SIDES_COUNT = 10;
+        service.setSidesCount(EXPECTED_SIDES_COUNT);
+        expect(toolSpy.setSidesCount).toHaveBeenCalled();
     });
 
     it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {

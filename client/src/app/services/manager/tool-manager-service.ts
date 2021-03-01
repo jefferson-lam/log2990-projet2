@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { EllipseService } from '@app/services/tools/ellipse-service';
-import { EraserService } from '@app/services/tools/eraser-service';
-import { LineService } from '@app/services/tools/line-service';
-import { PencilService } from '@app/services/tools/pencil-service';
-import { RectangleService } from '@app/services/tools/rectangle-service';
-import { PolygoneService } from '@app/services/tools/polygone-service';
+import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
+import { EraserService } from '@app/services/tools/eraser/eraser-service';
+import { LineService } from '@app/services/tools/line/line-service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
+import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 
 @Injectable({
     providedIn: 'root',
@@ -58,14 +58,14 @@ export class ToolManagerService {
         this.rectangleService.setPrimaryColor(color);
         this.ellipseService.setPrimaryColor(color);
         this.polygoneService.setPrimaryColor(color);
+        this.pencilService.setPrimaryColor(color);
+        this.lineService.setPrimaryColor(color);
     }
 
     // TODO ADD TESTS
     setSecondaryColorTools(color: string): void {
         this.rectangleService.setSecondaryColor(color);
         this.ellipseService.setSecondaryColor(color);
-        this.pencilService.setSecondaryColor(color);
-        this.lineService.setSecondaryColor(color);
         this.polygoneService.setSecondaryColor(color);
     }
 }

@@ -2,30 +2,33 @@
   font-family: 'Rubik', serif;
 
 }
-#settings-container{
+
+#settingsContainer{
   color: #EEE;
   margin-left: 10px;
 }
+
 #title{
   font-weight: bolder;
   font-size: x-large;
 }
-#width-setting{
+
+#widthSetting{
   display: block;
 }
 
-#width{
+#widthLine, #countSides{
   margin-top: -5px;
 }
-#trace-type{
-  flex-direction: column-reverse;
-  margin-top: 10px;
-  margin-left: -10px;
+
+#drawingStyleOptions{
+  margin-top: -11px;
 }
 
-#color-picker{
-  margin-top: 25px;
+#colorPicker{
+  margin-top: 5px;
 }
+
 .mat-radio-button{
   margin:5px;
 }

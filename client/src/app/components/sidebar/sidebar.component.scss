@@ -122,6 +122,7 @@ mat-drawer-content {
     overflow: hidden;
 }
 
+//TODO : duplicate? see line 59
 .options-sidebar {
     padding: 0;
 }
@@ -133,4 +134,9 @@ mat-drawer-content {
 .tools-option-container{
   display: flex;
   position: relative;
+}
+
+.options-sidebar .unclickable {
+  pointer-events: none;
+  background-color: gray;
 }
