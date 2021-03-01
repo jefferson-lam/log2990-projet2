@@ -1,75 +1,81 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PolygoneConstants from '@app/constants/polygone-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PolygoneCommand } from '@app/services/tools/polygone/polygone-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class PolygoneService extends Tool {
-    initNumberSides: number = PolygoneConstants.INIT_NUMBER_SIDES;
+    initNumberSides: number = PolygoneConstants.INIT_SIDES_COUNT;
     cornerCoords: Vec2[];
     lineWidth: number = PolygoneConstants.INIT_LINE_WIDTH;
-    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
+    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = '#b5cf60';
     secondaryColor: string = '#2F2A36';
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    previewCommand: PolygoneCommand;
+
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         const MAX_PATH_DATA_SIZE = 2;
         this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
+        this.previewCommand = new PolygoneCommand(this.drawingService.previewCtx, this);
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
-        if (this.mouseDown) {
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
+        if (this.inUse) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.cornerCoords[PolygoneConstants.START_INDEX] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[PolygoneConstants.END_INDEX] = mousePosition;
-            this.drawPolygone(this.drawingService.baseCtx, this.cornerCoords, this.initNumberSides);
+        if (this.inUse) {
+            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
+            const command: Command = new PolygoneCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
         }
-        this.mouseDown = false;
+        this.inUse = false;
         this.clearCornerCoords();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[PolygoneConstants.END_INDEX] = mousePosition;
+        if (this.inUse) {
+            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
             this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            const exitCoords = this.getPositionFromMouse(event);
-            this.cornerCoords[PolygoneConstants.END_INDEX] = exitCoords;
-            this.drawPolygone(this.drawingService.previewCtx, this.cornerCoords, this.initNumberSides);
+            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
             this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
         const LEFT_CLICK_BUTTONS = 1;
-        if (event.buttons === LEFT_CLICK_BUTTONS && this.mouseDown) {
-            this.mouseDown = true;
+        if (event.buttons === LEFT_CLICK_BUTTONS && this.inUse) {
+            this.inUse = true;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.mouseDown = false;
+            this.inUse = false;
         }
     }
 
@@ -99,17 +105,6 @@ export class PolygoneService extends Tool {
         return [xRadius, yRadius];
     }
 
-    private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[], sides: number): void {
-        const polygoneCenter = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]);
-        const startX = polygoneCenter.x;
-        const startY = polygoneCenter.y;
-        const radiiXAndY = this.getRadiiXAndY(path);
-        const xRadius = radiiXAndY[PolygoneConstants.X_INDEX];
-        const yRadius = radiiXAndY[PolygoneConstants.X_INDEX];
-        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        this.drawTypePolygone(ctx, startX, startY, xRadius, yRadius, sides, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
-    }
-
     private getPolygoneCenter(start: Vec2, end: Vec2): Vec2 {
         let displacementX: number;
         let displacementY: number;
@@ -124,36 +119,6 @@ export class PolygoneService extends Tool {
         const centerX = start.x + Math.sign(xVector) * displacementX;
         const centerY = start.y + Math.sign(yVector) * displacementY;
         return { x: centerX, y: centerY };
-    }
-
-    private drawTypePolygone(
-        ctx: CanvasRenderingContext2D,
-        startX: number,
-        startY: number,
-        xRadius: number,
-        yRadius: number,
-        sides: number,
-        fillMethod: number,
-        primaryColor: string,
-        secondaryColor: string,
-        lineWidth: number,
-    ): void {
-        ctx.beginPath();
-        ctx.setLineDash([]);
-        ctx.lineJoin = 'round';
-        const ANGLE = PolygoneConstants.END_ANGLE / sides;
-        ctx.moveTo(startX + xRadius * Math.cos(0), startY + xRadius * Math.sin(0));
-        for (let i = 1; i < sides; i++) {
-            ctx.lineTo(startX + xRadius * Math.cos(ANGLE * i), startY + xRadius * Math.sin(ANGLE * i));
-        }
-        ctx.closePath();
-        ctx.strokeStyle = secondaryColor;
-        ctx.lineWidth = lineWidth;
-        ctx.stroke();
-        if (fillMethod !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = primaryColor;
-            ctx.fill();
-        }
     }
 
     private drawPredictionCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {

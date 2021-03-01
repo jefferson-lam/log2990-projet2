@@ -1,95 +1,117 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EllipseCommand } from '@app/services/tools/ellipse/ellipse-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    cornerCoords: Vec2[];
+    cornerCoords: Vec2[] = [];
     isCircle: boolean = false;
     lineWidth: number = 20;
-    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
+    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = '#B5CF60';
     secondaryColor: string = '#2F2A36';
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    previewCommand: EllipseCommand;
+
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         const MAX_PATH_DATA_SIZE = 2;
         this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
+        this.previewCommand = new EllipseCommand(this.drawingService.previewCtx, this);
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
-        if (this.mouseDown) {
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
+        if (this.inUse) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.START_INDEX] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
-            this.drawEllipse(this.drawingService.baseCtx, this.cornerCoords);
+            const command: Command = new EllipseCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
         }
-        this.mouseDown = false;
+        this.inUse = false;
         this.clearCornerCoords();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
+
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
+
             this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             const exitCoords = this.getPositionFromMouse(event);
             this.cornerCoords[EllipseConstants.END_INDEX] = exitCoords;
-            this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
+
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
+
+            // this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
             this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
         const LEFT_CLICK_BUTTONS = 1;
-        if (event.buttons === LEFT_CLICK_BUTTONS && this.mouseDown) {
-            this.mouseDown = true;
+        if (event.buttons === LEFT_CLICK_BUTTONS && this.inUse) {
+            this.inUse = true;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.mouseDown = false;
+            this.inUse = false;
         }
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             if (event.key === 'Shift') {
                 this.isCircle = true;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
+
+                this.previewCommand.setValues(this.drawingService.previewCtx, this);
+                this.previewCommand.execute();
+
+                // this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
                 this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
             }
         }
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             if (event.key === 'Shift') {
                 this.isCircle = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
+
+                this.previewCommand.setValues(this.drawingService.previewCtx, this);
+                this.previewCommand.execute();
+
+                // this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
                 this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
             }
         } else {
@@ -130,78 +152,6 @@ export class EllipseService extends Tool {
             xRadius = yRadius = shortestSide;
         }
         return [xRadius, yRadius];
-    }
-
-    private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const ellipseCenter = this.getEllipseCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
-        const startX = ellipseCenter.x;
-        const startY = ellipseCenter.y;
-
-        const radiiXAndY = this.getRadiiXAndY(path);
-        let xRadius = radiiXAndY[EllipseConstants.X_INDEX];
-        let yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
-        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (xRadius > this.lineWidth / 2 && yRadius > this.lineWidth / 2) {
-            xRadius -= this.lineWidth / 2;
-            yRadius -= this.lineWidth / 2;
-            this.drawTypeEllipse(ctx, startX, startY, xRadius, yRadius, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
-        } else {
-            this.drawTypeEllipse(
-                ctx,
-                startX,
-                startY,
-                xRadius,
-                yRadius,
-                ToolConstants.FillMode.OUTLINE_FILL,
-                borderColor,
-                borderColor,
-                EllipseConstants.HIDDEN_BORDER_WIDTH,
-            );
-        }
-    }
-
-    private getEllipseCenter(start: Vec2, end: Vec2, isCircle: boolean): Vec2 {
-        let displacementX: number;
-        let displacementY: number;
-        const radiusX = Math.abs(end.x - start.x) / 2;
-        const radiusY = Math.abs(end.y - start.y) / 2;
-        if (isCircle) {
-            const shortestSide = Math.min(radiusX, radiusY);
-            displacementX = displacementY = shortestSide;
-        } else {
-            displacementX = radiusX;
-            displacementY = radiusY;
-        }
-        const xVector = end.x - start.x;
-        const yVector = end.y - start.y;
-        const centerX = start.x + Math.sign(xVector) * displacementX;
-        const centerY = start.y + Math.sign(yVector) * displacementY;
-        return { x: centerX, y: centerY };
-    }
-
-    private drawTypeEllipse(
-        ctx: CanvasRenderingContext2D,
-        startX: number,
-        startY: number,
-        xRadius: number,
-        yRadius: number,
-        fillMethod: number,
-        primaryColor: string,
-        secondaryColor: string,
-        lineWidth: number,
-    ): void {
-        ctx.beginPath();
-        ctx.setLineDash([]);
-        ctx.lineJoin = 'round';
-        ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, EllipseConstants.START_ANGLE, EllipseConstants.END_ANGLE);
-
-        ctx.strokeStyle = secondaryColor;
-        ctx.lineWidth = lineWidth;
-        ctx.stroke();
-        if (fillMethod !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = primaryColor;
-            ctx.fill();
-        }
     }
 
     private drawPredictionRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {

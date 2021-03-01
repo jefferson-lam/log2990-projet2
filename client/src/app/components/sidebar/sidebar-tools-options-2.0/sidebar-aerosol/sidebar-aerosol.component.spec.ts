@@ -4,17 +4,13 @@ import * as AerosolConstants from '@app/constants/aerosol-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarAerosolComponent } from './sidebar-aerosol.component';
 
-// tslint:disable:no-any
 describe('SidebarAerosolComponent', () => {
     let component: SidebarAerosolComponent;
     let fixture: ComponentFixture<SidebarAerosolComponent>;
-    let toolSizeChangedSubscribeSpy: jasmine.Spy<any>;
-    let waterDropSizeChangedSubcribeSpy: jasmine.Spy<any>;
-    let emitEmissionNumberSubscribeSpy: jasmine.Spy<any>;
+    let toolSizeChangedSubscribeSpy: jasmine.Spy;
+    let waterDropSizeChangedSubcribeSpy: jasmine.Spy;
+    let emitEmissionNumberSubscribeSpy: jasmine.Spy;
     let settingsManagerService: SettingsManagerService;
-
-    const MAX_WIDTH = 200;
-    const NO_JUNCTION_RADIUS = 0;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -39,7 +35,7 @@ describe('SidebarAerosolComponent', () => {
 
     it('emitToolSize should emit tool size', () => {
         const emitSpy = spyOn(component.toolSizeChanged, 'emit');
-        component.toolSize = NO_JUNCTION_RADIUS;
+        component.toolSize = AerosolConstants.INIT_TOOL_SIZE;
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
     });
@@ -56,12 +52,6 @@ describe('SidebarAerosolComponent', () => {
         component.emissionCount = AerosolConstants.INIT_LINE_WIDTH;
         component.emitEmissionNumber();
         expect(emitSpy).toHaveBeenCalled();
-    });
-
-    it('setMax should return input value if it is equal or under MAXWIDTH', () => {
-        const newWitdh = MAX_WIDTH;
-        const returnValue = component.setMax(newWitdh);
-        expect(returnValue).toEqual(newWitdh);
     });
 
     it('should call subscribe method when created', () => {
