@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import * as AerosolConstants from '@app/constants/aerosol-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarAerosolComponent } from './sidebar-aerosol.component';
 
@@ -45,14 +46,14 @@ describe('SidebarAerosolComponent', () => {
 
     it('emitWaterDropSize should emit particle size', () => {
         const emitSpy = spyOn(component.waterDropSizeChanged, 'emit');
-        component.waterDropSize = 25;
+        component.waterDropSize = AerosolConstants.INIT_WATERDROP_WIDTH;
         component.emitWaterDropSize();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitEmissionNumber should emit number of emissions', () => {
         const emitSpy = spyOn(component.numberOfEmissions, 'emit');
-        component.emissionCount = 10;
+        component.emissionCount = AerosolConstants.INIT_LINE_WIDTH;
         component.emitEmissionNumber();
         expect(emitSpy).toHaveBeenCalled();
     });

@@ -1,5 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import * as PolygoneConstants from '@app/constants/polygone-constants';
+import * as ToolsConstants from '@app/constants/tool-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarPolygoneComponent } from './sidebar-polygone.component';
 
@@ -35,13 +37,13 @@ describe('SidebarPolygoneComponent', () => {
 
     it('emitToolSize should emit tool size', () => {
         const emitSpy = spyOn(component.toolSizeChanged, 'emit');
-        component.toolSize = 0;
+        component.toolSize = PolygoneConstants.INIT_LINE_WIDTH;
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitFillMode should emit fill mode', () => {
-        const newFillMode = 1;
+        const newFillMode = ToolsConstants.FillMode.FILL_ONLY;
         const emitSpy = spyOn(component.fillModeChanged, 'emit');
         component.emitFillMode(newFillMode);
         expect(emitSpy).toHaveBeenCalled();
@@ -49,13 +51,13 @@ describe('SidebarPolygoneComponent', () => {
 
     it('emitPolygoneSideNumber should emit sides number', () => {
         const emitSpy = spyOn(component.numberOfPolySides, 'emit');
-        component.polygoneSidesCount = 4;
+        component.polygoneSidesCount = PolygoneConstants.INIT_NUMBER_SIDES;
         component.emitPolygoneSideNumber();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('setMax should return input value', () => {
-        const newWidth = 200;
+        const newWidth = PolygoneConstants.MAX_BORDER_WIDTH;
         const returnValue = component.setMax(newWidth);
         expect(returnValue).toEqual(newWidth);
     });
@@ -76,7 +78,7 @@ describe('SidebarPolygoneComponent', () => {
 
     it('should call setFillModeSpy() from settingsManager after fill mode change', () => {
         const setFillModeSpy = spyOn(settingsManagerService, 'setFillMode');
-        const fillMode = 1;
+        const fillMode = ToolsConstants.FillMode.FILL_ONLY;
         component.ngOnInit();
         component.emitFillMode(fillMode);
         expect(setFillModeSpy).toHaveBeenCalled();

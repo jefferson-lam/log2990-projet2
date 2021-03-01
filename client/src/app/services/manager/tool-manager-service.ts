@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { AerosolService } from '@app/services/tools/aerosol-service';
+import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
@@ -63,6 +63,7 @@ export class ToolManagerService {
         this.polygoneService.setPrimaryColor(color);
         this.pencilService.setPrimaryColor(color);
         this.lineService.setPrimaryColor(color);
+        this.aerosolService.setPrimaryColor(color);
     }
 
     // TODO ADD TESTS
@@ -70,6 +71,5 @@ export class ToolManagerService {
         this.rectangleService.setSecondaryColor(color);
         this.ellipseService.setSecondaryColor(color);
         this.polygoneService.setSecondaryColor(color);
-        this.aerosolService.setSecondaryColor(color);
     }
 }

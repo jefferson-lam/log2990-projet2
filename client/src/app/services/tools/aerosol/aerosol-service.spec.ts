@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as AerosolConstants from '@app/constants/aerosol-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { AerosolService } from './aerosol-service';
 
 // tslint:disable:no-any
@@ -14,7 +16,10 @@ describe('AerosolService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let aerosolSpy: jasmine.Spy<any>;
+    let executeSpy: jasmine.Spy;
+    let previewExecuteSpy: jasmine.Spy;
+    let setPreviewValuesSpy: jasmine.Spy;
+    let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -27,7 +32,10 @@ describe('AerosolService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(AerosolService);
-        aerosolSpy = spyOn<any>(service, 'airBrushCircle').and.callThrough();
+        undoRedoService = TestBed.inject(UndoRedoService);
+        executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
+        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
+        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
@@ -52,7 +60,7 @@ describe('AerosolService', () => {
 
     it('onMouseDown should set mouseDown property to true on left click', () => {
         service.onMouseDown(mouseEvent);
-        expect(service.mouseDown).toEqual(true);
+        expect(service.inUse).toEqual(true);
     });
 
     it('onMouseDown should set mouseDown property to false on right click', () => {
@@ -62,105 +70,123 @@ describe('AerosolService', () => {
             button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
-        expect(service.mouseDown).toEqual(false);
+        expect(service.inUse).toEqual(false);
     });
 
     it('onMouseUp should set mouseDown to true', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['pathData'].push(service.mouseDownCoord);
-        service.mouseDown = true;
+        service.inUse = true;
         service.onMouseUp(mouseEvent);
-        expect(aerosolSpy).not.toHaveBeenCalled();
-        expect(service.mouseDown).toEqual(false);
+        expect(service.inUse).toEqual(false);
+    });
+
+    it('onMouseUp should call executeCommand if mouse was already down', () => {
+        service.inUse = true;
+        service.onMouseUp(mouseEvent);
+        expect(executeSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should not call executeCommand if mouse was not already down', () => {
+        service.inUse = false;
+
+        service.onMouseUp(mouseEvent);
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseUp should set mouseDown to false', () => {
-        service.mouseDown = false;
+        service.inUse = false;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
-        expect(aerosolSpy).not.toHaveBeenCalled();
-        expect(service.mouseDown).toEqual(false);
+        expect(service.inUse).toEqual(false);
     });
 
-    it('onMouseMove should call airBrushCircle if mouse was already down', () => {
+    it('onMouseMove should call executeCommand if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['pathData'].push(service.mouseDownCoord);
-        service.mouseDown = true;
+        service.inUse = true;
         service.onMouseMove(mouseEvent);
-        expect(aerosolSpy).toHaveBeenCalled();
-        expect(service.mouseDown).toEqual(true);
+        expect(service.inUse).toEqual(true);
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseMove should call airBrushCircle', () => {
+    it('onMouseMove should not call executeCommand if mouseDown is false', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = true;
+        service.inUse = false;
         service.onMouseMove(mouseEvent);
-        expect(aerosolSpy).toHaveBeenCalled();
+        expect(service.inUse).toEqual(false);
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseMove should not call airBrushCircle if mouseDown is false', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = false;
+    it('onMouseMove should call setValues and execute of previewCommand if mouse was already down', () => {
+        service.inUse = true;
         service.onMouseMove(mouseEvent);
-        expect(aerosolSpy).not.toHaveBeenCalled();
-        expect(service.mouseDown).toEqual(false);
+        expect(setPreviewValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should not call setValues and execute of previewCommand if mouse was not already down', () => {
+        service.inUse = false;
+
+        service.onMouseMove(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
+        expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseLeave should stop calling airBrushCircle', () => {
-        aerosolSpy.and.callFake(() => {});
-        service.mouseDown = true;
+        service.inUse = true;
         service.onMouseLeave(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(aerosolSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseLeave should stop calling airBrushCircle if mouse was not down', () => {
-        aerosolSpy.and.callFake(() => {});
-        service.mouseDown = false;
+    it('onMouseLeave should call executeCommand if mouse was down', () => {
+        service.inUse = true;
         service.onMouseLeave(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(aerosolSpy).not.toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseLeave should not call executeCommand if mouse was not down', () => {
+        service.inUse = false;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(executeSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseEnter should set mouseDown to false if mouse is not down', () => {
-        service.mouseDown = true;
+        service.inUse = true;
         const mouseEventNoClick = {
             buttons: MouseConstants.MouseButton.Left,
         } as MouseEvent;
         service.onMouseEnter(mouseEventNoClick);
-        expect(service.mouseDown).toBeFalse();
+        expect(service.inUse).toBeFalse();
     });
 
     it('onMouseEnter should not set mouseDown to false if mouse is down', () => {
-        service.mouseDown = true;
+        service.inUse = true;
         service.onMouseEnter(mouseEvent);
-        expect(service.mouseDown).toBeTrue();
-    });
-
-    it('airBrushCircle should call canvas functions', () => {
-        const fillSpy = spyOn(baseCtxStub, 'fillRect').and.callThrough();
-        service['airBrushCircle'](baseCtxStub, mouseEvent);
-        expect(aerosolSpy).toHaveBeenCalledWith(baseCtxStub, mouseEvent);
-        expect(fillSpy).toHaveBeenCalled();
+        expect(service.inUse).toBeTrue();
     });
 
     it('setLineWidth should set size when called', () => {
-        service.setLineWidth(10);
-        expect(service.lineWidth).toEqual(10);
+        service.setLineWidth(AerosolConstants.INIT_LINE_WIDTH);
+        expect(service.lineWidth).toEqual(AerosolConstants.INIT_LINE_WIDTH);
     });
 
     it('setWaterDropWidth should set particle size when called', () => {
-        service.setWaterDropWidth(10);
-        expect(service.waterDropWidth).toEqual(10);
+        service.setWaterDropWidth(AerosolConstants.INIT_WATERDROP_WIDTH);
+        expect(service.waterDropWidth).toEqual(AerosolConstants.INIT_WATERDROP_WIDTH);
     });
 
     it('setEmissionCount should set emission count when called', () => {
-        service.setEmissionCount(10);
-        expect(service.emissionCount).toEqual(10);
+        service.setEmissionCount(AerosolConstants.INIT_EMISSION_COUNT);
+        expect(service.emissionCount).toEqual(AerosolConstants.INIT_EMISSION_COUNT);
     });
 
-    it('setSecondaryColor should set color when called', () => {
-        service.setSecondaryColor('black');
-        expect(service.secondaryColor).toEqual('black');
+    it('setPrimaryColor should set color when called', () => {
+        service.setPrimaryColor('black');
+        expect(service.primaryColor).toEqual('black');
     });
 });

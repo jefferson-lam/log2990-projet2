@@ -165,7 +165,7 @@ export class PolygoneService extends Tool {
 
         ctx.beginPath();
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = PolygoneConstants.PREDICTION_RECTANGLE_WIDTH;
+        ctx.lineWidth = PolygoneConstants.PREDICTION_CIRCLE_WIDTH;
         ctx.setLineDash([PolygoneConstants.LINE_DISTANCE]);
         ctx.arc(polygoneCenter.x, polygoneCenter.y, xRadius + this.lineWidth / 2, 0, 2 * Math.PI);
         ctx.stroke();
