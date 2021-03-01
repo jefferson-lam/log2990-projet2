@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { LineCommand } from '@app/services/tools/line/line-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,23 +16,25 @@ export class LineService extends Tool {
     linePathData: Vec2[];
     canvasState: ImageData;
 
+    previewCommand: LineCommand;
+
     shiftDown: boolean = false;
-    isDrawing: boolean = false;
     isEscapeKeyDown: boolean = false;
     isBackspaceKeyDown: boolean = false;
 
     withJunction: boolean = true;
     junctionRadius: number = LineConstants.MIN_LINE_WIDTH;
     lineWidth: number = LineConstants.MIN_LINE_WIDTH;
-    secondaryColor: string = LineConstants.DEFAULT_PRIMARY_COLOR;
+    primaryColor: string = LineConstants.DEFAULT_PRIMARY_COLOR;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         this.clearPath();
+        this.previewCommand = new LineCommand(drawingService.previewCtx, this);
     }
 
-    setSecondaryColor(newColor: string): void {
-        this.secondaryColor = newColor;
+    setPrimaryColor(newColor: string): void {
+        this.primaryColor = newColor;
     }
 
     setLineWidth(width: number): void {
@@ -70,7 +75,7 @@ export class LineService extends Tool {
      * event does not work for these modifiers.
      */
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.isDrawing) {
+        if (this.inUse) {
             if (event.key === 'Shift' && !this.shiftDown) {
                 const angle = this.calculateAngle(this.linePathData[LineConstants.STARTING_POINT], this.mousePosition);
                 const finalAngle = this.roundAngleToNearestMultiple(angle, LineConstants.DEGREES_45);
@@ -85,7 +90,8 @@ export class LineService extends Tool {
                     finalAngle,
                 );
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawLine(this.drawingService.previewCtx, this.linePathData);
+                this.previewCommand.setValues(this.drawingService.previewCtx, this);
+                this.previewCommand.execute();
                 this.shiftDown = true;
             } else if (event.key === 'Escape') {
                 this.isEscapeKeyDown = true;
@@ -96,27 +102,30 @@ export class LineService extends Tool {
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
-        if (this.isDrawing) {
+        if (this.inUse) {
             if (event.key === 'Shift') {
                 this.shiftDown = false;
                 this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawLine(this.drawingService.previewCtx, this.linePathData);
+                this.previewCommand.setValues(this.drawingService.previewCtx, this);
+                this.previewCommand.execute();
             } else if (event.key === 'Escape' && this.isEscapeKeyDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.clearPath();
-                this.isDrawing = false;
+                this.inUse = false;
                 this.isEscapeKeyDown = false;
             } else if (event.key === 'Backspace' && this.isBackspaceKeyDown) {
                 this.drawingService.baseCtx.putImageData(this.canvasState, 0, 0);
+                // TODO : decide if backspace is considered an undo or not?
+                this.undoRedoService.undoPile.pop();
             }
         }
     }
 
     onMouseClick(event: MouseEvent): void {
-        if (!this.isDrawing) {
+        if (!this.inUse) {
             this.clearPath();
-            this.isDrawing = true;
+            this.inUse = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.initialPoint = this.mouseDownCoord;
             this.linePathData[LineConstants.STARTING_POINT] = this.mouseDownCoord;
@@ -128,46 +137,29 @@ export class LineService extends Tool {
             }
             // We do a save of the current state of the canvas in order to deal with the user's 'undo last line' option on backspace.
             this.canvasState = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
-            this.drawLine(this.drawingService.baseCtx, this.linePathData);
+            const command: Command = new LineCommand(this.drawingService.baseCtx, this);
+            if (this.linePathData[LineConstants.STARTING_POINT] !== this.linePathData[LineConstants.ENDING_POINT])
+                this.undoRedoService.executeCommand(command);
             this.linePathData[LineConstants.STARTING_POINT] = this.linePathData[LineConstants.ENDING_POINT];
         }
     }
 
     onMouseDoubleClick(event: MouseEvent): void {
-        if (this.isDrawing) {
+        if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.clearPath();
-            this.isDrawing = false;
+            this.inUse = false;
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.isDrawing) {
+        if (this.inUse) {
             this.mousePosition = this.getPositionFromMouse(event);
             this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.linePathData);
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
         }
-    }
-
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        if (this.withJunction) {
-            ctx.arc(
-                path[LineConstants.ENDING_POINT].x,
-                path[LineConstants.ENDING_POINT].y,
-                this.junctionRadius,
-                LineConstants.DEGREES_0,
-                LineConstants.DEGREES_360,
-            );
-            ctx.fillStyle = this.secondaryColor;
-            ctx.fill();
-        }
-        ctx.lineWidth = this.lineWidth;
-        ctx.moveTo(path[LineConstants.STARTING_POINT].x, path[LineConstants.STARTING_POINT].y);
-        ctx.lineTo(path[LineConstants.ENDING_POINT].x, path[LineConstants.ENDING_POINT].y);
-        ctx.strokeStyle = this.secondaryColor;
-        ctx.stroke();
     }
 
     private clearPath(): void {

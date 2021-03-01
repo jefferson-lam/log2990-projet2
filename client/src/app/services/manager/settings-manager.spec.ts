@@ -4,6 +4,7 @@ import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
 import { ColorService } from '@app/services/color/color.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
 
@@ -15,7 +16,15 @@ describe('SettingsManagerService', () => {
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
 
     beforeEach(() => {
-        toolSpy = jasmine.createSpyObj('Tool', ['setLineWidth', 'setFillMode', 'setJunctionRadius', 'setWithJunction','setSidesCount','setWaterDropWidth','setEmissionCount']);
+        toolSpy = jasmine.createSpyObj('Tool', [
+            'setLineWidth',
+            'setFillMode',
+            'setJunctionRadius',
+            'setWithJunction',
+            'setSidesCount',
+            'setWaterDropWidth',
+            'setEmissionCount',
+        ]);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
         TestBed.configureTestingModule({
             declarations: [EditorComponent],
@@ -26,7 +35,7 @@ describe('SettingsManagerService', () => {
             ],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service);
+        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService);
         editorComponent.currentTool = toolSpy;
     });
 
@@ -59,21 +68,21 @@ describe('SettingsManagerService', () => {
     });
 
     it('setSidesCount should set the sides count correctly of current tool', () => {
-      const EXPECTED_SIDES_COUNT = 10;
-      service.setSidesCount(EXPECTED_SIDES_COUNT);
-      expect(toolSpy.setSidesCount).toHaveBeenCalled();
+        const EXPECTED_SIDES_COUNT = 10;
+        service.setSidesCount(EXPECTED_SIDES_COUNT);
+        expect(toolSpy.setSidesCount).toHaveBeenCalled();
     });
 
     it('setWaterDropWidth should set the particle width correctly of current tool', () => {
-      const EXPECTED_PARTICLE_WIDTH = 10;
-      service.setWaterDropWidth(EXPECTED_PARTICLE_WIDTH);
-      expect(toolSpy.setWaterDropWidth).toHaveBeenCalled();
+        const EXPECTED_PARTICLE_WIDTH = 10;
+        service.setWaterDropWidth(EXPECTED_PARTICLE_WIDTH);
+        expect(toolSpy.setWaterDropWidth).toHaveBeenCalled();
     });
 
     it('setEmissionCount should set the emission count correctly of current tool', () => {
-      const EXPECTED_EMISSION_COUNT = 10;
-      service.setEmissionCount(EXPECTED_EMISSION_COUNT);
-      expect(toolSpy.setEmissionCount).toHaveBeenCalled();
+        const EXPECTED_EMISSION_COUNT = 10;
+        service.setEmissionCount(EXPECTED_EMISSION_COUNT);
+        expect(toolSpy.setEmissionCount).toHaveBeenCalled();
     });
 
     it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {

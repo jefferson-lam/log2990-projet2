@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool.ts';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 class ToolStub extends Tool {}
 
@@ -10,7 +11,7 @@ describe('Tool', () => {
     let toolStub: ToolStub;
 
     beforeEach(() => {
-        toolStub = new ToolStub({} as DrawingService);
+        toolStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         TestBed.configureTestingModule({
             providers: [{ provide: Tool, useValue: toolStub }],
         }).compileComponents();
