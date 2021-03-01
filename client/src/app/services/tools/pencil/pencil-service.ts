@@ -1,27 +1,27 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PencilConstants from '@app/constants/pencil-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { Observable, Subject } from 'rxjs';
+import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class PencilService extends Tool {
-    private pathData: Vec2[];
+    pathData: Vec2[];
     lineWidth: number;
     primaryColor: string = 'black';
+    previewCommand: PencilCommand;
 
-    // Observables
-    private pencilSizeChangedSource: Subject<number> = new Subject<number>();
-    pencilSizeChanged$: Observable<number> = this.pencilSizeChangedSource.asObservable();
-
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         this.clearPath();
         this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
+        this.previewCommand = new PencilCommand(drawingService.previewCtx, this);
     }
 
     setPrimaryColor(color: string): void {
@@ -36,12 +36,11 @@ export class PencilService extends Tool {
         } else {
             this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
         }
-        this.pencilSizeChangedSource.next(this.lineWidth);
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
-        if (this.mouseDown) {
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
+        if (this.inUse) {
             this.clearPath();
 
             this.mouseDownCoord = this.getPositionFromMouse(event);
@@ -50,30 +49,36 @@ export class PencilService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+
+            const command: Command = new PencilCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
+
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
-        this.mouseDown = false;
+        this.inUse = false;
         this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+        if (this.inUse) {
+            const command: Command = new PencilCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
         this.clearPath();
@@ -81,22 +86,8 @@ export class PencilService extends Tool {
 
     onMouseEnter(event: MouseEvent): void {
         if (event.buttons === MouseConstants.MouseButton.Left) {
-            this.mouseDown = false;
+            this.inUse = false;
         }
-    }
-
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-
-        ctx.lineWidth = this.lineWidth;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
-        }
-        ctx.strokeStyle = this.primaryColor;
-        ctx.stroke();
     }
 
     private clearPath(): void {

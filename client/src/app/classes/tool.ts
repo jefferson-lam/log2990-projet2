@@ -1,5 +1,6 @@
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Vec2 } from './vec2';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
@@ -12,9 +13,10 @@ export abstract class Tool {
     withJunction?: boolean;
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
+    inUse: boolean = false;
     name: string;
 
-    constructor(protected drawingService: DrawingService) {}
+    constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {}
 
     onKeyboardDown(event: KeyboardEvent): void {}
 

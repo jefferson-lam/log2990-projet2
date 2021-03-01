@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as RectangleConstants from '@app/constants/rectangle-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { RectangleCommand } from '@app/services/tools/rectangle/rectangle-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -18,78 +21,86 @@ export class RectangleService extends Tool {
     primaryColor: string = 'red';
     secondaryColor: string = 'grey';
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    previewCommand: RectangleCommand;
+
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+        super(drawingService, undoRedoService);
         this.clearCorners();
+        this.previewCommand = new RectangleCommand(drawingService.previewCtx, this);
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseConstants.MouseButton.Left;
-        if (this.mouseDown) {
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
+        if (this.inUse) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.START_INDEX] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.END_INDEX] = mousePosition;
-            this.drawRectangle(this.drawingService.baseCtx, this.cornerCoords);
+            const command: Command = new RectangleCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
         }
-        this.mouseDown = false;
+        this.inUse = false;
         this.clearCorners();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             const exitCoords = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.END_INDEX] = exitCoords;
-            this.drawRectangle(this.drawingService.previewCtx, this.cornerCoords);
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
         const LEFT_CLICK_BUTTONS = 1;
-        if (event.buttons === LEFT_CLICK_BUTTONS && this.mouseDown) {
-            this.mouseDown = true;
+        if (event.buttons === LEFT_CLICK_BUTTONS && this.inUse) {
+            this.inUse = true;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.mouseDown = false;
+            this.inUse = false;
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             const mousePosition = this.getPositionFromMouse(event);
             this.cornerCoords[RectangleConstants.END_INDEX] = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawRectangle(this.drawingService.previewCtx, this.cornerCoords);
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             if (event.key === 'Shift' && !this.isShiftDown) {
                 this.isShiftDown = true;
                 this.isSquare = true;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawRectangle(this.drawingService.previewCtx, this.cornerCoords);
+                this.previewCommand.setValues(this.drawingService.previewCtx, this);
+                this.previewCommand.execute();
             }
         }
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
-        if (this.mouseDown) {
+        if (this.inUse) {
             if (event.key === 'Shift') {
                 this.isShiftDown = false;
                 this.isSquare = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawRectangle(this.drawingService.previewCtx, this.cornerCoords);
+                this.previewCommand.setValues(this.drawingService.previewCtx, this);
+                this.previewCommand.execute();
             }
         } else {
             this.isSquare = false;
@@ -118,58 +129,6 @@ export class RectangleService extends Tool {
     setSecondaryColor(newColor: string): void {
         // TODO: add color check
         this.secondaryColor = newColor;
-    }
-
-    private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        let width = path[RectangleConstants.END_INDEX].x - path[RectangleConstants.START_INDEX].x;
-        let height = path[RectangleConstants.END_INDEX].y - path[RectangleConstants.START_INDEX].y;
-        if (this.isSquare) {
-            const longestSide = Math.min(Math.abs(width), Math.abs(height));
-            width = Math.sign(width) * longestSide;
-            height = Math.sign(height) * longestSide;
-        }
-        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (Math.abs(width) > this.lineWidth && Math.abs(height) > this.lineWidth) {
-            width -= Math.sign(width) * this.lineWidth;
-            height -= Math.sign(height) * this.lineWidth;
-            this.drawTypeRectangle(ctx, path, width, height, this.fillMode, this.lineWidth, this.primaryColor, borderColor);
-        } else {
-            this.drawTypeRectangle(
-                ctx,
-                path,
-                width,
-                height,
-                ToolConstants.FillMode.OUTLINE_FILL,
-                RectangleConstants.MIN_BORDER_WIDTH,
-                borderColor,
-                borderColor,
-            );
-        }
-    }
-
-    private drawTypeRectangle(
-        ctx: CanvasRenderingContext2D,
-        path: Vec2[],
-        width: number,
-        height: number,
-        fillMode: ToolConstants.FillMode,
-        lineWidth: number,
-        fillColor: string,
-        borderColor: string,
-    ): void {
-        ctx.beginPath();
-        ctx.lineJoin = 'miter';
-        const startX = path[RectangleConstants.START_INDEX].x + (Math.sign(width) * lineWidth) / 2;
-        const startY = path[RectangleConstants.START_INDEX].y + (Math.sign(height) * lineWidth) / 2;
-        ctx.rect(startX, startY, width, height);
-
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = lineWidth;
-        ctx.stroke();
-        if (fillMode !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = fillColor;
-            ctx.fill();
-        }
     }
 
     private clearCorners(): void {
