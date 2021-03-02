@@ -1,7 +1,9 @@
 import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
+import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -26,20 +28,29 @@ export class EditorComponent {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (event.key.match(/^(1|2|c|l|e)$/)) {
-            this.currentTool = this.toolManager.selectTool(event);
-        } else if (event.ctrlKey && event.code === 'KeyO') {
+        if (event.ctrlKey) {
             event.preventDefault();
-            this.openModalPopUp();
-        } else if (event.ctrlKey && event.code === 'KeyZ') {
-            // TODO : lineTool can have mouseup and be drawing
-            if (!this.currentTool.inUse) {
-                if (event.shiftKey) {
-                    this.undoRedoService.redo();
-                } else {
-                    this.undoRedoService.undo();
-                }
+            switch (event.code) {
+                case 'KeyO':
+                    this.openModalPopUp('new');
+                    break;
+                case 'KeyE':
+                    this.openModalPopUp('export');
+                    break;
+                case 'KeyZ':
+                    if (!this.currentTool.inUse) {
+                        if (event.shiftKey) {
+                            this.undoRedoService.redo();
+                        } else {
+                            this.undoRedoService.undo();
+                        }
+                    }
+                    break;
+                default:
+                    break;
             }
+        } else if (event.key.match(/^(1|2|c|l|e)$/)) {
+            this.currentTool = this.toolManager.selectTool(event);
         }
     }
 
@@ -47,12 +58,19 @@ export class EditorComponent {
         this.currentTool = newTool;
     }
 
-    openModalPopUp(): void {
+    openModalPopUp(type: string): void {
         if (!this.isCanvasEmpty()) {
-            this.newDialog.open(NewDrawingBoxComponent, {
-                width: '100px;',
-                height: '200px',
-            });
+            if (type === 'export') {
+                this.newDialog.open(ExportDrawingComponent, {
+                    maxWidth: MAX_WIDTH_FORM + 'px',
+                    maxHeight: MAX_HEIGHT_FORM + 'px',
+                });
+            } else {
+                this.newDialog.open(NewDrawingBoxComponent, {
+                    width: '100px',
+                    height: '200px',
+                });
+            }
         }
     }
 

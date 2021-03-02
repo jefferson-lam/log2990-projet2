@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,6 +25,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { ExportDrawingComponent } from './components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
@@ -31,7 +33,6 @@ import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-
 @NgModule({
     declarations: [
         AppComponent,
@@ -47,6 +48,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarRectangleComponent,
         SidebarEllipseComponent,
         SidebarLineComponent,
+        ExportDrawingComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
@@ -57,6 +59,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatButtonModule,
         MatIconModule,
         MatSidenavModule,
+        MatSelectModule,
         BrowserAnimationsModule,
         MatFormFieldModule,
         MatInputModule,
