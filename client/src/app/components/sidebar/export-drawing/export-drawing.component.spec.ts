@@ -100,8 +100,8 @@ describe('ExportDrawingComponent', () => {
         component.whiteToAlpha();
 
         const imgData = testCtx.getImageData(0, 0, 1, 1);
-        for (let i = 0; i < imgData.data.length; i++) {
-            expect(imgData.data[i]).toBe(0);
+        for (const rgbValue of imgData.data) {
+            expect(rgbValue).toBe(0);
         }
     });
 
@@ -116,8 +116,8 @@ describe('ExportDrawingComponent', () => {
         component.createBackground();
 
         const imgData = component.exportCtx.getImageData(0, 0, 1, 1);
-        for (let i = 0; i < imgData.data.length; i++) {
-            expect(imgData.data[i]).toBe(MAX_RGB_VALUE);
+        for (const rgbValue of imgData.data) {
+            expect(rgbValue).toBe(MAX_RGB_VALUE);
         }
     });
 
