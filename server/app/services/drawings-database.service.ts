@@ -1,17 +1,19 @@
 import { Drawing } from '@app/classes/drawing';
 import { injectable } from 'inversify';
-import { Collection, MongoClient, ObjectID } from 'mongodb';
+import { Collection, MongoClient, MongoClientOptions, ObjectID } from 'mongodb';
 import 'reflect-metadata';
 
 @injectable()
 export class DrawingsDatabaseService {
     private databasePassword: string = 'log2990206';
     private databaseName: string = 'DrawingsDB';
+    private collectionName: string = 'drawings';
     private uri: string = `mongodb+srv://public:${this.databasePassword}@cluster0.p1joc.mongodb.net/${this.databaseName}?retryWrites=true&w=majority`;
-    private client: MongoClient = new MongoClient(this.uri, {
+    private options: MongoClientOptions = {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-    });
+    };
+    private client: MongoClient;
 
     async saveDrawing(drawingTitle: string, drawingTags: string[]): Promise<boolean> {
         try {
@@ -32,7 +34,7 @@ export class DrawingsDatabaseService {
         }
     }
 
-    async getDrawing(id: string): Promise<Drawing | null> {
+    async getDrawing(id: string): Promise<Drawing | null | undefined> {
         try {
             const drawingsCollection = await this.getCollection();
             const drawingId = new ObjectID(id);
@@ -42,7 +44,7 @@ export class DrawingsDatabaseService {
             return fetchedDrawing;
         } catch (error) {
             console.log(error);
-            return null;
+            return undefined;
         } finally {
             this.closeConnection();
         }
@@ -81,11 +83,21 @@ export class DrawingsDatabaseService {
         }
     }
 
+    // Method taken from the example in: TODO ADD SOURCE
+    private async start(): Promise<void> {
+        try {
+            const client = new MongoClient(this.uri, this.options);
+            this.client = await client.connect();
+        } catch {
+            throw new Error('Database connection error');
+        }
+    }
+
     private async getCollection(): Promise<Collection<Drawing>> {
         try {
-            await this.client.connect();
-            console.log('Connecting to database...');
-            return this.client.db('DrawingsDB').collection('drawings');
+            await this.start();
+            console.log(`Fetching collection ${this.collectionName}...`);
+            return this.client.db(this.databaseName).collection(this.collectionName);
         } catch (error) {
             console.log(error);
             throw new Error('Database connection error');

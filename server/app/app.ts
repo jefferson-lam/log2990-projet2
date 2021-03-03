@@ -1,4 +1,4 @@
-import { DrawingsDatabaseService } from '@app/services/drawings-database.service';
+// import { DrawingsDatabaseService } from '@app/services/drawings-database.service';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
@@ -19,8 +19,7 @@ export class Application {
 
     constructor(
         @inject(TYPES.IndexController) private indexController: IndexController,
-        @inject(TYPES.DateController) private dateController: DateController,
-        @inject(TYPES.DrawingsDatabaseService) private database: DrawingsDatabaseService,
+        @inject(TYPES.DateController) private dateController: DateController, // @inject(TYPES.DrawingsDatabaseService) private database: DrawingsDatabaseService,
     ) {
         this.app = express();
 
@@ -40,7 +39,9 @@ export class Application {
         this.bindRoutes();
 
         // this.database.saveDrawing('oneTwoThree', ['obo']);
-        this.database.getDrawing('603f0175c969185bc849ae10');
+        // this.database.getDrawing('203f0175c969185bc849ae10').then((drawing) => {
+        //     console.log(drawing);
+        // });
     }
 
     private config(): void {
