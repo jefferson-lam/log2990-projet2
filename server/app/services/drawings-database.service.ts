@@ -49,52 +49,36 @@ export class DrawingsDatabaseService {
     }
 
     async getDrawings(): Promise<Drawing[] | undefined> {
-        const drawingsCollection = await this.getCollection();
-        if (drawingsCollection === undefined) {
+        try {
+            const drawingsCollection = await this.getCollection();
+            const fetchedDrawing = await drawingsCollection.find().toArray();
+            console.log('Found drawing: ', fetchedDrawing);
+            return fetchedDrawing;
+        } catch (error) {
+            console.log('Error while finding: ', error);
             return undefined;
+        } finally {
+            this.closeConnection();
         }
-        const fetchedDrawing = await drawingsCollection
-            .find()
-            .toArray()
-            .then((databaseDrawings: Drawing[]) => {
-                console.log('Found drawing: ', databaseDrawings);
-                return databaseDrawings;
-            })
-            .catch((error) => {
-                console.log('Error while finding: ', error);
-                return undefined;
-            })
-            .finally(() => {
-                this.client.close();
-            });
-        return fetchedDrawing;
     }
 
     // function returns undefined if unsuccessfull.
     // If successfull, returns 0 if drawing wasn't found.
     // Returns 1 if drawing was deleted.
     async dropDrawing(id: string): Promise<number | undefined> {
-        const drawingsCollection = await this.getCollection();
-        if (drawingsCollection === undefined) {
+        try {
+            const drawingsCollection = await this.getCollection();
+            const drawingId = new ObjectID(id);
+            const drawingToFind = { _id: drawingId };
+            const deletionDetails = await drawingsCollection.deleteOne(drawingToFind);
+            console.log('Drawing deletion count:', deletionDetails.result.n);
+            return deletionDetails.result.n;
+        } catch (error) {
+            console.log('Deletion error: ', error);
             return undefined;
+        } finally {
+            this.closeConnection();
         }
-        const drawingId = new ObjectID(id);
-        const drawingToFind = { _id: drawingId };
-        const deleteCount = await drawingsCollection
-            .deleteOne(drawingToFind)
-            .then((deletion) => {
-                console.log('Deleted', deletion.result.n, 'drawings');
-                return deletion.result.n;
-            })
-            .catch((error) => {
-                console.log('Deletion error: ', error);
-                return undefined;
-            })
-            .finally(() => {
-                console.log('Closing connection to database...');
-                this.client.close();
-            });
-        return deleteCount;
     }
 
     private async getCollection(): Promise<Collection<Drawing>> {
