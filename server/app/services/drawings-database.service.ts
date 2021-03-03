@@ -14,53 +14,38 @@ export class DrawingsDatabaseService {
     });
 
     async saveDrawing(drawingTitle: string, drawingTags: string[]): Promise<boolean> {
-        const drawingsCollection = await this.getCollection();
-        if (drawingsCollection === undefined) {
-            return false;
-        }
+        try {
+            const drawingsCollection = await this.getCollection();
 
-        const drawing: Drawing = {
-            title: drawingTitle,
-            tags: drawingTags,
-        };
-        const isInserted = await drawingsCollection
-            .insertOne(drawing)
-            .then((res) => {
-                console.log('Inserted new object with id:', res.insertedId);
-                return true;
-            })
-            .catch((err) => {
-                console.log('Saving error: ', err);
-                return false;
-            })
-            .finally(() => {
-                console.log('Closing connection to database...');
-                this.client.close();
-            });
-        return isInserted;
+            const drawing: Drawing = {
+                title: drawingTitle,
+                tags: drawingTags,
+            };
+            const insertResponse = await drawingsCollection.insertOne(drawing);
+            console.log('Inserted new object with id:', insertResponse.insertedId);
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        } finally {
+            this.closeConnection();
+        }
     }
 
-    async getDrawing(id: string): Promise<Drawing | undefined> {
-        const drawingsCollection = await this.getCollection();
-        if (drawingsCollection === undefined) {
-            return undefined;
+    async getDrawing(id: string): Promise<Drawing | null> {
+        try {
+            const drawingsCollection = await this.getCollection();
+            const drawingId = new ObjectID(id);
+            const drawingToFind = { _id: drawingId };
+            const fetchedDrawing = await drawingsCollection.findOne(drawingToFind);
+            console.log('Found drawing: ', fetchedDrawing);
+            return fetchedDrawing;
+        } catch (error) {
+            console.log(error);
+            return null;
+        } finally {
+            this.closeConnection();
         }
-        const drawingId = new ObjectID(id);
-        const drawingToFind = { _id: drawingId };
-        const fetchedDrawing = await drawingsCollection
-            .findOne(drawingToFind)
-            .then((databaseDrawing: Drawing) => {
-                console.log('Found drawing: ', databaseDrawing);
-                return databaseDrawing;
-            })
-            .catch((error) => {
-                console.log('Error while finding: ', error);
-                return undefined;
-            })
-            .finally(() => {
-                this.client.close();
-            });
-        return fetchedDrawing;
     }
 
     async getDrawings(): Promise<Drawing[] | undefined> {
@@ -112,17 +97,19 @@ export class DrawingsDatabaseService {
         return deleteCount;
     }
 
-    private async getCollection(): Promise<Collection<Drawing> | undefined> {
-        return await this.client
-            .connect()
-            .then(() => {
-                console.log('Connecting to database...');
-                return this.client.db('DrawingsDB').collection('drawings');
-            })
-            .catch((err) => {
-                console.log('Error while connecting to database...');
-                console.log(err);
-                return undefined;
-            });
+    private async getCollection(): Promise<Collection<Drawing>> {
+        try {
+            await this.client.connect();
+            console.log('Connecting to database...');
+            return this.client.db('DrawingsDB').collection('drawings');
+        } catch (error) {
+            console.log(error);
+            throw new Error('Database connection error');
+        }
+    }
+
+    private async closeConnection(): Promise<void> {
+        console.log('Closing connection to database...');
+        return this.client.close();
     }
 }
