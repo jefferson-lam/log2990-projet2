@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { MAX_RGB_VALUE } from '@app/constants/color-constants';
+// import { MAX_RGB_VALUE } from '@app/constants/color-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -37,7 +37,6 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.exportCanvas = this.exportCanvasRef.nativeElement;
         this.exportCtx = this.exportCanvas.getContext('2d') as CanvasRenderingContext2D;
         this.exportCtx.drawImage(this.baseCanvas, 0, 0);
-        this.whiteToAlpha();
         this.exportImg.nativeElement.src = this.exportCanvas.toDataURL();
     }
 
@@ -49,21 +48,6 @@ export class ExportDrawingComponent implements AfterViewInit {
             this.canvasStyleWidth = MAX_EXPORT_CANVAS_WIDTH + 'px';
             this.canvasStyleHeight = (this.baseCanvas.height / this.baseCanvas.width) * MAX_EXPORT_CANVAS_HEIGHT + 'px';
         }
-    }
-
-    whiteToAlpha(): void {
-        const imgData = this.exportCtx.getImageData(0, 0, this.exportCanvas.width, this.exportCanvas.height);
-        // tslint:disable-next-line:no-magic-numbers
-        for (let i = 0; i < imgData.data.length; i += 4) {
-            if (imgData.data[i] === MAX_RGB_VALUE && imgData.data[i + 1] === MAX_RGB_VALUE && imgData.data[i + 2] === MAX_RGB_VALUE) {
-                imgData.data[i] = 0;
-                imgData.data[i + 1] = 0;
-                imgData.data[i + 2] = 0;
-                // tslint:disable-next-line:no-magic-numbers
-                imgData.data[i + 3] = 0;
-            }
-        }
-        this.exportCtx.putImageData(imgData, 0, 0);
     }
 
     applyFilter(filter: string): void {
