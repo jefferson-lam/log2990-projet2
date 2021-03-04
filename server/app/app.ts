@@ -8,6 +8,7 @@ import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { DateController } from './controllers/date.controller';
 import { IndexController } from './controllers/index.controller';
+import { LocalDrawingsController } from './controllers/local-drawings.controller';
 import { TYPES } from './types';
 
 @injectable()
@@ -19,6 +20,7 @@ export class Application {
     constructor(
         @inject(TYPES.IndexController) private indexController: IndexController,
         @inject(TYPES.DateController) private dateController: DateController,
+        @inject(TYPES.LocalDrawingsController) private localDrawingsController: LocalDrawingsController,
     ) {
         this.app = express();
 
@@ -52,6 +54,7 @@ export class Application {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/index', this.indexController.router);
         this.app.use('/api/date', this.dateController.router);
+        this.app.use('/api/drawings', this.localDrawingsController.router);
         this.errorHandling();
     }
 
