@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
-import { MIN_SIDES_COUNT } from '@app/constants/polygone-constants';
+import * as PolygoneConstants from '@app/constants/polygone-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { PolygoneCommand } from './polygone-command';
@@ -12,7 +12,7 @@ describe('PolygoneCommand', () => {
     let polygoneService: PolygoneService;
     let mockPoint: Vec2;
     let mockRadii: number[];
-
+    let mockRadius: number;
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
     let testCanvas: HTMLCanvasElement;
@@ -23,12 +23,14 @@ describe('PolygoneCommand', () => {
     const BLUE_VALUE = 202;
     const OPACITY = 1;
     const TEST_PRIMARY_COLOR_HEX = '#6ee1ca';
-    const TEST_PRIMARY_COLOR = `rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE}, ${OPACITY})`;
-    const TEST_SECONDARY_COLOR = 'black';
+    const TEST_PRIM_COLOR = `rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE}, ${OPACITY})`;
+    const TEST_SECOND_COLOR = 'white';
     const TEST_LINE_WIDTH = 1;
 
     const END_X = 10;
     const END_Y = 15;
+
+    const TEST_X_RADIUS = (END_X - TEST_LINE_WIDTH) / 2;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -41,9 +43,10 @@ describe('PolygoneCommand', () => {
 
         mockPoint = { x: 10, y: 10 };
         mockRadii = [END_X, END_Y];
+        mockRadius = TEST_X_RADIUS;
 
-        polygoneService.setPrimaryColor(TEST_PRIMARY_COLOR);
-        polygoneService.setSecondaryColor(TEST_SECONDARY_COLOR);
+        polygoneService.setPrimaryColor(TEST_PRIM_COLOR);
+        polygoneService.setSecondaryColor(TEST_SECOND_COLOR);
         polygoneService.setLineWidth(TEST_LINE_WIDTH);
         polygoneService.cornerCoords[0] = { x: 0, y: 0 };
         polygoneService.cornerCoords[1] = { x: END_X, y: END_Y };
@@ -69,13 +72,6 @@ describe('PolygoneCommand', () => {
         expect(command.secondaryColor).toEqual(polygoneService.secondaryColor);
         expect(command.lineWidth).toEqual(polygoneService.lineWidth);
         expect(command.cornerCoords).toEqual(polygoneService.cornerCoords);
-    });
-
-    it('drawPolygone should call getPolygoneCenter', () => {
-        const getPolygoneCenterSpy = spyOn<any>(command, 'getPolygoneCenter').and.callThrough();
-        // tslint:disable:no-string-literal
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
-        expect(getPolygoneCenterSpy).toHaveBeenCalled();
     });
 
     it('drawPolygone should set fillMode to fill only', () => {
@@ -116,9 +112,6 @@ describe('PolygoneCommand', () => {
     });
 
     it('drawPolygone should call drawTypePolygone and change primary color', () => {
-        spyOn<any>(command, 'getPolygoneCenter').and.callFake(() => {
-            return mockPoint;
-        });
         spyOn<any>(command, 'getRadiiXAndY').and.callFake(() => {
             return mockRadii;
         });
@@ -130,9 +123,6 @@ describe('PolygoneCommand', () => {
     });
 
     it('drawPolygone should call drawTypePolygone and not change primary color', () => {
-        spyOn<any>(command, 'getPolygoneCenter').and.callFake(() => {
-            return mockPoint;
-        });
         spyOn<any>(command, 'getRadiiXAndY').and.callFake(() => {
             return mockRadii;
         });
@@ -144,9 +134,6 @@ describe('PolygoneCommand', () => {
     });
 
     it('drawPolygone should call drawTypePolygone with fill mode change', () => {
-        spyOn<any>(command, 'getPolygoneCenter').and.callFake(() => {
-            return mockPoint;
-        });
         spyOn<any>(command, 'getRadiiXAndY').and.callFake(() => {
             return mockRadii;
         });
@@ -166,13 +153,12 @@ describe('PolygoneCommand', () => {
             mockPoint.y,
             mockRadii[0],
             mockRadii[1],
-            MIN_SIDES_COUNT,
+            PolygoneConstants.MIN_SIDES_COUNT,
             ToolConstants.FillMode.OUTLINE_FILL,
-            TEST_PRIMARY_COLOR,
-            TEST_PRIMARY_COLOR,
+            TEST_PRIM_COLOR,
+            TEST_PRIM_COLOR,
             TEST_LINE_WIDTH,
         );
-
         expect(testCtx.fillStyle).toEqual(TEST_PRIMARY_COLOR_HEX);
         expect(fillSpy).toHaveBeenCalled();
     });
@@ -185,14 +171,92 @@ describe('PolygoneCommand', () => {
             mockPoint.y,
             mockRadii[0],
             mockRadii[1],
-            MIN_SIDES_COUNT,
+            PolygoneConstants.MIN_SIDES_COUNT,
             ToolConstants.FillMode.OUTLINE,
-            TEST_PRIMARY_COLOR,
-            TEST_PRIMARY_COLOR,
+            TEST_PRIM_COLOR,
+            TEST_PRIM_COLOR,
             TEST_LINE_WIDTH,
         );
-
         expect(testCtx.fillStyle).not.toEqual(TEST_PRIMARY_COLOR_HEX);
         expect(fillSpy).not.toHaveBeenCalled();
+    });
+
+    it('drawPolygone should call getDrawTypeRadius', () => {
+        const getRadiusSpy = spyOn<any>(command, 'getDrawTypeRadius').and.callFake(() => {
+            return mockRadius;
+        });
+        // tslint:disable:no-string-literal
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        expect(getRadiusSpy).toHaveBeenCalled();
+    });
+
+    it('drawPolygoneType should call getDrawTypeRadius and change return value to yRadius', () => {
+        const getRadiusSpy = spyOn<any>(command, 'getDrawTypeRadius').and.callThrough();
+        // tslint:disable:no-string-literal
+        command['drawTypePolygone'](
+            testCtx,
+            mockPoint.x,
+            mockPoint.y,
+            mockRadii[0] + TEST_X_RADIUS * 2,
+            mockRadii[1],
+            PolygoneConstants.MIN_SIDES_COUNT,
+            ToolConstants.FillMode.OUTLINE,
+            TEST_PRIM_COLOR,
+            TEST_PRIM_COLOR,
+            TEST_LINE_WIDTH,
+        );
+        expect(getRadiusSpy).toHaveBeenCalled();
+    });
+
+    it('drawPolygoneType should call getDrawTypeRadius and change return value to xRadius', () => {
+        const getRadiusSpy = spyOn<any>(command, 'getDrawTypeRadius').and.callThrough();
+        // tslint:disable:no-string-literal
+        command['drawTypePolygone'](
+            testCtx,
+            mockPoint.x,
+            mockPoint.y,
+            mockRadii[0],
+            mockRadii[1] + TEST_X_RADIUS * 2,
+            PolygoneConstants.MIN_SIDES_COUNT,
+            ToolConstants.FillMode.OUTLINE,
+            TEST_PRIM_COLOR,
+            TEST_PRIM_COLOR,
+            TEST_LINE_WIDTH,
+        );
+        expect(getRadiusSpy).toHaveBeenCalled();
+    });
+
+    it('drawTypePolygone should call ctx moveTo', () => {
+        const moveSpy = spyOn(testCtx, 'moveTo');
+        command['drawTypePolygone'](
+            testCtx,
+            mockPoint.x,
+            mockPoint.y,
+            mockRadii[0],
+            mockRadii[1],
+            PolygoneConstants.MIN_SIDES_COUNT,
+            ToolConstants.FillMode.OUTLINE_FILL,
+            TEST_PRIM_COLOR,
+            TEST_PRIM_COLOR,
+            TEST_LINE_WIDTH,
+        );
+        expect(moveSpy).toHaveBeenCalled();
+    });
+
+    it('drawTypePolygone should call ctx lineTo', () => {
+        const lineSpy = spyOn(testCtx, 'lineTo');
+        command['drawTypePolygone'](
+            testCtx,
+            mockPoint.x,
+            mockPoint.y,
+            mockRadii[0],
+            mockRadii[1],
+            PolygoneConstants.MIN_SIDES_COUNT,
+            ToolConstants.FillMode.OUTLINE_FILL,
+            TEST_PRIM_COLOR,
+            TEST_PRIM_COLOR,
+            TEST_LINE_WIDTH,
+        );
+        expect(lineSpy).toHaveBeenCalled();
     });
 });

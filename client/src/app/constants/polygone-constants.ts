@@ -14,7 +14,7 @@ export const START_INDEX = 0;
 
 export const X_INDEX = 0;
 
-// export const Y_INDEX = 1;
+export const Y_INDEX = 1;
 
 export const MAX_LINE_WIDTH = 200;
 

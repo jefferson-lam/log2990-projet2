@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
+// import * as PolygoneConstants from '@app/constants/polygone-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -32,6 +33,7 @@ describe('PolygoneService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         service = TestBed.inject(PolygoneService);
         predictionCircleSpy = spyOn<any>(service, 'drawPredictionCircle').and.callThrough();
+
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
         previewExecuteSpy = spyOn(service.previewCommand, 'execute');
@@ -102,6 +104,22 @@ describe('PolygoneService', () => {
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
+    it('onMouseMove should call predictionCircleSpy if mouse was already down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.inUse = true;
+        service.onMouseMove(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(predictionCircleSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should not call predictionCircleSpy if mouse was already down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.inUse = false;
+        service.onMouseMove(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(predictionCircleSpy).not.toHaveBeenCalled();
+    });
+
     it('onMouseLeave should call executeCommand if mouse was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.inUse = true;
@@ -161,6 +179,13 @@ describe('PolygoneService', () => {
         service.inUse = false;
         service.onMouseEnter(mouseEnterEvent);
         expect(service.inUse).toEqual(false);
+    });
+
+    it('drawPolygoneType should call getDrawTypeRadius and change return value to xRadius', () => {
+        const getPredictionRadiusSpy = spyOn<any>(service, 'getPredictionCircleRadius').and.callThrough();
+        // tslint:disable:no-string-literal
+        service['drawPredictionCircle'](baseCtxStub, service.cornerCoords);
+        expect(getPredictionRadiusSpy).toHaveBeenCalled();
     });
 
     it('setLineWidth should change size of lineWidth', () => {
