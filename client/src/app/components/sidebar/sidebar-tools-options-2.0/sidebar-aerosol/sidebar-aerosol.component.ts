@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import * as AerosolConstants from '@app/constants/aerosol-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
@@ -8,16 +9,16 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
     styleUrls: ['./sidebar-aerosol.component.scss'],
 })
 export class SidebarAerosolComponent implements OnInit {
-    maxWidth: number = 200;
-    minWidth: number = 1;
-    maxWidthWaterDrop: number = 50;
-    minWidthWaterDrop: number = 1;
-    maxEmission: number = 100;
-    minEmission: number = 1;
-    tickInterval: number = 1;
-    toolSize: number = 70;
-    waterDropSize: number = 2;
-    emissionCount: number = 50;
+    maxWidth: number = AerosolConstants.MAX_LINE_WIDTH;
+    minWidth: number = AerosolConstants.MIN_LINE_WIDTH;
+    maxWidthWaterDrop: number = AerosolConstants.MAX_WATERDROP_WIDTH;
+    minWidthWaterDrop: number = AerosolConstants.MIN_WATERDROP_WIDTH;
+    maxEmission: number = AerosolConstants.MAX_EMISSION;
+    minEmission: number = AerosolConstants.MIN_EMISSION;
+    tickInterval: number = AerosolConstants.TICK_INTERVAL;
+    toolSize: number = AerosolConstants.INIT_TOOL_SIZE;
+    waterDropSize: number = AerosolConstants.INIT_WATERDROP_WIDTH;
+    emissionCount: number = AerosolConstants.INIT_EMISSION_COUNT;
     currentTool: Tool;
 
     @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
@@ -30,10 +31,6 @@ export class SidebarAerosolComponent implements OnInit {
         this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));
         this.waterDropSizeChanged.subscribe((newSize: number) => this.settingsManager.setWaterDropWidth(newSize));
         this.numberOfEmissions.subscribe((newEmissionCount: number) => this.settingsManager.setEmissionCount(newEmissionCount));
-    }
-
-    setMax(numberInput: number): number {
-        return numberInput;
     }
 
     emitToolSize(): void {

@@ -46,7 +46,6 @@ describe('AerosolCommandService', () => {
         expect(command['aerosolRefresh']).toEqual(aerosolService.aerosolRefresh);
         expect(command['primaryColor']).toEqual(aerosolService.primaryColor);
         expect(command['waterDropWidth']).toEqual(aerosolService.waterDropWidth);
-        expect(command['emissionCount']).toEqual(aerosolService.emissionCount);
         expect(command['primaryColor']).toEqual(aerosolService.primaryColor);
     });
 

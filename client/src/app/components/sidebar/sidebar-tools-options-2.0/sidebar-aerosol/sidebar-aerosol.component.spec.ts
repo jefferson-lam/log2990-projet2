@@ -13,7 +13,6 @@ describe('SidebarAerosolComponent', () => {
     let emitEmissionNumberSubscribeSpy: jasmine.Spy<any>;
     let settingsManagerService: SettingsManagerService;
 
-    const MAX_WIDTH = 200;
     const NO_JUNCTION_RADIUS = 0;
 
     beforeEach(async(() => {
@@ -56,12 +55,6 @@ describe('SidebarAerosolComponent', () => {
         component.emissionCount = AerosolConstants.INIT_LINE_WIDTH;
         component.emitEmissionNumber();
         expect(emitSpy).toHaveBeenCalled();
-    });
-
-    it('setMax should return input value if it is equal or under MAXWIDTH', () => {
-        const newWitdh = MAX_WIDTH;
-        const returnValue = component.setMax(newWitdh);
-        expect(returnValue).toEqual(newWitdh);
     });
 
     it('should call subscribe method when created', () => {

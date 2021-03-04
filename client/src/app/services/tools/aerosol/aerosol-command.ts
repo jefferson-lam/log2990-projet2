@@ -4,7 +4,6 @@ import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 
 export class AerosolCommand extends Command {
     private waterDropWidth: number;
-    private emissionCount: number;
     private primaryColor: string;
     private path: Vec2[];
     private preview: boolean;
@@ -17,7 +16,6 @@ export class AerosolCommand extends Command {
         this.primaryColor = aerosolService.primaryColor;
         this.aerosolRefresh = aerosolService.aerosolRefresh;
         this.waterDropWidth = aerosolService.waterDropWidth;
-        this.emissionCount = aerosolService.emissionCount;
         this.preview = false;
     }
 
@@ -28,7 +26,6 @@ export class AerosolCommand extends Command {
         this.primaryColor = aerosolService.primaryColor;
         this.aerosolRefresh = aerosolService.aerosolRefresh;
         this.waterDropWidth = aerosolService.waterDropWidth;
-        this.emissionCount = aerosolService.emissionCount;
     }
 
     execute(): void {
@@ -42,10 +39,7 @@ export class AerosolCommand extends Command {
 
     private airBrushCircle(ctx: CanvasRenderingContext2D, index?: number): void {
         if (!index) index = this.path.length - 1;
-
-        for (let i = 0; i < this.emissionCount; i++) {
-            ctx.fillStyle = this.primaryColor;
-            ctx.fillRect(this.path[index].x, this.path[index].y, this.waterDropWidth, this.waterDropWidth);
-        }
+        ctx.fillStyle = this.primaryColor;
+        ctx.fillRect(this.path[index].x, this.path[index].y, this.waterDropWidth, this.waterDropWidth);
     }
 }

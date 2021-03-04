@@ -6,7 +6,6 @@
         <p> Nombre d'émissions/sec : </p>
         <mat-slider id="emissionNumber" color="warn"
                     thumbLabel
-                    [displayWith]="setMax"
                     [tickInterval]='tickInterval'
                     [min]="minEmission"
                     [max]="maxEmission"
@@ -18,7 +17,6 @@
         <p> Diamètre des gouttelettes : </p>
         <mat-slider id="widthWaterDrop" color="warn"
                     thumbLabel
-                    [displayWith]="setMax"
                     [tickInterval]='tickInterval'
                     [min]="minWidthWaterDrop"
                     [max]="maxWidthWaterDrop"
@@ -30,7 +28,6 @@
         <p> Diamètre du jet : </p>
         <mat-slider id="width" color="warn"
                     thumbLabel
-                    [displayWith]="setMax"
                     [tickInterval]='tickInterval'
                     [min]="minWidth"
                     [max]="maxWidth"

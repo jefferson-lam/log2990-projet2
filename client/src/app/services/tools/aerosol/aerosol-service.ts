@@ -99,7 +99,7 @@ export class AerosolService extends Tool {
     }
 
     private getEmissionRate(): number {
-        this.emissionRate = AerosolConstants.EMMISION_RATE / this.emissionCount;
+        this.emissionRate = AerosolConstants.EMISSION_RATE / this.emissionCount;
         return this.emissionRate;
     }
 
