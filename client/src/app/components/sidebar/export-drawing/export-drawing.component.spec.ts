@@ -14,8 +14,6 @@ describe('ExportDrawingComponent', () => {
 
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
-    let testCanvas: HTMLCanvasElement;
-    let testCtx: CanvasRenderingContext2D;
 
     let clickSpy: jasmine.Spy;
 
@@ -30,9 +28,6 @@ describe('ExportDrawingComponent', () => {
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-
-        testCanvas = document.createElement('canvas');
-        testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D;
     }));
 
     beforeEach(() => {
@@ -48,14 +43,12 @@ describe('ExportDrawingComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('ngAfterViewInit should call drawImage, whiteToAlpha and toDataUrl', () => {
-        const whiteAlphaSpy = spyOn(component, 'whiteToAlpha');
+    it('ngAfterViewInit should call drawImageand toDataUrl', () => {
         const toDataUrlSpy = spyOn(component.exportCanvas, 'toDataURL');
         const drawImageSpy = spyOn(component.exportCtx, 'drawImage');
         component.ngAfterViewInit();
 
         expect(drawImageSpy).toHaveBeenCalled();
-        expect(whiteAlphaSpy).toHaveBeenCalled();
         expect(toDataUrlSpy).toHaveBeenCalled();
     });
 
@@ -89,20 +82,6 @@ describe('ExportDrawingComponent', () => {
         component.setPopupSizes();
 
         expect(component.canvasStyleHeight).toBe((component.baseCanvas.height / component.baseCanvas.width) * MAX_EXPORT_CANVAS_HEIGHT + 'px');
-    });
-
-    it('whiteToAlpha should set white pixels to rgba(0,0,0,0)', () => {
-        testCtx.fillStyle = 'white';
-        testCtx.fillRect(0, 0, 1, 1);
-
-        component.exportCtx = testCtx;
-
-        component.whiteToAlpha();
-
-        const imgData = testCtx.getImageData(0, 0, 1, 1);
-        for (const rgbValue of imgData.data) {
-            expect(rgbValue).toBe(0);
-        }
     });
 
     it('applyFilter should set filter of both exportImg and exportCanvas', () => {
