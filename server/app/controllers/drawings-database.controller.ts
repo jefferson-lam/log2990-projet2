@@ -163,7 +163,7 @@ export class DrawingsDatabaseController {
         this.router.delete('/drop', async (req: Request, res: Response, next: NextFunction) => {
             // Send the request to the service and send the response
             const drawingID: string = req.query._id;
-            console.log(drawingID);
+            console.log('Drawing to delete ID: ' + drawingID);
             this.databaseService.dropDrawing(drawingID).then((result: Message) => {
                 res.json(result);
             });

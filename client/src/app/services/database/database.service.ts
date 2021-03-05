@@ -18,7 +18,6 @@ export class DatabaseService {
 
     getDrawing(drawingId: string): Observable<Message> {
         let params = new HttpParams().set('_id', drawingId);
-        console.log(params);
         return this.http
             .get<Message>(this.BASE_URL + '/get', { params: params })
             .pipe(catchError(this.handleError<Message>('getDrawing')));
@@ -34,7 +33,6 @@ export class DatabaseService {
 
     dropDrawing(drawingId: string): Observable<Message> {
         let params = new HttpParams().set('_id', drawingId);
-        console.log(params);
         return this.http
             .delete<Message>(this.BASE_URL + '/drop', { params: params })
             .pipe(catchError(this.handleError<Message>('dropDrawing')));
