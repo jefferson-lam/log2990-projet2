@@ -46,6 +46,7 @@ export class DrawingsDatabaseService {
             const drawingsCollection = await this.getCollection();
             const drawingId = new ObjectID(id);
             const drawingToFind = { _id: drawingId };
+            console.log('Fetching drawing with id: ', drawingId);
             const fetchedDrawing = await drawingsCollection.findOne(drawingToFind);
             console.log('Found drawing: ', fetchedDrawing);
 
