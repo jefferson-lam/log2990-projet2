@@ -17,24 +17,24 @@ export class DatabaseService {
     }
 
     getDrawing(drawingId: string): Observable<Message> {
-        let params = new HttpParams().set('_id', drawingId);
+        const testParams = new HttpParams().set('_id', drawingId);
         return this.http
-            .get<Message>(this.BASE_URL + '/get', { params: params })
+            .get<Message>(this.BASE_URL + '/get', { params: testParams })
             .pipe(catchError(this.handleError<Message>('getDrawing')));
     }
 
-    saveDrawing(title: string, tags: string[]): Observable<Message> {
-        let postBody = {
-            title: title,
-            tags: tags,
+    saveDrawing(testTitle: string, testTags: string[]): Observable<Message> {
+        const postBody = {
+            title: testTitle,
+            tags: testTags,
         };
         return this.http.post<Message>(this.BASE_URL + '/send', postBody).pipe(catchError(this.handleError<Message>('saveDrawing')));
     }
 
     dropDrawing(drawingId: string): Observable<Message> {
-        let params = new HttpParams().set('_id', drawingId);
+        const testParams = new HttpParams().set('_id', drawingId);
         return this.http
-            .delete<Message>(this.BASE_URL + '/drop', { params: params })
+            .delete<Message>(this.BASE_URL + '/drop', { params: testParams })
             .pipe(catchError(this.handleError<Message>('dropDrawing')));
     }
 
