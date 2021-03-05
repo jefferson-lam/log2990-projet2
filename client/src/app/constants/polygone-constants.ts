@@ -31,3 +31,7 @@ export const INIT_TOOL_SIZE = 7;
 export const INIT_SIDES_COUNT = 5;
 
 export const INIT_LINE_WIDTH = 7;
+
+export const ANGLE_ODD = 90;
+
+export const ANGLE_LONG = 180;

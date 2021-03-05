@@ -226,8 +226,8 @@ describe('PolygoneCommand', () => {
         expect(getRadiusSpy).toHaveBeenCalled();
     });
 
-    it('drawTypePolygone should call ctx moveTo', () => {
-        const moveSpy = spyOn(testCtx, 'moveTo');
+    it('drawTypePolygone should call ctx lineTo for odd sides', () => {
+        const lineSpy = spyOn(testCtx, 'lineTo');
         command['drawTypePolygone'](
             testCtx,
             mockPoint.x,
@@ -240,18 +240,37 @@ describe('PolygoneCommand', () => {
             TEST_PRIM_COLOR,
             TEST_LINE_WIDTH,
         );
-        expect(moveSpy).toHaveBeenCalled();
+        expect(lineSpy).toHaveBeenCalled();
     });
 
-    it('drawTypePolygone should call ctx lineTo', () => {
-        const lineSpy = spyOn(testCtx, 'lineTo');
+    it('drawTypePolygone should change call ctx.moveTo for even sides', () => {
+        const moveSpy = spyOn(testCtx, 'moveTo');
+        const evenNumber = 4;
         command['drawTypePolygone'](
             testCtx,
             mockPoint.x,
             mockPoint.y,
             mockRadii[0],
             mockRadii[1],
-            PolygoneConstants.MIN_SIDES_COUNT,
+            evenNumber,
+            ToolConstants.FillMode.OUTLINE_FILL,
+            TEST_PRIM_COLOR,
+            TEST_PRIM_COLOR,
+            TEST_LINE_WIDTH,
+        );
+        expect(moveSpy).toHaveBeenCalled();
+    });
+
+    it('drawTypePolygone should change call ctx.lineTo for even sides', () => {
+        const lineSpy = spyOn(testCtx, 'lineTo');
+        const evenNumber = 4;
+        command['drawTypePolygone'](
+            testCtx,
+            mockPoint.x,
+            mockPoint.y,
+            mockRadii[0],
+            mockRadii[1],
+            evenNumber,
             ToolConstants.FillMode.OUTLINE_FILL,
             TEST_PRIM_COLOR,
             TEST_PRIM_COLOR,

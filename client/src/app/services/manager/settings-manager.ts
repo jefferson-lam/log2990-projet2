@@ -22,8 +22,6 @@ export class SettingsManagerService {
 
     setLineWidth(newWidth: number): void {
         this.editorComponent.currentTool.setLineWidth(newWidth);
-        console.log(newWidth);
-        console.log(this.editorComponent.currentTool);
     }
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {
