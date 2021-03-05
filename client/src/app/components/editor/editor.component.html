@@ -1,7 +1,12 @@
 <div class="container">
-    <app-sidebar (notifyOnToolSelect)="updateToolFromSidebarClick($event)" (newDrawingClicked)="openModalPopUp()" [currentTool]="currentTool"></app-sidebar>
+    <app-sidebar
+        (notifyOnToolSelect)="updateToolFromSidebarClick($event)"
+        (newDrawingClicked)="openModalPopUp()"
+        [currentTool]="currentTool"
+    ></app-sidebar>
     <div class="drawing-container">
         <app-drawing class="drawing" tabindex="0" [currentTool]="currentTool"></app-drawing>
         <app-resizer></app-resizer>
+        <div id="selection-canvas"></div>
     </div>
 </div>

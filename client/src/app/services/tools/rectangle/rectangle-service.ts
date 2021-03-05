@@ -16,7 +16,7 @@ export class RectangleService extends Tool {
     cornerCoords: Vec2[] = new Array<Vec2>(2);
     isSquare: boolean = false;
     isShiftDown: boolean = false;
-    lineWidth: number = 30;
+    lineWidth: number = 1;
     fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = 'red';
     secondaryColor: string = 'grey';
