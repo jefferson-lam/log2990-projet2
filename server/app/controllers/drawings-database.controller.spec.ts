@@ -1,14 +1,13 @@
 import { Application } from '@app/app';
 // import { DrawingsDatabaseService } from '@app/services/drawings-database.service';
 import { TYPES } from '@app/types';
+import * as HttpRequestCodes from '@common/communication/http-code-constants';
 import { Message } from '@common/communication/message';
 import { expect } from 'chai';
 import * as supertest from 'supertest';
 import { testingContainer } from '../../test/test-utils';
 
 // tslint:disable:no-any
-
-const HTTP_STATUS_OK = 200;
 
 describe('DrawingsDatabaseController', () => {
     // let databaseService: Stubbed<DrawingsDatabaseService>;
@@ -35,7 +34,7 @@ describe('DrawingsDatabaseController', () => {
     it('should return message from database service on valid get request to root', async () => {
         return supertest(app)
             .get('/api/database')
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(successMessage);
             });
@@ -47,7 +46,7 @@ describe('DrawingsDatabaseController', () => {
         return supertest(app)
             .get('/api/database/get')
             .query({ _id: testID })
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(successMessage);
             });
@@ -58,7 +57,7 @@ describe('DrawingsDatabaseController', () => {
         return supertest(app)
             .post('/api/database/send')
             .send({ _id: testID })
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(successMessage);
             });
@@ -69,7 +68,7 @@ describe('DrawingsDatabaseController', () => {
         return supertest(app)
             .delete('/api/database/drop')
             .query({ _id: testID })
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(successMessage);
             });
