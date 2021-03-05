@@ -1,4 +1,5 @@
 import { DrawingsDatabaseService } from '@app/services/drawings-database.service';
+import { Message } from '@common/communication/message';
 import { expect } from 'chai';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
@@ -16,71 +17,99 @@ describe('Drawing database service', () => {
         mongoServer = new MongoMemoryServer();
     });
 
-    it('saveDrawing should return true on successfull save', async () => {
+    it('saveDrawing should return success message on successfull save', async () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
         const testTitle = 'testTitle';
         const testTags = ['testing', 'function'];
-        const isSaveDrawingSuccess = await databaseService.saveDrawing(testTitle, testTags);
-        expect(isSaveDrawingSuccess).to.be.true;
+        const result = await databaseService.saveDrawing(testTitle, testTags);
+        expect(result.title).to.equals('Success');
         expect(databaseService['client'].isConnected()).to.be.false;
     });
 
-    it('saveDrawing should return false on unsuccessfull save', async () => {
+    it('saveDrawing should handle error on unsuccessfull save', (done: Mocha.Done) => {
         const testUri = 'BAD_URL';
         databaseService['uri'] = testUri;
         const testTitle = 'testTitle';
         const testTags = ['testing', 'function'];
-        const isSaveDrawingSuccess = await databaseService.saveDrawing(testTitle, testTags);
-        expect(isSaveDrawingSuccess).to.be.false;
+        databaseService
+            .saveDrawing(testTitle, testTags)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                done();
+            })
+            .catch((error: unknown) => {
+                done(error);
+            });
     });
 
-    it('getDrawing should not return undefined if connection successfull', async () => {
+    it('getDrawing should return success message if connection successfull', async () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
         const testID = '203f0175c969185bc849ae10';
-        const drawing = await databaseService.getDrawing(testID);
-        expect(drawing).to.not.be.undefined;
+        const result = await databaseService.getDrawing(testID);
+        expect(result.title).to.equals('Success');
         expect(databaseService['client'].isConnected()).to.be.false;
     });
 
-    it('getDrawing should return undefined if connection unsuccessfull', async () => {
+    it('getDrawing should handle error if connection unsuccessfull', (done: Mocha.Done) => {
         const testUri = 'BAD_URL';
         databaseService['uri'] = testUri;
         const testID = '203f0175c969185bc849ae10';
-        const drawing = await databaseService.getDrawing(testID);
-        expect(drawing).to.be.undefined;
+        databaseService
+            .getDrawing(testID)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                done();
+            })
+            .catch((error: unknown) => {
+                done(error);
+            });
     });
 
     it('getDrawings should not return undefined on successfull connection', async () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
-        const drawings = await databaseService.getDrawings();
-        expect(drawings).not.to.be.undefined;
+        const result = await databaseService.getDrawings();
+        expect(result.title).to.equals('Success');
         expect(databaseService['client'].isConnected()).to.be.false;
     });
 
-    it('getDrawings should return undefined on unsuccessfull connection', async () => {
+    it('getDrawings should return message error on unsuccessfull connection', (done: Mocha.Done) => {
         const testUri = 'BAD_URL';
         databaseService['uri'] = testUri;
-        const drawings = await databaseService.getDrawings();
-        expect(drawings).to.be.undefined;
+        databaseService
+            .getDrawings()
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                done();
+            })
+            .catch((error: unknown) => {
+                done(error);
+            });
     });
 
-    it('dropDrawing should not return undefined if connection successful', async () => {
+    it('dropDrawing should return success message if connection successful', async () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
         const testID = '203f0175c969185bc849ae10';
-        const drawings = await databaseService.dropDrawing(testID);
-        expect(drawings).not.to.be.undefined;
+        const result = await databaseService.dropDrawing(testID);
+        expect(result.title).to.equals('Success');
         expect(databaseService['client'].isConnected()).to.be.false;
     });
 
-    it('dropDrawing should return undefined if connection unsuccessful', async () => {
+    it('dropDrawing should return error message if connection unsuccessful', (done: Mocha.Done) => {
         const testUri = 'BAD_URL';
         databaseService['uri'] = testUri;
         const testID = '203f0175c969185bc849ae10';
-        const drawings = await databaseService.dropDrawing(testID);
-        expect(drawings).to.be.undefined;
+        databaseService
+            .dropDrawing(testID)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                done();
+            })
+            .catch((error: unknown) => {
+                done(error);
+            });
     });
 });

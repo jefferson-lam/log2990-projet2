@@ -1,4 +1,3 @@
-// import { DrawingsDatabaseService } from '@app/services/drawings-database.service';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
@@ -8,6 +7,7 @@ import * as logger from 'morgan';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { DateController } from './controllers/date.controller';
+import { DrawingsDatabaseController } from './controllers/drawings-database.controller';
 import { IndexController } from './controllers/index.controller';
 import { TYPES } from './types';
 
@@ -19,7 +19,8 @@ export class Application {
 
     constructor(
         @inject(TYPES.IndexController) private indexController: IndexController,
-        @inject(TYPES.DateController) private dateController: DateController, // @inject(TYPES.DrawingsDatabaseService) private database: DrawingsDatabaseService,
+        @inject(TYPES.DateController) private dateController: DateController,
+        @inject(TYPES.DrawingsDatabaseController) private databaseController: DrawingsDatabaseController,
     ) {
         this.app = express();
 
@@ -37,11 +38,6 @@ export class Application {
         this.config();
 
         this.bindRoutes();
-
-        // this.database.saveDrawing('oneTwoThree', ['obo']);
-        // this.database.getDrawing('203f0175c969185bc849ae10').then((drawing) => {
-        //     console.log(drawing);
-        // });
     }
 
     private config(): void {
@@ -58,6 +54,7 @@ export class Application {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/index', this.indexController.router);
         this.app.use('/api/date', this.dateController.router);
+        this.app.use('/api/database', this.databaseController.router);
         this.errorHandling();
     }
 

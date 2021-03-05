@@ -1,4 +1,5 @@
 import { Drawing } from '@app/classes/drawing';
+import { Message } from '@common/communication/message';
 import { injectable } from 'inversify';
 import { Collection, MongoClient, MongoClientOptions, ObjectID } from 'mongodb';
 import 'reflect-metadata';
@@ -15,7 +16,7 @@ export class DrawingsDatabaseService {
     };
     private client: MongoClient;
 
-    async saveDrawing(drawingTitle: string, drawingTags: string[]): Promise<boolean> {
+    async saveDrawing(drawingTitle: string, drawingTags: string[]): Promise<Message> {
         try {
             const drawingsCollection = await this.getCollection();
 
@@ -25,61 +26,85 @@ export class DrawingsDatabaseService {
             };
             const insertResponse = await drawingsCollection.insertOne(drawing);
             console.log('Inserted new object with id:', insertResponse.insertedId);
-            return true;
+            const successMessage: Message = {
+                title: 'Success',
+                body: `Inserted new drawing with id: ${insertResponse.insertedId}`,
+            };
+            return successMessage;
         } catch (error) {
-            console.log(error);
-            return false;
+            console.error(error);
+            return this.generateErrorMessage(error);
         } finally {
-            this.closeConnection();
+            if (this.client !== undefined) {
+                this.closeConnection();
+            }
         }
     }
 
-    async getDrawing(id: string): Promise<Drawing | null | undefined> {
+    async getDrawing(id: string): Promise<Message> {
         try {
             const drawingsCollection = await this.getCollection();
             const drawingId = new ObjectID(id);
             const drawingToFind = { _id: drawingId };
             const fetchedDrawing = await drawingsCollection.findOne(drawingToFind);
             console.log('Found drawing: ', fetchedDrawing);
-            return fetchedDrawing;
+
+            const successMessage: Message = {
+                title: 'Success',
+                body: JSON.stringify(fetchedDrawing),
+            };
+            return successMessage;
         } catch (error) {
-            console.log(error);
-            return undefined;
+            return this.generateErrorMessage(error);
         } finally {
-            this.closeConnection();
+            if (this.client !== undefined) {
+                this.closeConnection();
+            }
         }
     }
 
-    async getDrawings(): Promise<Drawing[] | undefined> {
+    async getDrawings(): Promise<Message> {
         try {
             const drawingsCollection = await this.getCollection();
-            const fetchedDrawing = await drawingsCollection.find().toArray();
-            console.log('Found drawing: ', fetchedDrawing);
-            return fetchedDrawing;
+            const fetchedDrawings = await drawingsCollection.find().toArray();
+            console.log('Found drawing: ', fetchedDrawings);
+            const successMessage: Message = {
+                title: 'Success',
+                body: JSON.stringify(fetchedDrawings),
+            };
+            return successMessage;
         } catch (error) {
-            console.log('Error while finding: ', error);
-            return undefined;
+            console.error('Error while getting drawings: ', error);
+            return this.generateErrorMessage(error);
         } finally {
-            this.closeConnection();
+            if (this.client !== undefined) {
+                this.closeConnection();
+            }
         }
     }
 
     // function returns undefined if unsuccessfull.
     // If successfull, returns 0 if drawing wasn't found.
     // Returns 1 if drawing was deleted.
-    async dropDrawing(id: string): Promise<number | undefined> {
+    async dropDrawing(id: string): Promise<Message> {
         try {
             const drawingsCollection = await this.getCollection();
             const drawingId = new ObjectID(id);
             const drawingToFind = { _id: drawingId };
             const deletionDetails = await drawingsCollection.deleteOne(drawingToFind);
             console.log('Drawing deletion count:', deletionDetails.result.n);
-            return deletionDetails.result.n;
+            const successMessage: Message = {
+                title: 'Success',
+                body: `Deleted drawing count: ${JSON.stringify(deletionDetails.result.n)}`,
+            };
+            return successMessage;
         } catch (error) {
             console.log('Deletion error: ', error);
-            return undefined;
+            return this.generateErrorMessage(error);
         } finally {
-            this.closeConnection();
+            if (this.client !== undefined) {
+                this.closeConnection();
+            }
         }
     }
 
@@ -88,8 +113,8 @@ export class DrawingsDatabaseService {
         try {
             const client = new MongoClient(this.uri, this.options);
             this.client = await client.connect();
-        } catch {
-            throw new Error('Database connection error');
+        } catch (error) {
+            throw new Error('Database connection error: ' + error).message;
         }
     }
 
@@ -99,13 +124,20 @@ export class DrawingsDatabaseService {
             console.log(`Fetching collection ${this.collectionName}...`);
             return this.client.db(this.databaseName).collection(this.collectionName);
         } catch (error) {
-            console.log(error);
-            throw new Error('Database connection error');
+            console.error(error);
+            throw new Error('Collection fetching error: ' + error).message;
         }
     }
 
     private async closeConnection(): Promise<void> {
         console.log('Closing connection to database...');
         return this.client.close();
+    }
+
+    private generateErrorMessage(error: Error): Message {
+        return {
+            title: 'Error',
+            body: error.toString(),
+        };
     }
 }
