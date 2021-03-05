@@ -34,7 +34,7 @@ describe('AerosolCommandService', () => {
         expect(command).toBeTruthy();
     });
 
-    it('execute should call drawLine', () => {
+    it('execute should call airBrushCircle', () => {
         command.execute();
         expect(airBrushSpy).toHaveBeenCalled();
     });
