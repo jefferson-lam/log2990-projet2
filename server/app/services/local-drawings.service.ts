@@ -1,4 +1,4 @@
-import { ServerDrawing } from '@common/communication/serverDrawing';
+import { ServerDrawing } from '@common/communication/server-drawing';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 
@@ -18,7 +18,7 @@ export class LocalDrawingsService {
         return this.clientDrawings;
     }
 
-    getDrawing(wantedId: number): ServerDrawing | undefined {
+    getDrawing(wantedId: string): ServerDrawing | undefined {
         return this.clientDrawings.find(({ id }) => id === wantedId);
     }
 }

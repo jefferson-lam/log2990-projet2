@@ -8,6 +8,7 @@
         <ng-template #oldDrawingFalse>
             <button mat-flat-button [disabled]="drawingExists">Continuer un dessin</button>
         </ng-template>
+        <button (click)="sendTimeToServer()">envoyer dessin</button>
     </div>
 
     <div class="footer-item">

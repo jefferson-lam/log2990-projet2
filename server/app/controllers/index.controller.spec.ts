@@ -52,7 +52,7 @@ describe('IndexController', () => {
         return supertest(app).post('/api/index/send').send(message).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
     });
 
-    it('should return an arrat of messages on valid get request to /all', async () => {
+    it('should return an array of messages on valid get request to /all', async () => {
         indexService.getAllMessages.returns([baseMessage, baseMessage]);
         return supertest(app)
             .get('/api/index/all')

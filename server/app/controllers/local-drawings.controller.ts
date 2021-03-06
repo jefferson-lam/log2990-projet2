@@ -1,6 +1,6 @@
 import { LocalDrawingsService } from '@app/services/local-drawings.service';
 import { TYPES } from '@app/types';
-import { ServerDrawing } from '@common/communication/serverDrawing';
+import { ServerDrawing } from '@common/communication/server-drawing';
 import { NextFunction, Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
 
@@ -24,9 +24,9 @@ export class LocalDrawingsController {
          *     type: object
          *     properties:
          *       id:
-         *         type: number
+         *         type: string
          *       pixels:
-         *         type: UintClampedArray
+         *         type: number[]
          *       height:
          *         type: number
          *       width:
@@ -43,7 +43,7 @@ export class LocalDrawingsController {
         /**
          * @swagger
          *
-         * /api/drawings/id:
+         * /api/drawings/get:
          *   get:
          *     description: Return drawing with corresponding id
          *     tags:
@@ -56,8 +56,8 @@ export class LocalDrawingsController {
          *           $ref: '#/definitions/ServerDrawings'
          *
          */
-        this.router.get('/id', async (req: Request, res: Response, next: NextFunction) => {
-            const drawing: ServerDrawing | undefined = this.localDrawingsService.getDrawing(req.body);
+        this.router.get('/get', async (req: Request, res: Response, next: NextFunction) => {
+            const drawing: ServerDrawing | undefined = this.localDrawingsService.getDrawing(req.query.id);
             res.json(drawing);
         });
 
