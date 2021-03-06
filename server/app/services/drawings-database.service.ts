@@ -109,7 +109,7 @@ export class DrawingsDatabaseService {
         }
     }
 
-    // Method taken from the example in: TODO ADD SOURCE
+    // Method heavily inspired from the example in mongodb example from https://moodle.polymtl.ca
     private async start(): Promise<void> {
         try {
             const client = new MongoClient(this.uri, this.options);

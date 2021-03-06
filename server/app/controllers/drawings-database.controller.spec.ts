@@ -21,13 +21,11 @@ describe('DrawingsDatabaseController', () => {
     beforeEach(async () => {
         const [container, sandbox] = await testingContainer();
         container.rebind(TYPES.DrawingsDatabaseService).toConstantValue({
-            // TODO ADD METHODS HERE
             saveDrawing: sandbox.stub().resolves(successMessage),
             getDrawing: sandbox.stub().resolves(successMessage),
             getDrawings: sandbox.stub().resolves(successMessage),
             dropDrawing: sandbox.stub().resolves(successMessage),
         });
-        // databaseService = container.get(TYPES.DrawingsDatabaseService);
         app = container.get<Application>(TYPES.Application).app;
     });
 
