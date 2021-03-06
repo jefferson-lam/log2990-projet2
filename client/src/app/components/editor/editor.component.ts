@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
     selector: 'app-editor',
@@ -13,7 +14,12 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 export class EditorComponent {
     currentTool: Tool;
 
-    constructor(public toolManager: ToolManagerService, public newDialog: MatDialog, public settingsManager: SettingsManagerService) {
+    constructor(
+        public toolManager: ToolManagerService,
+        public newDialog: MatDialog,
+        public settingsManager: SettingsManagerService,
+        public undoRedoService: UndoRedoService,
+    ) {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
     }
@@ -22,9 +28,18 @@ export class EditorComponent {
     onKeyboardDown(event: KeyboardEvent): void {
         if (event.key.match(/^(1|2|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
-        } else if (event.ctrlKey && event.key === 'o') {
+        } else if (event.ctrlKey && event.code === 'KeyO') {
             event.preventDefault();
             this.openModalPopUp();
+        } else if (event.ctrlKey && event.code === 'KeyZ') {
+            // TODO : lineTool can have mouseup and be drawing
+            if (!this.currentTool.inUse) {
+                if (event.shiftKey) {
+                    this.undoRedoService.redo();
+                } else {
+                    this.undoRedoService.undo();
+                }
+            }
         }
     }
 
@@ -35,7 +50,7 @@ export class EditorComponent {
     openModalPopUp(): void {
         if (!this.isCanvasEmpty()) {
             this.newDialog.open(NewDrawingBoxComponent, {
-                width: '100px;',
+                width: '130px;',
                 height: '200px',
             });
         }

@@ -2,11 +2,12 @@ p {
     color: red;
 }
 
-#input-box{
+#input-boxes{
   display: flex;
   flex-direction: column;
   margin-bottom: 5px;
   justify-content: center;
+  margin-left: 10px;
 }
 
 .colorInput{
