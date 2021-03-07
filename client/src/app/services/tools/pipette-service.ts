@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
+import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DrawingService } from '@app/services/drawing/drawing.service';
-import * as PipetteConstants from '@app/constants/pipette-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import { Rgba } from '@app/classes/rgba';
+import * as PipetteConstants from '@app/constants/pipette-constants';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '../color/color.service';
 import { ToolManagerService } from '../manager/tool-manager-service';
+import { UndoRedoService } from '../undo-redo/undo-redo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,9 @@ import { ToolManagerService } from '../manager/tool-manager-service';
 export class PipetteService extends Tool {
   mousePosition: Vec2;
   ctx: CanvasRenderingContext2D;
-  currentColor: Rgba = { red: '255', green: '255', blue: '255', alpha: 1};
+  //currentColor: Rgba = { red: '255', green: '255', blue: '255', alpha: 1};
+  centerPixelData: ImageData;
+  previewData: ImageData;
   colorService: ColorService;
   toolManager: ToolManagerService;
   mouseDown: boolean = false;
@@ -22,15 +25,18 @@ export class PipetteService extends Tool {
   rightMouseUp: boolean;
   inBound: boolean;
 
-  constructor(drawingService: DrawingService) {
-    super(drawingService);
+  constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+    super(drawingService, undoRedoService);
   }
 
   onMouseMove(event: MouseEvent) {
     if(this.inBound) {
       this.mousePosition = this.getPositionFromMouse(event);
       let pixelData = this.drawingService.baseCtx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);
-      this.setCurrentColor(this.pixelDataToRgba(pixelData));
+      let contextData = this.drawingService.baseCtx.getImageData(this.mousePosition.x - 5, this.mousePosition.y - 5, 10, 10);
+      this.setCenterPixelData(pixelData);
+      this.setPreviewData(contextData);
+      //this.setCurrentColor(this.pixelDataToRgba(pixelData));
     }
   }
 
@@ -69,14 +75,9 @@ export class PipetteService extends Tool {
     return 'rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + color.alpha + ')';
   }
 
-  getCurrentColor() {
-    console.log(this.currentColor);
-    this.currentColor;
-  }
-
-  setCurrentColor(color: Rgba) {
-    this.currentColor = color;
-  }
+  // setCurrentColor(color: Rgba) {
+  //   this.currentColor = color;
+  // }
 
   setPrimaryColor(color: Rgba) {
     this.colorService.setPrimaryColor(color);
@@ -84,5 +85,13 @@ export class PipetteService extends Tool {
 
   setSecondaryColor(color: Rgba) {
     this.colorService.setSecondaryColor(color);
+  }
+
+  setCenterPixelData(data: ImageData) {
+    this.centerPixelData = data;
+  }
+
+  setPreviewData(data: ImageData) {
+    this.previewData = data;
   }
 }
