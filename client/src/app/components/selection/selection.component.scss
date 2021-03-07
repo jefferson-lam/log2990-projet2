@@ -1,0 +1,7 @@
+#selectionLayer {
+    position: relative;
+    z-index: 15;
+    background-color: white;
+    // TODO:
+    // Make background-color transparent, while keeping border only when selection is active.
+}
