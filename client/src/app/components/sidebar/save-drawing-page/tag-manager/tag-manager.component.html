@@ -1,0 +1,11 @@
+<mat-form-field appearance="fill">
+    <mat-label>Tags</mat-label>
+    <input #tagInput matInput />
+</mat-form-field>
+<input type="button" value="Add tag" (click)="addTag(tagInput.value)" />
+<div id="tagsDiv" *ngFor="let tag of tags">
+    <div class="tag">
+        <p class="tagLabel">{{ tag }}</p>
+        <button class="tagDeleteButton" (click)="deleteTag(tag)">X</button>
+    </div>
+</div>

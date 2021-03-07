@@ -1,0 +1,11 @@
+.modal-dialog {
+    width: 400px;
+    height: 400px;
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
+}
+
+.mat-dialog-container {
+    overflow-y: hidden !important;
+}
