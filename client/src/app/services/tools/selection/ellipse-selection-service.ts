@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseService } from '../ellipse/ellipse-service';
@@ -8,11 +9,15 @@ import { ToolSelectionService } from './tool-selection-service';
     providedIn: 'root',
 })
 export class EllipseSelectionService extends ToolSelectionService {
+    inUse: boolean = false;
+    isManipulating: boolean = false;
+
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public ellipseService: EllipseService) {
         super(drawingService, undoRedoService, ellipseService);
     }
 
     onMouseDown(event: MouseEvent) {
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
         super.onMouseDown(event);
     }
 

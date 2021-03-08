@@ -9,6 +9,7 @@ import { RectangleSelectionService } from './rectangle-selection-service';
 export class RectangleSelectionCommand extends Command {
     selectionWidth: number;
     selectionHeight: number;
+    transformValues: Vec2;
     cornerCoords: Vec2[] = [];
     selectionCanvas: HTMLCanvasElement;
 
@@ -23,13 +24,25 @@ export class RectangleSelectionCommand extends Command {
         rectangleSelectionService: RectangleSelectionService,
     ): void {
         this.ctx = canvasContext;
+        this.cornerCoords = Object.assign([], rectangleSelectionService.cornerCoords);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
         this.selectionHeight = rectangleSelectionService.selectionHeight;
         this.selectionWidth = rectangleSelectionService.selectionWidth;
-        this.cornerCoords = Object.assign([], rectangleSelectionService.cornerCoords);
+        this.transformValues = rectangleSelectionService.transformValues;
     }
 
     execute() {
+        this.ctx.rect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
+        this.ctx.strokeStyle = 'white';
+        this.ctx.stroke();
+        this.ctx.fillStyle = 'white';
+        this.ctx.fill();
+        this.cornerCoords[0] = {
+            x: this.cornerCoords[0].x + this.transformValues.x,
+            y: this.cornerCoords[0].y + this.transformValues.y,
+        };
+        // When implementing scaling, we will have to sum selectionWidth and selectionHeight to a
+        // the distance scaled by the mouse
         this.ctx.drawImage(
             this.selectionCanvas,
             0,

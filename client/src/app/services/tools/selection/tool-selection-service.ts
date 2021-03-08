@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -19,7 +18,6 @@ export class ToolSelectionService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
             this.drawingService.previewCtx.setLineDash([3, 3]);
             this.cornerCoords[0] = this.getPositionFromMouse(event);
@@ -65,10 +63,14 @@ export class ToolSelectionService extends Tool {
     }
 
     resetCanvasState(canvas: HTMLCanvasElement): void {
+        canvas.style.transform = 'none';
         canvas.style.left = 0 + 'px';
         canvas.style.top = 0 + 'px';
         canvas.width = 0;
         canvas.height = 0;
-        canvas.style.transform = '';
+    }
+
+    clearCorners() {
+        this.cornerCoords.fill({ x: 0, y: 0 });
     }
 }

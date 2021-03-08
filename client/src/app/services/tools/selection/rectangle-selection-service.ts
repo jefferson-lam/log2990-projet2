@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
+import { Vec2 } from '@app/classes/vec2';
+import * as MouseConstants from '@app/constants/mouse-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle-selection-command';
@@ -11,56 +13,59 @@ import { ToolSelectionService } from './tool-selection-service';
     providedIn: 'root',
 })
 export class RectangleSelectionService extends ToolSelectionService {
-    inUse: boolean = false;
     isManipulating: boolean = false;
     selectionHeight: number = 0;
     selectionWidth: number = 0;
+    transformValues: Vec2;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public rectangleService: RectangleService) {
         super(drawingService, undoRedoService, rectangleService);
-        // Set rectangle settings when tool is changed, not when constructed TODO.
+        // TODO:
+        // Set rectangle settings when tool is changed, not when constructed.
         this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
     }
 
     onMouseDown(event: MouseEvent): void {
         if (this.isManipulating) {
-            const transformValues = this.getTransformValues(this.drawingService.selectionCanvas);
-            this.cornerCoords[0] = {
-                x: this.cornerCoords[0].x + transformValues.x,
-                y: this.cornerCoords[0].y + transformValues.y,
-            };
+            // TODO:
+            // Extract this into a single function allowing it to be called when tool is changed.
+            this.transformValues = this.getTransformValues(this.drawingService.selectionCanvas);
             const command: Command = new RectangleSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             this.undoRedoService.executeCommand(command);
             this.isManipulating = false;
+            // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
             this.clearCorners();
         }
-        // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
+        this.inUse = event.button === MouseConstants.MouseButton.Left;
         super.onMouseDown(event);
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
             this.cornerCoords[1] = this.getPositionFromMouse(event);
+            // TODO:
+            // Make it so super.onMouseUp does not draw on baseCtx, but uniquely on
+            // previewCtx.
             super.onMouseUp(event);
-            const selectionWidth = Math.abs(this.cornerCoords[1].x - this.cornerCoords[0].x);
-            const selectionHeight = Math.abs(this.cornerCoords[1].y - this.cornerCoords[0].y);
-            if (selectionWidth == 0 || selectionHeight == 0) {
+            this.selectionWidth = this.cornerCoords[1].x - this.cornerCoords[0].x;
+            this.selectionHeight = this.cornerCoords[1].y - this.cornerCoords[0].y;
+            if (this.selectionWidth == 0 || this.selectionHeight == 0) {
                 this.inUse = false;
                 return;
             }
-            this.drawingService.selectionCanvas.width = selectionWidth;
-            this.drawingService.selectionCanvas.height = selectionHeight;
+            this.drawingService.selectionCanvas.width = this.selectionWidth;
+            this.drawingService.selectionCanvas.height = this.selectionHeight;
             this.drawingService.selectionCtx.drawImage(
                 this.drawingService.canvas,
                 this.cornerCoords[0].x,
                 this.cornerCoords[0].y,
-                selectionWidth,
-                selectionHeight,
+                this.selectionWidth,
+                this.selectionHeight,
                 0,
                 0,
-                selectionWidth,
-                selectionHeight,
+                this.selectionWidth,
+                this.selectionHeight,
             );
             this.drawingService.baseCtx.rect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
             this.drawingService.baseCtx.strokeStyle = 'white';
@@ -71,9 +76,6 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[0].y + 'px';
             this.inUse = false;
             this.isManipulating = true;
-            this.drawingService.selectionCanvas.style.transform = '';
-            this.selectionWidth = selectionWidth;
-            this.selectionHeight = selectionHeight;
         }
     }
 
@@ -95,9 +97,5 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     onKeyboardUp(event: KeyboardEvent): void {
         super.onKeyboardUp(event);
-    }
-
-    private clearCorners(): void {
-        this.cornerCoords.fill({ x: 0, y: 0 });
     }
 }
