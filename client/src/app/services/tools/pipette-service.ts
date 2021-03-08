@@ -5,6 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PipetteConstants from '@app/constants/pipette-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ColorService } from '../color/color.service';
 import { ToolManagerService } from '../manager/tool-manager-service';
 import { UndoRedoService } from '../undo-redo/undo-redo.service';
@@ -15,32 +16,36 @@ import { UndoRedoService } from '../undo-redo/undo-redo.service';
 export class PipetteService extends Tool {
   mousePosition: Vec2;
   ctx: CanvasRenderingContext2D;
-  //currentColor: Rgba = { red: '255', green: '255', blue: '255', alpha: 1};
-  centerPixelData: ImageData;
-  previewData: ImageData;
-  colorService: ColorService;
   toolManager: ToolManagerService;
   mouseDown: boolean = false;
   leftMouseUp: boolean;
   rightMouseUp: boolean;
   inBound: boolean;
 
-  constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
+  
+  centerPixelData: ImageData = new ImageData(10, 10);
+  centerPixelDataSource: Subject<ImageData> = new BehaviorSubject<ImageData>(this.centerPixelData);
+  centerPixelDataObservable: Observable<ImageData> = this.centerPixelDataSource.asObservable();
+  
+  previewData: ImageData = new ImageData(10, 10);
+  previewDataSource: Subject<ImageData> = new BehaviorSubject<ImageData>(this.previewData);
+  previewDataObservable: Observable<ImageData> = this.centerPixelDataSource.asObservable();
+
+  constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public colorService: ColorService) {
     super(drawingService, undoRedoService);
   }
 
-  onMouseMove(event: MouseEvent) {
+  onMouseMove(event: MouseEvent): void {
     if(this.inBound) {
       this.mousePosition = this.getPositionFromMouse(event);
       let pixelData = this.drawingService.baseCtx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);
-      let contextData = this.drawingService.baseCtx.getImageData(this.mousePosition.x - 5, this.mousePosition.y - 5, 10, 10);
+      let contextData = this.drawingService.baseCtx.getImageData(Math.max(0, this.mousePosition.x - 5), Math.max(0, this.mousePosition.y - 5), 10 , 10);
       this.setCenterPixelData(pixelData);
       this.setPreviewData(contextData);
-      //this.setCurrentColor(this.pixelDataToRgba(pixelData));
     }
   }
 
-  onMouseClick(event: MouseEvent) {
+  onMouseClick(event: MouseEvent): void {
     this.ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.mousePosition = this.getPositionFromMouse(event);
     let pixelData = this.ctx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);
@@ -61,7 +66,7 @@ export class PipetteService extends Tool {
     this.inBound = true;
   }
 
-  pixelDataToRgba(data: ImageData) {
+  pixelDataToRgba(data: ImageData): Rgba {
     let red = data.data[PipetteConstants.RED_POSTITION];
     let green = data.data[PipetteConstants.GREEN_POSTITION];
     let blue = data.data[PipetteConstants.BLUE_POSTITION];
@@ -75,23 +80,21 @@ export class PipetteService extends Tool {
     return 'rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + color.alpha + ')';
   }
 
-  // setCurrentColor(color: Rgba) {
-  //   this.currentColor = color;
-  // }
-
-  setPrimaryColor(color: Rgba) {
+  setPrimaryColor(color: Rgba): void{
     this.colorService.setPrimaryColor(color);
   }
 
-  setSecondaryColor(color: Rgba) {
+  setSecondaryColor(color: Rgba): void {
     this.colorService.setSecondaryColor(color);
   }
 
-  setCenterPixelData(data: ImageData) {
+  setCenterPixelData(data: ImageData): void {
     this.centerPixelData = data;
+    this.centerPixelDataSource.next(this.centerPixelData);
   }
 
-  setPreviewData(data: ImageData) {
+  setPreviewData(data: ImageData): void {
     this.previewData = data;
+    this.previewDataSource.next(this.previewData);
   }
 }
