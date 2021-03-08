@@ -40,8 +40,7 @@ export class PolygoneService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[PolygoneConstants.END_INDEX].x = this.getPositionFromMouse(event).x - this.lineWidth / 2;
-            this.cornerCoords[PolygoneConstants.END_INDEX].y = this.getPositionFromMouse(event).y - this.lineWidth / 2;
+            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
             const command: Command = new PolygoneCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
@@ -52,8 +51,7 @@ export class PolygoneService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[PolygoneConstants.END_INDEX].x = this.getPositionFromMouse(event).x - this.lineWidth / 2;
-            this.cornerCoords[PolygoneConstants.END_INDEX].y = this.getPositionFromMouse(event).y - this.lineWidth / 2;
+            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();

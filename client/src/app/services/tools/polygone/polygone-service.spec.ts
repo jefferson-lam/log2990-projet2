@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
-// import * as PolygoneConstants from '@app/constants/polygone-constants';
+import * as PolygoneConstants from '@app/constants/polygone-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -186,6 +186,17 @@ describe('PolygoneService', () => {
         // tslint:disable:no-string-literal
         service['drawPredictionCircle'](baseCtxStub, service.cornerCoords);
         expect(getPredictionRadiusSpy).toHaveBeenCalled();
+    });
+    it('getRadiiXAndY should set expected x and y radius', () => {
+        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
+        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const xRadius = Math.abs(end.x - start.x) / 2;
+        const yRadius = Math.abs(end.y - start.y) / 2;
+        // tslint:disable:no-string-literal
+        const radii = service['getRadiiXAndY'](service.cornerCoords);
+
+        expect(radii[0]).toEqual(xRadius);
+        expect(radii[1]).toEqual(yRadius);
     });
 
     it('setLineWidth should change size of lineWidth', () => {

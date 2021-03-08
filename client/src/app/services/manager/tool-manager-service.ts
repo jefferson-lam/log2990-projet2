@@ -53,7 +53,6 @@ export class ToolManagerService {
         }
     }
 
-    // TODO ADD TESTS
     setPrimaryColorTools(color: string): void {
         this.rectangleService.setPrimaryColor(color);
         this.ellipseService.setPrimaryColor(color);
@@ -62,7 +61,6 @@ export class ToolManagerService {
         this.lineService.setPrimaryColor(color);
     }
 
-    // TODO ADD TESTS
     setSecondaryColorTools(color: string): void {
         this.rectangleService.setSecondaryColor(color);
         this.ellipseService.setSecondaryColor(color);
