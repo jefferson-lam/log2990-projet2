@@ -1,1 +1,5 @@
-<canvas cdkDrag id="selectionLayer" #selectionCanvas [attr.width]="0" [attr.height]="0"></canvas>
+<!-- TODO: -->
+<!-- Will need to update selectionContainer height and width when resizing the canvas -->
+<div id="selectionContainer">
+    <canvas cdkDrag id="selectionLayer" #selectionCanvas cdkDragBoundary="#selectionContainer" [attr.width]="0" [attr.height]="0"></canvas>
+</div>

@@ -5,3 +5,10 @@
     // TODO:
     // Make background-color transparent, while keeping border only when selection is active.
 }
+
+#selectionContainer {
+    width: 1200px;
+    height: 1000px;
+    max-width: 100%;
+    background-color: #607d8b;
+}
