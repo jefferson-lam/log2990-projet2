@@ -1,5 +1,7 @@
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle-selection-service';
 
 @Component({
     selector: 'app-selection',
@@ -11,7 +13,7 @@ export class SelectionComponent implements OnInit {
     private selectionCtx: CanvasRenderingContext2D;
     // private selectionCanvasSize: Vec2 = { x: 0, y: 0 };
 
-    constructor(private drawingService: DrawingService) {}
+    constructor(private drawingService: DrawingService, public rectangleSelectionService: RectangleSelectionService) {}
 
     ngAfterViewInit(): void {
         this.selectionCtx = this.selectionCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -20,4 +22,10 @@ export class SelectionComponent implements OnInit {
     }
 
     ngOnInit(): void {}
+
+    setPosition(event: CdkDragEnd) {
+        this.selectionCanvas.nativeElement.style.top = parseInt(this.selectionCanvas.nativeElement.style.top) + event.distance.y + 'px';
+        this.selectionCanvas.nativeElement.style.left = parseInt(this.selectionCanvas.nativeElement.style.left) + event.distance.x + 'px';
+        event.source._dragRef.reset();
+    }
 }

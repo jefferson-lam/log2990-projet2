@@ -17,6 +17,8 @@ export class RectangleSelectionService extends ToolSelectionService {
     selectionHeight: number = 0;
     selectionWidth: number = 0;
     transformValues: Vec2;
+    isSquare: boolean = false;
+    shiftDown: boolean = false;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public rectangleService: RectangleService) {
         super(drawingService, undoRedoService, rectangleService);
@@ -29,13 +31,17 @@ export class RectangleSelectionService extends ToolSelectionService {
         if (this.isManipulating) {
             // TODO:
             // Extract this into a single function allowing it to be called when tool is changed.
-            this.transformValues = this.getTransformValues(this.drawingService.selectionCanvas);
+            this.transformValues = {
+                x: parseInt(this.drawingService.selectionCanvas.style.left),
+                y: parseInt(this.drawingService.selectionCanvas.style.top),
+            };
             const command: Command = new RectangleSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             this.undoRedoService.executeCommand(command);
             this.isManipulating = false;
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
             this.clearCorners();
+            console.log(this.cornerCoords);
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         super.onMouseDown(event);
@@ -43,16 +49,19 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[1] = this.getPositionFromMouse(event);
-            // TODO:
-            // Make it so super.onMouseUp does not draw on baseCtx, but uniquely on
-            // previewCtx.
+            this.rectangleService.inUse = false;
             super.onMouseUp(event);
+            console.log(this.cornerCoords);
             this.selectionWidth = this.cornerCoords[1].x - this.cornerCoords[0].x;
             this.selectionHeight = this.cornerCoords[1].y - this.cornerCoords[0].y;
             if (this.selectionWidth == 0 || this.selectionHeight == 0) {
                 this.inUse = false;
                 return;
+            }
+            if (this.isSquare) {
+                const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
+                this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
+                this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
             }
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
@@ -67,15 +76,12 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.drawingService.baseCtx.rect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
-            this.drawingService.baseCtx.strokeStyle = 'white';
-            this.drawingService.baseCtx.stroke();
-            this.drawingService.baseCtx.fillStyle = 'white';
-            this.drawingService.baseCtx.fill();
+            this.drawingService.baseCtx.clearRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[0].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[0].y + 'px';
             this.inUse = false;
             this.isManipulating = true;
+            this.isSquare = false;
         }
     }
 
@@ -93,9 +99,19 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     onKeyboardDown(event: KeyboardEvent): void {
         super.onKeyboardDown(event);
+        if (event.shiftKey && !this.shiftDown) {
+            this.isSquare = true;
+            this.shiftDown = true;
+        }
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
         super.onKeyboardUp(event);
+        if (!event.shiftKey) {
+            this.isSquare = false;
+            this.shiftDown = false;
+        }
     }
+
+    selectAll(): void {}
 }

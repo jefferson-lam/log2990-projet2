@@ -26,7 +26,10 @@ export class ToolSelectionService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        this.selectionTool.onMouseUp(event);
+        if (this.inUse) {
+            this.cornerCoords[1] = this.getPositionFromMouse(event);
+            this.selectionTool.onMouseUp(event);
+        }
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -38,7 +41,10 @@ export class ToolSelectionService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.selectionTool.onMouseMove(event);
+        if (this.inUse) {
+            this.cornerCoords[1] = this.getPositionFromMouse(event);
+            this.selectionTool.onMouseMove(event);
+        }
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
@@ -63,7 +69,6 @@ export class ToolSelectionService extends Tool {
     }
 
     resetCanvasState(canvas: HTMLCanvasElement): void {
-        canvas.style.transform = 'none';
         canvas.style.left = 0 + 'px';
         canvas.style.top = 0 + 'px';
         canvas.width = 0;
