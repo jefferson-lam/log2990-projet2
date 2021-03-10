@@ -48,6 +48,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.selectionWidth = this.cornerCoords[1].x - this.cornerCoords[0].x;
             this.selectionHeight = this.cornerCoords[1].y - this.cornerCoords[0].y;
             if (this.selectionWidth == 0 || this.selectionHeight == 0) {
+                this.resetSelectedToolSettings();
                 this.inUse = false;
                 return;
             }
