@@ -73,18 +73,6 @@ describe('SettingsManagerService', () => {
         expect(toolSpy.setSidesCount).toHaveBeenCalled();
     });
 
-    it('setWaterDropWidth should set the particle width correctly of current tool', () => {
-        const EXPECTED_PARTICLE_WIDTH = 10;
-        service.setWaterDropWidth(EXPECTED_PARTICLE_WIDTH);
-        expect(toolSpy.setWaterDropWidth).toHaveBeenCalled();
-    });
-
-    it('setEmissionCount should set the emission count correctly of current tool', () => {
-        const EXPECTED_EMISSION_COUNT = 10;
-        service.setEmissionCount(EXPECTED_EMISSION_COUNT);
-        expect(toolSpy.setEmissionCount).toHaveBeenCalled();
-    });
-
     it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {
         service.setPrimaryColorTools('blue');
         expect(toolManagerSpy.setPrimaryColorTools).toHaveBeenCalled();

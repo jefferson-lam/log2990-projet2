@@ -1,11 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
-import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { ToolManagerService } from './tool-manager-service';
 
@@ -17,8 +15,6 @@ describe('ToolManagerService', () => {
     let eraserServiceSpy: jasmine.SpyObj<EraserService>;
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
     let lineServiceSpy: jasmine.SpyObj<LineService>;
-    let polygoneServiceSpy: jasmine.SpyObj<PolygoneService>;
-    let aerosolServiceSpy: jasmine.SpyObj<AerosolService>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -27,8 +23,6 @@ describe('ToolManagerService', () => {
         eraserServiceSpy = jasmine.createSpyObj('EraserService', ['setPrimaryColor', 'onMouseUp']);
         pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setPrimaryColor', 'onMouseUp']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['setPrimaryColor', 'onMouseUp']);
-        polygoneServiceSpy = jasmine.createSpyObj('PolygoneService', ['setPrimaryColor', 'setSecondaryColor', 'onMouseUp']);
-        aerosolServiceSpy = jasmine.createSpyObj('AerosolService', ['setPrimaryColor', 'onMouseUp']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -38,8 +32,6 @@ describe('ToolManagerService', () => {
                 { provide: EraserService, useValue: eraserServiceSpy },
                 { provide: PencilService, useValue: pencilServiceSpy },
                 { provide: LineService, useValue: lineServiceSpy },
-                { provide: PolygoneService, useValue: polygoneServiceSpy },
-                { provide: AerosolService, useValue: aerosolServiceSpy },
             ],
         });
         service = TestBed.inject(ToolManagerService);
@@ -108,8 +100,6 @@ describe('ToolManagerService', () => {
         expect(ellipseServiceSpy.setPrimaryColor).toHaveBeenCalled();
         expect(pencilServiceSpy.setPrimaryColor).toHaveBeenCalled();
         expect(lineServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(polygoneServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(aerosolServiceSpy.setPrimaryColor).toHaveBeenCalled();
     });
 
     it('should call all needed setSecondaryColor methods when setSecondaryColor is called', () => {
@@ -117,6 +107,5 @@ describe('ToolManagerService', () => {
         service.setSecondaryColorTools(RANDOM_COLOR);
         expect(rectangleServiceSpy.setSecondaryColor).toHaveBeenCalled();
         expect(ellipseServiceSpy.setSecondaryColor).toHaveBeenCalled();
-        expect(polygoneServiceSpy.setSecondaryColor).toHaveBeenCalled();
     });
 });
