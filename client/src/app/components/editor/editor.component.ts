@@ -28,7 +28,7 @@ export class EditorComponent {
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
         if (event.key.match(/^(1|2|c|l|e|r|s)$/)) {
-            this.currentTool = this.toolManager.selectTool(event);
+            this.setTool(this.toolManager.selectTool(event));
         } else if (event.ctrlKey && event.code === 'KeyO') {
             event.preventDefault();
             this.openModalPopUp();
@@ -64,6 +64,14 @@ export class EditorComponent {
     }
 
     updateToolFromSidebarClick(newTool: Tool): void {
+        this.setTool(newTool);
+    }
+
+    setTool(newTool: Tool): void {
+        if (this.currentTool instanceof RectangleSelectionService && !(newTool instanceof RectangleSelectionService)) {
+            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
+            this.currentTool.onMouseDown(emptyMouseEvent);
+        }
         this.currentTool = newTool;
     }
 

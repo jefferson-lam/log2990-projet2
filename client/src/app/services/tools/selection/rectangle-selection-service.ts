@@ -35,6 +35,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
             this.clearCorners();
+            this.resetSelectedToolSettings();
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         super.onMouseDown(event);
@@ -48,7 +49,6 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.selectionHeight = this.cornerCoords[1].y - this.cornerCoords[0].y;
             if (this.selectionWidth == 0 || this.selectionHeight == 0) {
                 this.inUse = false;
-                this.resetSelectedToolSettings();
                 return;
             }
             if (this.isSquare) {
