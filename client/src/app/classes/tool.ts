@@ -9,6 +9,8 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     lineWidth?: number;
     fillMode?: ToolConstants.FillMode;
+    primaryColor?: string;
+    secondaryColor?: string;
     junctionRadius?: number;
     withJunction?: boolean;
     mouseDownCoord: Vec2;
@@ -45,6 +47,10 @@ export abstract class Tool {
     setJunctionRadius(newJunctionRadius: number): void {}
 
     setWithJunction(hasJunction: boolean): void {}
+
+    setPrimaryColor(primaryColor: string) {}
+
+    setSecondaryColor(secondaryColor: string) {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };

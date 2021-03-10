@@ -15,7 +15,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class EllipseService extends Tool {
     cornerCoords: Vec2[] = [];
     isCircle: boolean = false;
-    lineWidth: number = 1; // TODO: Change back to 20 after finding a way to change settings when changing over to selection
+    lineWidth: number = 20; // TODO: Change back to 20 after finding a way to change settings when changing over to selection
     fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
     primaryColor: string = '#B5CF60';
     secondaryColor: string = '#2F2A36';
@@ -95,7 +95,6 @@ export class EllipseService extends Tool {
 
                 this.previewCommand.setValues(this.drawingService.previewCtx, this);
                 this.previewCommand.execute();
-
                 // this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
                 this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
             }
