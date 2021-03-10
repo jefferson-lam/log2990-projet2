@@ -9,3 +9,43 @@
 .mat-dialog-container {
     overflow-y: hidden !important;
 }
+
+.tagsDiv {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: space-between;
+}
+
+.tag {
+    background: rgb(224, 224, 224);
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+
+.tagLabel {
+    float: left;
+    margin: 5px, 5px, 5px, 5px;
+    padding-right: 15px;
+}
+
+.tagDeleteButton {
+    float: right;
+    padding: 0px, 0px, 0px, 0px;
+    margin: 5px, 5px, 5px, 5px;
+}
+
+button {
+    background-color: inherit;
+    border: none;
+    outline: none;
+}
+
+button:hover {
+    background: rgb(182, 178, 178);
+}
+
+.icon {
+    font-size: 1px;
+}

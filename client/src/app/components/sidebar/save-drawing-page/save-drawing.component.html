@@ -1,10 +1,27 @@
 <div class="modal-dialog">
-    <form>
-        <h1>Sauvegarder une image</h1>
-        <mat-form-field appearance="fill">
-            <mat-label>Titre</mat-label>
-            <input matInput />
-        </mat-form-field>
-        <app-tag-manager></app-tag-manager>
-    </form>
+    <div>
+        <form>
+            <h1>Sauvegarder une image</h1>
+            <mat-form-field appearance="fill">
+                <mat-label>Titre</mat-label>
+                <input #titleInput matInput />
+                <!--mat-error *ngIf="titleInput.value.length === 0"> Titre ne peut être vide</mat-error -->
+            </mat-form-field>
+            <!--app-tag-manager></app-tag-manager-->
+            <mat-form-field appearance="fill">
+                <mat-label>Tags</mat-label>
+                <input #tagInput matInput />
+            </mat-form-field>
+            <input type="button" value="Ajouter un tag" (click)="addTag(tagInput.value)" />
+            <div class="tagsDiv" *ngFor="let tag of tags">
+                <div class="tag">
+                    <p class="tagLabel">{{ tag }}</p>
+                    <button class="tagDeleteButton" (click)="deleteTag(tag)">
+                        <mat-icon [inline]="true">clear</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <input type="button" value="Save" (click)="saveDrawing('8mars2021', ['test', 'AgnesHappyNow?'])" />
+    </div>
 </div>
