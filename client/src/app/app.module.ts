@@ -33,6 +33,7 @@ import { SidebarRectangleSelectionComponent } from './components/sidebar/sidebar
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SelectionComponent } from './components/selection/selection.component';
+import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
 
 @NgModule({
     declarations: [
@@ -51,6 +52,7 @@ import { SelectionComponent } from './components/selection/selection.component';
         SidebarLineComponent,
         SidebarRectangleSelectionComponent,
         SelectionComponent,
+        DirectionalMovementDirective,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
