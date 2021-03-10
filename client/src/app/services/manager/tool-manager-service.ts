@@ -7,7 +7,6 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
-import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 
 @Injectable({
@@ -23,7 +22,6 @@ export class ToolManagerService {
         public rectangleService: RectangleService,
         public ellipseService: EllipseService,
         public drawingService: DrawingService,
-        public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
     ) {
         this.bindKeys();
@@ -37,7 +35,6 @@ export class ToolManagerService {
             .set(ToolManagerConstants.LINE_KEY, this.lineService)
             .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
             .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
-            .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
             .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService);
     }
 
@@ -56,18 +53,18 @@ export class ToolManagerService {
         }
     }
 
+    // TODO ADD TESTS
     setPrimaryColorTools(color: string): void {
         this.rectangleService.setPrimaryColor(color);
         this.ellipseService.setPrimaryColor(color);
-        this.polygoneService.setPrimaryColor(color);
-        this.pencilService.setPrimaryColor(color);
         this.lineService.setPrimaryColor(color);
         this.aerosolService.setPrimaryColor(color);
+        this.pencilService.setPrimaryColor(color);
     }
 
+    // TODO ADD TESTS
     setSecondaryColorTools(color: string): void {
         this.rectangleService.setSecondaryColor(color);
         this.ellipseService.setSecondaryColor(color);
-        this.polygoneService.setSecondaryColor(color);
     }
 }

@@ -58,7 +58,7 @@ export class EditorComponent implements OnInit {
                     default:
                         break;
                 }
-            } else if (event.key.match(/^(1|2|3|a|c|l|e)$/)) {
+            } else if (event.key.match(/^(1|2|c|l|e)$/)) {
                 this.currentTool = this.toolManager.selectTool(event);
             }
         }
