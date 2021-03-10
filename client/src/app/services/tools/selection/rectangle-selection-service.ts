@@ -52,6 +52,22 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.inUse = false;
                 return;
             }
+            const tempCoord = this.cornerCoords[0];
+            if (this.selectionHeight < 0 && this.selectionWidth < 0) {
+                this.cornerCoords[0] = this.cornerCoords[1];
+                this.cornerCoords[1] = tempCoord;
+            } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
+                console.log(this.selectionHeight);
+                console.log(this.cornerCoords);
+                this.cornerCoords[0].x = this.cornerCoords[1].x;
+                this.cornerCoords[1].x = tempCoord.x;
+                console.log(this.cornerCoords);
+            } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
+                this.cornerCoords[0].y = this.cornerCoords[1].y;
+                this.cornerCoords[1].y = tempCoord.y;
+            }
+            this.selectionWidth = Math.abs(this.selectionWidth);
+            this.selectionHeight = Math.abs(this.selectionHeight);
             if (this.isSquare) {
                 const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
                 this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
@@ -59,6 +75,8 @@ export class RectangleSelectionService extends ToolSelectionService {
             }
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
+            this.drawingService.selectionCtx.fillStyle = 'white';
+            this.drawingService.selectionCtx.fillRect(0, 0, this.drawingService.selectionCanvas.width, this.drawingService.selectionCanvas.height);
             this.drawingService.selectionCtx.drawImage(
                 this.drawingService.canvas,
                 this.cornerCoords[0].x,
