@@ -1,4 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MIN_HEIGHT_CANVAS } from '@app/constants/canvas-constants';
 import { MAX_RGB_VALUE } from '@app/constants/color-constants';
@@ -22,8 +24,10 @@ describe('ExportDrawingComponent', () => {
         (Object.getOwnPropertyDescriptor(drawServiceMock, 'canvas')?.get as Spy<() => HTMLCanvasElement>).and.returnValue({} as HTMLCanvasElement);
 
         TestBed.configureTestingModule({
+            imports: [FormsModule],
             declarations: [ExportDrawingComponent],
             providers: [{ provide: DrawingService, useValue: drawServiceMock }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
