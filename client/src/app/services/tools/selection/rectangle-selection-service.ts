@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle-selection-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -13,18 +12,13 @@ import { ToolSelectionService } from './tool-selection-service';
     providedIn: 'root',
 })
 export class RectangleSelectionService extends ToolSelectionService {
-    isManipulating: boolean = false;
-    selectionHeight: number = 0;
-    selectionWidth: number = 0;
     transformValues: Vec2;
     isSquare: boolean = false;
-    shiftDown: boolean = false;
+    isShiftDown: boolean = false;
+    isEscapeDown: boolean = false;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public rectangleService: RectangleService) {
         super(drawingService, undoRedoService, rectangleService);
-        // TODO:
-        // Set rectangle settings when tool is changed, not when constructed.
-        this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -41,7 +35,6 @@ export class RectangleSelectionService extends ToolSelectionService {
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
             this.clearCorners();
-            console.log(this.cornerCoords);
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         super.onMouseDown(event);
@@ -51,11 +44,11 @@ export class RectangleSelectionService extends ToolSelectionService {
         if (this.inUse) {
             this.rectangleService.inUse = false;
             super.onMouseUp(event);
-            console.log(this.cornerCoords);
             this.selectionWidth = this.cornerCoords[1].x - this.cornerCoords[0].x;
             this.selectionHeight = this.cornerCoords[1].y - this.cornerCoords[0].y;
             if (this.selectionWidth == 0 || this.selectionHeight == 0) {
                 this.inUse = false;
+                this.resetSelectedToolSettings();
                 return;
             }
             if (this.isSquare) {
@@ -99,19 +92,33 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     onKeyboardDown(event: KeyboardEvent): void {
         super.onKeyboardDown(event);
-        if (event.shiftKey && !this.shiftDown) {
-            this.isSquare = true;
-            this.shiftDown = true;
+        if (this.inUse) {
+            if (event.key === 'Shift' && !this.isShiftDown) {
+                console.log('Shift down');
+                this.isSquare = true;
+                this.isShiftDown = true;
+            } else if (event.key === 'Escape' && !this.isEscapeDown) {
+                console.log('Hello from escape');
+                this.isEscapeDown = true;
+                console.log(this.isEscapeDown);
+            }
         }
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
         super.onKeyboardUp(event);
-        if (!event.shiftKey) {
-            this.isSquare = false;
-            this.shiftDown = false;
+        if (this.inUse) {
+            if (event.key === 'Shift' && this.isShiftDown) {
+                console.log('Shift up');
+                this.isSquare = false;
+                this.isShiftDown = false;
+            } else if (event.key === 'Escape' && this.isEscapeDown) {
+                this.isEscapeDown = false;
+            }
         }
     }
 
-    selectAll(): void {}
+    selectAll(): void {
+        super.selectAll();
+    }
 }

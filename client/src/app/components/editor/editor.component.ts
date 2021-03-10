@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -40,6 +41,12 @@ export class EditorComponent {
                     this.undoRedoService.undo();
                 }
             }
+        } else if (event.ctrlKey && event.code == 'KeyA') {
+            event.preventDefault();
+            this.currentTool = this.toolManager.getTool('r');
+            // TODO: verify
+            let rectangleSelectionService: RectangleSelectionService = this.toolManager.rectangleSelectionService;
+            rectangleSelectionService.selectAll();
         }
     }
 
