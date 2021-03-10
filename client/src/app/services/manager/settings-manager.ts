@@ -36,6 +36,10 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setWithJunction(withJunction);
     }
 
+    setSidesCount(newSidesCount: number): void {
+        this.editorComponent.currentTool.setSidesCount(newSidesCount);
+    }
+
     setPrimaryColorTools(color: string): void {
         this.toolManagerService.setPrimaryColorTools(color);
     }

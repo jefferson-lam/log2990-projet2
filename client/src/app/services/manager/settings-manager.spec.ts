@@ -16,7 +16,7 @@ describe('SettingsManagerService', () => {
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
 
     beforeEach(() => {
-        toolSpy = jasmine.createSpyObj('Tool', ['setLineWidth', 'setFillMode', 'setJunctionRadius', 'setWithJunction']);
+        toolSpy = jasmine.createSpyObj('Tool', ['setLineWidth', 'setFillMode', 'setJunctionRadius', 'setWithJunction', 'setSidesCount']);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
         TestBed.configureTestingModule({
             declarations: [EditorComponent],
@@ -57,6 +57,12 @@ describe('SettingsManagerService', () => {
         const hasJunction = true;
         service.setWithJunction(hasJunction);
         expect(toolSpy.setWithJunction).toHaveBeenCalled();
+    });
+
+    it('setSidesCount should set the sides count correctly of current tool', () => {
+        const EXPECTED_SIDES_COUNT = 10;
+        service.setSidesCount(EXPECTED_SIDES_COUNT);
+        expect(toolSpy.setSidesCount).toHaveBeenCalled();
     });
 
     it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {
