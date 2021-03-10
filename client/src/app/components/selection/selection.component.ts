@@ -11,7 +11,6 @@ import { RectangleSelectionService } from '@app/services/tools/selection/rectang
 export class SelectionComponent implements OnInit {
     @ViewChild('selectionCanvas', { static: false }) selectionCanvas: ElementRef<HTMLCanvasElement>;
     private selectionCtx: CanvasRenderingContext2D;
-    // private selectionCanvasSize: Vec2 = { x: 0, y: 0 };
 
     constructor(private drawingService: DrawingService, public rectangleSelectionService: RectangleSelectionService) {}
 

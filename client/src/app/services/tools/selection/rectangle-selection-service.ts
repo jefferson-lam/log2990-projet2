@@ -134,6 +134,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             } else if (event.key === 'Escape' && this.isEscapeDown) {
                 // Case where the user is still selecting.
                 this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.resetSelectedToolSettings();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.inUse = false;
                 this.isEscapeDown = false;
@@ -153,6 +154,7 @@ export class RectangleSelectionService extends ToolSelectionService {
                     this.selectionHeight,
                 );
                 this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.resetSelectedToolSettings();
                 this.isManipulating = false;
                 this.isEscapeDown = false;
             }
