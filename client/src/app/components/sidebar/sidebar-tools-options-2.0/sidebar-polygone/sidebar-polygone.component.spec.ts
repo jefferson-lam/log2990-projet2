@@ -7,11 +7,11 @@ import { SidebarPolygoneComponent } from './sidebar-polygone.component';
 
 // tslint:disable:no-any
 describe('SidebarPolygoneComponent', () => {
-    let component: SidebarPolygoneComponent;
+    let polygoneComponent: SidebarPolygoneComponent;
     let fixture: ComponentFixture<SidebarPolygoneComponent>;
-    let toolSizeChangedSubscribeSpy: jasmine.Spy<any>;
-    let fillModeChangedSubscribeSpy: jasmine.Spy<any>;
-    let numberOfSidesSpy: jasmine.Spy<any>;
+    let toolSizeChangedSubscribeSpy: jasmine.Spy;
+    let fillModeChangedSubscribeSpy: jasmine.Spy;
+    let numberOfSidesSpy: jasmine.Spy;
     let settingsManagerService: SettingsManagerService;
 
     beforeEach(async(() => {
@@ -23,47 +23,41 @@ describe('SidebarPolygoneComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SidebarPolygoneComponent);
-        component = fixture.componentInstance;
+        polygoneComponent = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        toolSizeChangedSubscribeSpy = spyOn(component.toolSizeChanged, 'subscribe');
-        fillModeChangedSubscribeSpy = spyOn(component.fillModeChanged, 'subscribe');
-        numberOfSidesSpy = spyOn(component.numberOfPolySides, 'subscribe');
+        toolSizeChangedSubscribeSpy = spyOn(polygoneComponent.toolSizeChanged, 'subscribe');
+        fillModeChangedSubscribeSpy = spyOn(polygoneComponent.fillModeChanged, 'subscribe');
+        numberOfSidesSpy = spyOn(polygoneComponent.numberOfPolySides, 'subscribe');
     });
 
     it('should create', () => {
-        expect(component).toBeTruthy();
+        expect(polygoneComponent).toBeTruthy();
     });
 
     it('emitToolSize should emit tool size', () => {
-        const emitSpy = spyOn(component.toolSizeChanged, 'emit');
-        component.toolSize = PolygoneConstants.INIT_LINE_WIDTH;
-        component.emitToolSize();
+        const emitSpy = spyOn(polygoneComponent.toolSizeChanged, 'emit');
+        polygoneComponent.toolSize = PolygoneConstants.INIT_LINE_WIDTH;
+        polygoneComponent.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitFillMode should emit fill mode', () => {
         const newFillMode = ToolsConstants.FillMode.FILL_ONLY;
-        const emitSpy = spyOn(component.fillModeChanged, 'emit');
-        component.emitFillMode(newFillMode);
+        const emitSpy = spyOn(polygoneComponent.fillModeChanged, 'emit');
+        polygoneComponent.emitFillMode(newFillMode);
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitPolygoneSideNumber should emit sides number', () => {
-        const emitSpy = spyOn(component.numberOfPolySides, 'emit');
-        component.polygoneSidesCount = PolygoneConstants.INIT_NUMBER_SIDES;
-        component.emitPolygoneSideNumber();
+        const emitSpy = spyOn(polygoneComponent.numberOfPolySides, 'emit');
+        polygoneComponent.polygoneSidesCount = PolygoneConstants.INIT_SIDES_COUNT;
+        polygoneComponent.emitPolygoneSideNumber();
         expect(emitSpy).toHaveBeenCalled();
     });
 
-    it('setMax should return input value', () => {
-        const newWidth = PolygoneConstants.MAX_BORDER_WIDTH;
-        const returnValue = component.setMax(newWidth);
-        expect(returnValue).toEqual(newWidth);
-    });
-
-    it('should call subscribe method when created', () => {
-        component.ngOnInit();
+    it('should call subscribe method when created at first', () => {
+        polygoneComponent.ngOnInit();
         expect(toolSizeChangedSubscribeSpy).toHaveBeenCalled();
         expect(fillModeChangedSubscribeSpy).toHaveBeenCalled();
         expect(numberOfSidesSpy).toHaveBeenCalled();
@@ -71,23 +65,23 @@ describe('SidebarPolygoneComponent', () => {
 
     it('should call setLineWidth() from settingsManager after tool size change', () => {
         const setLineWidthSpy = spyOn(settingsManagerService, 'setLineWidth');
-        component.ngOnInit();
-        component.emitToolSize();
+        polygoneComponent.ngOnInit();
+        polygoneComponent.emitToolSize();
         expect(setLineWidthSpy).toHaveBeenCalled();
     });
 
     it('should call setFillModeSpy() from settingsManager after fill mode change', () => {
         const setFillModeSpy = spyOn(settingsManagerService, 'setFillMode');
         const fillMode = ToolsConstants.FillMode.FILL_ONLY;
-        component.ngOnInit();
-        component.emitFillMode(fillMode);
+        polygoneComponent.ngOnInit();
+        polygoneComponent.emitFillMode(fillMode);
         expect(setFillModeSpy).toHaveBeenCalled();
     });
 
     it('should call setSidesCount() from settingsManager after number of sides change', () => {
         const setNumberSpy = spyOn(settingsManagerService, 'setSidesCount');
-        component.ngOnInit();
-        component.emitPolygoneSideNumber();
+        polygoneComponent.ngOnInit();
+        polygoneComponent.emitPolygoneSideNumber();
         expect(setNumberSpy).toHaveBeenCalled();
     });
 });

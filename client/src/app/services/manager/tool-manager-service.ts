@@ -7,7 +7,7 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
-import { PolygoneService } from '@app/services/tools/polygone-service';
+import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 
 @Injectable({
@@ -56,7 +56,6 @@ export class ToolManagerService {
         }
     }
 
-    // TODO ADD TESTS
     setPrimaryColorTools(color: string): void {
         this.rectangleService.setPrimaryColor(color);
         this.ellipseService.setPrimaryColor(color);
@@ -66,7 +65,6 @@ export class ToolManagerService {
         this.aerosolService.setPrimaryColor(color);
     }
 
-    // TODO ADD TESTS
     setSecondaryColorTools(color: string): void {
         this.rectangleService.setSecondaryColor(color);
         this.ellipseService.setSecondaryColor(color);

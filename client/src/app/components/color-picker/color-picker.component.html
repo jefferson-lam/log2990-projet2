@@ -6,7 +6,7 @@
     <div class="color-display">
       <div
             class="color-preview"
-            [ngStyle]="{ 'background-color': colorService.convertRgbaToString(primaryColor) || 'white' }"
+            [ngStyle]="{ 'background-color': colorService.convertRgbaToString(primaryColor) || 'black' }"
             (click)="togglePrimaryPickerOpen()"
         ></div>
         <div id="switch">
@@ -14,7 +14,7 @@
         </div>
         <div
             class="color-preview"
-            [ngStyle]="{ 'background-color': colorService.convertRgbaToString(secondaryColor) || 'black' }"
+            [ngStyle]="{ 'background-color': colorService.convertRgbaToString(secondaryColor) || 'white' }"
             (click)="toggleSecondaryPickerOpen()"
         ></div>
     </div>

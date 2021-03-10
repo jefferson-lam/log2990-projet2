@@ -2,23 +2,31 @@
     <div id="sidebar">
         <ul class="options-sidebar">
             <li>
-                <mat-icon id="return-button" style="color: white" matTooltip="Retour" [matTooltipPosition]="'right'" routerLink="/home"
+                <mat-icon id="return-button" matTooltip="Retour" [matTooltipPosition]="'right'" routerLink="/home"
                     >backspace</mat-icon
                 >
             </li>
             <li>
                 <mat-icon
                     id="new-drawing-button"
-                    style="color: white"
                     matTooltip="Nouveau dessin"
                     [matTooltipPosition]="'right'"
                     (click)="openNewDrawing()"
                     >add_box</mat-icon
                 >
             </li>
-            <li><mat-icon style="color: white" matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
-            <li id='undoButton' [class.unclickable]="!isUndoPossible" (click)="undo()"><mat-icon style="color: white" matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon></li>
-            <li id='redoButton' [class.unclickable]="!isRedoPossible" (click)="redo()"><mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
+          <li id="exportButton">
+            <mat-icon
+              id="export-drawing-button"
+              matTooltip="Exporter dessin"
+              [matTooltipPosition]="'right'"
+              (click)="exportDrawing()"
+            >open_in_new</mat-icon
+            >
+          </li>
+            <li><mat-icon matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
+            <li id='undoButton' [class.unclickable]="!isUndoPossible" (click)="undo()"><mat-icon matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon></li>
+            <li id='redoButton' [class.unclickable]="!isRedoPossible" (click)="redo()"><mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon></li>
         </ul>
         <ul class="tools-sidebar">
             <li id="toolId" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons" class="listToolsClass">

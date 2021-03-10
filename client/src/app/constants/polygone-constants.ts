@@ -14,8 +14,24 @@ export const START_INDEX = 0;
 
 export const X_INDEX = 0;
 
-// export const Y_INDEX = 1;
+export const Y_INDEX = 1;
 
-export const INIT_NUMBER_SIDES = 5;
+export const MAX_LINE_WIDTH = 200;
+
+export const MIN_LINE_WIDTH = 1;
+
+export const MIN_SIDES_COUNT = 3;
+
+export const MAX_SIDES_COUNT = 12;
+
+export const TICK_INTERVAL = 1;
+
+export const INIT_TOOL_SIZE = 7;
+
+export const INIT_SIDES_COUNT = 5;
 
 export const INIT_LINE_WIDTH = 7;
+
+export const ANGLE_ODD = 90;
+
+export const ANGLE_LONG = 180;
