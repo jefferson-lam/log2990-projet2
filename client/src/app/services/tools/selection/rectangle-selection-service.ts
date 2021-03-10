@@ -94,13 +94,14 @@ export class RectangleSelectionService extends ToolSelectionService {
         super.onKeyboardDown(event);
         if (this.inUse) {
             if (event.key === 'Shift' && !this.isShiftDown) {
-                console.log('Shift down');
                 this.isSquare = true;
                 this.isShiftDown = true;
             } else if (event.key === 'Escape' && !this.isEscapeDown) {
-                console.log('Hello from escape');
                 this.isEscapeDown = true;
-                console.log(this.isEscapeDown);
+            }
+        } else if (this.isManipulating) {
+            if (event.key === 'Escape' && !this.isEscapeDown) {
+                this.isEscapeDown = true;
             }
         }
     }
@@ -109,10 +110,31 @@ export class RectangleSelectionService extends ToolSelectionService {
         super.onKeyboardUp(event);
         if (this.inUse) {
             if (event.key === 'Shift' && this.isShiftDown) {
-                console.log('Shift up');
                 this.isSquare = false;
                 this.isShiftDown = false;
             } else if (event.key === 'Escape' && this.isEscapeDown) {
+                // Case where the user is still selecting.
+                this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.inUse = false;
+                this.isEscapeDown = false;
+            }
+        } else if (this.isManipulating) {
+            if (event.key === 'Escape' && this.isEscapeDown) {
+                // Case where user has defined the selection area
+                this.drawingService.baseCtx.drawImage(
+                    this.drawingService.selectionCanvas,
+                    0,
+                    0,
+                    this.selectionWidth,
+                    this.selectionHeight,
+                    this.cornerCoords[0].x,
+                    this.cornerCoords[0].y,
+                    this.selectionWidth,
+                    this.selectionHeight,
+                );
+                this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.isManipulating = false;
                 this.isEscapeDown = false;
             }
         }

@@ -33,7 +33,7 @@ export class EditorComponent {
             event.preventDefault();
             this.openModalPopUp();
         } else if (event.ctrlKey && event.code === 'KeyZ') {
-            // TODO : lineTool can have mouseup and be drawing
+            // TODO: lineTool can have mouseup and be drawing
             if (!this.currentTool.inUse) {
                 if (event.shiftKey) {
                     this.undoRedoService.redo();
@@ -45,8 +45,21 @@ export class EditorComponent {
             event.preventDefault();
             this.currentTool = this.toolManager.getTool('r');
             // TODO: verify
-            let rectangleSelectionService: RectangleSelectionService = this.toolManager.rectangleSelectionService;
+            const rectangleSelectionService: RectangleSelectionService = this.toolManager.rectangleSelectionService;
             rectangleSelectionService.selectAll();
+        } else if (event.key === 'Escape') {
+            if (this.currentTool instanceof RectangleSelectionService) {
+                this.currentTool.onKeyboardDown(event);
+            }
+        }
+    }
+
+    @HostListener('window:keyup', ['$event'])
+    onKeyboardUp(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            if (this.currentTool instanceof RectangleSelectionService) {
+                this.currentTool.onKeyboardUp(event);
+            }
         }
     }
 
