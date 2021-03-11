@@ -41,9 +41,10 @@ export class SidebarPipetteComponent implements OnInit {
     for(let i = 0; i < this.rawData.data.length; i += 4) {
       //Iterate through each group of 10 pixel of previewData (100x100)
       for(let j = 0; j < 10; j++) {
-        this.previewData.data[k] = this.rawData.data[i] //R
-        this.previewData.data[k + 1] = this.rawData.data[i + 1] //G
-        this.previewData.data[k + 2] = this.rawData.data[i + 2] //B
+        this.previewData.data[k] = this.rawData.data[i]; //R
+        this.previewData.data[k + 1] = this.rawData.data[i + 1]; //G
+        this.previewData.data[k + 2] = this.rawData.data[i + 2]; //B
+        this.previewData.data[k + 3] = this.rawData.data[i + 3]; //A
         k += 4;
       }
     }
@@ -60,7 +61,7 @@ export class SidebarPipetteComponent implements OnInit {
     // this.ctx.fillRect(49, 49, 5, 5);
     // this.ctx.lineWidth = 2;
     // this.ctx.strokeStyle = 'rgb(0, 0, 0)';
-    // this.ctx.strokeRect(45, 45, 5, 5);
+    // this.ctx.strokeRect(49, 49, 5, 5);
 
     this.ctx.putImageData(this.previewData, 0, 0);
   }
