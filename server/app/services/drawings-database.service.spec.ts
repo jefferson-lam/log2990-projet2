@@ -27,7 +27,7 @@ describe('Drawing database service', () => {
         expect(databaseService['client'].isConnected()).to.be.false;
     });
 
-    it('saveDrawing should handle error on unsuccessfull save', (done: Mocha.Done) => {
+    it('saveDrawing should handle error on unsuccessfull connection to server', (done: Mocha.Done) => {
         const testUri = 'BAD_URL';
         databaseService['uri'] = testUri;
         const testTitle = 'testTitle';
@@ -41,6 +41,47 @@ describe('Drawing database service', () => {
             .catch((error: unknown) => {
                 done(error);
             });
+    });
+
+    it('saveDrawing should handle invalid title min length error', async () => {
+        const testUri = await mongoServer.getUri();
+        databaseService['uri'] = testUri;
+        const testTitle = '';
+        const testTags = ['testing', 'function'];
+        databaseService
+            .saveDrawing(testTitle, testTags)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+            })
+            .catch((error: unknown) => {});
+    });
+
+    it('saveDrawing should handle invalid title max length error', async () => {
+        const testUri = await mongoServer.getUri();
+        databaseService['uri'] = testUri;
+        const testTitle = '123456789012345678901';
+        const testTags = ['testing', 'function'];
+        databaseService
+            .saveDrawing(testTitle, testTags)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                console.log(result.body);
+            })
+            .catch((error: unknown) => {});
+    });
+
+    it('saveDrawing should handle invalid title max length error', async () => {
+        const testUri = await mongoServer.getUri();
+        databaseService['uri'] = testUri;
+        const testTitle = String.fromCharCode(35895);
+        const testTags = ['testing', 'function'];
+        databaseService
+            .saveDrawing(testTitle, testTags)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                console.log(result.body);
+            })
+            .catch((error: unknown) => {});
     });
 
     it('getDrawing should return success message if connection successfull', async () => {

@@ -1,5 +1,6 @@
 import { Drawing } from '@app/classes/drawing';
 import { Message } from '@common/communication/message';
+import * as DatabaseConstants from '@common/validation/database-constants';
 import { injectable } from 'inversify';
 import { Collection, MongoClient, MongoClientOptions, ObjectID } from 'mongodb';
 import 'reflect-metadata';
@@ -18,6 +19,8 @@ export class DrawingsDatabaseService {
 
     async saveDrawing(drawingTitle: string, drawingTags: string[]): Promise<Message> {
         try {
+            this.checkTitleValid(drawingTitle);
+
             const drawingsCollection = await this.getCollection();
 
             const drawing: Drawing = {
@@ -27,7 +30,7 @@ export class DrawingsDatabaseService {
             const insertResponse = await drawingsCollection.insertOne(drawing);
             console.log('Inserted new object with id:', insertResponse.insertedId);
             const successMessage: Message = {
-                title: 'Success',
+                title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: `Inserted new drawing with id: ${insertResponse.insertedId}`,
             };
             return successMessage;
@@ -51,7 +54,7 @@ export class DrawingsDatabaseService {
             console.log('Found drawing: ', fetchedDrawing);
 
             const successMessage: Message = {
-                title: 'Success',
+                title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: JSON.stringify(fetchedDrawing),
             };
             return successMessage;
@@ -70,7 +73,7 @@ export class DrawingsDatabaseService {
             const fetchedDrawings = await drawingsCollection.find().toArray();
             console.log('Found drawing: ', fetchedDrawings);
             const successMessage: Message = {
-                title: 'Success',
+                title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: JSON.stringify(fetchedDrawings),
             };
             return successMessage;
@@ -95,7 +98,7 @@ export class DrawingsDatabaseService {
             const deletionDetails = await drawingsCollection.deleteOne(drawingToFind);
             console.log('Drawing deletion count:', deletionDetails.result.n);
             const successMessage: Message = {
-                title: 'Success',
+                title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: `Deleted drawing count: ${JSON.stringify(deletionDetails.result.n)}`,
             };
             return successMessage;
@@ -137,8 +140,66 @@ export class DrawingsDatabaseService {
 
     private generateErrorMessage(error: Error): Message {
         return {
-            title: 'Error',
+            title: DatabaseConstants.ERROR_MESSAGE,
             body: error.toString(),
         };
+    }
+
+    // Returns message with 'Error' as title if title is invalid with reasons in the body.
+    // If title is valid,
+    private checkTitleValid(title: string): Message {
+        const validation = { title: DatabaseConstants.ERROR_MESSAGE, body: '' };
+        const minTitleValidation: Message = this.checkViolationTitleMinLength(title);
+        const maxTitleValidation: Message = this.checkViolationTitleMaxLength(title);
+        const asciiTitleValidation: Message = this.checkViolationTitleAscii(title);
+        let errorCount = 0;
+        if (this.isMessageError(minTitleValidation)) {
+            validation.body += minTitleValidation.body;
+            errorCount++;
+        }
+        if (this.isMessageError(maxTitleValidation)) {
+            validation.body += maxTitleValidation;
+            errorCount++;
+        }
+        if (this.isMessageError(asciiTitleValidation)) {
+            validation.body += asciiTitleValidation;
+            errorCount++;
+        }
+        if (errorCount > 0) {
+            validation.title = DatabaseConstants.ERROR_MESSAGE;
+            throw new Error(validation.body);
+        }
+        return validation;
+    }
+
+    private checkViolationTitleMinLength(title: string): Message {
+        const validation: Message = { title: DatabaseConstants.SUCCESS_MESSAGE, body: '' };
+        if (title.length < DatabaseConstants.MIN_TITLE_LENGTH) {
+            validation.title = DatabaseConstants.ERROR_MESSAGE;
+            validation.body = `Title does not respect shortest length constraint. Your title length of ${title.length} is shorter than the minimum length allowed of ${DatabaseConstants.MIN_TITLE_LENGTH}.\n`;
+        }
+        return validation;
+    }
+
+    private checkViolationTitleMaxLength(title: string): Message {
+        const validation: Message = { title: DatabaseConstants.SUCCESS_MESSAGE, body: '' };
+        if (title.length > DatabaseConstants.MAX_TITLE_LENGTH) {
+            validation.title = DatabaseConstants.ERROR_MESSAGE;
+            validation.body = `Title does not respect longest length constraint. Your title length of ${title.length} is longer than the maximum length allowed of${DatabaseConstants.MAX_TITLE_LENGTH}.\n`;
+        }
+        return validation;
+    }
+
+    private checkViolationTitleAscii(title: string): Message {
+        const validation: Message = { title: DatabaseConstants.SUCCESS_MESSAGE, body: '' };
+        if (!/^[\x00-\xFF]*$/.test(title)) {
+            validation.title = DatabaseConstants.ERROR_MESSAGE;
+            validation.body = 'Title does not respect ascii exclusive requirement. Only ascii characters are allowed.\n';
+        }
+        return validation;
+    }
+
+    private isMessageError(message: Message): boolean {
+        return message.title === DatabaseConstants.ERROR_MESSAGE;
     }
 }
