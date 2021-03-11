@@ -22,13 +22,10 @@ export const containerBootstrapper: () => Promise<Container> = async () => {
     container.bind(TYPES.DateController).to(DateController);
     container.bind(TYPES.DateService).to(DateService);
 
-<<<<<<< HEAD
     container.bind(TYPES.DrawingsDatabaseController).to(DrawingsDatabaseController);
     container.bind(TYPES.DrawingsDatabaseService).to(DrawingsDatabaseService);
-=======
     container.bind(TYPES.LocalDrawingsController).to(LocalDrawingsController);
     container.bind(TYPES.LocalDrawingsService).to(LocalDrawingsService);
->>>>>>> feature/database
 
     return container;
 };

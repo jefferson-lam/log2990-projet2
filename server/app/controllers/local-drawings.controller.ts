@@ -1,10 +1,9 @@
 import { LocalDrawingsService } from '@app/services/local-drawings.service';
 import { TYPES } from '@app/types';
+import * as HttpRequestCodes from '@common/communication/http-code-constants';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import { NextFunction, Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
-
-const HTTP_STATUS_CREATED = 201;
 
 @injectable()
 export class LocalDrawingsController {
@@ -107,7 +106,7 @@ export class LocalDrawingsController {
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
             const drawing: ServerDrawing = req.body;
             this.localDrawingsService.saveDrawing(drawing);
-            res.sendStatus(HTTP_STATUS_CREATED);
+            res.sendStatus(HttpRequestCodes.HTTP_STATUS_CREATED);
         });
     }
 }

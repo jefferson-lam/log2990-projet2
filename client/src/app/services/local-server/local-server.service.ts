@@ -25,4 +25,10 @@ export class LocalServerService {
             return of(result as T);
         };
     }
+
+    drawingToImageData(drawing: ServerDrawing): ImageData {
+        const typedArray = new Uint8ClampedArray(drawing.pixels);
+        const imageData: ImageData = new ImageData(typedArray, drawing.width, drawing.height);
+        return imageData;
+    }
 }
