@@ -5,7 +5,6 @@ import * as ToolsConstants from '@app/constants/tool-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarPolygoneComponent } from './sidebar-polygone.component';
 
-// tslint:disable:no-any
 describe('SidebarPolygoneComponent', () => {
     let polygoneComponent: SidebarPolygoneComponent;
     let fixture: ComponentFixture<SidebarPolygoneComponent>;

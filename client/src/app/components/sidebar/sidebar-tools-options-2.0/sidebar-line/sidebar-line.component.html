@@ -6,7 +6,6 @@
         <p> Épaisseur : </p>
         <mat-slider id="width" color="warn"
                     thumbLabel
-                    [displayWith]="setMax"
                     [tickInterval]='tickInterval'
                     [min]="min"
                     [max]="max"
@@ -26,7 +25,6 @@
           <p> Taille des points : </p>
           <mat-slider  color="warn"
                        thumbLabel
-                       [displayWith]="setMax"
                        [tickInterval]="1"
                        [min]="1"
                        [max]="100"
