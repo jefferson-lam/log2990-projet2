@@ -8,6 +8,7 @@ export class DirectionalMovementDirective {
 
     @HostListener('keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent) {
+        event.preventDefault();
         if (event.key === 'ArrowLeft') {
             this.translateLeft(3);
         } else if (event.key === 'ArrowRight') {
