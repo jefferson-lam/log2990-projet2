@@ -3,10 +3,10 @@ import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle-selection-command';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { RectangleService } from '../rectangle/rectangle-service';
-import { ToolSelectionService } from './tool-selection-service';
 
 @Injectable({
     providedIn: 'root',

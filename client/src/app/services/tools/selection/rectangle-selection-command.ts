@@ -1,11 +1,7 @@
-import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
-@Injectable({
-    providedIn: 'root',
-})
 export class RectangleSelectionCommand extends Command {
     selectionWidth: number;
     selectionHeight: number;
