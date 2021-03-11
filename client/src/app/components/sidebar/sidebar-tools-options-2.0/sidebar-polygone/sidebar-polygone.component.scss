@@ -1,0 +1,38 @@
+*{
+  font-family: 'Rubik', serif;
+
+}
+
+#settingsContainer{
+  color: #EEE;
+  margin-left: 10px;
+}
+
+#title{
+  font-weight: bolder;
+  font-size: x-large;
+}
+
+#widthSetting{
+  display: block;
+}
+
+#widthLine, #countSides{
+  margin-top: -5px;
+}
+
+#drawingStyleOptions{
+  margin-top: -11px;
+}
+
+#colorPicker{
+  margin-top: 5px;
+}
+
+.mat-radio-button{
+  margin:5px;
+}
+
+#colorPicker{
+  margin-left: -20px;
+}

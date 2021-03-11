@@ -1,13 +1,13 @@
 import { Application } from '@app/app';
 import { DateService } from '@app/services/date.service';
 import { TYPES } from '@app/types';
+import * as HttpRequestCodes from '@common/communication/http-code-constants';
 import { Message } from '@common/communication/message';
 import { expect } from 'chai';
 import * as supertest from 'supertest';
 import { Stubbed, testingContainer } from '../../test/test-utils';
 
 // tslint:disable:no-any
-const HTTP_STATUS_OK = 200;
 
 describe('DateController', () => {
     let dateService: Stubbed<DateService>;
@@ -28,7 +28,7 @@ describe('DateController', () => {
 
         return supertest(app)
             .get('/api/date')
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(expectedMessage);
             });
@@ -39,7 +39,7 @@ describe('DateController', () => {
 
         return supertest(app)
             .get('/api/date')
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body.title).to.equal('Error');
             });

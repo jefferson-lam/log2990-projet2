@@ -16,15 +16,7 @@ describe('SettingsManagerService', () => {
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
 
     beforeEach(() => {
-        toolSpy = jasmine.createSpyObj('Tool', [
-            'setLineWidth',
-            'setFillMode',
-            'setJunctionRadius',
-            'setWithJunction',
-            'setSidesCount',
-            'setWaterDropWidth',
-            'setEmissionCount',
-        ]);
+        toolSpy = jasmine.createSpyObj('Tool', ['setLineWidth', 'setFillMode', 'setJunctionRadius', 'setWithJunction', 'setSidesCount']);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
         TestBed.configureTestingModule({
             declarations: [EditorComponent],

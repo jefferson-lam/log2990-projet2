@@ -1,14 +1,13 @@
 import { Application } from '@app/app';
 import { IndexService } from '@app/services/index.service';
 import { TYPES } from '@app/types';
+import * as HttpRequestCodes from '@common/communication/http-code-constants';
 import { Message } from '@common/communication/message';
 import { expect } from 'chai';
 import * as supertest from 'supertest';
 import { Stubbed, testingContainer } from '../../test/test-utils';
 
 // tslint:disable:no-any
-const HTTP_STATUS_OK = 200;
-const HTTP_STATUS_CREATED = 201;
 
 describe('IndexController', () => {
     const baseMessage = { title: 'Hello world', body: 'anything really' } as Message;
@@ -30,7 +29,7 @@ describe('IndexController', () => {
     it('should return message from index service on valid get request to root', async () => {
         return supertest(app)
             .get('/api/index')
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(baseMessage);
             });
@@ -41,7 +40,7 @@ describe('IndexController', () => {
         indexService.about.returns(aboutMessage);
         return supertest(app)
             .get('/api/index/about')
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(aboutMessage);
             });
@@ -49,14 +48,14 @@ describe('IndexController', () => {
 
     it('should store message in the array on valid post request to /send', async () => {
         const message: Message = { title: 'Hello', body: 'World' };
-        return supertest(app).post('/api/index/send').send(message).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
+        return supertest(app).post('/api/index/send').send(message).set('Accept', 'application/json').expect(HttpRequestCodes.HTTP_STATUS_CREATED);
     });
 
     it('should return an arrat of messages on valid get request to /all', async () => {
         indexService.getAllMessages.returns([baseMessage, baseMessage]);
         return supertest(app)
             .get('/api/index/all')
-            .expect(HTTP_STATUS_OK)
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal([baseMessage, baseMessage]);
             });
