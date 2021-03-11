@@ -72,7 +72,7 @@ describe('LineService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('setPrimaryColor should correcly set primary color to wanted color', () => {
+    it('setPrimaryColor should correctly set primary color to wanted color', () => {
         const EXPECTED_COLOR = 'blue';
         service.setPrimaryColor(EXPECTED_COLOR);
         expect(service.primaryColor).toEqual(EXPECTED_COLOR);
