@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
@@ -25,15 +26,16 @@ import { EditorComponent } from './components/editor/editor.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveCompletePageComponent } from './components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
 import { SaveDrawingComponent } from './components/sidebar/save-drawing-page/save-drawing.component';
-import { TagManagerComponent } from './components/sidebar/save-drawing-page/tag-manager/tag-manager.component';
+import { SavePageErrorComponent } from './components/sidebar/save-drawing-page/save-page-error/save-page-error.component';
+import { SavingPageComponent } from './components/sidebar/save-drawing-page/saving-page/saving-page.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { DrawingOptionsComponent } from './components/sidebar/save-drawing-page/drawing-options/drawing-options.component';
 
 @NgModule({
     declarations: [
@@ -51,8 +53,9 @@ import { DrawingOptionsComponent } from './components/sidebar/save-drawing-page/
         SidebarEllipseComponent,
         SidebarLineComponent,
         SaveDrawingComponent,
-        TagManagerComponent,
-        DrawingOptionsComponent,
+        SaveCompletePageComponent,
+        SavingPageComponent,
+        SavePageErrorComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
@@ -75,6 +78,7 @@ import { DrawingOptionsComponent } from './components/sidebar/save-drawing-page/
         MatCheckboxModule,
         DragDropModule,
         FormsModule,
+        MatProgressSpinnerModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

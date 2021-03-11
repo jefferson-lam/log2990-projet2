@@ -88,7 +88,6 @@ export class SidebarComponent implements OnChanges {
     }
 
     openSaveDrawingMenu(): void {
-        console.log('Boy');
         this.dialog.open(SaveDrawingComponent, {});
     }
 }

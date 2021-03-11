@@ -1,5 +1,5 @@
 <div class="modal-dialog">
-    <div>
+    <div *ngIf="saveProgress === saveProgressEnum.CHOOSING_SETTING">
         <form>
             <h1>Sauvegarder une image</h1>
             <mat-form-field appearance="fill">
@@ -22,6 +22,9 @@
                 </div>
             </div>
         </form>
-        <input type="button" value="Save" (click)="saveDrawing('8mars2021', ['test', 'AgnesHappyNow?'])" />
+        <input #savebutton type="button" value="Save" (click)="saveDrawing(titleInput.value, tags)" />
     </div>
+    <app-saving-page *ngIf="saveProgress === saveProgressEnum.SAVING"></app-saving-page>
+    <app-save-complete-page *ngIf="saveProgress === saveProgressEnum.COMPLTETE"></app-save-complete-page>
+    <app-save-page-error *ngIf="saveProgress === saveProgressEnum.ERROR"></app-save-page-error>
 </div>
