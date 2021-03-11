@@ -52,6 +52,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarRectangleComponent,
         SidebarEllipseComponent,
         SidebarLineComponent,
+        SidebarPolygoneComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
