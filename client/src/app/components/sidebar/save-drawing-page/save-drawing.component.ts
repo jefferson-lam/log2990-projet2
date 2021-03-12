@@ -1,6 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { SaveCompletePageComponent } from '@app/components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
-import { SavePageErrorComponent } from '@app/components/sidebar/save-drawing-page/save-page-error/save-page-error.component';
+import { Component } from '@angular/core';
 import { DatabaseService } from '@app/services/database/database.service';
 import { Message } from '@common/communication/message';
 
@@ -16,15 +14,7 @@ export enum SaveProgress {
     styleUrls: ['./save-drawing.component.scss'],
 })
 export class SaveDrawingComponent {
-    @ViewChild('savebutton') saveButton: ElementRef;
-    @ViewChild(SaveCompletePageComponent) saveCompletePage: SaveCompletePageComponent;
-    private savePageError: SavePageErrorComponent;
-    @ViewChild('savePageError') set content(content: SavePageErrorComponent) {
-        console.log(content);
-        if (content) {
-            this.savePageError = content;
-        }
-    }
+    resultMessage: string = '';
     saveProgressEnum: typeof SaveProgress = SaveProgress;
     saveProgress: SaveProgress = SaveProgress.CHOOSING_SETTING;
     tags: string[] = new Array();
@@ -79,13 +69,13 @@ export class SaveDrawingComponent {
                     if (this.request.title.includes('Success')) {
                         this.saveProgress = SaveProgress.COMPLTETE;
                     } else {
-                        console.log('Error');
+                        this.saveProgress = SaveProgress.ERROR;
                     }
+                    this.resultMessage = this.request.body;
                 },
                 next: (result: Message) => {
                     if (result === undefined) {
                         this.saveProgress = SaveProgress.ERROR;
-                        this.savePageError.setReason('FAIL!');
                         return;
                     }
                     this.request = result;

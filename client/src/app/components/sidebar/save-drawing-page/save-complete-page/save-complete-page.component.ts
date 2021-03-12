@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'app-save-complete-page',
@@ -6,9 +6,5 @@ import { Component } from '@angular/core';
     styleUrls: ['./save-complete-page.component.scss'],
 })
 export class SaveCompletePageComponent {
-    message: string = 'Drawing Saved!';
-
-    changeToFailedMessage(): void {
-        this.message = 'Failed to save';
-    }
+    @Input() reason: string;
 }

@@ -28,8 +28,8 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveCompletePageComponent } from './components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
 import { SaveDrawingComponent } from './components/sidebar/save-drawing-page/save-drawing.component';
-import { SavePageErrorComponent } from './components/sidebar/save-drawing-page/save-page-error/save-page-error.component';
-import { SavingPageComponent } from './components/sidebar/save-drawing-page/saving-page/saving-page.component';
+import { SaveErrorPageComponent } from './components/sidebar/save-drawing-page/save-error-page/save-error-page.component';
+import { SaveSavingPageComponent } from './components/sidebar/save-drawing-page/save-saving-page/save-saving-page.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
@@ -54,8 +54,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarLineComponent,
         SaveDrawingComponent,
         SaveCompletePageComponent,
-        SavingPageComponent,
-        SavePageErrorComponent,
+        SaveSavingPageComponent,
+        SaveErrorPageComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
