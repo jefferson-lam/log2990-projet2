@@ -3,7 +3,7 @@ import { TYPES } from '@app/types';
 import { Message } from '@common/communication/message';
 import { NextFunction, Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
-import { DrawingsDatabaseService } from '../services/drawings-database.service';
+import { DrawingsDatabaseService } from '../services/database/drawings-database.service';
 
 @injectable()
 export class DrawingsDatabaseController {
