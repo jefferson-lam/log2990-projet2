@@ -1,5 +1,6 @@
 import { DrawingsDatabaseService } from '@app/services/drawings-database.service';
 import { Message } from '@common/communication/message';
+import * as DatabaseConstants from '@common/validation/database-constants';
 import { expect } from 'chai';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
@@ -43,6 +44,23 @@ describe('Drawing database service', () => {
             });
     });
 
+    it('saveDrawing should handle invalid tags length error', async () => {
+        const testUri = await mongoServer.getUri();
+        databaseService['uri'] = testUri;
+        const testTitle = 'Title';
+        let testTags: string[] = [];
+        for (let i = 0; i < DatabaseConstants.MAX_TAGS_COUNT + 1; i++) {
+            testTags.push('test');
+        }
+        databaseService
+            .saveDrawing(testTitle, testTags)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                expect(result.body).to.include("Vous avez trop d'étiquettes");
+            })
+            .catch((error: unknown) => {});
+    });
+
     it('saveDrawing should handle invalid title min length error', async () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
@@ -56,6 +74,20 @@ describe('Drawing database service', () => {
             .catch((error: unknown) => {});
     });
 
+    it('saveDrawing should handle invalid tag min length error', async () => {
+        const testUri = await mongoServer.getUri();
+        databaseService['uri'] = testUri;
+        const testTitle = 'testTitle';
+        const testTags = ['', 'function'];
+        databaseService
+            .saveDrawing(testTitle, testTags)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                expect(result.body).to.include('Le tag est trop court');
+            })
+            .catch((error: unknown) => {});
+    });
+
     it('saveDrawing should handle invalid title max length error', async () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
@@ -65,12 +97,29 @@ describe('Drawing database service', () => {
             .saveDrawing(testTitle, testTags)
             .then((result: Message) => {
                 expect(result.title).to.equals('Error');
-                console.log(result.body);
             })
             .catch((error: unknown) => {});
     });
 
-    it('saveDrawing should handle invalid title max length error', async () => {
+    it('saveDrawing should handle invalid tag max length error', async () => {
+        const testUri = await mongoServer.getUri();
+        databaseService['uri'] = testUri;
+        const testTitle = 'testTitle';
+        let testTag = '';
+        for (let i = 0; i < DatabaseConstants.MAX_TAG_LENGTH + 1; i++) {
+            testTag += 'g';
+        }
+        const testTags = [testTag];
+        databaseService
+            .saveDrawing(testTitle, testTags)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                expect(result.body).to.include('Le tag est trop long');
+            })
+            .catch((error: unknown) => {});
+    });
+
+    it('saveDrawing should handle ascii invalid character title error', async () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
         const testTitle = String.fromCharCode(35895);
@@ -79,7 +128,20 @@ describe('Drawing database service', () => {
             .saveDrawing(testTitle, testTags)
             .then((result: Message) => {
                 expect(result.title).to.equals('Error');
-                console.log(result.body);
+            })
+            .catch((error: unknown) => {});
+    });
+
+    it('saveDrawing should handle ascii invalid character tag error', async () => {
+        const testUri = await mongoServer.getUri();
+        databaseService['uri'] = testUri;
+        const testTitle = 'testTitle';
+        const testTags = [String.fromCharCode(35895), 'function'];
+        databaseService
+            .saveDrawing(testTitle, testTags)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                expect(result.body).to.include('ne peut pas avoir de caractères spéciaux');
             })
             .catch((error: unknown) => {});
     });
