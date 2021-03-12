@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DatabaseService } from '@app/services/database/database.service';
 import { Message } from '@common/communication/message';
+import { timeout } from 'rxjs/operators';
 
 export enum SaveProgress {
     CHOOSING_SETTING,
@@ -64,23 +65,28 @@ export class SaveDrawingComponent {
     saveDrawing(title: string, tags: string[]): void {
         if (this.isTitleValid(title)) {
             this.saveProgress = SaveProgress.SAVING;
-            this.database.saveDrawing(title, tags).subscribe({
-                complete: () => {
-                    if (this.request.title.includes('Success')) {
-                        this.saveProgress = SaveProgress.COMPLTETE;
-                    } else {
+            this.database
+                .saveDrawing(title, tags)
+                .pipe(timeout(3000))
+                .subscribe({
+                    complete: () => {
+                        if (this.request.title.includes('Success')) {
+                            this.saveProgress = SaveProgress.COMPLTETE;
+                        } else {
+                            this.saveProgress = SaveProgress.ERROR;
+                        }
+                        this.resultMessage = this.request.body;
+                    },
+                    next: (result: Message) => {
+                        this.request = result;
+                    },
+                    error: (error: Error) => {
                         this.saveProgress = SaveProgress.ERROR;
-                    }
-                    this.resultMessage = this.request.body;
-                },
-                next: (result: Message) => {
-                    if (result === undefined) {
-                        this.saveProgress = SaveProgress.ERROR;
-                        return;
-                    }
-                    this.request = result;
-                },
-            });
+                        if (error.message.includes('Timeout')) {
+                            this.resultMessage = 'Temps de connection au serveur a expiré.';
+                        }
+                    },
+                });
         }
     }
 }
