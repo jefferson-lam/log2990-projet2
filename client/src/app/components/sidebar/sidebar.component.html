@@ -2,17 +2,10 @@
     <div id="sidebar">
         <ul class="options-sidebar">
             <li>
-                <mat-icon id="return-button" style="color: white" matTooltip="Retour" [matTooltipPosition]="'right'" routerLink="/home"
-                    >backspace</mat-icon
-                >
+                <mat-icon id="return-button" matTooltip="Retour" [matTooltipPosition]="'right'" routerLink="/home">backspace</mat-icon>
             </li>
             <li>
-                <mat-icon
-                    id="new-drawing-button"
-                    style="color: white"
-                    matTooltip="Nouveau dessin"
-                    [matTooltipPosition]="'right'"
-                    (click)="openNewDrawing()"
+                <mat-icon id="new-drawing-button" matTooltip="Nouveau dessin" [matTooltipPosition]="'right'" (click)="openNewDrawing()"
                     >add_box</mat-icon
                 >
             </li>
@@ -26,6 +19,19 @@
             </li>
             <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
                 <mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
+            </li>
+
+            <li id="exportButton">
+                <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
+                    >open_in_new</mat-icon
+                >
+            </li>
+            <li><mat-icon matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
+            <li id="undoButton" [class.unclickable]="!isUndoPossible" (click)="undo()">
+                <mat-icon matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
+            </li>
+            <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
+                <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
             </li>
         </ul>
         <ul class="tools-sidebar">
@@ -51,6 +57,9 @@
                 <app-sidebar-rectangle class="sidebar-tool-options" *ngSwitchCase="'1'"></app-sidebar-rectangle>
                 <app-sidebar-ellipse class="sidebar-tool-options" *ngSwitchCase="'2'"></app-sidebar-ellipse>
                 <app-sidebar-line class="sidebar-tool-options" *ngSwitchCase="'l'"></app-sidebar-line>
+                <<<<<<< HEAD =======
+                <app-sidebar-polygone class="sidebar-tool-options" *ngSwitchCase="'3'"></app-sidebar-polygone>
+                >>>>>>> dev
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>
