@@ -8,12 +8,12 @@ export class TagValidatorService extends ValidatorService {
     checkTagsValid(tags: string[]): Message {
         const validation = { title: DatabaseConstants.SUCCESS_MESSAGE, body: '' };
         const checkTagsCountAboveMax = this.checkTagsCountAboveMax(tags);
+        let errorCount = 0;
         if (this.isMessageError(checkTagsCountAboveMax)) {
             validation.title = DatabaseConstants.ERROR_MESSAGE;
             validation.body += checkTagsCountAboveMax.body;
-            throw new Error(validation.body);
+            errorCount++;
         }
-        let errorCount = 0;
         for (const tag of tags) {
             const tagCheck = this.checkTagValid(tag);
             if (this.isMessageError(tagCheck)) {
@@ -33,7 +33,7 @@ export class TagValidatorService extends ValidatorService {
         const validation: Message = { title: DatabaseConstants.SUCCESS_MESSAGE, body: '' };
         if (tags.length > DatabaseConstants.MAX_TAGS_COUNT) {
             validation.title = DatabaseConstants.ERROR_MESSAGE;
-            validation.body = `Vous avez trop de tags. Vous en avez ${tags.length}. Le maximum est de ${DatabaseConstants.MAX_TAGS_COUNT}`;
+            validation.body = `Vous avez trop de tags. Vous en avez ${tags.length}. Le maximum est de ${DatabaseConstants.MAX_TAGS_COUNT}.\n`;
         }
         return validation;
     }
@@ -66,7 +66,7 @@ export class TagValidatorService extends ValidatorService {
         const validation: Message = { title: DatabaseConstants.SUCCESS_MESSAGE, body: '' };
         if (tag.length < DatabaseConstants.MIN_TAG_LENGTH) {
             validation.title = DatabaseConstants.ERROR_MESSAGE;
-            validation.body = `Le tag est trop court. Doit avoir une longueur minimum de ${DatabaseConstants.MIN_TAG_LENGTH} caractères`;
+            validation.body = `Le tag est trop court. Doit avoir une longueur minimum de ${DatabaseConstants.MIN_TAG_LENGTH} caractère.\n`;
         }
         return validation;
     }
@@ -75,7 +75,7 @@ export class TagValidatorService extends ValidatorService {
         const validation: Message = { title: DatabaseConstants.SUCCESS_MESSAGE, body: '' };
         if (tag.length > DatabaseConstants.MAX_TAG_LENGTH) {
             validation.title = DatabaseConstants.ERROR_MESSAGE;
-            validation.body = `Le tag est trop long. Doit avoir une longeur maximum de ${DatabaseConstants.MIN_TAG_LENGTH}`;
+            validation.body = `Le tag est trop long. Doit avoir une longeur maximum de ${DatabaseConstants.MIN_TAG_LENGTH}.\n`;
         }
         return validation;
     }
