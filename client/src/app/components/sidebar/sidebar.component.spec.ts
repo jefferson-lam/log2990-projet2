@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -35,6 +36,7 @@ describe('SidebarComponent', () => {
     let refreshSpy: jasmine.Spy;
     let redoButton: HTMLElement;
     let undoButton: HTMLElement;
+    const dialogStub = jasmine.createSpyObj('MatDialog', ['open']);
 
     // tslint:disable:no-any
     beforeEach(async(() => {
@@ -53,6 +55,7 @@ describe('SidebarComponent', () => {
                 { provide: RectangleService, useValue: rectangleStub },
                 { provide: EllipseService, useValue: ellipseStub },
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
+                { provide: MatDialog, useValue: dialogStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
