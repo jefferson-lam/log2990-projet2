@@ -27,14 +27,14 @@ describe('AerosolCommandService', () => {
             ],
         );
         command = new AerosolCommand(baseCtxStub, aerosolService);
-        airBrushSpy = spyOn<any>(command, 'airBrushCircle').and.callThrough();
+        airBrushSpy = spyOn<any>(command, 'sprayAirBrush').and.callThrough();
     });
 
     it('should be created', () => {
         expect(command).toBeTruthy();
     });
 
-    it('execute should call airBrushCircle', () => {
+    it('execute should call sprayAirBrush', () => {
         command.execute();
         expect(airBrushSpy).toHaveBeenCalled();
     });
@@ -49,10 +49,18 @@ describe('AerosolCommandService', () => {
         expect(command['primaryColor']).toEqual(aerosolService.primaryColor);
     });
 
-    it('airBrushCircle should call canvas functions', () => {
-        const fillRectSpy = spyOn(baseCtxStub, 'fillRect').and.callThrough();
-        command['airBrushCircle'](command['ctx'], AerosolConstants.MIN_EMISSION);
+    it('sprayAirBrush should call canvas functions', () => {
+        const arcSpy = spyOn(baseCtxStub, 'arc').and.callThrough();
+        const fillSpy = spyOn(baseCtxStub, 'fill').and.callThrough();
+        command['sprayAirBrush'](command['ctx'], AerosolConstants.MIN_EMISSION);
         expect(airBrushSpy).toHaveBeenCalled();
-        expect(fillRectSpy).toHaveBeenCalled();
+        expect(arcSpy).toHaveBeenCalled();
+        expect(fillSpy).toHaveBeenCalled();
+    });
+
+    it('sprayAirBrush should set primary color', () => {
+        command['sprayAirBrush'](command['ctx'], AerosolConstants.MIN_EMISSION);
+        expect(airBrushSpy).toHaveBeenCalled();
+        expect(baseCtxStub.fillStyle).toEqual('#2f2a36');
     });
 });

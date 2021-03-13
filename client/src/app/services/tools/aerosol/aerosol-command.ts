@@ -31,15 +31,19 @@ export class AerosolCommand extends Command {
     execute(): void {
         if (!this.preview) {
             for (let index = 0; index < this.path.length - 1; index++) {
-                this.airBrushCircle(this.ctx, index);
+                this.sprayAirBrush(this.ctx, index);
             }
         }
-        this.airBrushCircle(this.ctx);
+        this.sprayAirBrush(this.ctx);
     }
 
-    private airBrushCircle(ctx: CanvasRenderingContext2D, index?: number): void {
+    private sprayAirBrush(ctx: CanvasRenderingContext2D, index?: number): void {
         if (!index) index = this.path.length - 1;
+        ctx.beginPath();
+        ctx.setLineDash([]);
+        ctx.lineJoin = 'round';
+        ctx.arc(this.path[index].x, this.path[index].y, this.waterDropWidth / 2, 0, 2 * Math.PI);
         ctx.fillStyle = this.primaryColor;
-        ctx.fillRect(this.path[index].x, this.path[index].y, this.waterDropWidth, this.waterDropWidth);
+        ctx.fill();
     }
 }
