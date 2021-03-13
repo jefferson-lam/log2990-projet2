@@ -5,6 +5,7 @@ import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -154,6 +155,15 @@ describe('EditorComponent', () => {
         expect(modalPopUpSpy).toHaveBeenCalledWith('export');
     });
 
+    it("should call openModalPopUp with argument 'save' when 'ctrl+s' key is down", () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyS', key: '' });
+        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
+        component.onKeyboardDown(eventSpy);
+
+        expect(modalPopUpSpy).toHaveBeenCalled();
+        expect(modalPopUpSpy).toHaveBeenCalledWith('save');
+    });
+
     it("should not call openModalPopUp when only 'ctrl' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: '', key: '' });
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
@@ -256,6 +266,13 @@ describe('EditorComponent', () => {
         expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
+    });
+
+    it('openModalPopUp should open SaveDrawingComponent if type of popUp is save', () => {
+        component.openModalPopUp('save');
+
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(SaveDrawingComponent);
     });
 
     it('openModalPopUp should not open anything if canvas is empty', () => {

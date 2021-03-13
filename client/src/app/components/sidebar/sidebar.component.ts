@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { Tool } from '@app/classes/tool';
-import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -39,7 +37,7 @@ export class SidebarComponent implements OnChanges {
         { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' },
     ];
 
-    constructor(public toolManagerService: ToolManagerService, public dialog: MatDialog, private undoRedoService: UndoRedoService) {
+    constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService) {
         this.shouldRun = false;
         this.selectedTool = this.sidebarToolButtons[0];
         this.undoRedoService.pileSizeObservable.subscribe((sizes: number[]) => {
@@ -80,6 +78,10 @@ export class SidebarComponent implements OnChanges {
         this.openPopUp.emit('export');
     }
 
+    saveDrawing(): void {
+        this.openPopUp.emit('save');
+    }
+
     undo(): void {
         if (!this.currentTool.inUse) {
             this.undoRedoService.undo();
@@ -90,9 +92,5 @@ export class SidebarComponent implements OnChanges {
         if (!this.currentTool.inUse) {
             this.undoRedoService.redo();
         }
-    }
-
-    openSaveDrawingMenu(): void {
-        this.dialog.open(SaveDrawingComponent, {});
     }
 }

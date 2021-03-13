@@ -5,9 +5,7 @@
             <mat-form-field appearance="fill">
                 <mat-label>Titre</mat-label>
                 <input #titleInput matInput />
-                <!--mat-error *ngIf="titleInput.value.length === 0"> Titre ne peut être vide</mat-error -->
             </mat-form-field>
-            <!--app-tag-manager></app-tag-manager-->
             <mat-form-field appearance="fill">
                 <mat-label>Tags</mat-label>
                 <input #tagInput matInput />
@@ -25,6 +23,6 @@
         <input #savebutton type="button" value="Save" (click)="saveDrawing(titleInput.value, tags)" />
     </div>
     <app-save-saving-page *ngIf="saveProgress === saveProgressEnum.SAVING"></app-save-saving-page>
-    <app-save-complete-page [reason]="resultMessage" *ngIf="saveProgress === saveProgressEnum.COMPLTETE"></app-save-complete-page>
+    <app-save-complete-page [reason]="resultMessage" *ngIf="saveProgress === saveProgressEnum.COMPLETE"></app-save-complete-page>
     <app-save-error-page [reason]="resultMessage" *ngIf="saveProgress === saveProgressEnum.ERROR"></app-save-error-page>
 </div>

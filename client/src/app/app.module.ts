@@ -40,6 +40,8 @@ import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-optio
 import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-polygone/sidebar-polygone.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { TagValidatorComponent } from './components/sidebar/save-drawing/tag-validator/tag-validator.component';
+import { TitleValidatorComponent } from './components/sidebar/save-drawing-page/title-validator/title-validator.component';
 
 @NgModule({
     declarations: [
@@ -62,6 +64,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SaveSavingPageComponent,
         SaveErrorPageComponent,
         SidebarPolygoneComponent,
+        TagValidatorComponent,
+        TitleValidatorComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -46,6 +47,9 @@ export class EditorComponent implements OnInit {
                     case 'KeyE':
                         this.openModalPopUp('export');
                         break;
+                    case 'KeyS':
+                        this.openModalPopUp('save');
+                        break;
                     case 'KeyZ':
                         if (!this.currentTool.inUse) {
                             if (event.shiftKey) {
@@ -80,6 +84,9 @@ export class EditorComponent implements OnInit {
                 this.newDialog.open(NewDrawingBoxComponent);
                 this.isPopUpOpen = true;
             }
+        } else if (type === 'save') {
+            this.newDialog.open(SaveDrawingComponent);
+            this.isPopUpOpen = true;
         }
     }
 

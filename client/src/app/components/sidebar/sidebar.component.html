@@ -10,7 +10,12 @@
                 >
             </li>
             <li>
-                <mat-icon style="color: white" matTooltip="Sauvegarder" [matTooltipPosition]="'right'" (click)="openSaveDrawingMenu()"
+                <mat-icon
+                    id="save-drawing-button"
+                    style="color: white"
+                    matTooltip="Sauvegarder"
+                    [matTooltipPosition]="'right'"
+                    (click)="saveDrawing()"
                     >save_alt</mat-icon
                 >
             </li>
@@ -25,13 +30,6 @@
                 <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
                     >open_in_new</mat-icon
                 >
-            </li>
-            <li><mat-icon matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
-            <li id="undoButton" [class.unclickable]="!isUndoPossible" (click)="undo()">
-                <mat-icon matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
-            </li>
-            <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
-                <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
             </li>
         </ul>
         <ul class="tools-sidebar">
@@ -57,9 +55,7 @@
                 <app-sidebar-rectangle class="sidebar-tool-options" *ngSwitchCase="'1'"></app-sidebar-rectangle>
                 <app-sidebar-ellipse class="sidebar-tool-options" *ngSwitchCase="'2'"></app-sidebar-ellipse>
                 <app-sidebar-line class="sidebar-tool-options" *ngSwitchCase="'l'"></app-sidebar-line>
-                <<<<<<< HEAD =======
                 <app-sidebar-polygone class="sidebar-tool-options" *ngSwitchCase="'3'"></app-sidebar-polygone>
-                >>>>>>> dev
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>
