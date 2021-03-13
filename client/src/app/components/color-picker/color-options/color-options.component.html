@@ -3,7 +3,7 @@
         <app-color-palette [hue]="hue" [currentOpacity]="color.alpha" (color)="color = $event"></app-color-palette>
         <app-color-slider (hue)="hue = $event"></app-color-slider>
     </div>
-    <app-rgb-selector [initialColor]="color" (newColor)="color = $event" ></app-rgb-selector>
+    <app-rgb-selector [initialColor]="color" (newColor)="color = $event"></app-rgb-selector>
     <div class="opacity-wrap">
         <span type="text">Opacité</span>
         <mat-slider thumbLabel [step]="step" [min]="min" [max]="max" [(value)]="color.alpha"></mat-slider>
