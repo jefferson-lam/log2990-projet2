@@ -278,4 +278,32 @@ describe('PolygoneCommand', () => {
         );
         expect(lineSpy).toHaveBeenCalled();
     });
+
+    it('getPolygoneCenter should set polygone center', () => {
+        const start = command.cornerCoords[PolygoneConstants.START_INDEX];
+        const end = command.cornerCoords[PolygoneConstants.END_INDEX];
+        const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
+        const xVector = end.x - start.x;
+        const yVector = end.y - start.y;
+
+        // tslint:disable:no-string-literal
+        const center = command['getPolygoneCenter'](start, end);
+
+        expect(center.x).toEqual(start.x + Math.sign(xVector) * shortestSide);
+        expect(center.y).toEqual(start.y + Math.sign(yVector) * shortestSide);
+    });
+
+    it('getRadiiXAndY should set radius to shortest side always', () => {
+        const start = command.cornerCoords[PolygoneConstants.START_INDEX];
+        const end = command.cornerCoords[PolygoneConstants.END_INDEX];
+        const xRadius = Math.abs(end.x - start.x) / 2;
+        const yRadius = Math.abs(end.y - start.y) / 2;
+        const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
+
+        // tslint:disable:no-string-literal
+        const radii = command['getRadiiXAndY'](command.cornerCoords);
+
+        expect(radii[0]).toEqual(shortestSide);
+        expect(radii[1]).toEqual(shortestSide);
+    });
 });

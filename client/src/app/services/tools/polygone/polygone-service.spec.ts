@@ -77,6 +77,7 @@ describe('PolygoneService', () => {
     it('onMouseUp should call executeCommand and change primary color', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.inUse = true;
+        service.drawShape = true;
         service.fillMode = 1;
         service.onMouseUp(mouseEvent);
         expect(executeSpy).toHaveBeenCalled();
@@ -239,5 +240,56 @@ describe('PolygoneService', () => {
         const EXPECTED_RANDOM_COLOR = 'green';
         service.setSecondaryColor(EXPECTED_RANDOM_COLOR);
         expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
+    });
+
+    it('getPolygoneCenter should set polygone center', () => {
+        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
+        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
+        const xVector = end.x - start.x;
+        const yVector = end.y - start.y;
+
+        // tslint:disable:no-string-literal
+        const center = service['getPolygoneCenter'](start, end);
+
+        expect(center.x).toEqual(start.x + Math.sign(xVector) * shortestSide);
+        expect(center.y).toEqual(start.y + Math.sign(yVector) * shortestSide);
+    });
+
+    it('getRadiiXAndY should set radius to shortest side always', () => {
+        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
+        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const xRadius = Math.abs(end.x - start.x) / 2;
+        const yRadius = Math.abs(end.y - start.y) / 2;
+        const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
+
+        // tslint:disable:no-string-literal
+        const radii = service['getRadiiXAndY'](service.cornerCoords);
+
+        expect(radii[0]).toEqual(shortestSide);
+        expect(radii[1]).toEqual(shortestSide);
+    });
+
+    it(' onKeyboardDown of escape keypress should call clearCanvas', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+
+        const keyEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+
+        service.onKeyboardDown(keyEvent);
+        expect(service.drawShape).toEqual(false);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it(' onKeyboardDown of wrong keypress should not call clearCanvas', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+
+        const keyEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+
+        service.onKeyboardDown(keyEvent);
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 });
