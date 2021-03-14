@@ -2,26 +2,10 @@
     <div *ngIf="saveProgress === saveProgressEnum.CHOOSING_SETTING">
         <form>
             <h1>Sauvegarder une image</h1>
-            <app-tag-input #tagInput></app-tag-input>
-            <!--mat-form-field appearance="fill">
-                <mat-label>Titre</mat-label>
-                <input #titleInput matInput />
-            </mat-form-field>
-            <mat-form-field appearance="fill">
-                <mat-label>Tags</mat-label>
-                <input #tagInput matInput />
-            </mat-form-field>
-            <input type="button" value="Ajouter un tag" (click)="addTag(tagInput.value)" />
-            <div class="tagsDiv" *ngFor="let tag of tags">
-                <div class="tag">
-                    <p class="tagLabel">{{ tag }}</p>
-                    <button class="tagDeleteButton" (click)="deleteTag(tag)">
-                        <mat-icon [inline]="true">clear</mat-icon>
-                    </button>
-                </div>
-            </div-->
+            <app-title-input #titleInput (isTitleValidEvent)="verifyTitleValid($event)"></app-title-input>
+            <app-tag-input #tagInput (areTagsValidEvent)="verifyTagsValid($event)"></app-tag-input>
         </form>
-        <input #savebutton type="button" value="Save" (click)="saveDrawing('test')" />
+        <input #savebutton type="button" value="Save" [disabled]="!isSavePossible" (click)="saveDrawing()" />
     </div>
     <app-save-saving-page *ngIf="saveProgress === saveProgressEnum.SAVING"></app-save-saving-page>
     <app-save-complete-page [reason]="resultMessage" *ngIf="saveProgress === saveProgressEnum.COMPLETE"></app-save-complete-page>

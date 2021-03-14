@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import * as DatabaseConstants from '@common/validation/database-constants';
 
@@ -12,6 +12,7 @@ export class TagInputComponent {
     tags: string[] = new Array();
 
     isSavePossible: boolean = false;
+    @Output() areTagsValidEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     distinctTagsRequirement: string = 'Ne peut pas avoir deux étiquettes identiques.';
     distinctTagsDivClass: string;
@@ -27,7 +28,6 @@ export class TagInputComponent {
 
     maxTagsCountRequirement: string = `Ne peut pas avoir plus que ${DatabaseConstants.MAX_TAGS_COUNT} étiquettes.`;
     maxTagsCountDivClass: string;
-    constructor() {}
 
     addTag(tag: string): void {
         if (this.checkIsTagValid(tag)) {
@@ -85,11 +85,11 @@ export class TagInputComponent {
         }
 
         if (unsatisfiedRequirements > 0) {
-            // TODO:  DISABLE BUTTON
             this.isSavePossible = false;
+            this.areTagsValidEvent.emit(false);
         } else {
-            // ENABLE BUTTON
             this.isSavePossible = true;
+            this.areTagsValidEvent.emit(true);
         }
     }
 
@@ -108,31 +108,28 @@ export class TagInputComponent {
         return this.tags.length === DatabaseConstants.MAX_TAGS_COUNT;
     }
 
-    // Tag not empty
-    // Can't have same tag twice
-    // Not more than 30 tags
-    // Each tag not more than 20 chars
-    // Only ascii chars
     private checkIsTagValid(tag: string): boolean {
         // TODO: Add check for tag
+        let requirementViolations = 0;
         if (this.tags.includes(tag)) {
-            return false;
+            requirementViolations++;
         }
         if (this.tagIsShorterThanMinLength(tag)) {
-            return false;
+            requirementViolations++;
         }
         if (this.tagIsLongerThanMaxLength(tag)) {
-            return false;
+            requirementViolations++;
         }
 
         if (this.tagHasSpecialCharacters(tag)) {
-            return false;
+            requirementViolations++;
         }
 
         if (this.tagsHasReachedMaxCount()) {
-            return false;
+            requirementViolations++;
         }
-
-        return true;
+        const requirementViolated = requirementViolations > 0;
+        this.areTagsValidEvent.emit(!requirementViolated);
+        return !requirementViolated;
     }
 }

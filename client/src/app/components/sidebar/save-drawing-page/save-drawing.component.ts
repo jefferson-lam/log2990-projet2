@@ -4,6 +4,7 @@ import { DatabaseService } from '@app/services/database/database.service';
 import { Message } from '@common/communication/message';
 import { timeout } from 'rxjs/operators';
 import { TagInputComponent } from './tag-input/tag-input.component';
+import { TitleInputComponent } from './title-input/title-input.component';
 @Component({
     selector: 'app-save-drawing',
     templateUrl: './save-drawing.component.html',
@@ -11,17 +12,35 @@ import { TagInputComponent } from './tag-input/tag-input.component';
 })
 export class SaveDrawingComponent {
     @ViewChild('tagInput') private tagInput: TagInputComponent;
+    @ViewChild('titleInput') private titleInput: TitleInputComponent;
     resultMessage: string = '';
     saveProgressEnum: typeof SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress;
     saveProgress: SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress.CHOOSING_SETTING;
     request: Message = { title: 'Error', body: '' };
+    isTitleValid: boolean = false;
+    areTagsValid: boolean = true;
+    isSavePossible: boolean = false;
 
-    constructor(private database: DatabaseService) {} // , private tagInput: TagInputComponent) {}
+    constructor(private database: DatabaseService) {}
 
-    saveDrawing(title: string): void {
+    verifyTitleValid(isTitleValid: boolean): void {
+        this.isTitleValid = isTitleValid;
+        this.verifySavePossible();
+    }
+
+    verifyTagsValid(areTagsValid: boolean): void {
+        this.areTagsValid = areTagsValid;
+        this.verifySavePossible();
+    }
+
+    private verifySavePossible(): void {
+        this.isSavePossible = this.isTitleValid && this.areTagsValid;
+    }
+
+    saveDrawing(): void {
         this.saveProgress = SaveDrawingConstants.SaveProgress.SAVING;
         this.database
-            .saveDrawing(title, this.tagInput.tags)
+            .saveDrawing(this.titleInput.title, this.tagInput.tags)
             .pipe(timeout(SaveDrawingConstants.TIMEOUT_MAX_TIME))
             .subscribe({
                 complete: () => {
