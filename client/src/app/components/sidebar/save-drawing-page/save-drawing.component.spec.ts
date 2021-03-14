@@ -1,6 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { MatDialogRef } from '@angular/material/dialog';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import { DatabaseService } from '@app/services/database/database.service';
 import { of, throwError } from 'rxjs';
@@ -21,12 +22,17 @@ describe('SaveDrawingComponent', () => {
     let tagInputComponent: TagInputComponent;
     let fakeTitleInputFixture: ComponentFixture<TitleInputComponent>;
     let titleInputComponent: TitleInputComponent;
+    let matDialogRefStub: MatDialogRef<any>;
 
     beforeEach(async(() => {
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawings', 'getDrawing', 'saveDrawing', 'dropDrawing']);
+        matDialogRefStub = {} as MatDialogRef<any>;
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
-            providers: [{ provide: DatabaseService, useValue: databaseServiceSpy }],
+            providers: [
+                { provide: DatabaseService, useValue: databaseServiceSpy },
+                { provide: MatDialogRef, useValue: matDialogRefStub },
+            ],
             declarations: [SaveDrawingComponent, SaveSavingPageComponent, SaveCompletePageComponent, SaveErrorPageComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();

@@ -1,4 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import { DatabaseService } from '@app/services/database/database.service';
 import { Message } from '@common/communication/message';
@@ -21,7 +22,7 @@ export class SaveDrawingComponent {
     areTagsValid: boolean = true;
     isSavePossible: boolean = false;
 
-    constructor(private database: DatabaseService) {}
+    constructor(private database: DatabaseService, @Inject(MatDialogRef) private dialogRef: MatDialogRef<SaveDrawingComponent>) {}
 
     verifyTitleValid(isTitleValid: boolean): void {
         this.isTitleValid = isTitleValid;
@@ -38,6 +39,7 @@ export class SaveDrawingComponent {
     }
 
     saveDrawing(): void {
+        this.dialogRef.disableClose = true;
         this.saveProgress = SaveDrawingConstants.SaveProgress.SAVING;
         this.database
             .saveDrawing(this.titleInput.title, this.tagInput.tags)
@@ -51,6 +53,7 @@ export class SaveDrawingComponent {
                         this.resultMessage = this.request.body;
                     }
                     this.resultMessage = this.request.body;
+                    this.dialogRef.disableClose = false;
                 },
                 next: (result: Message) => {
                     this.request = result;
@@ -60,6 +63,7 @@ export class SaveDrawingComponent {
                     if (error.message.includes('Timeout')) {
                         this.resultMessage = 'Temps de connection au serveur a expiré.';
                     }
+                    this.dialogRef.disableClose = false;
                 },
             });
     }
