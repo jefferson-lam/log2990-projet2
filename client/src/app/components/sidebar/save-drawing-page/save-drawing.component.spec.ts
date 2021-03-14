@@ -14,6 +14,7 @@ import { TitleInputComponent } from './title-input/title-input.component';
 import SpyObj = jasmine.SpyObj;
 
 // tslint:disable:no-string-literal
+// tslint:disable:no-any
 describe('SaveDrawingComponent', () => {
     let component: SaveDrawingComponent;
     let fixture: ComponentFixture<SaveDrawingComponent>;
