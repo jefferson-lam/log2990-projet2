@@ -1,27 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import { DatabaseService } from '@app/services/database/database.service';
 import { Message } from '@common/communication/message';
 import { timeout } from 'rxjs/operators';
+import { TagInputComponent } from './tag-input/tag-input.component';
 @Component({
     selector: 'app-save-drawing',
     templateUrl: './save-drawing.component.html',
     styleUrls: ['./save-drawing.component.scss'],
 })
 export class SaveDrawingComponent {
+    @ViewChild('tagInput') private tagInput: TagInputComponent;
     resultMessage: string = '';
     saveProgressEnum: typeof SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress;
     saveProgress: SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress.CHOOSING_SETTING;
-    tags: string[] = new Array();
     request: Message = { title: 'Error', body: '' };
 
-    constructor(public database: DatabaseService) {}
+    constructor(private database: DatabaseService) {} // , private tagInput: TagInputComponent) {}
 
-    saveDrawing(title: string, tags: string[]): void {
-        // FIND CONDITION FOR THIS
+    saveDrawing(title: string): void {
         this.saveProgress = SaveDrawingConstants.SaveProgress.SAVING;
         this.database
-            .saveDrawing(title, tags)
+            .saveDrawing(title, this.tagInput.tags)
             .pipe(timeout(SaveDrawingConstants.TIMEOUT_MAX_TIME))
             .subscribe({
                 complete: () => {

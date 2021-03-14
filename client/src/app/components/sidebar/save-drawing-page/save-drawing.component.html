@@ -2,7 +2,7 @@
     <div *ngIf="saveProgress === saveProgressEnum.CHOOSING_SETTING">
         <form>
             <h1>Sauvegarder une image</h1>
-            <app-tag-input></app-tag-input>
+            <app-tag-input #tagInput></app-tag-input>
             <!--mat-form-field appearance="fill">
                 <mat-label>Titre</mat-label>
                 <input #titleInput matInput />
@@ -21,7 +21,7 @@
                 </div>
             </div-->
         </form>
-        <input #savebutton type="button" value="Save" (click)="saveDrawing('test', tags)" />
+        <input #savebutton type="button" value="Save" (click)="saveDrawing('test')" />
     </div>
     <app-save-saving-page *ngIf="saveProgress === saveProgressEnum.SAVING"></app-save-saving-page>
     <app-save-complete-page [reason]="resultMessage" *ngIf="saveProgress === saveProgressEnum.COMPLETE"></app-save-complete-page>

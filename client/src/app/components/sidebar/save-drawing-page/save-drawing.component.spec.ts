@@ -8,6 +8,7 @@ import { SaveCompletePageComponent } from './save-complete-page/save-complete-pa
 import { SaveDrawingComponent } from './save-drawing.component';
 import { SaveErrorPageComponent } from './save-error-page/save-error-page.component';
 import { SaveSavingPageComponent } from './save-saving-page/save-saving-page.component';
+import { TagInputComponent } from './tag-input/tag-input.component';
 
 import SpyObj = jasmine.SpyObj;
 
@@ -15,6 +16,8 @@ describe('SaveDrawingComponent', () => {
     let component: SaveDrawingComponent;
     let fixture: ComponentFixture<SaveDrawingComponent>;
     let databaseServiceSpy: SpyObj<DatabaseService>;
+    let fakeTagInputFixture: ComponentFixture<TagInputComponent>;
+    let tagInputComponent: TagInputComponent;
 
     beforeEach(async(() => {
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawings', 'getDrawing', 'saveDrawing', 'dropDrawing']);
@@ -29,6 +32,10 @@ describe('SaveDrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(SaveDrawingComponent);
         component = fixture.componentInstance;
+        fakeTagInputFixture = TestBed.createComponent(TagInputComponent);
+        tagInputComponent = fakeTagInputFixture.componentInstance;
+        component['tagInput'] = tagInputComponent;
+        component['tagInput'].tags = [];
     });
 
     it('should create', () => {
@@ -38,29 +45,27 @@ describe('SaveDrawingComponent', () => {
     it('should call saveDrawings when calling saveDrawings', () => {
         databaseServiceSpy.saveDrawing.and.returnValue(of({ title: 'Success', body: '' }));
         const testTitle = 'test';
-        const testTags = ['test'];
-        component.saveDrawing(testTitle, testTags);
+        component.saveDrawing(testTitle);
         expect(databaseServiceSpy.saveDrawing).toHaveBeenCalled();
     });
 
     it('should handle case where error message is received', async () => {
         databaseServiceSpy.saveDrawing.and.returnValue(of({ title: 'Error', body: '' }));
         const testTitle = 'test';
-        const testTags = ['test'];
-        component.saveDrawing(testTitle, testTags);
+        component.saveDrawing(testTitle);
         expect(databaseServiceSpy.saveDrawing).toHaveBeenCalled();
     });
 
     it('should handle setTimeoutError on saveDrawing', fakeAsync(() => {
         databaseServiceSpy.saveDrawing.and.returnValue(throwError(new Error('Timeout')));
-        component.saveDrawing('testTitle', ['testTag']);
+        component.saveDrawing('testTitle');
         tick(SaveDrawingConstants.TIMEOUT_MAX_TIME + 1);
         expect(component.saveProgress).toEqual(SaveDrawingConstants.SaveProgress.ERROR);
     }));
 
     it('should handle errors on saveDrawing', () => {
         databaseServiceSpy.saveDrawing.and.returnValue(throwError(new Error('Random')));
-        component.saveDrawing('testTitle', ['testTag']);
+        component.saveDrawing('testTitle');
         expect(component.saveProgress).toEqual(SaveDrawingConstants.SaveProgress.ERROR);
     });
 });
