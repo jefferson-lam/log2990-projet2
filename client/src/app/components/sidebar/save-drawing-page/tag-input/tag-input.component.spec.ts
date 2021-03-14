@@ -122,7 +122,6 @@ describe('TagValidatorComponent', () => {
         expect(component.isSavePossible).toEqual(true);
     });
 
-    // HERE
     it('addTag should handle case where tag already exists in tags', () => {
         const testTag = 'test';
         component.tags.push(testTag);

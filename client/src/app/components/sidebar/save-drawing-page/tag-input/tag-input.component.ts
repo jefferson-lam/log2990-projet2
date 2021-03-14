@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import * as DatabaseConstants from '@common/validation/database-constants';
 
@@ -8,6 +8,7 @@ import * as DatabaseConstants from '@common/validation/database-constants';
     styleUrls: ['./tag-input.component.scss'],
 })
 export class TagInputComponent {
+    @ViewChild('tagInput') tagInput: ElementRef;
     currentTag: string;
     tags: string[] = new Array();
 
@@ -30,9 +31,10 @@ export class TagInputComponent {
     maxTagsCountDivClass: string;
 
     addTag(tag: string): void {
-        if (this.checkIsTagValid(tag)) {
+        if (this.validateTag(tag)) {
             this.tags.push(tag);
         }
+        this.tagInput.nativeElement.value = '';
     }
 
     deleteTag(tag: string): void {
@@ -42,7 +44,7 @@ export class TagInputComponent {
         }
     }
 
-    validateTag(tag: string): void {
+    validateTag(tag: string): boolean {
         let unsatisfiedRequirements = 0;
         // Change class for distinct tags requirement
         if (this.tags.includes(tag)) {
@@ -84,13 +86,11 @@ export class TagInputComponent {
             this.maxTagsCountDivClass = 'Satisfied';
         }
 
-        if (unsatisfiedRequirements > 0) {
-            this.isSavePossible = false;
-            this.areTagsValidEvent.emit(false);
-        } else {
-            this.isSavePossible = true;
-            this.areTagsValidEvent.emit(true);
-        }
+        const requirementViolated = unsatisfiedRequirements > 0;
+        // emit to save-drawing-page that tags aren't valid
+        this.areTagsValidEvent.emit(!requirementViolated);
+        this.isSavePossible = !requirementViolated;
+        return !requirementViolated;
     }
 
     private tagIsShorterThanMinLength(tag: string): boolean {
@@ -108,28 +108,28 @@ export class TagInputComponent {
         return this.tags.length === DatabaseConstants.MAX_TAGS_COUNT;
     }
 
-    private checkIsTagValid(tag: string): boolean {
-        // TODO: Add check for tag
-        let requirementViolations = 0;
-        if (this.tags.includes(tag)) {
-            requirementViolations++;
-        }
-        if (this.tagIsShorterThanMinLength(tag)) {
-            requirementViolations++;
-        }
-        if (this.tagIsLongerThanMaxLength(tag)) {
-            requirementViolations++;
-        }
+    // private checkIsTagValid(tag: string): boolean {
+    //     // TODO: Add check for tag
+    //     let requirementViolations = 0;
+    //     if (this.tags.includes(tag)) {
+    //         requirementViolations++;
+    //     }
+    //     if (this.tagIsShorterThanMinLength(tag)) {
+    //         requirementViolations++;
+    //     }
+    //     if (this.tagIsLongerThanMaxLength(tag)) {
+    //         requirementViolations++;
+    //     }
 
-        if (this.tagHasSpecialCharacters(tag)) {
-            requirementViolations++;
-        }
+    //     if (this.tagHasSpecialCharacters(tag)) {
+    //         requirementViolations++;
+    //     }
 
-        if (this.tagsHasReachedMaxCount()) {
-            requirementViolations++;
-        }
-        const requirementViolated = requirementViolations > 0;
-        this.areTagsValidEvent.emit(!requirementViolated);
-        return !requirementViolated;
-    }
+    //     if (this.tagsHasReachedMaxCount()) {
+    //         requirementViolations++;
+    //     }
+    //     const requirementViolated = requirementViolations > 0;
+    //     this.areTagsValidEvent.emit(!requirementViolated);
+    //     return !requirementViolated;
+    // }
 }
