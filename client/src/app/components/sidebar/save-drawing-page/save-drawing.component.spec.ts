@@ -11,7 +11,7 @@ import { SaveSavingPageComponent } from './save-saving-page/save-saving-page.com
 
 import SpyObj = jasmine.SpyObj;
 
-fdescribe('SaveDrawingComponent', () => {
+describe('SaveDrawingComponent', () => {
     let component: SaveDrawingComponent;
     let fixture: ComponentFixture<SaveDrawingComponent>;
     let databaseServiceSpy: SpyObj<DatabaseService>;
@@ -33,19 +33,6 @@ fdescribe('SaveDrawingComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
-    });
-
-    it('addTag should add a tag into tags if it is valid.', () => {
-        const testTag = 'testTag';
-        component.addTag(testTag);
-        expect(component.tags.length).toBeGreaterThan(0);
-    });
-
-    it('deleteTag should remove tag from tags if it exists.', () => {
-        const testTag = 'testTag';
-        component.tags.push(testTag);
-        component.deleteTag(testTag);
-        expect(component.tags).not.toContain(testTag);
     });
 
     it('should call saveDrawings when calling saveDrawings', () => {
@@ -70,4 +57,10 @@ fdescribe('SaveDrawingComponent', () => {
         tick(SaveDrawingConstants.TIMEOUT_MAX_TIME + 1);
         expect(component.saveProgress).toEqual(SaveDrawingConstants.SaveProgress.ERROR);
     }));
+
+    it('should handle errors on saveDrawing', () => {
+        databaseServiceSpy.saveDrawing.and.returnValue(throwError(new Error('Random')));
+        component.saveDrawing('testTitle', ['testTag']);
+        expect(component.saveProgress).toEqual(SaveDrawingConstants.SaveProgress.ERROR);
+    });
 });
