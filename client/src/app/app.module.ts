@@ -33,6 +33,8 @@ import { SaveCompletePageComponent } from './components/sidebar/save-drawing-pag
 import { SaveDrawingComponent } from './components/sidebar/save-drawing-page/save-drawing.component';
 import { SaveErrorPageComponent } from './components/sidebar/save-drawing-page/save-error-page/save-error-page.component';
 import { SaveSavingPageComponent } from './components/sidebar/save-drawing-page/save-saving-page/save-saving-page.component';
+import { TagInputComponent } from './components/sidebar/save-drawing-page/tag-input/tag-input.component';
+import { TitleValidatorComponent } from './components/sidebar/save-drawing-page/title-validator/title-validator.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
@@ -40,8 +42,6 @@ import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-optio
 import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-polygone/sidebar-polygone.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { TagValidatorComponent } from './components/sidebar/save-drawing/tag-validator/tag-validator.component';
-import { TitleValidatorComponent } from './components/sidebar/save-drawing-page/title-validator/title-validator.component';
 
 @NgModule({
     declarations: [
@@ -64,7 +64,7 @@ import { TitleValidatorComponent } from './components/sidebar/save-drawing-page/
         SaveSavingPageComponent,
         SaveErrorPageComponent,
         SidebarPolygoneComponent,
-        TagValidatorComponent,
+        TagInputComponent,
         TitleValidatorComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],

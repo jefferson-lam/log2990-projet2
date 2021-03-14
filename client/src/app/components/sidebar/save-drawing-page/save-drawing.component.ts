@@ -17,19 +17,6 @@ export class SaveDrawingComponent {
 
     constructor(public database: DatabaseService) {}
 
-    addTag(tag: string): void {
-        if (this.checkIsTagValid(tag)) {
-            this.tags.push(tag);
-        }
-    }
-
-    deleteTag(tag: string): void {
-        const index = this.tags.indexOf(tag, 0);
-        if (index > SaveDrawingConstants.TAG_NOT_FOUND) {
-            this.tags.splice(index, 1);
-        }
-    }
-
     saveDrawing(title: string, tags: string[]): void {
         if (this.isTitleValid(title)) {
             this.saveProgress = SaveDrawingConstants.SaveProgress.SAVING;
@@ -57,27 +44,6 @@ export class SaveDrawingComponent {
                     },
                 });
         }
-    }
-
-    private tagIsEmpty(tag: string): boolean {
-        return tag.length === 0;
-    }
-
-    // Tag not empty
-    // Not more than 30 tags
-    // Each tag not more than 20 chars
-    // Only ascii chars
-    private checkIsTagValid(tag: string): boolean {
-        // TODO: Add check for tag
-        if (this.tags.includes(tag)) {
-            alert('You cannot put that tag in again!');
-            return false;
-        }
-        if (this.tagIsEmpty(tag)) {
-            alert('Tag cannot be empty!');
-            return false;
-        }
-        return true;
     }
 
     // Title empty
