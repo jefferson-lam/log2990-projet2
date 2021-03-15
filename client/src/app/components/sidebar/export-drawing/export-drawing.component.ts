@@ -28,7 +28,7 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.setPopupSizes();
         this.type = 'png';
         this.name = 'Image';
-        this.filter = 'original';
+        this.filter = 'none';
         this.link = document.createElement('a');
     }
 
