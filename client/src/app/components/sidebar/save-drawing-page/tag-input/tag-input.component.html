@@ -1,0 +1,20 @@
+<mat-form-field appearance="fill">
+    <mat-label>Tags</mat-label>
+    <input #tagInput matInput (input)="validateTag(tagInput.value)" />
+</mat-form-field>
+<input [disabled]="!isSavePossible" type="button" value="Ajouter un tag" (click)="addTag(tagInput.value)" #tagInput />
+<div>
+    <div #distinctTagsDiv [className]="distinctTagsDivClass">{{ distinctTagsRequirement }}</div>
+    <div #minLengthDiv [className]="minLengthDivClass">{{ minLengthRequirement }}</div>
+    <div #maxLengthDiv [className]="maxLengthDivClass">{{ maxLengthRequirement }}</div>
+    <div #noSpecialCharacterDiv [className]="noSpecialCharacterDivClass">{{ noSpecialCharacterRequirement }}</div>
+    <div #maxTagsCountDiv [className]="maxTagsCountDivClass">{{ maxTagsCountRequirement }}</div>
+</div>
+<div class="tagDiv" *ngFor="let tag of tags">
+    <div class="tag">
+        <p class="tagLabel">{{ tag }}</p>
+        <button class="tagDeleteButton" (click)="deleteTag(tag)">
+            <mat-icon [inline]="true">clear</mat-icon>
+        </button>
+    </div>
+</div>

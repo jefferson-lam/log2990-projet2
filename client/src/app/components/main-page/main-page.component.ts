@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { IndexService } from '@app/services/index/index.service';
-import { LocalServerService } from '@app/services/local-server/local-server.service';
 import { Message } from '@common/communication/message';
-import { ServerDrawing } from '@common/communication/server-drawing';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -20,7 +18,7 @@ export class MainPageComponent {
     oldDrawingTrue: boolean = true;
     drawingExists: boolean;
 
-    constructor(private basicService: IndexService, private localServerService: LocalServerService, public dialog: MatDialog) {}
+    constructor(private basicService: IndexService, public dialog: MatDialog) {}
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
@@ -41,11 +39,6 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
-    }
-
-    sendDrawingToServer(): void {
-        const drawing: ServerDrawing = { id: '123', pixels: [1, 2, 1], height: 100, width: 100 };
-        this.localServerService.sendDrawing(drawing).subscribe();
     }
 
     openCarousel(): void {

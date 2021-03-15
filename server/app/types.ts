@@ -1,12 +1,14 @@
 export const TYPES = {
-    Server: Symbol('Server'),
     Application: Symbol('Application'),
-    IndexController: Symbol('IndexController'),
     DateController: Symbol('DateController'),
-    DrawingsDatabaseController: Symbol('DrawingsDatabaseController'),
-    IndexService: Symbol('IndexService'),
     DateService: Symbol('DateService'),
+    DrawingsDatabaseController: Symbol('DrawingsDatabaseController'),
     DrawingsDatabaseService: Symbol('DrawingsDatabaseService'),
     LocalDrawingsService: Symbol('LocalDrawingsService'),
     LocalDrawingsController: Symbol('LocalDrawingsController'),
+    IndexController: Symbol('IndexController'),
+    IndexService: Symbol('IndexService'),
+    Server: Symbol('Server'),
+    TagValidatorService: Symbol('TagValidatorService'),
+    TitleValidatorService: Symbol('TitleValidatorService'),
 };
