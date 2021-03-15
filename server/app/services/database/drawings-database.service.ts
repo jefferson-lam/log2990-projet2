@@ -81,10 +81,10 @@ export class DrawingsDatabaseService {
         try {
             const drawingsCollection = await this.getCollection();
             const collectionDrawings: Drawing[] = await drawingsCollection.find().toArray();
-            let drawingsWithTags: Drawing[] = new Array();
-            for (let drawing of collectionDrawings) {
+            const drawingsWithTags: Drawing[] = new Array();
+            for (const drawing of collectionDrawings) {
                 let hasAllTags = true;
-                for (let tag of tags) {
+                for (const tag of tags) {
                     if (!drawing.tags.includes(tag)) {
                         hasAllTags = false;
                         break;
