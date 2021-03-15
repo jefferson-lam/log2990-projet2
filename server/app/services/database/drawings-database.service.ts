@@ -98,7 +98,6 @@ export class DrawingsDatabaseService {
                 title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: JSON.stringify(drawingsWithTags),
             };
-            console.log(successMessage);
             return successMessage;
         } catch (error) {
             console.error('Error while getting drawings: ', error);

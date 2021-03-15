@@ -52,7 +52,7 @@ describe('DrawingsDatabaseController', () => {
     });
 
     it('should return message from database service on valid get request with specific tags', async () => {
-        const testTags: string[] = ['1', '2'];
+        const testTags: string = "'1', '2'";
 
         return supertest(app)
             .get('/api/database/getTags')

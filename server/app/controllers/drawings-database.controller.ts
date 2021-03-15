@@ -152,7 +152,7 @@ export class DrawingsDatabaseController {
          *           type: array
          *           items:
          *             type: string
-         *         explode: true
+         *         explode: false
          *         style: matrix
          *         description: Tags attached to drawings.
          *     produces:
@@ -166,7 +166,8 @@ export class DrawingsDatabaseController {
         this.router.get('/getTags', async (req: Request, res: Response, next: NextFunction) => {
             // Send the request to the service and send the response
             // Turn single string or array of strings into array of strings
-            const tags: string[] = ((v: ConcatArray<never>) => [].concat(v))(req.query.tags);
+            const tagsString: string = req.query.tags as string;
+            const tags: string[] = tagsString.split(',');
             this.databaseService.getDrawingsByTags(tags).then((result: Message) => {
                 res.json(result);
             });
