@@ -37,9 +37,18 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
+        if (event.ctrlKey) {
+            switch (event.code) {
+                case 'KeyO':
+                case 'KeyE':
+                case 'KeyS':
+                default:
+                    event.preventDefault();
+            }
+        }
+
         if (!this.isPopUpOpen) {
             if (event.ctrlKey) {
-                event.preventDefault();
                 switch (event.code) {
                     case 'KeyO':
                         this.openModalPopUp('new');
