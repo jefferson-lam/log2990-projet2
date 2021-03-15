@@ -38,6 +38,9 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
         event.preventDefault();
+        if (this.isPopUpOpen && event.code === 'KeyS' && event.ctrlKey) {
+            event.preventDefault();
+        }
         if (!this.isPopUpOpen) {
             if (event.ctrlKey) {
                 switch (event.code) {
