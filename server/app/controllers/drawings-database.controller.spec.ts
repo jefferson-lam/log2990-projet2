@@ -43,7 +43,7 @@ describe('DrawingsDatabaseController', () => {
         const testID = '604055a4efc7ff42043e0a8c';
 
         return supertest(app)
-            .get('/api/database/getID')
+            .get('/api/database/getId')
             .query({ _id: testID })
             .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
