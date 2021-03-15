@@ -46,8 +46,7 @@ describe('DatabaseService', () => {
             expect(response.title).toEqual(expectedMessage.title, 'Title check');
             expect(response.body).toEqual(expectedMessage.body, 'body check');
         }, fail);
-        console.log('CONSOLE: ', httpMock);
-        const req = httpMock.expectOne(baseUrl + `/getTags?tags=1,2,3`);
+        const req = httpMock.expectOne(baseUrl + '/getTags?tags=1,2,3');
         expect(req.request.method).toBe('GET');
         // actually send the request
         req.flush(expectedMessage);
