@@ -24,15 +24,30 @@ describe('DatabaseService', () => {
         httpMock.verify();
     });
 
-    it('getDrawing should return expected message (HttpClient called once)', () => {
+    it('getDrawingById should return expected message (HttpClient called once)', () => {
         const expectedMessage: Message = { title: 'testTitle', body: 'testBody' };
         const testId = '6042a2b65ae55f5a1838be54';
         // check the content of the mocked call
-        service.getDrawing(testId).subscribe((response: Message) => {
+        service.getDrawingById(testId).subscribe((response: Message) => {
             expect(response.title).toEqual(expectedMessage.title, 'Title check');
             expect(response.body).toEqual(expectedMessage.body, 'body check');
         }, fail);
-        const req = httpMock.expectOne(baseUrl + `/get?_id=${testId}`);
+        const req = httpMock.expectOne(baseUrl + `/getId?_id=${testId}`);
+        expect(req.request.method).toBe('GET');
+        // actually send the request
+        req.flush(expectedMessage);
+    });
+
+    it('getDrawingByTags should return expected message (HttpClient called once)', () => {
+        const expectedMessage: Message = { title: 'testTitle', body: 'testBody' };
+        const testTags = ['1', '2', '3'];
+        // check the content of the mocked call
+        service.getDrawingsByTags(testTags).subscribe((response: Message) => {
+            expect(response.title).toEqual(expectedMessage.title, 'Title check');
+            expect(response.body).toEqual(expectedMessage.body, 'body check');
+        }, fail);
+        console.log('CONSOLE: ', httpMock);
+        const req = httpMock.expectOne(baseUrl + `/getTags?tags=1,2,3`);
         expect(req.request.method).toBe('GET');
         // actually send the request
         req.flush(expectedMessage);
@@ -67,7 +82,7 @@ describe('DatabaseService', () => {
         req.flush(expectedMessage);
     });
 
-    it('should return expected message when sending a POST request (HttpClient called once)', () => {
+    it('saveDrawing should return expected message when sending a POST request (HttpClient called once)', () => {
         const expectedMessage: Message = { title: 'Success', body: 'testBody' };
         const testTitle = 'testTitle';
         const testBody = ['test', 'body'];
