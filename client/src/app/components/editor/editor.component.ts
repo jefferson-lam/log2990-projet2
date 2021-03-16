@@ -3,11 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { SaveDrawingComponent } from '../sidebar/save-drawing-page/save-drawing.component';
 
 @Component({
     selector: 'app-editor',
