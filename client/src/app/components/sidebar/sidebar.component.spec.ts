@@ -31,6 +31,7 @@ describe('SidebarComponent', () => {
     let selectToolSpy: jasmine.Spy;
     let openExportPopUpSpy: jasmine.Spy;
     let openNewDrawingPopUpSpy: jasmine.Spy;
+    let openSavePopUpSpy: jasmine.Spy;
     let undoServiceSpy: jasmine.Spy;
     let redoServiceSpy: jasmine.Spy;
     let refreshSpy: jasmine.Spy;
@@ -71,6 +72,7 @@ describe('SidebarComponent', () => {
         selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
         openExportPopUpSpy = spyOn(component.openExportPopUp, 'emit');
         openNewDrawingPopUpSpy = spyOn(component.openNewDrawingPopUp, 'emit');
+        openSavePopUpSpy = spyOn(component.openSavePopUp, 'emit');
         component.currentTool = pencilStub;
         undoServiceSpy = spyOn(undoRedoService, 'undo').and.callThrough();
         redoServiceSpy = spyOn(undoRedoService, 'redo').and.callThrough();
@@ -218,6 +220,13 @@ describe('SidebarComponent', () => {
         exportDrawingButton.click();
         fixture.detectChanges();
         expect(openExportPopUpSpy).toHaveBeenCalled();
+    });
+
+    it('pressing on saveDrawing should emit to editor', () => {
+        const saveDrawingButton = fixture.debugElement.nativeElement.querySelector('#save-drawing-button');
+        saveDrawingButton.click();
+        fixture.detectChanges();
+        expect(openSavePopUpSpy).toHaveBeenCalled();
     });
 
     it('clicking on undo button when undo pile is not empty and tool is not used should call undoRedoService.undo', () => {
