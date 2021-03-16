@@ -38,7 +38,7 @@ export class EditorComponent implements OnInit {
     onCtrlEKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (!this.isPopUpOpen) {
-            this.openModalPopUp('export');
+            this.openExportPopUp();
         }
     }
 
@@ -46,7 +46,7 @@ export class EditorComponent implements OnInit {
     onCtrlOKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (!this.isPopUpOpen) {
-            this.openModalPopUp('new');
+            this.openNewDrawingPopUp();
         }
     }
 
@@ -77,18 +77,20 @@ export class EditorComponent implements OnInit {
         this.currentTool = newTool;
     }
 
-    openModalPopUp(type: string): void {
+    private openExportPopUp(): void {
         if (!this.isCanvasEmpty()) {
-            if (type === 'export') {
-                this.newDialog.open(ExportDrawingComponent, {
-                    maxWidth: MAX_WIDTH_FORM + 'px',
-                    maxHeight: MAX_HEIGHT_FORM + 'px',
-                });
-                this.isPopUpOpen = true;
-            } else {
-                this.newDialog.open(NewDrawingBoxComponent);
-                this.isPopUpOpen = true;
-            }
+            this.newDialog.open(ExportDrawingComponent, {
+                maxWidth: MAX_WIDTH_FORM + 'px',
+                maxHeight: MAX_HEIGHT_FORM + 'px',
+            });
+            this.isPopUpOpen = true;
+        }
+    }
+
+    private openNewDrawingPopUp(): void {
+        if (!this.isCanvasEmpty()) {
+            this.newDialog.open(NewDrawingBoxComponent);
+            this.isPopUpOpen = true;
         }
     }
 
