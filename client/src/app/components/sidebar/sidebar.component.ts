@@ -11,7 +11,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class SidebarComponent implements OnChanges {
     @Output() notifyOnToolSelect: EventEmitter<Tool> = new EventEmitter<Tool>();
-    @Output() openPopUp: EventEmitter<string> = new EventEmitter<string>();
+    @Output() openExportPopUp: EventEmitter<void> = new EventEmitter<void>();
+    @Output() openNewDrawingPopUp: EventEmitter<void> = new EventEmitter<void>();
     @Input() currentTool: Tool;
     @Input() isUndoPossible: boolean = false;
     @Input() isRedoPossible: boolean = false;
@@ -71,11 +72,11 @@ export class SidebarComponent implements OnChanges {
     }
 
     openNewDrawing(): void {
-        this.openPopUp.emit('new');
+        this.openNewDrawingPopUp.emit();
     }
 
     exportDrawing(): void {
-        this.openPopUp.emit('export');
+        this.openExportPopUp.emit();
     }
 
     undo(): void {
