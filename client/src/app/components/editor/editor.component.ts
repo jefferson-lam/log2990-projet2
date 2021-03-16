@@ -35,45 +35,42 @@ export class EditorComponent implements OnInit {
         });
     }
 
+    @HostListener('window:keydown.control.e', ['$event'])
+    onCtrlEKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isPopUpOpen) {
+            this.openModalPopUp('export');
+        }
+    }
+
+    @HostListener('window:keydown.control.o', ['$event'])
+    onCtrlOKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isPopUpOpen) {
+            this.openModalPopUp('new');
+        }
+    }
+
+    @HostListener('window:keydown.control.shift.z', ['$event'])
+    onCtrlShiftZKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+            this.undoRedoService.redo();
+        }
+    }
+
+    @HostListener('window:keydown.control.z', ['$event'])
+    onCtrlZKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+            this.undoRedoService.undo();
+        }
+    }
+
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (event.ctrlKey) {
-            switch (event.code) {
-                case 'KeyO':
-                case 'KeyE':
-                case 'KeyS':
-                default:
-                    event.preventDefault();
-            }
-        }
-
-        if (!this.isPopUpOpen) {
-            if (event.ctrlKey) {
-                switch (event.code) {
-                    case 'KeyO':
-                        this.openModalPopUp('new');
-                        break;
-                    case 'KeyE':
-                        this.openModalPopUp('export');
-                        break;
-                    case 'KeyS':
-                        this.openModalPopUp('save');
-                        break;
-                    case 'KeyZ':
-                        if (!this.currentTool.inUse) {
-                            if (event.shiftKey) {
-                                this.undoRedoService.redo();
-                            } else {
-                                this.undoRedoService.undo();
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            } else if (event.key.match(/^(1|2|3|c|l|e)$/)) {
-                this.currentTool = this.toolManager.selectTool(event);
-            }
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e)$/)) {
+            this.currentTool = this.toolManager.selectTool(event);
         }
     }
 
