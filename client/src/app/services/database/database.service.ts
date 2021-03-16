@@ -16,11 +16,18 @@ export class DatabaseService {
         return this.http.get<Message>(this.BASE_URL).pipe(catchError(this.handleError<Message>('getDrawings')));
     }
 
-    getDrawing(drawingId: string): Observable<Message> {
+    getDrawingById(drawingId: string): Observable<Message> {
         const testParams = new HttpParams().set('_id', drawingId);
         return this.http
-            .get<Message>(this.BASE_URL + '/get', { params: testParams })
-            .pipe(catchError(this.handleError<Message>('getDrawing')));
+            .get<Message>(this.BASE_URL + '/getId', { params: testParams })
+            .pipe(catchError(this.handleError<Message>('getDrawingById')));
+    }
+
+    getDrawingsByTags(tags: string[]): Observable<Message> {
+        const testParams = new HttpParams().set('tags', tags.toString());
+        return this.http
+            .get<Message>(this.BASE_URL + '/getTags', { params: testParams })
+            .pipe(catchError(this.handleError<Message>('getDrawingsByTag')));
     }
 
     saveDrawing(testTitle: string, testTags: string[]): Observable<Message> {

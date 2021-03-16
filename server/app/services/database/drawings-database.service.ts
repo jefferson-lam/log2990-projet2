@@ -77,6 +77,38 @@ export class DrawingsDatabaseService {
         }
     }
 
+    async getDrawingsByTags(tags: string[]): Promise<Message> {
+        try {
+            const drawingsCollection = await this.getCollection();
+            const collectionDrawings: Drawing[] = await drawingsCollection.find().toArray();
+            const drawingsWithTags: Drawing[] = new Array();
+            for (const drawing of collectionDrawings) {
+                let hasAllTags = true;
+                for (const tag of tags) {
+                    if (!drawing.tags.includes(tag)) {
+                        hasAllTags = false;
+                        break;
+                    }
+                }
+                if (hasAllTags) {
+                    drawingsWithTags.push(drawing);
+                }
+            }
+            const successMessage: Message = {
+                title: DatabaseConstants.SUCCESS_MESSAGE,
+                body: JSON.stringify(drawingsWithTags),
+            };
+            return successMessage;
+        } catch (error) {
+            console.error('Error while getting drawings: ', error);
+            return this.generateErrorMessage(error);
+        } finally {
+            if (this.client !== undefined) {
+                this.closeConnection();
+            }
+        }
+    }
+
     async getDrawings(): Promise<Message> {
         try {
             const drawingsCollection = await this.getCollection();
