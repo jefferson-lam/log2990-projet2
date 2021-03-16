@@ -16,6 +16,7 @@ import { EditorComponent } from './editor.component';
 class ToolStub extends Tool {}
 
 // tslint:disable:no-any
+// tslint:disable:max-file-line-count
 describe('EditorComponent', () => {
     let component: EditorComponent;
     let fixture: ComponentFixture<EditorComponent>;
