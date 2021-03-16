@@ -2,8 +2,10 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import { DatabaseService } from '@app/services/database/database.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { of, throwError } from 'rxjs';
 import { SaveCompletePageComponent } from './save-complete-page/save-complete-page.component';
 import { SaveDrawingComponent } from './save-drawing.component';
@@ -24,16 +26,14 @@ describe('SaveDrawingComponent', () => {
     let fakeTitleInputFixture: ComponentFixture<TitleInputComponent>;
     let titleInputComponent: TitleInputComponent;
     let matDialogRefStub: MatDialogRef<any>;
-    // let drawServiceSpy: SpyObj<DrawingService>;
+    let drawService: DrawingService;
     // let localServerServiceSpy: SpyObj<LocalServerService>;
+    let canvasTestHelper: CanvasTestHelper;
 
     beforeEach(async(() => {
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawings', 'getDrawing', 'saveDrawing', 'dropDrawing']);
         matDialogRefStub = {} as MatDialogRef<any>;
-        // drawServiceSpy = jasmine.createSpyObj('DrawingService', [], ['canvas']);
-        // (Object.getOwnPropertyDescriptor(drawServiceSpy, 'canvas')?.get as jasmine.Spy<() => HTMLCanvasElement>).and.returnValue(
-        //     {} as HTMLCanvasElement,
-        // );
+
         // localServerServiceSpy = jasmine.createSpyObj('LocalServerService', ['sendDrawing']);
 
         TestBed.configureTestingModule({
@@ -41,7 +41,6 @@ describe('SaveDrawingComponent', () => {
             providers: [
                 { provide: DatabaseService, useValue: databaseServiceSpy },
                 { provide: MatDialogRef, useValue: matDialogRefStub },
-                // { provide: DrawingService, useClass: drawServiceSpy },
                 // { provide: LocalServerService, useValue: localServerServiceSpy },
             ],
             declarations: [SaveDrawingComponent, SaveSavingPageComponent, SaveCompletePageComponent, SaveErrorPageComponent],
@@ -64,6 +63,9 @@ describe('SaveDrawingComponent', () => {
         titleInputComponent = fakeTitleInputFixture.componentInstance;
         component['titleInput'] = titleInputComponent;
         component['titleInput'].title = 'testTitle';
+
+        drawService = TestBed.inject(DrawingService);
+        canvasTestHelper = TestBed.inject(CanvasTestHelper);
     });
 
     it('should create', () => {
@@ -71,8 +73,8 @@ describe('SaveDrawingComponent', () => {
     });
 
     it('ngAfterViewInit should call toDataURL()', () => {
-        // const toDataUrlSpy = spyOn(drawServiceSpy.canvas, 'toDataURL');
-        const toDataUrlSpy = spyOn(component.saveCanvas, 'toDataURL').and.callThrough();
+        drawService.canvas = canvasTestHelper.canvas;
+        const toDataUrlSpy = spyOn(drawService.canvas, 'toDataURL');
         component.ngAfterViewInit();
         expect(toDataUrlSpy).toHaveBeenCalled();
     });
