@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
+import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle-selection-command';
@@ -23,11 +24,9 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     onMouseDown(event: MouseEvent): void {
         if (this.isManipulating) {
-            // TODO:
-            // Extract this into a single function allowing it to be called when tool is changed.
             this.transformValues = {
-                x: parseInt(this.drawingService.selectionCanvas.style.left),
-                y: parseInt(this.drawingService.selectionCanvas.style.top),
+                x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
+                y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
             };
             const command: Command = new RectangleSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             this.undoRedoService.executeCommand(command);
@@ -45,26 +44,26 @@ export class RectangleSelectionService extends ToolSelectionService {
         if (this.inUse) {
             this.rectangleService.inUse = false;
             super.onMouseUp(event);
-            this.selectionWidth = this.cornerCoords[1].x - this.cornerCoords[0].x;
-            this.selectionHeight = this.cornerCoords[1].y - this.cornerCoords[0].y;
-            if (this.selectionWidth == 0 || this.selectionHeight == 0) {
+            this.selectionWidth = this.cornerCoords[SelectionConstants.END_INDEX].x - this.cornerCoords[SelectionConstants.START_INDEX].x;
+            this.selectionHeight = this.cornerCoords[SelectionConstants.END_INDEX].y - this.cornerCoords[SelectionConstants.START_INDEX].y;
+            if (this.selectionWidth === 0 || this.selectionHeight === 0) {
                 this.resetSelectedToolSettings();
                 this.inUse = false;
                 return;
             }
-            const tempCoord = this.cornerCoords[0];
+            const tempCoord = this.cornerCoords[SelectionConstants.START_INDEX];
             if (this.selectionHeight < 0 && this.selectionWidth < 0) {
-                this.cornerCoords[0] = this.cornerCoords[1];
-                this.cornerCoords[1] = tempCoord;
+                this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
+                this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
             } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
                 console.log(this.selectionHeight);
                 console.log(this.cornerCoords);
-                this.cornerCoords[0].x = this.cornerCoords[1].x;
-                this.cornerCoords[1].x = tempCoord.x;
+                this.cornerCoords[SelectionConstants.START_INDEX].x = this.cornerCoords[SelectionConstants.END_INDEX].x;
+                this.cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
                 console.log(this.cornerCoords);
             } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
-                this.cornerCoords[0].y = this.cornerCoords[1].y;
-                this.cornerCoords[1].y = tempCoord.y;
+                this.cornerCoords[SelectionConstants.START_INDEX].y = this.cornerCoords[SelectionConstants.END_INDEX].y;
+                this.cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
             }
             this.selectionWidth = Math.abs(this.selectionWidth);
             this.selectionHeight = Math.abs(this.selectionHeight);
@@ -79,8 +78,8 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.drawingService.selectionCtx.fillRect(0, 0, this.drawingService.selectionCanvas.width, this.drawingService.selectionCanvas.height);
             this.drawingService.selectionCtx.drawImage(
                 this.drawingService.canvas,
-                this.cornerCoords[0].x,
-                this.cornerCoords[0].y,
+                this.cornerCoords[SelectionConstants.START_INDEX].x,
+                this.cornerCoords[SelectionConstants.START_INDEX].y,
                 this.selectionWidth,
                 this.selectionHeight,
                 0,
@@ -88,9 +87,14 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.drawingService.baseCtx.clearRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
-            this.drawingService.selectionCanvas.style.left = this.cornerCoords[0].x + 'px';
-            this.drawingService.selectionCanvas.style.top = this.cornerCoords[0].y + 'px';
+            this.drawingService.baseCtx.clearRect(
+                this.cornerCoords[SelectionConstants.START_INDEX].x,
+                this.cornerCoords[SelectionConstants.START_INDEX].y,
+                this.selectionWidth,
+                this.selectionHeight,
+            );
+            this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
+            this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
             this.inUse = false;
             this.isManipulating = true;
             this.isSquare = false;
@@ -133,6 +137,7 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.isShiftDown = false;
             } else if (event.key === 'Escape' && this.isEscapeDown) {
                 // Case where the user is still selecting.
+                console.log('Resetting from editor...');
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetSelectedToolSettings();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -148,8 +153,8 @@ export class RectangleSelectionService extends ToolSelectionService {
                     0,
                     this.selectionWidth,
                     this.selectionHeight,
-                    this.cornerCoords[0].x,
-                    this.cornerCoords[0].y,
+                    this.cornerCoords[SelectionConstants.START_INDEX].x,
+                    this.cornerCoords[SelectionConstants.START_INDEX].y,
                     this.selectionWidth,
                     this.selectionHeight,
                 );

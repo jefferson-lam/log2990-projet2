@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import * as SelectionConstants from '@app/constants/selection-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -24,23 +25,31 @@ export class ToolSelectionService extends Tool {
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, selectionTool: Tool) {
         super(drawingService, undoRedoService);
         this.selectionTool = selectionTool;
-        this.selectionToolLineWidth = selectionTool.lineWidth!;
-        this.selectionToolFillMode = selectionTool.fillMode!;
-        this.selectionToolPrimaryColor = selectionTool.primaryColor!;
-        this.selectionToolSecondaryColor = selectionTool.secondaryColor!;
+        if (selectionTool.lineWidth != null) {
+            this.selectionToolLineWidth = selectionTool.lineWidth;
+        }
+        if (selectionTool.fillMode != null) {
+            this.selectionToolFillMode = selectionTool.fillMode;
+        }
+        if (selectionTool.primaryColor != null) {
+            this.selectionToolPrimaryColor = selectionTool.primaryColor;
+        }
+        if (selectionTool.secondaryColor != null) {
+            this.selectionToolSecondaryColor = selectionTool.secondaryColor;
+        }
     }
 
     onMouseDown(event: MouseEvent): void {
         if (this.inUse) {
             this.setSelectionSettings();
-            this.cornerCoords[0] = this.getPositionFromMouse(event);
+            this.cornerCoords[SelectionConstants.START_INDEX] = this.getPositionFromMouse(event);
             this.selectionTool.onMouseDown(event);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[1] = this.getPositionFromMouse(event);
+            this.cornerCoords[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.selectionTool.onMouseUp(event);
         }
     }
@@ -55,20 +64,13 @@ export class ToolSelectionService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[1] = this.getPositionFromMouse(event);
+            this.cornerCoords[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.selectionTool.onMouseMove(event);
         }
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
         this.selectionTool.onKeyboardDown(event);
-        // Handle Ctrl+A to select all. This is handled here because the select all
-        // functionality is shared between all selection tools.
-        // TODO: Make it a function so that it can be called directly from the sidebar as well.
-
-        // TODO:
-        // When Esc is pressed, cancel the current selection:
-        // Call redraw back to initial cornerCoords and resetCanvas of selectionCanvas,
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
@@ -76,10 +78,10 @@ export class ToolSelectionService extends Tool {
     }
 
     resetCanvasState(canvas: HTMLCanvasElement): void {
-        canvas.style.left = 0 + 'px';
-        canvas.style.top = 0 + 'px';
-        canvas.width = 0;
-        canvas.height = 0;
+        canvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
+        canvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
+        canvas.width = SelectionConstants.DEFAULT_WIDTH;
+        canvas.height = SelectionConstants.DEFAULT_HEIGHT;
     }
 
     clearCorners(): void {
@@ -88,10 +90,10 @@ export class ToolSelectionService extends Tool {
 
     setSelectionSettings(): void {
         this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
-        this.selectionTool.setLineWidth(1);
+        this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
         this.selectionTool.setPrimaryColor('white');
         this.selectionTool.setSecondaryColor('black');
-        this.drawingService.previewCtx.setLineDash([3, 3]);
+        this.drawingService.previewCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
     }
 
     resetSelectedToolSettings(): void {
@@ -107,6 +109,8 @@ export class ToolSelectionService extends Tool {
         this.selectionHeight = this.drawingService.canvas.height;
         this.drawingService.selectionCanvas.width = this.selectionWidth;
         this.drawingService.selectionCanvas.height = this.selectionHeight;
+        this.drawingService.selectionCtx.fillStyle = 'white';
+        this.drawingService.selectionCtx.fillRect(0, 0, this.drawingService.selectionCanvas.width, this.drawingService.selectionCanvas.height);
         this.drawingService.selectionCtx.drawImage(
             this.drawingService.canvas,
             0,
@@ -119,8 +123,8 @@ export class ToolSelectionService extends Tool {
             this.selectionHeight,
         );
         this.drawingService.baseCtx.clearRect(0, 0, this.selectionWidth, this.selectionHeight);
-        this.drawingService.selectionCanvas.style.left = 0 + 'px';
-        this.drawingService.selectionCanvas.style.top = 0 + 'px';
+        this.drawingService.selectionCanvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
+        this.drawingService.selectionCanvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
         this.cornerCoords = [
             { x: 0, y: 0 },
             { x: this.selectionWidth, y: this.selectionHeight },

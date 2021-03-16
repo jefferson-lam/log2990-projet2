@@ -48,9 +48,9 @@ export abstract class Tool {
 
     setWithJunction(hasJunction: boolean): void {}
 
-    setPrimaryColor(primaryColor: string) {}
+    setPrimaryColor(primaryColor: string): void {}
 
-    setSecondaryColor(secondaryColor: string) {}
+    setSecondaryColor(secondaryColor: string): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };

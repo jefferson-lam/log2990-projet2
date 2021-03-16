@@ -29,7 +29,7 @@ export class RectangleSelectionCommand extends Command {
         this.isSquare = rectangleSelectionService.isSquare;
     }
 
-    execute() {
+    execute(): void {
         this.ctx.clearRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
         // When implementing scaling, we will have to sum selectionWidth and selectionHeight to a
         // the distance scaled by the mouse
@@ -46,15 +46,14 @@ export class RectangleSelectionCommand extends Command {
         );
     }
 
-    cloneCanvas(selectionCanvas: HTMLCanvasElement) {
-        var newCanvas = document.createElement('canvas');
-        var context = newCanvas.getContext('2d');
+    cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {
+        const newCanvas = document.createElement('canvas');
+        const context = newCanvas.getContext('2d');
         newCanvas.width = selectionCanvas.width;
         newCanvas.height = selectionCanvas.height;
-        //apply the old canvas to the new one
+        // apply the old canvas to the new one
         context?.drawImage(selectionCanvas, 0, 0);
-
-        //return the new canvas
+        // return the new canvas
         return newCanvas;
     }
 }

@@ -41,12 +41,12 @@ export class EditorComponent {
                     this.undoRedoService.undo();
                 }
             }
-        } else if (event.ctrlKey && event.code == 'KeyA') {
+        } else if (event.ctrlKey && event.code === 'KeyA') {
             event.preventDefault();
             this.currentTool = this.toolManager.getTool('r');
-            // TODO: verify
-            const rectangleSelectionService: RectangleSelectionService = this.toolManager.rectangleSelectionService;
-            rectangleSelectionService.selectAll();
+            if (this.currentTool instanceof RectangleSelectionService) {
+                this.currentTool.selectAll();
+            }
         } else if (event.key === 'Escape') {
             if (this.currentTool instanceof RectangleSelectionService) {
                 this.currentTool.onKeyboardDown(event);
@@ -69,8 +69,16 @@ export class EditorComponent {
 
     setTool(newTool: Tool): void {
         if (this.currentTool instanceof RectangleSelectionService && !(newTool instanceof RectangleSelectionService)) {
-            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
-            this.currentTool.onMouseDown(emptyMouseEvent);
+            if (this.currentTool.isManipulating) {
+                const emptyMouseEvent: MouseEvent = {} as MouseEvent;
+                this.currentTool.onMouseDown(emptyMouseEvent);
+            } else if (this.currentTool.inUse) {
+                const resetKeyboardEvent: KeyboardEvent = {
+                    key: 'Escape',
+                } as KeyboardEvent;
+                this.currentTool.isEscapeDown = true;
+                this.currentTool.onKeyboardUp(resetKeyboardEvent);
+            }
         }
         this.currentTool = newTool;
     }
