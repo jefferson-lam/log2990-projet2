@@ -1,6 +1,10 @@
 import { Drawing } from '@app/classes/drawing';
+import { TagValidatorService } from '@app/services/database/tag-validator/tag-validator.service';
+import { TitleValidatorService } from '@app/services/database/title-validator/title-validator.service';
+import { TYPES } from '@app/types';
 import { Message } from '@common/communication/message';
-import { injectable } from 'inversify';
+import * as DatabaseConstants from '@common/validation/database-constants';
+import { inject, injectable } from 'inversify';
 import { Collection, MongoClient, MongoClientOptions, ObjectID } from 'mongodb';
 import 'reflect-metadata';
 
@@ -16,8 +20,17 @@ export class DrawingsDatabaseService {
     };
     private client: MongoClient;
 
+    constructor(
+        @inject(TYPES.TitleValidatorService) private titleValidator: TitleValidatorService,
+        @inject(TYPES.TagValidatorService) private tagValidator: TagValidatorService,
+    ) {}
+
     async saveDrawing(drawingTitle: string, drawingTags: string[]): Promise<Message> {
         try {
+            this.titleValidator.checkTitleValid(drawingTitle);
+
+            this.tagValidator.checkTagsValid(drawingTags);
+
             const drawingsCollection = await this.getCollection();
 
             const drawing: Drawing = {
@@ -27,7 +40,7 @@ export class DrawingsDatabaseService {
             const insertResponse = await drawingsCollection.insertOne(drawing);
             console.log('Inserted new object with id:', insertResponse.insertedId);
             const successMessage: Message = {
-                title: 'Success',
+                title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: `Inserted new drawing with id: ${insertResponse.insertedId}`,
             };
             return successMessage;
@@ -51,7 +64,7 @@ export class DrawingsDatabaseService {
             console.log('Found drawing: ', fetchedDrawing);
 
             const successMessage: Message = {
-                title: 'Success',
+                title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: JSON.stringify(fetchedDrawing),
             };
             return successMessage;
@@ -70,7 +83,7 @@ export class DrawingsDatabaseService {
             const fetchedDrawings = await drawingsCollection.find().toArray();
             console.log('Found drawing: ', fetchedDrawings);
             const successMessage: Message = {
-                title: 'Success',
+                title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: JSON.stringify(fetchedDrawings),
             };
             return successMessage;
@@ -95,7 +108,7 @@ export class DrawingsDatabaseService {
             const deletionDetails = await drawingsCollection.deleteOne(drawingToFind);
             console.log('Drawing deletion count:', deletionDetails.result.n);
             const successMessage: Message = {
-                title: 'Success',
+                title: DatabaseConstants.SUCCESS_MESSAGE,
                 body: `Deleted drawing count: ${JSON.stringify(deletionDetails.result.n)}`,
             };
             return successMessage;
@@ -137,7 +150,7 @@ export class DrawingsDatabaseService {
 
     private generateErrorMessage(error: Error): Message {
         return {
-            title: 'Error',
+            title: DatabaseConstants.ERROR_MESSAGE,
             body: error.toString(),
         };
     }
