@@ -9,10 +9,11 @@ import { PipetteService } from '@app/services/tools/pipette-service';
 })
 export class SidebarPipetteComponent implements OnInit {
   ctx: CanvasRenderingContext2D;
+  zoomedCtx: CanvasRenderingContext2D;
   colorService: ColorService;
   rawData: ImageData = new ImageData(10, 10);
   previewData: ImageData = new ImageData(100, 100);
-  centerPixelData: ImageData = new ImageData(1, 1);
+  //centerPixelData: ImageData = new ImageData(1, 1);
 
   constructor(colorService: ColorService, public pipetteService: PipetteService) { }
 
@@ -20,9 +21,9 @@ export class SidebarPipetteComponent implements OnInit {
   canvas: ElementRef<HTMLCanvasElement>;
 
   ngOnInit(): void {
-    this.pipetteService.centerPixelDataSource.subscribe((pixelData: ImageData) => {
-      this.centerPixelData = pixelData;
-    });
+    // this.pipetteService.centerPixelDataSource.subscribe((pixelData: ImageData) => {
+    //   this.centerPixelData = pixelData;
+    // });
     this.pipetteService.previewDataObservable.subscribe((previewData: ImageData) => {
       this.rawData = previewData;
       this.drawPreview();
@@ -33,36 +34,34 @@ export class SidebarPipetteComponent implements OnInit {
     if (!this.ctx) {
       this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
     }
-    console.log(this.rawData.data);
-    
-    // Tentative pour agrandir le 10x10 a 100x100
-    let k = 0;
-    // Iterate through every pixel of rawData (10x10)
-    for(let i = 0; i < this.rawData.data.length; i += 4) {
-      //Iterate through each group of 10 pixel of previewData (100x100)
-      for(let j = 0; j < 10; j++) {
-        this.previewData.data[k] = this.rawData.data[i]; //R
-        this.previewData.data[k + 1] = this.rawData.data[i + 1]; //G
-        this.previewData.data[k + 2] = this.rawData.data[i + 2]; //B
-        this.previewData.data[k + 3] = this.rawData.data[i + 3]; //A
-        k += 4;
-      }
+
+    //Zoom ImageData from 10x10 to 100x100
+    //Iterate through every pixel of previewData (100x100)
+    for(let i = 0; i < this.previewData.data.length; i += 4) {
+        let bigRow = this.findBigRow(i, 100); // row position in big matrix
+        let bigColumn = this.findBigColumn(i, 100); // column position in big matrix
+
+        let smallRow = Math.floor(bigRow / 10); // row position from small matrix
+        let smallColumn = Math.floor(bigColumn / 10); // column position from small matrix
+        let index = this.findIndexInSmallArray(smallRow, smallColumn, 10);
+
+        this.previewData.data[i] = this.rawData.data[index]; //R
+        this.previewData.data[i + 1] = this.rawData.data[index + 1]; //G
+        this.previewData.data[i + 2] = this.rawData.data[index + 2]; //B
+        this.previewData.data[i + 3] = this.rawData.data[index + 3]; //A
     }
+    this.ctx.putImageData(this.previewData, 0, 0)
+  }
 
-    
-    // this.ctx.fillStyle = 'rgb(255, 0, 0)';
-    // this.ctx.fillRect(0, 0, 100, 100);
-    // this.ctx.lineWidth = 2;
-    // this.ctx.strokeStyle = 'rgb(0, 0, 0)';
-    // this.ctx.strokeRect(0, 0, 100, 100);
+  findBigRow(rowCoord: number, width: number) {
+    return Math.floor(rowCoord / width);
+  }
 
-    // this.ctx.lineWidth = 0;
-    // this.ctx.fillStyle = 'rgb(255, 255, 255)';
-    // this.ctx.fillRect(49, 49, 5, 5);
-    // this.ctx.lineWidth = 2;
-    // this.ctx.strokeStyle = 'rgb(0, 0, 0)';
-    // this.ctx.strokeRect(49, 49, 5, 5);
+  findBigColumn(rowCoord: number, width: number) {
+    return (rowCoord - width);
+  }
 
-    this.ctx.putImageData(this.previewData, 0, 0);
+  findIndexInSmallArray(row: number, column: number, width: number) {
+    return (row * width + column) * 4;
   }
 }

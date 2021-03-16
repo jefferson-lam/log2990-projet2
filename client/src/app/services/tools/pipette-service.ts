@@ -23,13 +23,13 @@ export class PipetteService extends Tool {
   inBound: boolean;
 
   
-  centerPixelData: ImageData = new ImageData(10, 10);
-  centerPixelDataSource: Subject<ImageData> = new BehaviorSubject<ImageData>(this.centerPixelData);
-  centerPixelDataObservable: Observable<ImageData> = this.centerPixelDataSource.asObservable();
+  // centerPixelData: ImageData = new ImageData(1, 1);
+  // centerPixelDataSource: Subject<ImageData> = new BehaviorSubject<ImageData>(this.centerPixelData);
+  // centerPixelDataObservable: Observable<ImageData> = this.centerPixelDataSource.asObservable();
   
   previewData: ImageData = new ImageData(10, 10);
   previewDataSource: Subject<ImageData> = new BehaviorSubject<ImageData>(this.previewData);
-  previewDataObservable: Observable<ImageData> = this.centerPixelDataSource.asObservable();
+  previewDataObservable: Observable<ImageData> = this.previewDataSource.asObservable();
 
   constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public colorService: ColorService) {
     super(drawingService, undoRedoService);
@@ -38,9 +38,9 @@ export class PipetteService extends Tool {
   onMouseMove(event: MouseEvent): void {
     if(this.inBound) {
       this.mousePosition = this.getPositionFromMouse(event);
-      let pixelData = this.drawingService.baseCtx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);
-      let contextData = this.drawingService.baseCtx.getImageData(Math.max(0, this.mousePosition.x - 5), Math.max(0, this.mousePosition.y - 5), 10 , 10);
-      this.setCenterPixelData(pixelData);
+      //let pixelData = this.drawingService.baseCtx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);
+      let contextData = this.drawingService.baseCtx.getImageData(this.mousePosition.x - 5, this.mousePosition.y - 5, 10, 10);
+      //this.setCenterPixelData(pixelData);
       this.setPreviewData(contextData);
     }
   }
@@ -88,10 +88,10 @@ export class PipetteService extends Tool {
     this.colorService.setSecondaryColor(color);
   }
 
-  setCenterPixelData(data: ImageData): void {
-    this.centerPixelData = data;
-    this.centerPixelDataSource.next(this.centerPixelData);
-  }
+  // setCenterPixelData(data: ImageData): void {
+  //   this.centerPixelData = data;
+  //   this.centerPixelDataSource.next(this.centerPixelData);
+  // }
 
   setPreviewData(data: ImageData): void {
     this.previewData = data;
