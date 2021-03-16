@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
@@ -26,6 +26,8 @@ describe('EditorComponent', () => {
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let undoSpy: jasmine.Spy;
     let redoSpy: jasmine.Spy;
+    let exportPopUpSpy: jasmine.Spy<any>;
+    let newDrawingPopUpSpy: jasmine.Spy<any>;
 
     beforeEach(async(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -62,6 +64,9 @@ describe('EditorComponent', () => {
 
         undoSpy = spyOn(component.undoRedoService, 'undo');
         redoSpy = spyOn(component.undoRedoService, 'redo');
+
+        exportPopUpSpy = spyOn<any>(component, 'openExportPopUp').and.callThrough();
+        newDrawingPopUpSpy = spyOn<any>(component, 'openNewDrawingPopUp').and.callThrough();
     });
 
     it('should create', () => {
@@ -75,8 +80,7 @@ describe('EditorComponent', () => {
         expect(subscribeSpy).toHaveBeenCalled();
     });
 
-    it('should not call select tool,undo,redo or openModalPopUp when isPopUpOpen', () => {
-        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
+    it('should not call select tool,undo,redo, openExportModalPopUp or openNewDrawingPopUp when isPopUpOpen', () => {
         component.isPopUpOpen = true;
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: '1' });
         component.onKeyboardDown(eventSpy);
@@ -84,7 +88,8 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).not.toHaveBeenCalled();
         expect(undoSpy).not.toHaveBeenCalled();
         expect(redoSpy).not.toHaveBeenCalled();
-        expect(modalPopUpSpy).not.toHaveBeenCalled();
+        expect(exportPopUpSpy).not.toHaveBeenCalled();
+        expect(newDrawingPopUpSpy).not.toHaveBeenCalled();
     });
 
     it("should call select tool when '1' key is down", () => {
@@ -139,37 +144,33 @@ describe('EditorComponent', () => {
         expect(eventSpy.preventDefault).toHaveBeenCalled();
     });
 
-    it("should call openModalPopUp with argument 'new' when 'ctrl+o' key is down", () => {
+    it("should call openNewDrawingPopUp when 'ctrl+o' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: '' });
-        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
         component.onCtrlOKeyDown(eventSpy);
 
-        expect(modalPopUpSpy).toHaveBeenCalled();
-        expect(modalPopUpSpy).toHaveBeenCalledWith('new');
+        expect(newDrawingPopUpSpy).toHaveBeenCalled();
     });
 
-    it("should call openModalPopUp with argument 'export' when 'ctrl+e' key is down", () => {
+    it("should call openExportPopUp when 'ctrl+e' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
-        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
         component.onCtrlEKeyDown(eventSpy);
 
-        expect(modalPopUpSpy).toHaveBeenCalled();
-        expect(modalPopUpSpy).toHaveBeenCalledWith('export');
+        expect(exportPopUpSpy).toHaveBeenCalled();
     });
 
-    it("should not call openModalPopUp when only 'ctrl' key is down", () => {
+    it("should not call openExportPopUp or openNewDrawingPopUp when only 'ctrl' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: '', key: '' });
-        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
         component.onKeyboardDown(eventSpy);
 
-        expect(modalPopUpSpy).not.toHaveBeenCalled();
+        expect(exportPopUpSpy).not.toHaveBeenCalled();
+        expect(newDrawingPopUpSpy).not.toHaveBeenCalled();
     });
-    it("should not call openModalPopUp when only 'o' key is down", () => {
+
+    it("should not call openNewDrawingPopUp when only 'o' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'KeyO', key: '' });
-        const modalPopUpSpy = spyOn(component, 'openModalPopUp');
         component.onKeyboardDown(eventSpy);
 
-        expect(modalPopUpSpy).not.toHaveBeenCalled();
+        expect(newDrawingPopUpSpy).not.toHaveBeenCalled();
     });
 
     it("should call undo when 'ctrl+z' keys are down and tool isn't used and no popups open", () => {
@@ -238,37 +239,81 @@ describe('EditorComponent', () => {
         expect(component.currentTool).toBe(toolStub);
     });
 
-    it("openModalPopUp should open NewDrawingBoxComponent if canvas isn't empty and type of popUp is new", () => {
+    it("'ctrl+o' should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open", () => {
         const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
             return false;
         });
-        component.openModalPopUp('new');
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: '' });
+        component.isPopUpOpen = false;
+        component.onCtrlOKeyDown(eventSpy);
 
+        expect(newDrawingPopUpSpy).toHaveBeenCalled();
         expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
+        expect(component.isPopUpOpen).toBeTrue();
     });
 
-    it("openModalPopUp should open ExportDrawingComponent if canvas isn't empty and type of popUp is export", () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
-            return false;
-        });
-        const mockConfig = { maxWidth: MAX_WIDTH_FORM + 'px', maxHeight: MAX_HEIGHT_FORM + 'px' };
-        component.openModalPopUp('export');
-
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
-    });
-
-    it('openModalPopUp should not open anything if canvas is empty', () => {
+    it("'ctrl+o' should not open anything if canvas is empty", () => {
         const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
             return true;
         });
-        component.openModalPopUp('export');
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
+        component.onCtrlOKeyDown(eventSpy);
 
+        expect(newDrawingPopUpSpy).toHaveBeenCalled();
         expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(component.isPopUpOpen).toBeFalse();
+    });
+
+    it("'ctrl+o' should not open anything if pop up is open", () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
+        component.isPopUpOpen = true;
+        component.onCtrlOKeyDown(eventSpy);
+
+        expect(newDrawingPopUpSpy).not.toHaveBeenCalled();
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(component.isPopUpOpen).toBeTrue();
+    });
+
+    it("'ctrl+e' should open export pop up if canvas isn't empty and pop up isn't open", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return false;
+        });
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
+        const mockConfig = { maxWidth: MAX_WIDTH_FORM + 'px', maxHeight: MAX_HEIGHT_FORM + 'px' };
+        component.isPopUpOpen = false;
+        component.onCtrlEKeyDown(eventSpy);
+
+        expect(exportPopUpSpy).toHaveBeenCalled();
+        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
+        expect(component.isPopUpOpen).toBeTrue();
+    });
+
+    it("'ctrl+e' should not open anything if canvas is empty", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return true;
+        });
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
+        component.onCtrlEKeyDown(eventSpy);
+
+        expect(exportPopUpSpy).toHaveBeenCalled();
+        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(component.isPopUpOpen).toBeFalse();
+    });
+
+    it("'ctrl+e' should not open anything if pop up is open", () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
+        component.isPopUpOpen = true;
+        component.onCtrlEKeyDown(eventSpy);
+
+        expect(exportPopUpSpy).not.toHaveBeenCalled();
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(component.isPopUpOpen).toBeTrue();
     });
 
     it('should not call selectTool if a non tool key is down.', () => {
@@ -297,22 +342,6 @@ describe('EditorComponent', () => {
 
         expect(isCanvasEmptySpy).toHaveBeenCalled();
         expect(returnValue).toBeFalse();
-    });
-
-    it('when a popup is open, isPopUpOpen is set to true', () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
-            return false;
-        });
-        expect(component.isPopUpOpen).toBeFalse();
-
-        const mockMatDialogRef = {} as MatDialogRef<any>;
-        dialogSpy.open.and.callFake(() => {
-            return mockMatDialogRef;
-        });
-        component.openModalPopUp('new');
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(component.isPopUpOpen).toBeTrue();
     });
 
     it('when all popups are closed, isPopUpOpen is set to false', () => {
