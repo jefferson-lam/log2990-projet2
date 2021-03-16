@@ -1,0 +1,19 @@
+<div id="galleryContainer" *ngIf="!this.deleted">
+  <div id="titleGallery"><h3> Drawing Title </h3></div>
+
+  <div id='galleryShowcase'>
+    <mat-icon class='slideLeft' (click)='showcaseNextDrawing()'>navigate_before</mat-icon>
+    <mat-card id="previewGalleryImage">
+      <mat-card-content
+        *ngFor="let drawing of previewDrawing; let i = index"
+        mat-card-image="drawing.image"
+      ></mat-card-content>
+    </mat-card>
+    <mat-icon class='slideRight' (click)='showcaseNextDrawing()'>navigate_next</mat-icon>
+  </div>
+
+  <div id="tagGallery"><p> tag something </p></div>
+</div>
+
+
+

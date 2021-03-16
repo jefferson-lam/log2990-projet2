@@ -1,0 +1,49 @@
+* {
+  font-family: 'Rubik', serif;
+}
+
+mat-icon{
+  color: #E8E8E8;
+}
+mat-icon:hover{
+  cursor:pointer;
+}
+mat-icon:active{
+  color:#000220;
+}
+
+#galleryContainer {
+  border-radius: 5px;
+  //background-color: #C06C84;
+  background-color: #355C7D;
+  border: 1px solid lightgrey;
+  height: 100%;
+}
+
+#previewGalleryImage {
+  height: 420px;
+  background-color: #355C7D;
+}
+
+#galleryShowcase{
+  flex-flow: row wrap
+}
+
+#titleGallery {
+  text-align: center;
+  color: white;
+  margin-top: 12px;
+}
+
+h3{
+  font-family: 'Rubik', serif;
+}
+
+#tagGallery {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+  color: white;
+  bottom: 0;
+
+}

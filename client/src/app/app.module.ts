@@ -1,7 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -25,6 +25,7 @@ import { AppComponent } from './components/app/app.component';
 import { ColorPickerModule } from './components/color-picker/color-picker.module';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { CarouselGalleryComponent } from './components/main-page/main-page-carrousel/carrousel-gallery/carousel-gallery/carousel-gallery.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
@@ -53,6 +54,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarEllipseComponent,
         SidebarLineComponent,
         SidebarPolygoneComponent,
+        CarouselGalleryComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
@@ -77,6 +79,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatSliderModule,
         MatToolbarModule,
         MatTooltipModule,
+        ReactiveFormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

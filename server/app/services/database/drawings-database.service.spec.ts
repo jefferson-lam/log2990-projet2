@@ -110,7 +110,7 @@ describe('Drawing database service', () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
         const testTitle = 'Title';
-        let testTags: string[] = [];
+        const testTags: string[] = [];
         for (let i = 0; i < DatabaseConstants.MAX_TAGS_COUNT + 1; i++) {
             testTags.push('test');
         }

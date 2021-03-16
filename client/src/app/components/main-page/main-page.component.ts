@@ -43,7 +43,8 @@ export class MainPageComponent {
 
     openCarousel(): void {
         this.dialog.open(MainPageCarrouselComponent, {
-            width: '400px;',
+            height: '700px',
+            width: '1800px',
         });
     }
 }

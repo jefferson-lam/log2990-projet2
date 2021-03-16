@@ -1,12 +1,21 @@
-<div class="modal-dialog">
-    <h1 mat-dialog-title>Options du carrousel</h1>
-    <div mat-dialog-content>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-        anim id est laborum.
+<div class="modal-dialog" (keydown)="$event.stopPropagation()">
+    <div id = 'topBar'><h1 mat-dialog-title>Options du carrousel</h1>
+      <mat-form-field appearance='fill'>
+        <mat-label id='filterTag'> Filtrage par étiquette </mat-label>
+        <label>
+          <input matInput type='text' [(ngModel)]='tagValue'>
+        </label>
+        <button mat-button *ngIf="tagValue" matSuffix mat-icon-button aria-label="Clear" (click)="tagValue=''">
+        <mat-icon>close</mat-icon>
+      </button>
+      </mat-form-field>
+      <button mat-button *ngIf="tagValue" id="acceptTag" (click)="updateDrawings()">Accepter</button>
+    </div>
+    <div mat-dialog-content id='galleryPreview'>
+      <app-carousel-gallery></app-carousel-gallery>
     </div>
     <div mat-dialog-actions>
-        <button mat-button mat-dialog-close id="exitButton">Retour</button>
+      <button mat-button id="deleteButton" (click)='deleteDrawing()'>Supprimer</button>
+      <button mat-button mat-dialog-close id="exitButton">Retour</button>
     </div>
 </div>

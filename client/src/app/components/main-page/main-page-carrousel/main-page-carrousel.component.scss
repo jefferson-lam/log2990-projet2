@@ -1,17 +1,41 @@
 * {
-    font-family: 'Rubik', serif;
+  font-family: 'Rubik', serif;
 }
 
 .modal-dialog {
-    width: 400px;
-    height: 400px;
-    justify-content: space-between;
-    flex-direction: column;
-    display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
+  height: 100%;
+}
+
+#galleryPreview{
+  height:100%;
+  overflow: hidden;
+
 }
 
 #exitButton {
-    background-color: #ffbf00;
-    margin-left: auto;
-    text-align: center;
+  background-color:#F88B86;
+  margin-left: auto;
+  text-align: center;
+  bottom:0;
+  color: white;
+}
+
+#deleteButton {
+  background-color: #6C5B7B;
+  color: white;
+  text-align: center;
+  bottom:0;
+}
+
+#deleteButton:hover, #exitButton:hover{
+  color: black;
+  background-color: slategrey;
+}
+#topBar {
+  justify-content: space-between;
+  flex-direction: row;
+  display: flex;
 }
