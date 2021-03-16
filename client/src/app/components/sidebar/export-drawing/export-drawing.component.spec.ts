@@ -95,7 +95,7 @@ describe('ExportDrawingComponent', () => {
         expect(component.exportImg.nativeElement.style.filter).toBe('invert(0%)');
     });
 
-    it('createBackground should fill background white if not invert filter', () => {
+    it('createBackground should fill background white', () => {
         component.createBackground();
 
         const imgData = component.exportCtx.getImageData(0, 0, 1, 1);
@@ -104,36 +104,44 @@ describe('ExportDrawingComponent', () => {
         }
     });
 
-    it('createBackground should fill background black if invert filter', () => {
-        component.applyFilter('invert(0%)');
-        component.createBackground();
+    it('applyFilter should clear canvas and refresh if drop-shadow', () => {
+        const clearRectSpy = spyOn(component.exportCtx, 'clearRect');
+        const createBackgroundSpy = spyOn(component, 'createBackground');
+        const refreshSpy = spyOn(component, 'refreshCanvas');
 
-        const imgData = component.exportCtx.getImageData(0, 0, 1, 1);
-        // tslint:disable-next-line:no-magic-numbers
-        for (let i = 0; i < imgData.data.length; i += 4) {
-            expect(imgData.data[i]).toBe(0);
-            expect(imgData.data[i + 1]).toBe(0);
-            expect(imgData.data[i + 2]).toBe(0);
-            // tslint:disable-next-line:no-magic-numbers
-            expect(imgData.data[i + 3]).toBe(MAX_RGB_VALUE);
-        }
+        component.applyFilter('drop-shadow(30px 30px 10px black)');
+
+        expect(clearRectSpy).toHaveBeenCalled();
+        expect(createBackgroundSpy).not.toHaveBeenCalled();
+        expect(refreshSpy).toHaveBeenCalled();
     });
 
-    it('saveImage should call createBackground if jpeg type', () => {
-        component.type = 'jpeg';
+    it('applyFilter should createBackground and refresh if not drop-shadow', () => {
+        const clearRectSpy = spyOn(component.exportCtx, 'clearRect');
+        const createBackgroundSpy = spyOn(component, 'createBackground');
+        const refreshSpy = spyOn(component, 'refreshCanvas');
+
+        component.applyFilter('none');
+
+        expect(clearRectSpy).not.toHaveBeenCalled();
+        expect(createBackgroundSpy).toHaveBeenCalled();
+        expect(refreshSpy).toHaveBeenCalled();
+    });
+
+    it('saveImage should call applyFilter', () => {
+        const filterSpy = spyOn(component, 'applyFilter');
+
+        component.saveImage();
+
+        expect(filterSpy).toHaveBeenCalled();
+    });
+
+    it('saveImage should call createBackground', () => {
         const backgroundSpy = spyOn(component, 'createBackground');
 
         component.saveImage();
 
         expect(backgroundSpy).toHaveBeenCalled();
-    });
-
-    it('saveImage should not call createBackground if not jpeg type', () => {
-        const backgroundSpy = spyOn(component, 'createBackground');
-
-        component.saveImage();
-
-        expect(backgroundSpy).not.toHaveBeenCalled();
     });
 
     it('saveImage should set link href with image data and click it', () => {

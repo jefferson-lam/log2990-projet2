@@ -38,25 +38,19 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.control.e', ['$event'])
     onCtrlEKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (!this.isPopUpOpen) {
-            this.openExportPopUp();
-        }
+        this.openExportPopUp();
     }
 
     @HostListener('window:keydown.control.o', ['$event'])
     onCtrlOKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (!this.isPopUpOpen) {
-            this.openNewDrawingPopUp();
-        }
+        this.openNewDrawingPopUp();
     }
 
     @HostListener('window:keydown.control.s', ['$event'])
     onCtrlSKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (!this.isPopUpOpen) {
-            this.openSavePopUp();
-        }
+        this.openSavePopUp();
     }
 
     @HostListener('window:keydown.control.shift.z', ['$event'])
@@ -86,8 +80,8 @@ export class EditorComponent implements OnInit {
         this.currentTool = newTool;
     }
 
-    private openExportPopUp(): void {
-        if (!this.isCanvasEmpty()) {
+    openExportPopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
             this.newDialog.open(ExportDrawingComponent, {
                 maxWidth: MAX_WIDTH_FORM + 'px',
                 maxHeight: MAX_HEIGHT_FORM + 'px',
@@ -96,15 +90,15 @@ export class EditorComponent implements OnInit {
         }
     }
 
-    private openNewDrawingPopUp(): void {
-        if (!this.isCanvasEmpty()) {
+    openNewDrawingPopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
             this.newDialog.open(NewDrawingBoxComponent);
             this.isPopUpOpen = true;
         }
     }
 
-    private openSavePopUp(): void {
-        if (!this.isCanvasEmpty()) {
+    openSavePopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
             this.newDialog.open(SaveDrawingComponent);
             this.isPopUpOpen = true;
         }
