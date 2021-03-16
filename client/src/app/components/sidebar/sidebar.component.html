@@ -10,20 +10,15 @@
                 >
             </li>
             <li>
-                <mat-icon
-                    id="save-drawing-button"
-                    style="color: white"
-                    matTooltip="Sauvegarder"
-                    [matTooltipPosition]="'right'"
-                    (click)="saveDrawing()"
+                <mat-icon id="save-drawing-button" class="whiteButton" matTooltip="Sauvegarder" [matTooltipPosition]="'right'" (click)="saveDrawing()"
                     >save_alt</mat-icon
                 >
             </li>
             <li id="undoButton" [class.unclickable]="!isUndoPossible" (click)="undo()">
-                <mat-icon style="color: white" matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
+                <mat-icon class="whiteButton" matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
             </li>
             <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
-                <mat-icon style="color: white" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
+                <mat-icon class="whiteButton" matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
             </li>
 
             <li id="exportButton">

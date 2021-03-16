@@ -24,12 +24,8 @@ export class LocalDrawingsController {
          *     properties:
          *       id:
          *         type: string
-         *       pixels:
-         *         type: number[]
-         *       height:
-         *         type: number
-         *       width:
-         *         type: number
+         *       image:
+         *         type: string
          */
 
         /**

@@ -13,8 +13,14 @@ describe('Local Drawings service', () => {
     beforeEach(async () => {
         const [container] = await testingContainer();
         localDrawingsService = container.get<LocalDrawingsService>(TYPES.LocalDrawingsService);
-        newDrawing1 = { id: '111', pixels: [1, 1, 1], width: 100, height: 100 };
-        newDrawing2 = { id: '222', pixels: [2, 2, 2], width: 200, height: 200 };
+        newDrawing1 = {
+            id: '111',
+            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
+        };
+        newDrawing2 = {
+            id: '222',
+            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
+        };
     });
 
     it('should get all drawings', (done: Mocha.Done) => {
@@ -52,7 +58,10 @@ describe('Local Drawings service', () => {
     it('should save new drawing at the end of the array when not the first', (done: Mocha.Done) => {
         localDrawingsService.clientDrawings.push(newDrawing1);
         localDrawingsService.clientDrawings.push(newDrawing2);
-        const newDrawing3 = { id: '333', pixels: [3, 3, 3], width: 333, height: 333 };
+        const newDrawing3 = {
+            id: '333',
+            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
+        };
         localDrawingsService.saveDrawing(newDrawing3);
         expect(localDrawingsService.clientDrawings[2]).to.equals(newDrawing3);
         done();

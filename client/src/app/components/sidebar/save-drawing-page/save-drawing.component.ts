@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import { DatabaseService } from '@app/services/database/database.service';
@@ -14,10 +14,10 @@ import { TitleInputComponent } from './title-input/title-input.component';
     templateUrl: './save-drawing.component.html',
     styleUrls: ['./save-drawing.component.scss'],
 })
-export class SaveDrawingComponent {
+export class SaveDrawingComponent implements AfterViewInit {
     @ViewChild('tagInput') private tagInput: TagInputComponent;
     @ViewChild('titleInput') private titleInput: TitleInputComponent;
-    @ViewChild('saveImg', { static: true }) saveImg: ElementRef<HTMLImageElement>;
+
     resultMessage: string = '';
     saveProgressEnum: typeof SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress;
     saveProgress: SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress.CHOOSING_SETTING;
@@ -26,7 +26,8 @@ export class SaveDrawingComponent {
     areTagsValid: boolean = true;
     isSavePossible: boolean = false;
 
-    baseCanvas: HTMLCanvasElement;
+    saveCanvas: HTMLCanvasElement;
+    imageURL: string;
 
     constructor(
         private database: DatabaseService,
@@ -34,9 +35,11 @@ export class SaveDrawingComponent {
         private drawingService: DrawingService,
         @Inject(MatDialogRef) private dialogRef: MatDialogRef<SaveDrawingComponent>,
     ) {
-        // TODO: test further to show drawing in save modal popup with saveImg
-        this.baseCanvas = this.drawingService.canvas;
-        this.saveImg.nativeElement.src = this.drawingService.canvas.toDataURL();
+        this.saveCanvas = this.drawingService.canvas;
+    }
+
+    ngAfterViewInit(): void {
+        this.imageURL = this.saveCanvas.toDataURL();
     }
 
     verifyTitleValid(isTitleValid: boolean): void {
@@ -69,6 +72,9 @@ export class SaveDrawingComponent {
                     }
                     this.resultMessage = this.request.body;
                     this.dialogRef.disableClose = false;
+                    const insertedId = this.resultMessage.slice(29);
+                    const drawing: ServerDrawing = { id: insertedId, image: this.imageURL };
+                    this.localServerService.sendDrawing(drawing).subscribe();
                 },
                 next: (result: Message) => {
                     this.request = result;
@@ -81,12 +87,5 @@ export class SaveDrawingComponent {
                     this.dialogRef.disableClose = false;
                 },
             });
-        // Has to save in databse before local server to generate ID
-        const insertedId = this.resultMessage.slice(29);
-        const ctx = this.baseCanvas.getContext('2d') as CanvasRenderingContext2D;
-        const pixelsTypedArray = ctx.getImageData(0, 0, this.baseCanvas.width, this.baseCanvas.height).data;
-        const pixelsNormalArray = Array.prototype.slice.call(pixelsTypedArray);
-        const drawing: ServerDrawing = { id: insertedId, pixels: pixelsNormalArray, width: this.baseCanvas.width, height: this.baseCanvas.height };
-        this.localServerService.sendDrawing(drawing).subscribe();
     }
 }

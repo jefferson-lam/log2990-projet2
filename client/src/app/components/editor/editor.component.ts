@@ -37,7 +37,16 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        event.preventDefault();
+        if (event.ctrlKey) {
+            switch (event.code) {
+                case 'KeyO':
+                case 'KeyE':
+                case 'KeyS':
+                default:
+                    event.preventDefault();
+            }
+        }
+
         if (!this.isPopUpOpen) {
             if (event.ctrlKey) {
                 switch (event.code) {
@@ -74,19 +83,22 @@ export class EditorComponent implements OnInit {
 
     openModalPopUp(type: string): void {
         if (!this.isCanvasEmpty()) {
-            if (type === 'export') {
-                this.newDialog.open(ExportDrawingComponent, {
-                    maxWidth: MAX_WIDTH_FORM + 'px',
-                    maxHeight: MAX_HEIGHT_FORM + 'px',
-                });
-                this.isPopUpOpen = true;
-            } else {
-                this.newDialog.open(NewDrawingBoxComponent);
-                this.isPopUpOpen = true;
+            switch (type) {
+                case 'export':
+                    this.newDialog.open(ExportDrawingComponent, {
+                        maxWidth: MAX_WIDTH_FORM + 'px',
+                        maxHeight: MAX_HEIGHT_FORM + 'px',
+                    });
+                    this.isPopUpOpen = true;
+                    break;
+                case 'new':
+                    this.newDialog.open(NewDrawingBoxComponent);
+                    this.isPopUpOpen = true;
+                    break;
+                case 'save':
+                    this.newDialog.open(SaveDrawingComponent);
+                    this.isPopUpOpen = true;
             }
-        } else if (type === 'save') {
-            this.newDialog.open(SaveDrawingComponent);
-            this.isPopUpOpen = true;
         }
     }
 

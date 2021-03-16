@@ -268,9 +268,13 @@ describe('EditorComponent', () => {
         expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
     });
 
-    it('openModalPopUp should open SaveDrawingComponent if type of popUp is save', () => {
+    it("openModalPopUp should open SaveDrawingComponent if canvas isn't empty type of popUp is save", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return false;
+        });
         component.openModalPopUp('save');
 
+        expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(SaveDrawingComponent);
     });

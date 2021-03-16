@@ -24,15 +24,25 @@ describe('SaveDrawingComponent', () => {
     let fakeTitleInputFixture: ComponentFixture<TitleInputComponent>;
     let titleInputComponent: TitleInputComponent;
     let matDialogRefStub: MatDialogRef<any>;
+    // let drawServiceSpy: SpyObj<DrawingService>;
+    // let localServerServiceSpy: SpyObj<LocalServerService>;
 
     beforeEach(async(() => {
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawings', 'getDrawing', 'saveDrawing', 'dropDrawing']);
         matDialogRefStub = {} as MatDialogRef<any>;
+        // drawServiceSpy = jasmine.createSpyObj('DrawingService', [], ['canvas']);
+        // (Object.getOwnPropertyDescriptor(drawServiceSpy, 'canvas')?.get as jasmine.Spy<() => HTMLCanvasElement>).and.returnValue(
+        //     {} as HTMLCanvasElement,
+        // );
+        // localServerServiceSpy = jasmine.createSpyObj('LocalServerService', ['sendDrawing']);
+
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
                 { provide: DatabaseService, useValue: databaseServiceSpy },
                 { provide: MatDialogRef, useValue: matDialogRefStub },
+                // { provide: DrawingService, useClass: drawServiceSpy },
+                // { provide: LocalServerService, useValue: localServerServiceSpy },
             ],
             declarations: [SaveDrawingComponent, SaveSavingPageComponent, SaveCompletePageComponent, SaveErrorPageComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -58,6 +68,13 @@ describe('SaveDrawingComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('ngAfterViewInit should call toDataURL()', () => {
+        // const toDataUrlSpy = spyOn(drawServiceSpy.canvas, 'toDataURL');
+        const toDataUrlSpy = spyOn(component.saveCanvas, 'toDataURL').and.callThrough();
+        component.ngAfterViewInit();
+        expect(toDataUrlSpy).toHaveBeenCalled();
     });
 
     it('verifyTitleValid should set isSavePossible to true if areTagsValid is already true', () => {
@@ -88,11 +105,17 @@ describe('SaveDrawingComponent', () => {
         expect(component.isSavePossible).toBeFalse();
     });
 
-    it('should call saveDrawings when calling saveDrawings', () => {
+    it('should call databaseService saveDrawings when calling saveDrawings', () => {
         databaseServiceSpy.saveDrawing.and.returnValue(of({ title: 'Success', body: '' }));
         component.saveDrawing();
         expect(databaseServiceSpy.saveDrawing).toHaveBeenCalled();
     });
+
+    // it('should call localServerService sendDrawing when calling saveDrawings', () => {
+    //     localServerServiceSpy.sendDrawing.and.returnValue(of());
+    //     component.saveDrawing();
+    //     expect(localServerServiceSpy.sendDrawing).toHaveBeenCalled();
+    // });
 
     it('should handle case where error message is received', async () => {
         databaseServiceSpy.saveDrawing.and.returnValue(of({ title: 'Error', body: '' }));

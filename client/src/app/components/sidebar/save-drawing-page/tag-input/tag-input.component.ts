@@ -107,29 +107,4 @@ export class TagInputComponent {
     private tagsHasReachedMaxCount(): boolean {
         return this.tags.length === DatabaseConstants.MAX_TAGS_COUNT;
     }
-
-    // private checkIsTagValid(tag: string): boolean {
-    //     // TODO: Add check for tag
-    //     let requirementViolations = 0;
-    //     if (this.tags.includes(tag)) {
-    //         requirementViolations++;
-    //     }
-    //     if (this.tagIsShorterThanMinLength(tag)) {
-    //         requirementViolations++;
-    //     }
-    //     if (this.tagIsLongerThanMaxLength(tag)) {
-    //         requirementViolations++;
-    //     }
-
-    //     if (this.tagHasSpecialCharacters(tag)) {
-    //         requirementViolations++;
-    //     }
-
-    //     if (this.tagsHasReachedMaxCount()) {
-    //         requirementViolations++;
-    //     }
-    //     const requirementViolated = requirementViolations > 0;
-    //     this.areTagsValidEvent.emit(!requirementViolated);
-    //     return !requirementViolated;
-    // }
 }

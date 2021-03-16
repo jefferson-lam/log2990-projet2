@@ -17,7 +17,10 @@ describe('LocalServerService', () => {
         httpMock = TestBed.inject(HttpTestingController);
         // tslint:disable: no-string-literal
         baseUrl = service['DRAWINGS_URL'];
-        drawing = { id: '123', pixels: [1, 2, 1], height: 100, width: 100 };
+        drawing = {
+            id: '123',
+            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
+        };
     });
 
     afterEach(() => {

@@ -26,7 +26,10 @@ describe('LocalDrawingsController', () => {
         });
         localDrawingsService = container.get(TYPES.LocalDrawingsService);
         app = container.get<Application>(TYPES.Application).app;
-        drawing = { id: '111', pixels: [1, 1, 1], width: 111, height: 111 };
+        drawing = {
+            id: '111',
+            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
+        };
     });
 
     it('should return array of server drawings on get request to /all', async () => {
@@ -53,15 +56,4 @@ describe('LocalDrawingsController', () => {
                 expect(response.body).to.deep.equal(drawing);
             });
     });
-
-    // it('should return undefined on invalid get request with specific drawing ID', async () => {
-    //     localDrawingsService.getDrawing.returns(undefined);
-    //     return supertest(app)
-    //         .get('/api/drawings/get')
-    //         .query({ id: '111' })
-    //         .expect(HTTP_STATUS_OK)
-    //         .then((response: any) => {
-    //             expect(response.body).to.deep.equal(undefined);
-    //         });
-    // });
 });
