@@ -35,6 +35,11 @@ export class ExportDrawingComponent implements AfterViewInit {
     ngAfterViewInit(): void {
         this.exportCanvas = this.exportCanvasRef.nativeElement;
         this.exportCtx = this.exportCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.createBackground();
+        this.refreshCanvas();
+    }
+
+    refreshCanvas(): void {
         this.exportCtx.drawImage(this.baseCanvas, 0, 0);
         this.exportImg.nativeElement.src = this.exportCanvas.toDataURL();
     }
@@ -52,22 +57,23 @@ export class ExportDrawingComponent implements AfterViewInit {
     applyFilter(filter: string): void {
         this.exportCanvas.style.filter = filter;
         this.exportImg.nativeElement.style.filter = filter;
+        if (filter === 'drop-shadow(30px 30px 10px black)') {
+            this.exportCtx.clearRect(0, 0, this.exportCanvas.width, this.exportCanvas.height);
+            this.refreshCanvas();
+        } else {
+            this.createBackground();
+            this.refreshCanvas();
+        }
     }
 
     createBackground(): void {
-        if (this.exportCanvas.style.filter === 'invert(0%)') {
-            this.exportCtx.fillStyle = 'black';
-        } else {
-            this.exportCtx.fillStyle = 'white';
-        }
+        this.exportCtx.fillStyle = 'white';
         this.exportCtx.fillRect(0, 0, this.exportCanvas.width, this.exportCanvas.height);
-        this.exportCtx.drawImage(this.baseCanvas, 0, 0);
     }
 
     saveImage(): void {
-        if (this.type === 'jpeg') {
-            this.createBackground();
-        }
+        this.exportCtx.filter = this.exportCanvas.style.filter;
+        this.applyFilter(this.exportCtx.filter);
         this.link.download = this.name + '.' + this.type;
         this.link.href = this.exportCanvas.toDataURL('image/' + this.type);
         this.link.click();
