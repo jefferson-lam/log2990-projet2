@@ -129,9 +129,12 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(eventSpy);
     });
 
-    it('should prevent keydown default when ctrl is down', () => {
+    it('should prevent keydown default when ctrl+relevant key is down', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: '', key: '' });
-        component.onKeyboardDown(eventSpy);
+        component.onCtrlZKeyDown(eventSpy);
+        component.onCtrlOKeyDown(eventSpy);
+        component.onCtrlEKeyDown(eventSpy);
+        component.onCtrlShiftZKeyDown(eventSpy);
 
         expect(eventSpy.preventDefault).toHaveBeenCalled();
     });
@@ -139,7 +142,7 @@ describe('EditorComponent', () => {
     it("should call openModalPopUp with argument 'new' when 'ctrl+o' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: '' });
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
-        component.onKeyboardDown(eventSpy);
+        component.onCtrlOKeyDown(eventSpy);
 
         expect(modalPopUpSpy).toHaveBeenCalled();
         expect(modalPopUpSpy).toHaveBeenCalledWith('new');
@@ -148,7 +151,7 @@ describe('EditorComponent', () => {
     it("should call openModalPopUp with argument 'export' when 'ctrl+e' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
         const modalPopUpSpy = spyOn(component, 'openModalPopUp');
-        component.onKeyboardDown(eventSpy);
+        component.onCtrlEKeyDown(eventSpy);
 
         expect(modalPopUpSpy).toHaveBeenCalled();
         expect(modalPopUpSpy).toHaveBeenCalledWith('export');
@@ -172,7 +175,7 @@ describe('EditorComponent', () => {
     it("should call undo when 'ctrl+z' keys are down and tool isn't used and no popups open", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyZ', key: '' });
         component.currentTool.mouseDown = false;
-        component.onKeyboardDown(eventSpy);
+        component.onCtrlZKeyDown(eventSpy);
 
         expect(undoSpy).toHaveBeenCalled();
         expect(redoSpy).not.toHaveBeenCalled();
@@ -181,7 +184,7 @@ describe('EditorComponent', () => {
     it("should call redo when 'ctrl+shift+z' keys are down and tool isn't used and no popups open", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, shiftKey: true, code: 'KeyZ', key: '' });
         component.currentTool.mouseDown = false;
-        component.onKeyboardDown(eventSpy);
+        component.onCtrlShiftZKeyDown(eventSpy);
 
         expect(undoSpy).not.toHaveBeenCalled();
         expect(redoSpy).toHaveBeenCalled();
@@ -191,7 +194,7 @@ describe('EditorComponent', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyZ', key: '' });
 
         component.currentTool.inUse = true;
-        component.onKeyboardDown(eventSpy);
+        component.onCtrlZKeyDown(eventSpy);
 
         expect(undoSpy).not.toHaveBeenCalled();
         expect(redoSpy).not.toHaveBeenCalled();
@@ -200,7 +203,7 @@ describe('EditorComponent', () => {
     it("should not call redo when 'ctrl+shift+z' keys are down and tool is used", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, shiftKey: true, code: 'KeyZ', key: '' });
         component.currentTool.inUse = true;
-        component.onKeyboardDown(eventSpy);
+        component.onCtrlShiftZKeyDown(eventSpy);
 
         expect(undoSpy).not.toHaveBeenCalled();
         expect(redoSpy).not.toHaveBeenCalled();

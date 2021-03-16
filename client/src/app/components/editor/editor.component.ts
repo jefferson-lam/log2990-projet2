@@ -51,7 +51,7 @@ export class EditorComponent implements OnInit {
     }
 
     @HostListener('window:keydown.control.shift.z', ['$event'])
-    onControlShiftZKeyDown(event: KeyboardEvent): void {
+    onCtrlShiftZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (!this.isPopUpOpen && !this.currentTool.inUse) {
             this.undoRedoService.redo();
