@@ -1,7 +1,7 @@
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { RectangleSelectionService } from '@app/services/tools/selection/rectangle-selection-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 
 @Component({
     selector: 'app-selection',
