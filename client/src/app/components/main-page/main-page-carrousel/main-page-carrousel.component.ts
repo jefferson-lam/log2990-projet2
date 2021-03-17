@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
-import { DrawingFormat } from '@app/classes/drawing-format';
-import { TagFormat } from '@app/classes/tag-format';
-import { DatabaseService } from '@app/services/database/database.service';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
     selector: 'app-main-page-carrousel',
@@ -9,40 +11,50 @@ import { DatabaseService } from '@app/services/database/database.service';
     styleUrls: ['./main-page-carrousel.component.scss'],
 })
 export class MainPageCarrouselComponent {
-    newTagAdded: boolean;
-    drawingId: string;
-    tagValue: string = '';
-    drawings: DrawingFormat[];
+    tagCtrl = new FormControl();
+    filteredTags: Observable<string[]>;
 
-    tagsList: TagFormat[] = [
-        {
-            name: '',
-        },
-    ];
+    visible: boolean = true;
+    selectable: boolean = true;
+    removable: boolean = true;
 
-    constructor(private databaseService: DatabaseService) {}
+    separatorKeysCodes: number[] = [ENTER, COMMA];
+    allTags: string[] = [''];
+    tagValue: string[] = [];
 
-    getDrawing(): void {
-        this.databaseService.getDrawings();
+    @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
+    constructor() {
+        this.filteredTags = this.tagCtrl.valueChanges.pipe(
+            startWith(null),
+            map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
+        );
     }
 
-    deleteDrawing(): void {
-        this.databaseService.dropDrawing(this.drawingId);
+    addTag(event: MatChipInputEvent): void {
+        const input = event.input;
+        const value = event.value;
+
+        if ((value || '').trim()) {
+            this.tagValue.push(value.trim());
+        }
+
+        if (input) {
+            input.value = '';
+        }
+
+        this.tagCtrl.setValue(null);
     }
 
-    updateDrawings(): void {
-        this.newTagAdded = true;
+    removeTag(tag: string): void {
+        const index = this.tagValue.indexOf(tag);
+
+        if (index >= 0) {
+            this.tagValue.splice(index, 1);
+        }
     }
 
-    addTag(): void {
-        this.tagsList.push();
-    }
-
-    updateTags(): void {
-        this.newTagAdded = !this.newTagAdded;
-    }
-
-    deleteTag(index: number): void {
-        this.tagsList.splice(index, 1);
+    private _filter(value: string): string[] {
+        const filterValue = value.toLowerCase();
+        return this.allTags.filter((tag) => tag.toLowerCase().indexOf(filterValue) === 0);
     }
 }
