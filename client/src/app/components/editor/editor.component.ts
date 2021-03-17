@@ -75,7 +75,7 @@ export class EditorComponent implements OnInit {
     }
 
     openExportPopUp(): void {
-        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+        if (!this.isPopUpOpen) {
             this.newDialog.open(ExportDrawingComponent, {
                 maxWidth: MAX_WIDTH_FORM + 'px',
                 maxHeight: MAX_HEIGHT_FORM + 'px',
