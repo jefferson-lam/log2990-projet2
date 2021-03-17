@@ -17,6 +17,11 @@ export class RectangleSelectionService extends ToolSelectionService {
     isSquare: boolean = false;
     isShiftDown: boolean = false;
     isEscapeDown: boolean = false;
+    cornerCoords: Vec2[] = new Array<Vec2>(2);
+    inUse: boolean = false;
+    isManipulating: boolean = false;
+    selectionHeight: number = 0;
+    selectionWidth: number = 0;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public rectangleService: RectangleService) {
         super(drawingService, undoRedoService, rectangleService);
@@ -37,11 +42,15 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.resetSelectedToolSettings();
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
-        super.onMouseDown(event);
+        if (this.inUse) {
+            this.cornerCoords[SelectionConstants.START_INDEX] = this.getPositionFromMouse(event);
+            super.onMouseDown(event);
+        }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
+            this.cornerCoords[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.rectangleService.inUse = false;
             super.onMouseUp(event);
             this.selectionWidth = this.cornerCoords[SelectionConstants.END_INDEX].x - this.cornerCoords[SelectionConstants.START_INDEX].x;
@@ -51,27 +60,8 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.inUse = false;
                 return;
             }
-            const tempCoord = this.cornerCoords[SelectionConstants.START_INDEX];
-            if (this.selectionHeight < 0 && this.selectionWidth < 0) {
-                this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
-                this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
-            } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
-                console.log(this.selectionHeight);
-                console.log(this.cornerCoords);
-                this.cornerCoords[SelectionConstants.START_INDEX].x = this.cornerCoords[SelectionConstants.END_INDEX].x;
-                this.cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
-                console.log(this.cornerCoords);
-            } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
-                this.cornerCoords[SelectionConstants.START_INDEX].y = this.cornerCoords[SelectionConstants.END_INDEX].y;
-                this.cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
-            }
-            this.selectionWidth = Math.abs(this.selectionWidth);
-            this.selectionHeight = Math.abs(this.selectionHeight);
-            if (this.isSquare) {
-                const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
-                this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
-                this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
-            }
+            this.validateCornerCoords();
+            this.validateSelectionSize();
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
             this.drawingService.selectionCtx.fillStyle = 'white';
@@ -110,7 +100,10 @@ export class RectangleSelectionService extends ToolSelectionService {
     }
 
     onMouseMove(event: MouseEvent): void {
-        super.onMouseMove(event);
+        if (this.inUse) {
+            this.cornerCoords[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
+            super.onMouseMove(event);
+        }
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
@@ -137,7 +130,6 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.isShiftDown = false;
             } else if (event.key === 'Escape' && this.isEscapeDown) {
                 // Case where the user is still selecting.
-                console.log('Resetting from editor...');
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetSelectedToolSettings();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -167,6 +159,59 @@ export class RectangleSelectionService extends ToolSelectionService {
     }
 
     selectAll(): void {
-        super.selectAll();
+        this.selectionWidth = this.drawingService.canvas.width;
+        this.selectionHeight = this.drawingService.canvas.height;
+        this.drawingService.selectionCanvas.width = this.selectionWidth;
+        this.drawingService.selectionCanvas.height = this.selectionHeight;
+        this.drawingService.selectionCtx.fillStyle = 'white';
+        this.drawingService.selectionCtx.fillRect(0, 0, this.drawingService.selectionCanvas.width, this.drawingService.selectionCanvas.height);
+        this.drawingService.selectionCtx.drawImage(
+            this.drawingService.canvas,
+            0,
+            0,
+            this.selectionWidth,
+            this.selectionHeight,
+            0,
+            0,
+            this.selectionWidth,
+            this.selectionHeight,
+        );
+        this.drawingService.baseCtx.clearRect(0, 0, this.selectionWidth, this.selectionHeight);
+        this.drawingService.selectionCanvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
+        this.drawingService.selectionCanvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
+        this.cornerCoords = [
+            { x: 0, y: 0 },
+            { x: this.selectionWidth, y: this.selectionHeight },
+        ];
+        this.inUse = false;
+        this.isManipulating = true;
+    }
+
+    validateCornerCoords() {
+        const tempCoord = this.cornerCoords[SelectionConstants.START_INDEX];
+        if (this.selectionHeight < 0 && this.selectionWidth < 0) {
+            this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
+            this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
+        } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
+            this.cornerCoords[SelectionConstants.START_INDEX].x = this.cornerCoords[SelectionConstants.END_INDEX].x;
+            this.cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
+        } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
+            this.cornerCoords[SelectionConstants.START_INDEX].y = this.cornerCoords[SelectionConstants.END_INDEX].y;
+            this.cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
+        }
+    }
+
+    validateSelectionSize() {
+        this.selectionWidth = Math.abs(this.selectionWidth);
+        this.selectionHeight = Math.abs(this.selectionHeight);
+        if (this.isSquare) {
+            const shortestSide = Math.min(this.selectionWidth, this.selectionHeight);
+            this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
+            this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
+        }
+    }
+
+    clearCorners(): void {
+        this.cornerCoords.fill({ x: 0, y: 0 });
     }
 }
