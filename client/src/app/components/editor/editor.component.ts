@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -96,6 +97,6 @@ export class EditorComponent implements OnInit {
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         const baseCtx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
         const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
-        return !pixelBuffer.some((color) => color !== 0);
+        return !pixelBuffer.some((color) => color !== WHITE_RGBA_DECIMAL);
     }
 }
