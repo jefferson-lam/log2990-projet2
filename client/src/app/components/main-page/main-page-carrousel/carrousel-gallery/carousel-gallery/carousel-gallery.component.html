@@ -1,17 +1,16 @@
 <div id="galleryContainer" *ngIf="!this.deleted">
-  <div id='galleryShowcase'>
-    <mat-icon class='slideLeft' (click)='showcasePrevDrawing()' (keydown.arrowLeft)='showcasePrevDrawing()'>navigate_before</mat-icon>
-    <div class='gridContainer'>
-      <div id="previewGalleryImage" *ngFor="let drawing of showCasedDrawing; let i = index">
-        <div class='drawingTitle'><div>{{drawing.name}}</div></div>
-        <div>
-          <img alt='Image non-trouvée' class='drawingImage' [src]="drawing.image" (click)='openDrawingEditor()'/>
+    <div id="galleryShowcase">
+        <mat-icon class="slideLeft" (click)="showcasePrevDrawing()" (keydown.arrowLeft)="showcasePrevDrawing()">navigate_before</mat-icon>
+        <div class="gridContainer">
+            <div id="previewGalleryImage" *ngFor="let drawing of showCasedDrawings; let i = index">
+                <div class="drawingTitle">
+                    <div>{{ drawing.name }}</div>
+                </div>
+                <div>
+                    <img alt="Image non-trouvée" class="drawingImage" [src]="drawing.image" (click)="openDrawingEditor()" />
+                </div>
+            </div>
         </div>
-      </div>
+        <mat-icon class="slideRight" (click)="showcaseNextDrawing()" (keydown.arrowRight)="showcaseNextDrawing()">navigate_next</mat-icon>
     </div>
-    <mat-icon class='slideRight' (click)='showcaseNextDrawing()' (keydown.arrowRight)='showcaseNextDrawing()'>navigate_next</mat-icon>
-  </div>
 </div>
-
-
-
