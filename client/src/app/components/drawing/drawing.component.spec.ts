@@ -49,6 +49,13 @@ describe('DrawingComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('should initialize baseCanvas with a white background', () => {
+        const baseCtx: CanvasRenderingContext2D = component.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, component.baseWidth, component.baseHeight).data.buffer);
+        const isEmpty = !pixelBuffer.some((color) => color !== 0);
+        expect(isEmpty).toBeFalsy();
+    });
+
     it('should have a default WIDTH and HEIGHT', () => {
         const height = component.baseHeight;
         const width = component.baseWidth;
