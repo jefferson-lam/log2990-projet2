@@ -7,3 +7,5 @@ export const LINE_KEY = 'l';
 export const RECTANGLE_KEY = '1';
 
 export const ELLIPSE_KEY = '2';
+
+export const RECTANGLE_SELECTION_KEY = 'r';
