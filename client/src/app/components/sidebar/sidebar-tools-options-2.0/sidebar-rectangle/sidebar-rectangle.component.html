@@ -1,5 +1,5 @@
 <div id="settings-container">
-  <h2 id="title"> Options du rectangle </h2>
+  <h2 id="title"> Options rectangle </h2>
   <div>
     <div>
       <div id="width-setting">
@@ -18,9 +18,10 @@
         <mat-radio-group>
           <mat-radio-button id="border" value="border" color="warn" (change)="emitFillMode(0)"> Contour </mat-radio-button> <br>
           <mat-radio-button id="filled" value="filled" color="warn" (change)="emitFillMode(1)"> Plein </mat-radio-button> <br>
-          <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="emitFillMode(2)"> Plein avec contour </mat-radio-button>
+          <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="emitFillMode(2)" checked> Plein avec contour </mat-radio-button>
         </mat-radio-group>
       </div>
+      <br>
       <div id="colorPicker">
         <app-color-picker></app-color-picker>
       </div>
