@@ -12,8 +12,6 @@ export class SidebarPipetteComponent implements OnInit {
     colorService: ColorService;
     rawData: ImageData = new ImageData(10, 10);
     previewData: ImageData = new ImageData(100, 100);
-    rawWidth = 40;
-    previewWidth = 400;
 
     constructor(colorService: ColorService, public pipetteService: PipetteService) {}
 
