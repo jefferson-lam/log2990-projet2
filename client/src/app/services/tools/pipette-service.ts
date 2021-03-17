@@ -17,12 +17,12 @@ export class PipetteService extends Tool {
     mousePosition: Vec2;
     ctx: CanvasRenderingContext2D;
     toolManager: ToolManagerService;
-    mouseDown: boolean = false;
-    leftMouseUp: boolean;
-    rightMouseUp: boolean;
-    inBound: boolean;
 
-    previewData: ImageData = new ImageData(10, 10);
+    inBound: boolean = false;
+    inBoundSource: Subject<boolean> = new BehaviorSubject<boolean>(this.inBound);
+    inBoundObservable: Observable<boolean> = this.inBoundSource.asObservable();
+
+    previewData: ImageData = new ImageData(11, 11);
     previewDataSource: Subject<ImageData> = new BehaviorSubject<ImageData>(this.previewData);
     previewDataObservable: Observable<ImageData> = this.previewDataSource.asObservable();
 
@@ -33,7 +33,7 @@ export class PipetteService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.inBound) {
             this.mousePosition = this.getPositionFromMouse(event);
-            let contextData = this.drawingService.baseCtx.getImageData(this.mousePosition.x - 5, this.mousePosition.y - 5, 10, 10);
+            let contextData = this.drawingService.baseCtx.getImageData(this.mousePosition.x - 5, this.mousePosition.y - 5, 11, 11);
             this.setPreviewData(contextData);
         }
     }
@@ -51,12 +51,12 @@ export class PipetteService extends Tool {
         }
     }
 
-    onMouseLeave(event: MouseEvent): void {
-        this.inBound = false;
+    onMouseLeave(): void {
+        this.setInBound(false);
     }
 
-    onMouseEnter(event: MouseEvent): void {
-        this.inBound = true;
+    onMouseEnter(): void {
+        this.setInBound(true);
     }
 
     pixelDataToRgba(data: ImageData): Rgba {
@@ -67,10 +67,6 @@ export class PipetteService extends Tool {
 
         let color = { red: red.toString(), green: green.toString(), blue: blue.toString(), alpha: alpha };
         return color;
-    }
-
-    convertRgbaToString(color: Rgba): string {
-        return 'rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + color.alpha + ')';
     }
 
     setPrimaryColor(color: Rgba): void {
@@ -84,5 +80,10 @@ export class PipetteService extends Tool {
     setPreviewData(data: ImageData): void {
         this.previewData = data;
         this.previewDataSource.next(this.previewData);
+    }
+
+    setInBound(bool: boolean): void {
+        this.inBound = bool;
+        this.inBoundSource.next(this.inBound);
     }
 }

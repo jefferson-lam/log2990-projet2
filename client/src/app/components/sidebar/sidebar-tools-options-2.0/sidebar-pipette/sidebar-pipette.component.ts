@@ -10,8 +10,9 @@ import { PipetteService } from '@app/services/tools/pipette-service';
 export class SidebarPipetteComponent implements OnInit {
     ctx: CanvasRenderingContext2D;
     colorService: ColorService;
-    rawData: ImageData = new ImageData(10, 10);
-    previewData: ImageData = new ImageData(100, 100);
+    rawData: ImageData = new ImageData(11, 11);
+    previewData: ImageData = new ImageData(220, 220);
+    inBound: boolean = false;
 
     constructor(colorService: ColorService, public pipetteService: PipetteService) {}
 
@@ -23,27 +24,27 @@ export class SidebarPipetteComponent implements OnInit {
             this.rawData = previewData;
             this.drawPreview();
         });
+        this.pipetteService.inBoundObservable.subscribe((inBound: boolean) => {
+            this.inBound = inBound;
+        });
     }
 
     drawPreview(): void {
         if (!this.ctx) {
             this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         }
-        this.ctx.fillStyle = '#FFF';
-        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.imageSmoothingEnabled = false;
 
-        let zoomedCanvas = document.createElement('canvas');
-        zoomedCanvas.width = 100;
-        zoomedCanvas.height = 100;
-        let zoomedCtx = zoomedCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.ctx.beginPath();
+        this.ctx.arc(110, 110, 110, 0, Math.PI * 2, true);
+        this.ctx.clip();
+        this.ctx.closePath();
 
-        zoomedCtx.fillStyle = '#FFF';
-        zoomedCtx.fillRect(0, 0, 100, 100);
+        this.ctx.putImageData(this.rawData, 110, 110);
 
-        zoomedCtx.putImageData(this.rawData, 0, 0);
-        this.ctx.drawImage(zoomedCtx.canvas, 0, 0, 10, 10, 0, 0, 100, 100);
+        this.ctx.drawImage(this.ctx.canvas, 110, 110, 11, 11, 0, 0, 220, 220);
         // Put center pixel in evidence
         this.ctx.strokeStyle = '#000';
-        this.ctx.strokeRect(45, 45, 10, 10);
+        this.ctx.strokeRect(100, 100, 20, 20);
     }
 }
