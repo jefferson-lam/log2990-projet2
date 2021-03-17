@@ -1,18 +1,16 @@
 <div id="galleryContainer" *ngIf="!this.deleted">
-  <div id="titleGallery"><h3> Drawing Title </h3></div>
-
   <div id='galleryShowcase'>
-    <mat-icon class='slideLeft' (click)='showcaseNextDrawing()'>navigate_before</mat-icon>
-    <mat-card id="previewGalleryImage">
-      <mat-card-content
-        *ngFor="let drawing of previewDrawing; let i = index"
-        mat-card-image="drawing.image"
-      ></mat-card-content>
-    </mat-card>
-    <mat-icon class='slideRight' (click)='showcaseNextDrawing()'>navigate_next</mat-icon>
+    <mat-icon class='slideLeft' (click)='showcasePrevDrawing()' (keydown.arrowLeft)='showcasePrevDrawing()'>navigate_before</mat-icon>
+    <div class='gridContainer'>
+      <div id="previewGalleryImage" *ngFor="let drawing of showCasedDrawing; let i = index">
+        <div class='drawingTitle'><div>{{drawing.name}}</div></div>
+        <div>
+          <img alt='Image non-trouvée' class='drawingImage' [src]="drawing.image" (click)='openDrawingEditor()'/>
+        </div>
+      </div>
+    </div>
+    <mat-icon class='slideRight' (click)='showcaseNextDrawing()' (keydown.arrowRight)='showcaseNextDrawing()'>navigate_next</mat-icon>
   </div>
-
-  <div id="tagGallery"><p> tag something </p></div>
 </div>
 
 

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DrawingFormat } from '@app/classes/drawing-format';
+import { TagFormat } from '@app/classes/tag-format';
 import { DatabaseService } from '@app/services/database/database.service';
 
 @Component({
@@ -8,26 +9,40 @@ import { DatabaseService } from '@app/services/database/database.service';
     styleUrls: ['./main-page-carrousel.component.scss'],
 })
 export class MainPageCarrouselComponent {
+    newTagAdded: boolean;
     drawingId: string;
-    tagValue: string;
+    tagValue: string = '';
     drawings: DrawingFormat[];
 
-    constructor(private databaseService: DatabaseService) {
-        this.tagValue = '';
-    }
+    tagsList: TagFormat[] = [
+        {
+            name: '',
+        },
+    ];
+
+    constructor(private databaseService: DatabaseService) {}
 
     getDrawing(): void {
         this.databaseService.getDrawings();
     }
 
-    // getDrawingId(): void {
-    //     const x = JSON.parse(this.databaseService.getDrawings());
-    // }
-
     deleteDrawing(): void {
         this.databaseService.dropDrawing(this.drawingId);
     }
+
     updateDrawings(): void {
-        console.log('something');
+        this.newTagAdded = true;
+    }
+
+    addTag(): void {
+        this.tagsList.push();
+    }
+
+    updateTags(): void {
+        this.newTagAdded = !this.newTagAdded;
+    }
+
+    deleteTag(index: number): void {
+        this.tagsList.splice(index, 1);
     }
 }
