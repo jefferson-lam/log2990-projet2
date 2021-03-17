@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
@@ -23,6 +24,7 @@ export class ToolManagerService {
         public ellipseService: EllipseService,
         public drawingService: DrawingService,
         public polygoneService: PolygoneService,
+        public aerosolService: AerosolService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -35,7 +37,8 @@ export class ToolManagerService {
             .set(ToolManagerConstants.LINE_KEY, this.lineService)
             .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
             .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
-            .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService);
+            .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
+            .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService);
     }
 
     selectTool(event: KeyboardEvent): Tool {
@@ -59,6 +62,7 @@ export class ToolManagerService {
         this.polygoneService.setPrimaryColor(color);
         this.pencilService.setPrimaryColor(color);
         this.lineService.setPrimaryColor(color);
+        this.aerosolService.setPrimaryColor(color);
     }
 
     setSecondaryColorTools(color: string): void {
