@@ -5,7 +5,7 @@
             <app-title-input #titleInput (isTitleValidEvent)="verifyTitleValid($event)"></app-title-input>
             <app-tag-input #tagInput (areTagsValidEvent)="verifyTagsValid($event)"></app-tag-input>
         </form>
-        <input #savebutton type="button" value="Save" [disabled]="!isSavePossible" (click)="saveDrawing()" />
+        <input #savebutton id="saveButton" type="button" value="Confirmer" [disabled]="!isSavePossible" (click)="saveDrawing()" />
     </div>
     <app-save-saving-page *ngIf="saveProgress === saveProgressEnum.SAVING"></app-save-saving-page>
     <app-save-complete-page [reason]="resultMessage" *ngIf="saveProgress === saveProgressEnum.COMPLETE"></app-save-complete-page>
