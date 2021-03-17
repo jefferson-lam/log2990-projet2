@@ -26,6 +26,8 @@ describe('RectangleSelectionService', () => {
     let baseCtxClearRectSpy: jasmine.Spy<any>;
     let selectionCtxDrawImageSpy: jasmine.Spy<any>;
     let selectionCtxFillRectSpy: jasmine.Spy<any>;
+    let parentResetSelectedToolSettingsSpy: jasmine.Spy<any>;
+    let computeSquareCoordsSpy: jasmine.Spy<any>;
 
     let executeSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
@@ -59,11 +61,13 @@ describe('RectangleSelectionService', () => {
         parentKeyboardUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onKeyboardUp');
         parentMouseLeaveSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseLeave');
         parentMouseEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseEnter');
+        parentResetSelectedToolSettingsSpy = spyOn<any>(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'resetSelectedToolSettings');
 
         baseCtxDrawImageSpy = spyOn<any>(baseCtxStub, 'drawImage').and.callThrough();
         baseCtxClearRectSpy = spyOn<any>(baseCtxStub, 'clearRect').and.callThrough();
         selectionCtxDrawImageSpy = spyOn<any>(selectionCtxStub, 'drawImage').and.callThrough();
         selectionCtxFillRectSpy = spyOn<any>(selectionCtxStub, 'fillRect').and.callThrough();
+        computeSquareCoordsSpy = spyOn<any>(service, 'computeSquareCoords').and.callThrough();
 
         mouseEvent = {
             offsetX: 25,
@@ -76,7 +80,7 @@ describe('RectangleSelectionService', () => {
         expect(service).toBeTruthy();
     });
 
-    it(' mouseDown should should set inUse to true', () => {
+    it('mouseDown should should set inUse to true', () => {
         service.onMouseDown(mouseEvent);
         expect(service.inUse).toBeTruthy();
         expect(parentMouseDownSpy).toHaveBeenCalled();
@@ -90,6 +94,14 @@ describe('RectangleSelectionService', () => {
         expect(executeSpy).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
         expect(service.cornerCoords[START_INDEX]).toEqual(expectedResult);
+    });
+
+    it('onMouseDown should not set inUse to true if not left mouse button', () => {
+        const rightMouseButton: MouseEvent = {
+            button: 1,
+        } as MouseEvent;
+        service.onMouseDown(rightMouseButton);
+        expect(service.inUse).toBeFalsy();
     });
 
     it('onMouseUp should pass if tool not inUse', () => {
@@ -114,33 +126,39 @@ describe('RectangleSelectionService', () => {
 
     it('onMouseUp should return if selectionW and selectionH are 0', () => {
         const startPoint: Vec2 = {
-            x: 250,
+            x: 25,
             y: 250,
         };
-        const endPoint: Vec2 = {
-            x: 250,
-            y: 300,
-        };
         service.inUse = true;
-        service.cornerCoords = [startPoint, endPoint];
+        service.cornerCoords[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(service.inUse).toBeFalsy();
     });
 
     it('onMouseUp should return if selectionW and selectionH are 0', () => {
         const startPoint: Vec2 = {
             x: 250,
-            y: 250,
-        };
-        const endPoint: Vec2 = {
-            x: 300,
-            y: 250,
+            y: 40,
         };
         service.inUse = true;
-        service.cornerCoords = [startPoint, endPoint];
+        service.cornerCoords[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(service.inUse).toBeFalsy();
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(service.onMouseUp(mouseEvent)).toBe(undefined);
+    });
+
+    it('onMouseUp if isSquare should call computeSquareCoords', () => {
+        const startPoint: Vec2 = {
+            x: 250,
+            y: 500,
+        };
+        service.isSquare = true;
+        service.inUse = true;
+        service.cornerCoords[START_INDEX] = startPoint;
+        service.onMouseUp(mouseEvent);
+        expect(computeSquareCoordsSpy).toHaveBeenCalled();
     });
 
     it('onMouseLeave should call parents onMouseLeave', () => {
@@ -198,11 +216,32 @@ describe('RectangleSelectionService', () => {
         expect(service.isEscapeDown).toBeTruthy();
     });
 
+    it('onKeyboardDown while inUSe with esc key should not run if escapeDown is already true', () => {
+        const escKeyboardEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+        service.inUse = true;
+        service.isEscapeDown = true;
+        service.onKeyboardDown(escKeyboardEvent);
+        expect(service.isEscapeDown).toBeTruthy();
+    });
+
     it('onKeyboardDown while isManipulating with Esc key should set values to true', () => {
         const escKeyboardEvent = {
             key: 'Escape',
         } as KeyboardEvent;
         service.isManipulating = true;
+        service.onKeyboardDown(escKeyboardEvent);
+        expect(service.isEscapeDown).toBeTruthy();
+    });
+
+    it('onKeyboardDown while isManipulating with esc key should not run if escapeDown is already true', () => {
+        const escKeyboardEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+        service.inUse = false;
+        service.isManipulating = true;
+        service.isEscapeDown = true;
         service.onKeyboardDown(escKeyboardEvent);
         expect(service.isEscapeDown).toBeTruthy();
     });
@@ -237,6 +276,18 @@ describe('RectangleSelectionService', () => {
         expect(service.isEscapeDown).toBeFalsy();
     });
 
+    it('onKeyboardUp inUse should not reset canvas state if esc is called while isEscapeDown is false', () => {
+        const escKeyboardEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+        service.inUse = true;
+        service.isEscapeDown = false;
+        service.onKeyboardUp(escKeyboardEvent);
+        expect(parentResetSelectedToolSettingsSpy).not.toHaveBeenCalled();
+        expect(service.inUse).toBeTruthy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
     it('onKeyboardUp isManipulating should set esc values', () => {
         const escKeyboardEvent = {
             key: 'Escape',
@@ -250,6 +301,19 @@ describe('RectangleSelectionService', () => {
         service.onKeyboardUp(escKeyboardEvent);
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('onKeyboardUp isManipulating should not reset canvas state if esc is called while isEscapeDown is false', () => {
+        const escKeyboardEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+        service.isManipulating = true;
+        service.isEscapeDown = false;
+        service.onKeyboardUp(escKeyboardEvent);
+        expect(baseCtxDrawImageSpy).not.toHaveBeenCalled();
+        expect(parentResetSelectedToolSettingsSpy).not.toHaveBeenCalled();
+        expect(service.isManipulating).toBeTruthy();
         expect(service.isEscapeDown).toBeFalsy();
     });
 
@@ -356,7 +420,7 @@ describe('RectangleSelectionService', () => {
         expect(service.cornerCoords).toEqual(expectedResult);
     });
 
-    it('validateCorneCoords should properly set values (+w, +h)', () => {
+    it('validateCornerCoords should properly set values (+w, +h)', () => {
         const startPoint: Vec2 = {
             x: 100,
             y: 350,

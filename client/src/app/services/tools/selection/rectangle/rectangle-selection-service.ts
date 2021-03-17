@@ -61,11 +61,13 @@ export class RectangleSelectionService extends ToolSelectionService {
                 return;
             }
             this.validateCornerCoords();
-            this.validateSelectionSize();
+            this.selectionWidth = Math.abs(this.selectionWidth);
+            this.selectionHeight = Math.abs(this.selectionHeight);
+            if (this.isSquare) {
+                this.computeSquareCoords();
+            }
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
-            this.drawingService.selectionCtx.fillStyle = 'white';
-            this.drawingService.selectionCtx.fillRect(0, 0, this.drawingService.selectionCanvas.width, this.drawingService.selectionCanvas.height);
             this.drawingService.selectionCtx.drawImage(
                 this.drawingService.canvas,
                 this.cornerCoords[SelectionConstants.START_INDEX].x,
@@ -77,7 +79,8 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.drawingService.baseCtx.clearRect(
+            this.drawingService.baseCtx.fillStyle = 'white';
+            this.drawingService.baseCtx.fillRect(
                 this.cornerCoords[SelectionConstants.START_INDEX].x,
                 this.cornerCoords[SelectionConstants.START_INDEX].y,
                 this.selectionWidth,
@@ -86,8 +89,8 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
             this.inUse = false;
-            this.isManipulating = true;
             this.isSquare = false;
+            this.isManipulating = true;
         }
     }
 
@@ -201,14 +204,10 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    validateSelectionSize() {
-        this.selectionWidth = Math.abs(this.selectionWidth);
-        this.selectionHeight = Math.abs(this.selectionHeight);
-        if (this.isSquare) {
-            const shortestSide = Math.min(this.selectionWidth, this.selectionHeight);
-            this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
-            this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
-        }
+    computeSquareCoords() {
+        const shortestSide = Math.min(this.selectionWidth, this.selectionHeight);
+        this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
+        this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
     }
 
     clearCorners(): void {

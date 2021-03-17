@@ -70,6 +70,7 @@ export class ToolSelectionService extends Tool {
     }
 
     setSelectionSettings(): void {
+        this.drawingService.baseCtx.fillStyle = '#fffff';
         this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
         this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
         this.selectionTool.setPrimaryColor('white');
@@ -78,6 +79,7 @@ export class ToolSelectionService extends Tool {
     }
 
     resetSelectedToolSettings(): void {
+        this.drawingService.baseCtx.fillStyle = 'black';
         this.selectionTool.setFillMode(this.selectionToolFillMode);
         this.selectionTool.setLineWidth(this.selectionToolLineWidth);
         this.selectionTool.setPrimaryColor(this.selectionToolPrimaryColor);
