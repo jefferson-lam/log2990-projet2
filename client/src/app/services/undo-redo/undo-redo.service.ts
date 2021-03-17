@@ -10,6 +10,8 @@ export class UndoRedoService {
     undoPile: Command[] = [];
     redoPile: Command[] = [];
 
+    resetCanvasSize: Command;
+
     pileSizeSource: Subject<number[]> = new BehaviorSubject<number[]>([this.undoPile.length, this.redoPile.length]);
     pileSizeObservable: Observable<number[]> = this.pileSizeSource.asObservable();
 
@@ -47,6 +49,7 @@ export class UndoRedoService {
     refresh(): void {
         this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.resetCanvasSize.execute();
         this.undoPile.forEach((c) => c.execute());
     }
 }
