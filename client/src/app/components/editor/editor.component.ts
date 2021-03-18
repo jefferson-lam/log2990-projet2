@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -34,33 +35,44 @@ export class EditorComponent implements OnInit {
         });
     }
 
+    @HostListener('window:keydown.control.e', ['$event'])
+    onCtrlEKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.openExportPopUp();
+    }
+
+    @HostListener('window:keydown.control.o', ['$event'])
+    onCtrlOKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.openNewDrawingPopUp();
+    }
+
+    @HostListener('window:keydown.control.s', ['$event'])
+    onCtrlSKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.openSavePopUp();
+    }
+
+    @HostListener('window:keydown.control.shift.z', ['$event'])
+    onCtrlShiftZKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+            this.undoRedoService.redo();
+        }
+    }
+
+    @HostListener('window:keydown.control.z', ['$event'])
+    onCtrlZKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+            this.undoRedoService.undo();
+        }
+    }
+
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        if (!this.isPopUpOpen) {
-            if (event.ctrlKey) {
-                switch (event.code) {
-                    case 'KeyO':
-                        this.openModalPopUp('new');
-                        break;
-                    case 'KeyE':
-                        this.openModalPopUp('export');
-                        break;
-                    case 'KeyZ':
-                        if (!this.currentTool.inUse) {
-                            if (event.shiftKey) {
-                                this.undoRedoService.redo();
-                            } else {
-                                this.undoRedoService.undo();
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            } else if (event.key.match(/^(1|2|3|c|l|e)$/)) {
-                this.currentTool = this.toolManager.selectTool(event);
-            }
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|3|a|c|l|e)$/)) {
+            this.currentTool = this.toolManager.selectTool(event);
         }
     }
 
@@ -68,18 +80,27 @@ export class EditorComponent implements OnInit {
         this.currentTool = newTool;
     }
 
-    openModalPopUp(type: string): void {
-        if (!this.isCanvasEmpty()) {
-            if (type === 'export') {
-                this.newDialog.open(ExportDrawingComponent, {
-                    maxWidth: MAX_WIDTH_FORM + 'px',
-                    maxHeight: MAX_HEIGHT_FORM + 'px',
-                });
-                this.isPopUpOpen = true;
-            } else {
-                this.newDialog.open(NewDrawingBoxComponent);
-                this.isPopUpOpen = true;
-            }
+    openExportPopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            this.newDialog.open(ExportDrawingComponent, {
+                maxWidth: MAX_WIDTH_FORM + 'px',
+                maxHeight: MAX_HEIGHT_FORM + 'px',
+            });
+            this.isPopUpOpen = true;
+        }
+    }
+
+    openNewDrawingPopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            this.newDialog.open(NewDrawingBoxComponent);
+            this.isPopUpOpen = true;
+        }
+    }
+
+    openSavePopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            this.newDialog.open(SaveDrawingComponent);
+            this.isPopUpOpen = true;
         }
     }
 
