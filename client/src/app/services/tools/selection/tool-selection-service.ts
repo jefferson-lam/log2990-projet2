@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { Vec2 } from '@app/classes/vec2';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -34,6 +35,7 @@ export class ToolSelectionService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
+        this.getSelectedToolSettings();
         this.setSelectionSettings();
         this.selectionTool.onMouseDown(event);
     }
@@ -62,11 +64,33 @@ export class ToolSelectionService extends Tool {
         this.selectionTool.onKeyboardUp(event);
     }
 
+    validateCornerCoords(cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): Vec2[] {
+        const tempCoord = cornerCoords[SelectionConstants.START_INDEX];
+        if (selectionHeight < 0 && selectionWidth < 0) {
+            cornerCoords[SelectionConstants.START_INDEX] = cornerCoords[SelectionConstants.END_INDEX];
+            cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
+        } else if (selectionWidth < 0 && selectionHeight > 0) {
+            cornerCoords[SelectionConstants.START_INDEX].x = cornerCoords[SelectionConstants.END_INDEX].x;
+            cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
+        } else if (selectionWidth > 0 && selectionHeight < 0) {
+            cornerCoords[SelectionConstants.START_INDEX].y = cornerCoords[SelectionConstants.END_INDEX].y;
+            cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
+        }
+        return cornerCoords;
+    }
+
     resetCanvasState(canvas: HTMLCanvasElement): void {
         canvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
         canvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
         canvas.width = SelectionConstants.DEFAULT_WIDTH;
         canvas.height = SelectionConstants.DEFAULT_HEIGHT;
+    }
+
+    getSelectedToolSettings(): void {
+        this.selectionToolLineWidth = this.selectionTool.lineWidth!;
+        this.selectionToolFillMode = this.selectionTool.fillMode!;
+        this.selectionToolPrimaryColor = this.selectionTool.primaryColor!;
+        this.selectionToolSecondaryColor = this.selectionTool.secondaryColor!;
     }
 
     setSelectionSettings(): void {

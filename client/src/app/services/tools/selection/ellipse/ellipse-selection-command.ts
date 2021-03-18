@@ -1,6 +1,7 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import { END_ANGLE, END_INDEX, ROTATION, START_ANGLE, START_INDEX } from '@app/constants/ellipse-constants';
+import { OFFSET_RADIUS } from '@app/constants/selection-constants';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 
 export class EllipseSelectionCommand extends Command {
@@ -32,12 +33,13 @@ export class EllipseSelectionCommand extends Command {
         const radiiXAndY = this.getRadiiXAndY(this.cornerCoords);
         const xRadius = radiiXAndY[0];
         const yRadius = radiiXAndY[1];
-
         this.ctx.beginPath();
         this.ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
         this.ctx.fillStyle = 'white';
         this.ctx.fill();
 
+        // Clip the ctx to only fit the what is inside the outline that is offset by 1
+        this.clipEllise(this.ctx, this.transformValues, this.selectionHeight, this.selectionWidth);
         this.ctx.drawImage(
             this.selectionCanvas,
             0,
@@ -49,6 +51,8 @@ export class EllipseSelectionCommand extends Command {
             this.selectionWidth,
             this.selectionHeight,
         );
+        // restore is called because save is called in clipEllipse function.
+        this.ctx.restore();
     }
 
     cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {
@@ -60,6 +64,24 @@ export class EllipseSelectionCommand extends Command {
         context?.drawImage(selectionCanvas, 0, 0);
         // return the new canvas
         return newCanvas;
+    }
+
+    clipEllise(ctx: CanvasRenderingContext2D, start: Vec2, height: number, width: number): void {
+        const end: Vec2 = {
+            x: start.x + width,
+            y: start.y + height,
+        };
+        const ellipseCenter = this.getEllipseCenter(start, end, this.isCircle);
+        const startX = ellipseCenter.x;
+        const startY = ellipseCenter.y;
+        const radiiXAndY = this.getRadiiXAndY([start, end]);
+        const xRadius = radiiXAndY[0];
+        const yRadius = radiiXAndY[1];
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(this.transformValues.x, this.transformValues.y);
+        ctx.ellipse(startX, startY, xRadius - OFFSET_RADIUS, yRadius - OFFSET_RADIUS, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.clip();
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {

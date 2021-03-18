@@ -28,7 +28,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         super(drawingService, undoRedoService, ellipseService);
     }
 
-    onMouseDown(event: MouseEvent) {
+    onMouseDown(event: MouseEvent): void {
         if (this.isManipulating) {
             this.transformValues = {
                 x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
@@ -51,7 +51,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    onMouseUp(event: MouseEvent) {
+    onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
             this.cornerCoords[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.ellipseService.inUse = false;
@@ -63,10 +63,9 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.inUse = false;
                 return;
             }
-            this.validateCornerCoords();
+            this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
             this.selectionWidth = Math.abs(this.selectionWidth);
             this.selectionHeight = Math.abs(this.selectionHeight);
-            console.log(this.isCircle);
             if (this.isCircle) {
                 const shortestSide = Math.min(this.selectionWidth, this.selectionHeight);
                 this.selectionHeight = this.selectionWidth = shortestSide;
@@ -83,7 +82,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    onMouseMove(event: MouseEvent) {
+    onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
             this.cornerCoords[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
             super.onMouseMove(event);
@@ -94,11 +93,11 @@ export class EllipseSelectionService extends ToolSelectionService {
         super.onMouseLeave(event);
     }
 
-    onMouseEnter(event: MouseEvent) {
+    onMouseEnter(event: MouseEvent): void {
         super.onMouseEnter(event);
     }
 
-    onKeyboardDown(event: KeyboardEvent) {
+    onKeyboardDown(event: KeyboardEvent): void {
         super.onKeyboardDown(event);
         if (this.inUse) {
             if (event.key === 'Shift' && !this.isShiftDown) {
@@ -115,7 +114,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    onKeyboardUp(event: KeyboardEvent) {
+    onKeyboardUp(event: KeyboardEvent): void {
         super.onKeyboardUp(event);
         if (this.inUse) {
             if (event.key === 'Shift' && this.isShiftDown) {
@@ -178,6 +177,19 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.selectionHeight,
         );
         this.drawingService.selectionCtx.restore();
+        // Draw outline on selectionCanvas, this outline will be on selectionCanvas but not part of the clipped zone.
+        this.drawingService.selectionCtx.beginPath();
+        this.drawingService.selectionCtx.setLineDash([3, 3]);
+        this.drawingService.selectionCtx.ellipse(
+            startX,
+            startY,
+            radiusX + SelectionConstants.OFFSET_RADIUS,
+            radiusY + SelectionConstants.OFFSET_RADIUS,
+            ROTATION,
+            START_ANGLE,
+            END_ANGLE,
+        );
+        this.drawingService.selectionCtx.stroke();
     }
 
     deleteSelectionZoneOnBaseCanvas(): void {
@@ -196,20 +208,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.drawingService.baseCtx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
         this.drawingService.baseCtx.fillStyle = 'white';
         this.drawingService.baseCtx.fill();
-    }
-
-    validateCornerCoords() {
-        const tempCoord = this.cornerCoords[SelectionConstants.START_INDEX];
-        if (this.selectionHeight < 0 && this.selectionWidth < 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
-            this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
-        } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX].x = this.cornerCoords[SelectionConstants.END_INDEX].x;
-            this.cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
-        } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX].y = this.cornerCoords[SelectionConstants.END_INDEX].y;
-            this.cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
-        }
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {
