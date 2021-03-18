@@ -60,7 +60,7 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.inUse = false;
                 return;
             }
-            this.validateCornerCoords();
+            this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
             this.validateSelectionSize();
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
@@ -186,20 +186,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         ];
         this.inUse = false;
         this.isManipulating = true;
-    }
-
-    validateCornerCoords() {
-        const tempCoord = this.cornerCoords[SelectionConstants.START_INDEX];
-        if (this.selectionHeight < 0 && this.selectionWidth < 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
-            this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
-        } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX].x = this.cornerCoords[SelectionConstants.END_INDEX].x;
-            this.cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
-        } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX].y = this.cornerCoords[SelectionConstants.END_INDEX].y;
-            this.cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
-        }
     }
 
     validateSelectionSize() {
