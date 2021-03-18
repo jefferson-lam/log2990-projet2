@@ -155,8 +155,6 @@ export class MainPageCarrouselComponent {
                 console.log(result);
             },
         });
-
-        // delete from server
         this.showCasedDrawings.splice(1, 1);
         this.previewDrawing.splice((this.drawingCounter + 1) % this.previewDrawing.length, 1);
     }
