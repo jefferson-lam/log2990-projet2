@@ -6,6 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
 import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
+import * as ServerConstants from '@common/validation/server-constants';
 import { timeout } from 'rxjs/operators';
 import { TagInputComponent } from './tag-input/tag-input.component';
 import { TitleInputComponent } from './title-input/title-input.component';
@@ -69,9 +70,7 @@ export class SaveDrawingComponent implements AfterViewInit {
                     }
                     this.resultMessage = this.request.body;
                     this.dialogRef.disableClose = false;
-                    const insertedId = this.resultMessage.slice(29);
-                    const drawing: ServerDrawing = { id: insertedId, image: this.imageURL };
-                    this.localServerService.sendDrawing(drawing).subscribe();
+                    this.sendDrawingToServer();
                 },
                 next: (result: Message) => {
                     this.request = result;
@@ -84,5 +83,11 @@ export class SaveDrawingComponent implements AfterViewInit {
                     this.dialogRef.disableClose = false;
                 },
             });
+    }
+
+    private sendDrawingToServer(): void {
+        const insertedId = this.resultMessage.slice(ServerConstants.ID_MESSAGE_SLICE);
+        const drawing: ServerDrawing = { id: insertedId, image: this.imageURL };
+        this.localServerService.sendDrawing(drawing).subscribe();
     }
 }

@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import { LocalServerService } from './local-server.service';
 
+// tslint:disable: no-empty
+// tslint:disable: no-string-literal
 describe('LocalServerService', () => {
     let service: LocalServerService;
     let httpMock: HttpTestingController;
@@ -15,7 +17,6 @@ describe('LocalServerService', () => {
         });
         service = TestBed.inject(LocalServerService);
         httpMock = TestBed.inject(HttpTestingController);
-        // tslint:disable: no-string-literal
         baseUrl = service['DRAWINGS_URL'];
         drawing = {
             id: '123',
@@ -33,7 +34,6 @@ describe('LocalServerService', () => {
 
     it('should not return any drawing when sending a POST request (HttpClient called once)', () => {
         // subscribe to the mocked call
-        // tslint:disable-next-line: no-empty
         service.sendDrawing(drawing).subscribe(() => {}, fail);
 
         const req = httpMock.expectOne(baseUrl + '/send');
@@ -44,13 +44,20 @@ describe('LocalServerService', () => {
 
     it('should return expected drawing (HttpClient called once)', () => {
         service.sendDrawing(drawing);
-        // TODO: find right syntax to expect drawing to be at first position of response body (array)
-        // tslint:disable-next-line: no-empty
         service.getAllDrawings().subscribe(() => {}, fail);
 
-        const req = httpMock.expectOne(baseUrl);
+        const req = httpMock.expectOne(baseUrl + '/all');
         expect(req.request.method).toBe('GET');
-        // actually send the request
+        req.flush(drawing);
+    });
+
+    it('should return expected drawing with requested id', () => {
+        service.sendDrawing(drawing);
+        const id = '123';
+        service.getDrawingById(id).subscribe(() => {}, fail);
+
+        const req = httpMock.expectOne(baseUrl + `/get?id=${id}`);
+        expect(req.request.method).toBe('GET');
         req.flush(drawing);
     });
 
