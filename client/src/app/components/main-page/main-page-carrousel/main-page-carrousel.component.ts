@@ -32,14 +32,14 @@ export class MainPageCarrouselComponent {
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
     allTags: string[] = [''];
-    tagValue: string[] = [];
+    tags: string[] = [];
 
     deleted: boolean = false;
     drawingCounter: number = 0;
     fetchedDrawingByTag: string[];
     showCasedDrawings: ImageFormat[];
 
-    previewDrawing: ImageFormat[] = [];
+    previewDrawings: ImageFormat[] = [];
 
     constructor(private database: DatabaseService, private localServerService: LocalServerService) {
         this.filteredTags = this.tagCtrl.valueChanges.pipe(
@@ -54,7 +54,7 @@ export class MainPageCarrouselComponent {
         const value = event.value;
 
         if ((value || '').trim()) {
-            this.tagValue.push(value.trim());
+            this.tags.push(value.trim());
         }
 
         if (input) {
@@ -66,24 +66,23 @@ export class MainPageCarrouselComponent {
     }
 
     removeTag(tag: string): void {
-        const index = this.tagValue.indexOf(tag);
+        const index = this.tags.indexOf(tag);
 
         if (index >= 0) {
-            this.tagValue.splice(index, 1);
+            this.tags.splice(index, 1);
         }
         this.resetShowcasedDrawings();
     }
 
-    resetShowcasedDrawings(): void {
+    private resetShowcasedDrawings(): void {
         // Clean drawings currently in carousel
-        this.previewDrawing = [];
+        this.previewDrawings = [];
         this.showCasedDrawings = [];
         this.drawingCounter = 0;
 
-        const tags: string[] = this.tagValue;
         let drawingsWithMatchingTags: Drawing[];
-        if (tags.length > 0) {
-            this.database.getDrawingsByTags(tags).subscribe({
+        if (this.tags.length > 0) {
+            this.database.getDrawingsByTags(this.tags).subscribe({
                 next: (result: Message) => {
                     drawingsWithMatchingTags = JSON.parse(result.body);
                 },
@@ -93,18 +92,18 @@ export class MainPageCarrouselComponent {
                     }
                 },
             });
-        } else {
-            this.database.getDrawings().subscribe({
-                next: (result: Message) => {
-                    drawingsWithMatchingTags = JSON.parse(result.body);
-                },
-                complete: () => {
-                    for (const drawing of drawingsWithMatchingTags) {
-                        this.addDrawingToDisplay(drawing._id, drawing);
-                    }
-                },
-            });
+            return;
         }
+        this.database.getDrawings().subscribe({
+            next: (result: Message) => {
+                drawingsWithMatchingTags = JSON.parse(result.body);
+            },
+            complete: () => {
+                for (const drawing of drawingsWithMatchingTags) {
+                    this.addDrawingToDisplay(drawing._id, drawing);
+                }
+            },
+        });
     }
 
     private addDrawingToDisplay(id: string, drawing: Drawing): void {
@@ -112,7 +111,7 @@ export class MainPageCarrouselComponent {
             next: (serverDrawing: ServerDrawing) => {
                 if (serverDrawing !== null) {
                     const newPreviewDrawing: ImageFormat = { image: serverDrawing.image, name: drawing.title, tags: drawing.tags, id };
-                    this.previewDrawing.push(newPreviewDrawing);
+                    this.previewDrawings.push(newPreviewDrawing);
                     if (this.showCasedDrawings.length < CarouselConstants.MAX_CAROUSEL_SIZE) {
                         this.showCasedDrawings.push(newPreviewDrawing);
                     }
@@ -121,34 +120,34 @@ export class MainPageCarrouselComponent {
         });
     }
 
-    showcasePrevDrawing(): void {
+    showcasePreviousDrawing(): void {
         // Determine new drawingCounter value
         if (this.drawingCounter === 0) {
-            this.drawingCounter = this.previewDrawing.length - 1;
+            this.drawingCounter = this.previewDrawings.length - 1;
         } else {
             this.drawingCounter--;
         }
         this.showCasedDrawings.pop();
-        this.showCasedDrawings.unshift(this.previewDrawing[this.drawingCounter]);
+        this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
     }
 
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;
-        if (this.drawingCounter + this.showCasedDrawings.length >= this.previewDrawing.length) {
-            newDrawingIndex = (this.drawingCounter + this.showCasedDrawings.length) % this.previewDrawing.length;
+        if (this.drawingCounter + this.showCasedDrawings.length >= this.previewDrawings.length) {
+            newDrawingIndex = (this.drawingCounter + this.showCasedDrawings.length) % this.previewDrawings.length;
         } else {
             newDrawingIndex = this.drawingCounter + this.showCasedDrawings.length;
         }
         this.showCasedDrawings.shift();
-        this.showCasedDrawings.push(this.previewDrawing[newDrawingIndex]);
+        this.showCasedDrawings.push(this.previewDrawings[newDrawingIndex]);
         this.drawingCounter++;
-        if (this.drawingCounter > this.previewDrawing.length - 1) {
+        if (this.drawingCounter > this.previewDrawings.length - 1) {
             this.drawingCounter = 0;
         }
     }
 
     deleteDrawing(): void {
-        const indexToDelete = this.previewDrawing.length > 1 ? 1 : 0;
+        const indexToDelete = this.previewDrawings.length > 1 ? 1 : 0;
         const idDrawingToDelete = this.showCasedDrawings[indexToDelete].id;
         this.database.dropDrawing(idDrawingToDelete).subscribe({
             next: (result) => {
@@ -156,7 +155,7 @@ export class MainPageCarrouselComponent {
             },
         });
         this.showCasedDrawings.splice(1, 1);
-        this.previewDrawing.splice((this.drawingCounter + 1) % this.previewDrawing.length, 1);
+        this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
     }
 
     openDrawingEditor(): void {
