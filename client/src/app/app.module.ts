@@ -35,6 +35,7 @@ import { SaveErrorPageComponent } from './components/sidebar/save-drawing-page/s
 import { SaveSavingPageComponent } from './components/sidebar/save-drawing-page/save-saving-page/save-saving-page.component';
 import { TagInputComponent } from './components/sidebar/save-drawing-page/tag-input/tag-input.component';
 import { TitleInputComponent } from './components/sidebar/save-drawing-page/title-input/title-input.component';
+import { SidebarAerosolComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-aerosol/sidebar-aerosol.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
@@ -53,6 +54,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MainPageCarrouselComponent,
         NewDrawingBoxComponent,
         ResizerComponent,
+        SidebarAerosolComponent,
         SidebarComponent,
         SidebarPencilComponent,
         SidebarEraserComponent,
