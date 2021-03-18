@@ -40,6 +40,14 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setSidesCount(newSidesCount);
     }
 
+    setWaterDropWidth(newSize: number): void {
+        this.editorComponent.currentTool.setWaterDropWidth(newSize);
+    }
+
+    setEmissionCount(newEmissionCount: number): void {
+        this.editorComponent.currentTool.setEmissionCount(newEmissionCount);
+    }
+
     setPrimaryColorTools(color: string): void {
         this.toolManagerService.setPrimaryColorTools(color);
     }

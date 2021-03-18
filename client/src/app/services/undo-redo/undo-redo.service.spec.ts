@@ -30,6 +30,7 @@ describe('UndoRedoService', () => {
         service = TestBed.inject(UndoRedoService);
 
         commandStub = new CommandStub();
+        service.resetCanvasSize = commandStub;
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -160,6 +161,14 @@ describe('UndoRedoService', () => {
         service.refresh();
 
         expect(forEachSpy).toHaveBeenCalled();
+        expect(executeSpy).toHaveBeenCalled();
+    });
+
+    it('refresh should execute resetCanvasSize', () => {
+        const executeSpy = spyOn(service.resetCanvasSize, 'execute');
+
+        service.refresh();
+
         expect(executeSpy).toHaveBeenCalled();
     });
 });
