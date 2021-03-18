@@ -36,6 +36,9 @@ export class RectangleSelectionService extends ToolSelectionService {
             const command: Command = new RectangleSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             this.undoRedoService.executeCommand(command);
             this.isManipulating = false;
+            this.isSquare = false;
+            this.isShiftDown = false;
+            this.rectangleService.isShiftDown = false;
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
             this.clearCorners();
@@ -89,7 +92,6 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
             this.inUse = false;
-            this.isSquare = false;
             this.isManipulating = true;
         }
     }
