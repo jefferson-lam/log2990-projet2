@@ -27,21 +27,17 @@ describe('SaveDrawingComponent', () => {
     let titleInputComponent: TitleInputComponent;
     let matDialogRefStub: MatDialogRef<any>;
     let drawService: DrawingService;
-    // let localServerServiceSpy: SpyObj<LocalServerService>;
     let canvasTestHelper: CanvasTestHelper;
 
     beforeEach(async(() => {
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawings', 'getDrawing', 'saveDrawing', 'dropDrawing']);
         matDialogRefStub = {} as MatDialogRef<any>;
 
-        // localServerServiceSpy = jasmine.createSpyObj('LocalServerService', ['sendDrawing']);
-
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
                 { provide: DatabaseService, useValue: databaseServiceSpy },
                 { provide: MatDialogRef, useValue: matDialogRefStub },
-                // { provide: LocalServerService, useValue: localServerServiceSpy },
             ],
             declarations: [SaveDrawingComponent, SaveSavingPageComponent, SaveCompletePageComponent, SaveErrorPageComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -112,12 +108,6 @@ describe('SaveDrawingComponent', () => {
         component.saveDrawing();
         expect(databaseServiceSpy.saveDrawing).toHaveBeenCalled();
     });
-
-    // it('should call localServerService sendDrawing when calling saveDrawings', () => {
-    //     localServerServiceSpy.sendDrawing.and.returnValue(of());
-    //     component.saveDrawing();
-    //     expect(localServerServiceSpy.sendDrawing).toHaveBeenCalled();
-    // });
 
     it('should handle case where error message is received', async () => {
         databaseServiceSpy.saveDrawing.and.returnValue(of({ title: 'Error', body: '' }));
