@@ -99,6 +99,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatGridListModule,
         MatAutocompleteModule,
         MatChipsModule,
+        MatRadioModule,
         MatProgressSpinnerModule,
     ],
     providers: [],
