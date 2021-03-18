@@ -68,6 +68,8 @@ export class SaveDrawingComponent implements AfterViewInit {
                         this.saveProgress = SaveDrawingConstants.SaveProgress.ERROR;
                         this.resultMessage = this.request.body;
                     }
+                    this.resultMessage = this.request.body;
+                    this.dialogRef.disableClose = false;
                     this.sendDrawingToServer();
                 },
                 next: (result: Message) => {
@@ -84,8 +86,6 @@ export class SaveDrawingComponent implements AfterViewInit {
     }
 
     private sendDrawingToServer(): void {
-        this.resultMessage = this.request.body;
-        this.dialogRef.disableClose = false;
         const insertedId = this.resultMessage.slice(ServerConstants.ID_MESSAGE_SLICE);
         const drawing: ServerDrawing = { id: insertedId, image: this.imageURL };
         this.localServerService.sendDrawing(drawing).subscribe();
