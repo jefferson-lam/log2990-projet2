@@ -5,6 +5,7 @@ import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -15,6 +16,7 @@ import { EditorComponent } from './editor.component';
 
 class ToolStub extends Tool {}
 
+// tslint:disable:no-string-literal
 // tslint:disable:no-any
 // tslint:disable:no-string-literal
 // tslint:disable:max-file-line-count
@@ -28,6 +30,7 @@ describe('EditorComponent', () => {
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let undoSpy: jasmine.Spy;
     let redoSpy: jasmine.Spy;
+    let savePopUpSpy: jasmine.Spy;
     let exportPopUpSpy: jasmine.Spy;
     let newDrawingPopUpSpy: jasmine.Spy;
 
@@ -66,6 +69,7 @@ describe('EditorComponent', () => {
         undoSpy = spyOn(component.undoRedoService, 'undo');
         redoSpy = spyOn(component.undoRedoService, 'redo');
 
+        savePopUpSpy = spyOn(component, 'openSavePopUp').and.callThrough();
         exportPopUpSpy = spyOn(component, 'openExportPopUp').and.callThrough();
         newDrawingPopUpSpy = spyOn(component, 'openNewDrawingPopUp').and.callThrough();
     });
@@ -309,6 +313,52 @@ describe('EditorComponent', () => {
         component.isPopUpOpen = true;
         component.openExportPopUp();
 
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(component.isPopUpOpen).toBeTrue();
+    });
+
+    it("'ctrl+s' should call openSavePopUp", () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyS', key: '' });
+        component.onCtrlSKeyDown(eventSpy);
+
+        expect(savePopUpSpy).toHaveBeenCalled();
+        expect(eventSpy['preventDefault']).toHaveBeenCalled();
+    });
+
+    it("openSavePopUp should open SaveDrawingComponent if canvas isn't empty and pop up isn't open", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return false;
+        });
+
+        component.isPopUpOpen = false;
+        component.openSavePopUp();
+
+        expect(savePopUpSpy).toHaveBeenCalled();
+        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(SaveDrawingComponent);
+        expect(component.isPopUpOpen).toBeTrue();
+    });
+
+    it('openSavePopUp should not open anything if canvas is empty', () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return true;
+        });
+        component.openSavePopUp();
+
+        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(component.isPopUpOpen).toBeFalse();
+    });
+
+    it("openSavePopUp should not open anything if pop up is open and canvas isn't empty", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return true;
+        });
+        component.isPopUpOpen = true;
+        component.openSavePopUp();
+
+        expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
         expect(component.isPopUpOpen).toBeTrue();
     });
