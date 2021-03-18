@@ -30,6 +30,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onMouseDown(event: MouseEvent): void {
         if (this.isManipulating) {
+            // transformValues represent where the canvas' topleft corner was moved
             this.transformValues = {
                 x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
                 y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
@@ -89,7 +90,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    onMouseLeave(event: MouseEvent) {
+    onMouseLeave(event: MouseEvent): void {
         super.onMouseLeave(event);
     }
 
@@ -103,7 +104,6 @@ export class EllipseSelectionService extends ToolSelectionService {
             if (event.key === 'Shift' && !this.isShiftDown) {
                 this.isCircle = true;
                 this.isShiftDown = true;
-                console.log(this.isCircle);
             } else if (event.key === 'Escape' && !this.isEscapeDown) {
                 this.isEscapeDown = true;
             }
@@ -156,8 +156,10 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     drawSelectionOnSelectionCanvas(): void {
-        let startX, radiusX;
-        let startY, radiusY;
+        let startX: number;
+        let radiusX: number;
+        let startY: number;
+        let radiusY: number;
         startX = radiusX = this.selectionWidth / 2;
         startY = radiusY = this.selectionHeight / 2;
         this.drawingService.selectionCtx.save();
@@ -179,7 +181,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.drawingService.selectionCtx.restore();
         // Draw outline on selectionCanvas, this outline will be on selectionCanvas but not part of the clipped zone.
         this.drawingService.selectionCtx.beginPath();
-        this.drawingService.selectionCtx.setLineDash([3, 3]);
+        this.drawingService.selectionCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
         this.drawingService.selectionCtx.ellipse(
             startX,
             startY,
@@ -208,6 +210,20 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.drawingService.baseCtx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
         this.drawingService.baseCtx.fillStyle = 'white';
         this.drawingService.baseCtx.fill();
+    }
+
+    validateClassCornerCoords(): void {
+        const tempCoord = this.cornerCoords[SelectionConstants.START_INDEX];
+        if (this.selectionHeight < 0 && this.selectionWidth < 0) {
+            this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
+            this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
+        } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
+            this.cornerCoords[SelectionConstants.START_INDEX].x = this.cornerCoords[SelectionConstants.END_INDEX].x;
+            this.cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
+        } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
+            this.cornerCoords[SelectionConstants.START_INDEX].y = this.cornerCoords[SelectionConstants.END_INDEX].y;
+            this.cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
+        }
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {
