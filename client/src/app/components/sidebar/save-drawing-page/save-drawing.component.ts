@@ -26,7 +26,6 @@ export class SaveDrawingComponent implements AfterViewInit {
     areTagsValid: boolean = true;
     isSavePossible: boolean = false;
 
-    saveCanvas: HTMLCanvasElement;
     imageURL: string;
 
     constructor(
@@ -34,12 +33,10 @@ export class SaveDrawingComponent implements AfterViewInit {
         private localServerService: LocalServerService,
         private drawingService: DrawingService,
         @Inject(MatDialogRef) private dialogRef: MatDialogRef<SaveDrawingComponent>,
-    ) {
-        this.saveCanvas = this.drawingService.canvas;
-    }
+    ) {}
 
     ngAfterViewInit(): void {
-        this.imageURL = this.saveCanvas.toDataURL();
+        this.imageURL = this.drawingService.canvas.toDataURL();
     }
 
     verifyTitleValid(isTitleValid: boolean): void {
