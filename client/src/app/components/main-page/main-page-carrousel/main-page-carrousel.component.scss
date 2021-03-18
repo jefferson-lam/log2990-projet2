@@ -10,13 +10,26 @@
   overflow: hidden;
 }
 
-#exitButton {
+#deleteButton {
+  background-color: #6C5B7B;
+  color: white;
+  text-align: center;
+  font-family: 'Rubik', serif;
+  z-index: 100;
+}
+
+#exitButton{
   background-color:#F88B86;
   margin-left: auto;
   text-align: center;
   bottom:0;
   color: white;
   font-family: 'Rubik', serif;
+}
+
+#exitButton:hover, #deleteButton:hover{
+  color: black;
+  background-color: slategrey;
 }
 
 #acceptTag {
@@ -30,18 +43,6 @@
   height: 50%;
 }
 
-#deleteButton {
-  background-color: #6C5B7B;
-  color: white;
-  text-align: center;
-  bottom:0;
-  font-family: 'Rubik', serif;
-}
-
-#deleteButton:hover, #exitButton:hover{
-  color: black;
-  background-color: slategrey;
-}
 #topBar {
   justify-content: space-between;
   flex-direction: row;
@@ -69,3 +70,83 @@
 .tagsList{
   width: 70%;
 }
+
+.slideRight,.slideLeft{
+  color: #E8E8E8;
+  margin-top: 200px;
+  font-size: 50px;
+  width: 50px;
+  height:50px;
+  z-index: 3;
+}
+
+.slideRight:hover,.slideLeft:hover{
+  cursor:pointer;
+}
+
+.slideRight:active,.slideLeft:active{
+  color:#000220;
+}
+
+#galleryContainer {
+  background-color: #355C7D;
+  border: 1px solid lightgrey;
+  height: 100%;
+}
+
+#previewGalleryImage {
+  height: 420px;
+  width: 92%;
+  background-color: #355C7D;
+  position: relative;
+}
+
+#galleryShowcase{
+  display: flex;
+}
+
+h3{
+  font-family: 'Rubik', serif;
+}
+
+#tagGallery {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+  color: white;
+  bottom: 0;
+  margin-top: 5px;
+}
+
+#tagButton{
+  background-color:#F88B86;
+  text-align: center;
+  bottom:0;
+  color: white;
+  font-family: 'Rubik', serif;
+  height: 27px;
+}
+
+.drawingImage{
+  width:100%;
+  height:100%;
+}
+
+.drawingTitle{
+  margin-top:5%;
+  align-content: center;
+  text-align: center;
+  color: white;
+  font-family: 'Rubik', serif;
+  font-size: large;
+  margin-bottom: 10px;
+}
+
+.gridContainer{
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+
+
+

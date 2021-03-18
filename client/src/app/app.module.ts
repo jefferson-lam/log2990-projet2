@@ -28,7 +28,6 @@ import { AppComponent } from './components/app/app.component';
 import { ColorPickerModule } from './components/color-picker/color-picker.module';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
-import { CarouselGalleryComponent } from './components/main-page/main-page-carrousel/carrousel-gallery/carousel-gallery/carousel-gallery.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
@@ -57,7 +56,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarEllipseComponent,
         SidebarLineComponent,
         SidebarPolygoneComponent,
-        CarouselGalleryComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

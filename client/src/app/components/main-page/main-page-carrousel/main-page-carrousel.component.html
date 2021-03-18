@@ -24,10 +24,25 @@
     </div>
 
     <div mat-dialog-content id='galleryPreview'>
-      <app-carousel-gallery></app-carousel-gallery>
+      <div id="galleryContainer" *ngIf="!this.deleted">
+        <div id="galleryShowcase">
+          <mat-icon class="slideLeft" (click)="showcasePrevDrawing()" (keydown.arrowLeft)="showcasePrevDrawing()">navigate_before</mat-icon>
+          <div class="gridContainer">
+            <div id="previewGalleryImage" *ngFor="let drawing of showCasedDrawings; let i = index">
+              <div class="drawingTitle">
+                <div>{{ drawing.name }}</div>
+              </div>
+              <div>
+                <img alt="Image non-trouvée" class="drawingImage" [src]="drawing.image" (click)="openDrawingEditor()" />
+              </div>
+            </div>
+          </div>
+          <mat-icon class="slideRight" (click)="showcaseNextDrawing()" (keydown.arrowRight)="showcaseNextDrawing()">navigate_next</mat-icon>
+        </div>
+      </div>
     </div>
     <div mat-dialog-actions>
-      <button mat-button id="deleteButton">Supprimer</button>
+      <button mat-button id="deleteButton" (click)='deleteDrawing()'>Supprimer</button>
       <button mat-button mat-dialog-close id="exitButton">Retour</button>
     </div>
 </div>
