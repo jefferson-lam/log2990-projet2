@@ -44,13 +44,22 @@ describe('LocalServerService', () => {
 
     it('should return expected drawing (HttpClient called once)', () => {
         service.sendDrawing(drawing);
-        // TODO: find right syntax to expect drawing to be at first position of response body (array)
         // tslint:disable-next-line: no-empty
         service.getAllDrawings().subscribe(() => {}, fail);
 
-        const req = httpMock.expectOne(baseUrl);
+        const req = httpMock.expectOne(baseUrl + '/all');
         expect(req.request.method).toBe('GET');
-        // actually send the request
+        req.flush(drawing);
+    });
+
+    it('should return expected drawing with requested id', () => {
+        service.sendDrawing(drawing);
+        const id = '123';
+        // tslint:disable-next-line: no-empty
+        service.getDrawingById(id).subscribe(() => {}, fail);
+
+        const req = httpMock.expectOne(baseUrl + `/get?id=${id}`);
+        expect(req.request.method).toBe('GET');
         req.flush(drawing);
     });
 
