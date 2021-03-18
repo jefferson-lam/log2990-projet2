@@ -88,6 +88,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.inUse = false;
             this.isManipulating = true;
             this.isSquare = false;
+            this.rectangleService.isShiftDown = false;
         }
     }
 
