@@ -29,7 +29,9 @@ describe('SidebarComponent', () => {
     let commandExecuteSpy: jasmine.Spy;
     let selectToolEmitterSpy: jasmine.Spy;
     let selectToolSpy: jasmine.Spy;
-    let openPopUpSpy: jasmine.Spy;
+    let openExportPopUpSpy: jasmine.Spy;
+    let openNewDrawingPopUpSpy: jasmine.Spy;
+    let openSavePopUpSpy: jasmine.Spy;
     let undoServiceSpy: jasmine.Spy;
     let redoServiceSpy: jasmine.Spy;
     let refreshSpy: jasmine.Spy;
@@ -68,7 +70,9 @@ describe('SidebarComponent', () => {
         commandExecuteSpy = spyOn(mockCommand, 'execute');
         selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
         selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
-        openPopUpSpy = spyOn(component.openPopUp, 'emit');
+        openExportPopUpSpy = spyOn(component.openExportPopUp, 'emit');
+        openNewDrawingPopUpSpy = spyOn(component.openNewDrawingPopUp, 'emit');
+        openSavePopUpSpy = spyOn(component.openSavePopUp, 'emit');
         component.currentTool = pencilStub;
         undoServiceSpy = spyOn(undoRedoService, 'undo').and.callThrough();
         redoServiceSpy = spyOn(undoRedoService, 'redo').and.callThrough();
@@ -208,24 +212,21 @@ describe('SidebarComponent', () => {
         const newDrawingButton = fixture.debugElement.nativeElement.querySelector('#new-drawing-button');
         newDrawingButton.click();
         fixture.detectChanges();
-        expect(openPopUpSpy).toHaveBeenCalled();
-        expect(openPopUpSpy).toHaveBeenCalledWith('new');
+        expect(openNewDrawingPopUpSpy).toHaveBeenCalled();
     });
 
     it('pressing on exportDrawing should emit to editor', () => {
         const exportDrawingButton = fixture.debugElement.nativeElement.querySelector('#export-drawing-button');
         exportDrawingButton.click();
         fixture.detectChanges();
-        expect(openPopUpSpy).toHaveBeenCalled();
-        expect(openPopUpSpy).toHaveBeenCalledWith('export');
+        expect(openExportPopUpSpy).toHaveBeenCalled();
     });
 
     it('pressing on saveDrawing should emit to editor', () => {
-        const exportDrawingButton = fixture.debugElement.nativeElement.querySelector('#save-drawing-button');
-        exportDrawingButton.click();
+        const saveDrawingButton = fixture.debugElement.nativeElement.querySelector('#save-drawing-button');
+        saveDrawingButton.click();
         fixture.detectChanges();
-        expect(openPopUpSpy).toHaveBeenCalled();
-        expect(openPopUpSpy).toHaveBeenCalledWith('save');
+        expect(openSavePopUpSpy).toHaveBeenCalled();
     });
 
     it('clicking on undo button when undo pile is not empty and tool is not used should call undoRedoService.undo', () => {

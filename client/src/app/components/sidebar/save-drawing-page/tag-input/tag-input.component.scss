@@ -41,12 +41,27 @@ div {
     font-size: 3px;
 }
 
-button {
+.tagDeleteButton {
     background-color: inherit;
     border: none;
     outline: none;
 }
 
-button:hover {
+.tagDeleteButton:hover {
     background: rgb(182, 178, 178);
+}
+
+#addTagButton {
+    cursor: pointer;
+    background-color: inherit;
+    border-radius: 3px;
+    margin-left: 5px;
+}
+
+#addTagButton:hover:enabled {
+    background: rgb(182, 178, 178);
+}
+
+#addTagButton:disabled {
+    cursor: not-allowed;
 }

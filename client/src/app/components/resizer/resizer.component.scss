@@ -1,6 +1,6 @@
-#bottomSlider,
-#cornerSlider,
-#sideSlider {
+#bottomResizer,
+#cornerResizer,
+#sideResizer {
   position: absolute;
   width: 10px;
   height: 10px;
@@ -9,14 +9,14 @@
   background-color: black;
 }
 
-#sideSlider {
+#sideResizer {
   cursor: e-resize;
 }
 
-#cornerSlider {
+#cornerResizer {
   cursor: se-resize;
 }
 
-#bottomSlider {
+#bottomResizer {
   cursor: s-resize;
 }
