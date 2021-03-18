@@ -1,48 +1,48 @@
 <div class="modal-dialog" (keydown)="$event.stopPropagation()">
-
-    <div id = 'topBar'><h1 mat-dialog-title id='titleTopBar'>Carrousel</h1>
-      <mat-form-field class='tagsList'>
-        <mat-label id='filterTag'> Filtrage par étiquette </mat-label>
-        <mat-chip-list #chipList aria-label="Fruit selection">
-          <mat-chip
-            *ngFor="let tag of tagValue"
-            [selectable]="selectable"
-            [removable]="removable"
-            (removed)="removeTag(tag)">
-            {{tag}}
-            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-          </mat-chip>
-          <input
-            placeholder="Add new tag..."
-            #tagInput
-            [formControl]="tagCtrl"
-            [matChipInputFor]="chipList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            (matChipInputTokenEnd)="addTag($event)">
-        </mat-chip-list>
-      </mat-form-field>
+    <div id="topBar">
+        <h1 mat-dialog-title id="titleTopBar">Carrousel</h1>
+        <mat-form-field class="tagsList">
+            <mat-label id="filterTag"> Filtrage par étiquette </mat-label>
+            <mat-chip-list #chipList aria-label="Fruit selection">
+                <mat-chip *ngFor="let tag of tagValue" [selectable]="selectable" [removable]="removable" (removed)="removeTag(tag)">
+                    {{ tag }}
+                    <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
+                <input
+                    placeholder="Add new tag..."
+                    #tagInput
+                    [formControl]="tagCtrl"
+                    [matChipInputFor]="chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="addTag($event)"
+                />
+            </mat-chip-list>
+        </mat-form-field>
     </div>
 
-    <div mat-dialog-content id='galleryPreview'>
-      <div id="galleryContainer" *ngIf="!this.deleted">
-        <div id="galleryShowcase">
-          <mat-icon class="slideLeft" (click)="showcasePrevDrawing()" (keydown.arrowLeft)="showcasePrevDrawing()">navigate_before</mat-icon>
-          <div class="gridContainer">
-            <div id="previewGalleryImage" *ngFor="let drawing of showCasedDrawings; let i = index">
-              <div class="drawingTitle">
-                <div>{{ drawing.name }}</div>
-              </div>
-              <div>
-                <img alt="Image non-trouvée" class="drawingImage" [src]="drawing.image" (click)="openDrawingEditor()" />
-              </div>
+    <div mat-dialog-content id="galleryPreview">
+        <div id="galleryContainer" *ngIf="!this.deleted">
+            <div id="galleryShowcase">
+                <mat-icon class="slideLeft" (click)="showcasePrevDrawing()" (keydown.arrowLeft)="showcasePrevDrawing()">navigate_before</mat-icon>
+                <div class="gridContainer">
+                    <div id="previewGalleryImage" *ngFor="let drawing of showCasedDrawings; let i = index">
+                        <div class="drawingTitle">
+                            <div>{{ drawing.name }}</div>
+                        </div>
+                        <div>
+                            <img alt="Image non-trouvée" class="drawingImage" [src]="drawing.image" (click)="openDrawingEditor()" />
+                        </div>
+                        <div>
+                            <mat-chip *ngFor="let tag of drawing.tags">{{ tag }}</mat-chip>
+                        </div>
+                    </div>
+                </div>
+                <mat-icon class="slideRight" (click)="showcaseNextDrawing()" (keydown.arrowRight)="showcaseNextDrawing()">navigate_next</mat-icon>
             </div>
-          </div>
-          <mat-icon class="slideRight" (click)="showcaseNextDrawing()" (keydown.arrowRight)="showcaseNextDrawing()">navigate_next</mat-icon>
         </div>
-      </div>
     </div>
     <div mat-dialog-actions>
-      <button mat-button id="deleteButton" (click)='deleteDrawing()'>Supprimer</button>
-      <button mat-button mat-dialog-close id="exitButton">Retour</button>
+        <button mat-button id="deleteButton" (click)="deleteDrawing()">Supprimer</button>
+        <button mat-button mat-dialog-close id="exitButton">Retour</button>
     </div>
 </div>
