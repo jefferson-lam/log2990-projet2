@@ -1,5 +1,4 @@
 import { Application } from '@app/app';
-// import { DrawingsDatabaseService } from '@app/services/drawings-database.service';
 import { TYPES } from '@app/types';
 import * as HttpRequestCodes from '@common/communication/http-code-constants';
 import { Message } from '@common/communication/message';
@@ -10,7 +9,6 @@ import { testingContainer } from '../../test/test-utils';
 // tslint:disable:no-any
 
 describe('DrawingsDatabaseController', () => {
-    // let databaseService: Stubbed<DrawingsDatabaseService>;
     let app: Express.Application;
 
     const successMessage: Message = {

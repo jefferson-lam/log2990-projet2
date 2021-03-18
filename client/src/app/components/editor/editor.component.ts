@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
@@ -47,6 +48,12 @@ export class EditorComponent implements OnInit {
         this.openNewDrawingPopUp();
     }
 
+    @HostListener('window:keydown.control.s', ['$event'])
+    onCtrlSKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.openSavePopUp();
+    }
+
     @HostListener('window:keydown.control.shift.z', ['$event'])
     onCtrlShiftZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
@@ -65,7 +72,7 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e)$/)) {
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|3|a|c|l|e)$/)) {
             this.currentTool = this.toolManager.selectTool(event);
         }
     }
@@ -87,6 +94,13 @@ export class EditorComponent implements OnInit {
     openNewDrawingPopUp(): void {
         if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
             this.newDialog.open(NewDrawingBoxComponent);
+            this.isPopUpOpen = true;
+        }
+    }
+
+    openSavePopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            this.newDialog.open(SaveDrawingComponent);
             this.isPopUpOpen = true;
         }
     }
