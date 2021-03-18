@@ -1,7 +1,7 @@
-import { Drawing } from '@app/classes/drawing';
 import { TagValidatorService } from '@app/services/database/tag-validator/tag-validator.service';
 import { TitleValidatorService } from '@app/services/database/title-validator/title-validator.service';
 import { TYPES } from '@app/types';
+import { Drawing } from '@common/communication/drawing';
 import { Message } from '@common/communication/message';
 import * as DatabaseConstants from '@common/validation/database-constants';
 import { inject, injectable } from 'inversify';

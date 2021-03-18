@@ -1,7 +1,7 @@
-import { Drawing } from '@app/classes/drawing';
 import { DrawingsDatabaseService } from '@app/services/database/drawings-database.service';
 import { TagValidatorService } from '@app/services/database/tag-validator/tag-validator.service';
 import { TitleValidatorService } from '@app/services/database/title-validator/title-validator.service';
+import { Drawing } from '@common/communication/drawing';
 import { Message } from '@common/communication/message';
 import * as DatabaseConstants from '@common/validation/database-constants';
 import { expect } from 'chai';

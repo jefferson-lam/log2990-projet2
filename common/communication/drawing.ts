@@ -1,6 +1,5 @@
-import { ObjectID } from 'mongodb';
 export interface Drawing {
-    _id?: ObjectID;
+    id?: string;
     title: string;
     tags: string[];
 }
