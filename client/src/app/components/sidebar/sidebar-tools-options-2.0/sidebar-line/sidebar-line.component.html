@@ -3,7 +3,7 @@
   <div>
     <div>
       <div id="width-setting">
-        <p> Épaisseur : </p>
+        <p> Épaisseur : {{toolSize}} </p>
         <mat-slider id="width" color="warn"
                     thumbLabel
                     [tickInterval]='tickInterval'
@@ -22,7 +22,7 @@
           ></mat-checkbox>
         </div>
         <div id="dot-size">
-          <p> Taille des points : </p>
+          <p> Taille des points : {{junctionRadius}} </p>
           <mat-slider  color="warn"
                        thumbLabel
                        [tickInterval]="1"
