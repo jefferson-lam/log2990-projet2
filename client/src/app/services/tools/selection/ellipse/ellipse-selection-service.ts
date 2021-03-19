@@ -136,6 +136,7 @@ export class EllipseSelectionService extends ToolSelectionService {
                 // Case where the user is still selecting.
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetSelectedToolSettings();
+                // Erase the rectangle drawn as a preview of selection
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.inUse = false;
                 this.isEscapeDown = false;
@@ -143,13 +144,13 @@ export class EllipseSelectionService extends ToolSelectionService {
         } else if (this.isManipulating) {
             if (event.key === 'Escape' && this.isEscapeDown) {
                 // Case where user has defined the selection area
+                // Draw the image on baseCtx.
                 this.onMouseDown({} as MouseEvent);
                 this.resizerHandlerService.resetResizers();
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetSelectedToolSettings();
                 this.isManipulating = false;
                 this.isEscapeDown = false;
-                this.isShiftDown = false;
             }
         }
     }
@@ -209,20 +210,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.drawingService.baseCtx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
         this.drawingService.baseCtx.fillStyle = 'white';
         this.drawingService.baseCtx.fill();
-    }
-
-    validateClassCornerCoords(): void {
-        const tempCoord = this.cornerCoords[SelectionConstants.START_INDEX];
-        if (this.selectionHeight < 0 && this.selectionWidth < 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
-            this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
-        } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX].x = this.cornerCoords[SelectionConstants.END_INDEX].x;
-            this.cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
-        } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX].y = this.cornerCoords[SelectionConstants.END_INDEX].y;
-            this.cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
-        }
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {

@@ -3,6 +3,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
@@ -11,6 +12,7 @@ fdescribe('EllipseToolSelectionService', () => {
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let resizerHandlerServiceSpy: jasmine.SpyObj<ResizerHandlerService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
@@ -22,8 +24,6 @@ fdescribe('EllipseToolSelectionService', () => {
     let parentMouseLeaveSpy: jasmine.Spy;
     let parentMouseEnterSpy: jasmine.Spy;
 
-    let baseCtxDrawImageSpy: jasmine.Spy;
-    // let baseCtxClearRectSpy: jasmine.Spy<any>;
     // let selectionCtxDrawImageSpy: jasmine.Spy<any>;
     // let selectionCtxFillRectSpy: jasmine.Spy<any>;
 
@@ -32,8 +32,12 @@ fdescribe('EllipseToolSelectionService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['resetResizers', 'setResizerPosition']);
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ResizerHandlerService, useValue: resizerHandlerServiceSpy },
+            ],
         });
         service = TestBed.inject(EllipseSelectionService);
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
@@ -52,6 +56,15 @@ fdescribe('EllipseToolSelectionService', () => {
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
 
+        service['resizerHandlerService'].topLeftResizer = document.createElement('div');
+        service['resizerHandlerService'].topResizer = document.createElement('div');
+        service['resizerHandlerService'].topRightResizer = document.createElement('div');
+        service['resizerHandlerService'].rightResizer = document.createElement('div');
+        service['resizerHandlerService'].bottomRightResizer = document.createElement('div');
+        service['resizerHandlerService'].bottomResizer = document.createElement('div');
+        service['resizerHandlerService'].bottomLeftResizer = document.createElement('div');
+        service['resizerHandlerService'].leftResizer = document.createElement('div');
+
         parentMouseDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseDown');
         parentMouseUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseUp');
         parentKeyboardDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onKeyboardDown');
@@ -59,8 +72,6 @@ fdescribe('EllipseToolSelectionService', () => {
         parentMouseLeaveSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseLeave');
         parentMouseEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseEnter');
 
-        baseCtxDrawImageSpy = spyOn(baseCtxStub, 'drawImage').and.callThrough();
-        // baseCtxClearRectSpy = spyOn<any>(baseCtxStub, 'clearRect').and.callThrough();
         // selectionCtxDrawImageSpy = spyOn<any>(selectionCtxStub, 'drawImage').and.callThrough();
         // selectionCtxFillRectSpy = spyOn<any>(selectionCtxStub, 'fillRect').and.callThrough();
 
@@ -87,6 +98,7 @@ fdescribe('EllipseToolSelectionService', () => {
         service.isManipulating = true;
         service.onMouseDown(mouseEvent);
         expect(executeSpy).toHaveBeenCalled();
+        expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
         expect(service.cornerCoords[START_INDEX]).toEqual(expectedResult);
     });
@@ -113,15 +125,11 @@ fdescribe('EllipseToolSelectionService', () => {
 
     it('onMouseUp should return if selectionW is 0', () => {
         const startPoint: Vec2 = {
-            x: 250,
+            x: 25,
             y: 250,
         };
-        const endPoint: Vec2 = {
-            x: 250,
-            y: 300,
-        };
         service.inUse = true;
-        service.cornerCoords = [startPoint, endPoint];
+        service.cornerCoords[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(service.inUse).toBeFalsy();
     });
@@ -129,17 +137,46 @@ fdescribe('EllipseToolSelectionService', () => {
     it('onMouseUp should return if selectionH is 0', () => {
         const startPoint: Vec2 = {
             x: 250,
-            y: 250,
-        };
-        const endPoint: Vec2 = {
-            x: 300,
-            y: 250,
+            y: 40,
         };
         service.inUse = true;
-        service.cornerCoords = [startPoint, endPoint];
+        service.cornerCoords[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(service.inUse).toBeFalsy();
         expect(service.onMouseUp(mouseEvent)).toBe(undefined);
+    });
+
+    it('onMouseUp should calculate correct selectionH and selectionW if isCircle is true', () => {
+        const startPoint: Vec2 = {
+            x: 250,
+            y: 250,
+        };
+        const expectedCircleDiameter = 210;
+        service.inUse = true;
+        service.isCircle = true;
+        service.cornerCoords[START_INDEX] = startPoint;
+        service.onMouseUp(mouseEvent);
+        expect(service.selectionHeight).toEqual(expectedCircleDiameter);
+        expect(service.selectionWidth).toEqual(expectedCircleDiameter);
+    });
+
+    it('onMouseUp should set appropriate size and position to selectionCanvas', () => {
+        const startPoint: Vec2 = {
+            x: 250,
+            y: 250,
+        };
+        const expectedWidth = 225;
+        const expectedHeight = 210;
+        service.inUse = true;
+        service.cornerCoords[START_INDEX] = startPoint;
+        service.onMouseUp(mouseEvent);
+        expect(drawServiceSpy.selectionCanvas.width).toEqual(expectedWidth);
+        expect(drawServiceSpy.selectionCanvas.height).toEqual(expectedHeight);
+        expect(drawServiceSpy.selectionCanvas.style.left).toEqual('25px');
+        expect(drawServiceSpy.selectionCanvas.style.top).toEqual('40px');
+        expect(resizerHandlerServiceSpy.setResizerPosition).toHaveBeenCalled();
+        expect(service.inUse).toBeFalsy();
+        expect(service.isManipulating).toBeTruthy();
     });
 
     it('onMouseLeave should call parents onMouseLeave', () => {
@@ -188,6 +225,21 @@ fdescribe('EllipseToolSelectionService', () => {
         expect(service.isShiftDown).toBeTruthy();
     });
 
+    it('onKeyboardDown inUse with shift should not call if isShiftDown is true', () => {
+        service.isShiftDown = true;
+        service.inUse = true;
+        service.onKeyboardDown({ key: 'Shift' } as KeyboardEvent);
+        expect(service.isShiftDown).toBeTruthy();
+        expect(service.isCircle).toBeFalsy();
+    });
+
+    it('onKeyboardDown inUse with shift should not call if isShiftDown is true', () => {
+        service.isManipulating = true;
+        service.isEscapeDown = true;
+        service.onKeyboardDown({ key: 'Escape' } as KeyboardEvent);
+        expect(service.isEscapeDown).toBeTruthy();
+    });
+
     it('onKeyboardDown while inUse with esc key should set values to true', () => {
         const escKeyboardEvent = {
             key: 'Escape',
@@ -214,6 +266,12 @@ fdescribe('EllipseToolSelectionService', () => {
         expect(parentKeyboardUpSpy).toHaveBeenCalled();
     });
 
+    it('onKeyboardUp should pass if inUse and isManipulating is false', () => {
+        expect(() => {
+            service.onKeyboardUp({} as KeyboardEvent);
+        }).not.toThrow();
+    });
+
     it('onKeyboardUp inUse should set shift values to false', () => {
         const shiftKeyboardEvent = {
             key: 'Shift',
@@ -223,6 +281,29 @@ fdescribe('EllipseToolSelectionService', () => {
         service.onKeyboardUp(shiftKeyboardEvent);
         expect(service.isCircle).toBeFalsy();
         expect(service.isShiftDown).toBeFalsy();
+    });
+
+    it('onKeyboardUp inUse with shift key should not call if shiftDown is false', () => {
+        service.isShiftDown = false;
+        service.inUse = true;
+        service.onKeyboardUp({ key: 'Shift' } as KeyboardEvent);
+        expect(service.isShiftDown).toBeFalsy();
+    });
+
+    it('onKeyboardUp inUse with esc key and isEscapeDown true should call appropriate functions', () => {
+        service.inUse = true;
+        service.isEscapeDown = true;
+        service.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(previewCtxStub);
+        expect(service.inUse).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('onKeyboardUp inUse with esc key should not call if isEscapeDown is false', () => {
+        service.isEscapeDown = false;
+        service.inUse = true;
+        service.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
+        expect(service.isEscapeDown).toBeFalsy();
     });
 
     it('onKeyboardUp isManipulating should set esc values', () => {
@@ -236,93 +317,15 @@ fdescribe('EllipseToolSelectionService', () => {
             { x: 100, y: 250 },
         ];
         service.onKeyboardUp(escKeyboardEvent);
-        expect(baseCtxDrawImageSpy).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
+        expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
         expect(service.isEscapeDown).toBeFalsy();
     });
 
-    it('validateCornerCoords should properly (-w, -h)', () => {
-        const startPoint: Vec2 = {
-            x: 400,
-            y: 350,
-        };
-        const endPoint: Vec2 = {
-            x: 150,
-            y: 100,
-        };
-        const selHeight = -250;
-        const selWidth = -250;
-        const expectedResult = [endPoint, startPoint];
-        service.cornerCoords = [startPoint, endPoint];
-        service.selectionHeight = selHeight;
-        service.selectionWidth = selWidth;
-        service.cornerCoords = service.validateCornerCoords(service.cornerCoords, service.selectionWidth, service.selectionHeight);
-        expect(service.cornerCoords).toEqual(expectedResult);
-    });
-
-    it('validateCornerCoords should properly set values (-w, +h)', () => {
-        const startPoint: Vec2 = {
-            x: 400,
-            y: 100,
-        };
-        const endPoint: Vec2 = {
-            x: 150,
-            y: 400,
-        };
-        const selWidth = -250;
-        const selHeight = 300;
-        const expectedResult = [
-            { x: 150, y: 100 },
-            { x: 150, y: 400 },
-        ];
-        service.cornerCoords = [startPoint, endPoint];
-        service.selectionHeight = selHeight;
-        service.selectionWidth = selWidth;
-        service.cornerCoords = service.validateCornerCoords(service.cornerCoords, service.selectionWidth, service.selectionHeight);
-        expect(service.cornerCoords).toEqual(expectedResult);
-    });
-
-    it('validateCorneCoords should properly set values (+w, -h)', () => {
-        const startPoint: Vec2 = {
-            x: 100,
-            y: 350,
-        };
-        const endPoint: Vec2 = {
-            x: 150,
-            y: 200,
-        };
-        const selWidth = 50;
-        const selHeight = -150;
-        const expectedResult = [
-            { x: 100, y: 200 },
-            { x: 150, y: 200 },
-        ];
-        service.cornerCoords = [startPoint, endPoint];
-        service.selectionHeight = selHeight;
-        service.selectionWidth = selWidth;
-        service.cornerCoords = service.validateCornerCoords(service.cornerCoords, service.selectionWidth, service.selectionHeight);
-        expect(service.cornerCoords).toEqual(expectedResult);
-    });
-
-    it('validateCorneCoords should properly set values (+w, +h)', () => {
-        const startPoint: Vec2 = {
-            x: 100,
-            y: 350,
-        };
-        const endPoint: Vec2 = {
-            x: 150,
-            y: 500,
-        };
-        const selWidth = 50;
-        const selHeight = 150;
-        const expectedResult = [
-            { x: 100, y: 350 },
-            { x: 150, y: 500 },
-        ];
-        service.cornerCoords = [startPoint, endPoint];
-        service.selectionHeight = selHeight;
-        service.selectionWidth = selWidth;
-        service.cornerCoords = service.validateCornerCoords(service.cornerCoords, service.selectionWidth, service.selectionHeight);
-        expect(service.cornerCoords).toEqual(expectedResult);
+    it('onKeyboardUp isManiputing should not call if isEscapeDown is false', () => {
+        service.isEscapeDown = false;
+        service.isManipulating = true;
+        service.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
+        expect(service.isEscapeDown).toBeFalsy();
     });
 });
