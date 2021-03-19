@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -48,7 +49,7 @@ export class EditorComponent {
                 this.currentTool.selectAll();
             }
         } else if (event.key === 'Escape') {
-            if (this.currentTool instanceof RectangleSelectionService) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.onKeyboardDown(event);
             }
         }
@@ -57,7 +58,7 @@ export class EditorComponent {
     @HostListener('window:keyup', ['$event'])
     onKeyboardUp(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
-            if (this.currentTool instanceof RectangleSelectionService) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.onKeyboardUp(event);
             }
         }
@@ -68,19 +69,21 @@ export class EditorComponent {
     }
 
     setTool(newTool: Tool): void {
-        if (this.currentTool instanceof RectangleSelectionService && !(newTool instanceof RectangleSelectionService)) {
-            if (this.currentTool.isManipulating) {
-                const emptyMouseEvent: MouseEvent = {} as MouseEvent;
-                this.currentTool.onMouseDown(emptyMouseEvent);
-            } else if (this.currentTool.inUse) {
-                const resetKeyboardEvent: KeyboardEvent = {
-                    key: 'Escape',
-                } as KeyboardEvent;
-                this.currentTool.isEscapeDown = true;
-                this.currentTool.onKeyboardUp(resetKeyboardEvent);
+        if (this.currentTool != newTool) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                if (this.currentTool.isManipulating) {
+                    const emptyMouseEvent: MouseEvent = {} as MouseEvent;
+                    this.currentTool.onMouseDown(emptyMouseEvent);
+                } else if (this.currentTool.inUse) {
+                    const resetKeyboardEvent: KeyboardEvent = {
+                        key: 'Escape',
+                    } as KeyboardEvent;
+                    this.currentTool.isEscapeDown = true;
+                    this.currentTool.onKeyboardUp(resetKeyboardEvent);
+                }
             }
+            this.currentTool = newTool;
         }
-        this.currentTool = newTool;
     }
 
     openModalPopUp(): void {

@@ -146,9 +146,9 @@ export class EllipseSelectionService extends ToolSelectionService {
                 // Case where user has defined the selection area
                 // Draw the image on baseCtx.
                 this.onMouseDown({} as MouseEvent);
-                this.resizerHandlerService.resetResizers();
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetSelectedToolSettings();
+                this.resizerHandlerService.resetResizers();
                 this.isManipulating = false;
                 this.isEscapeDown = false;
             }
