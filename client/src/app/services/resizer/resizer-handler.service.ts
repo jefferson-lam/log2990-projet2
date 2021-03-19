@@ -74,7 +74,7 @@ export class ResizerHandlerService {
     translateDown(numPixels: number): void {
         const resizers = this.getAllResizers();
         resizers.forEach((resizer) => {
-            let newLeftValue = parseInt(resizer.style.top, 10) + numPixels;
+            const newLeftValue = parseInt(resizer.style.top, 10) + numPixels;
             resizer.style.left = newLeftValue + 'px';
         });
     }
@@ -82,7 +82,7 @@ export class ResizerHandlerService {
     translateRight(numPixels: number): void {
         const resizers = this.getAllResizers();
         resizers.forEach((resizer) => {
-            let newLeftValue = parseInt(resizer.style.left, 10) + numPixels;
+            const newLeftValue = parseInt(resizer.style.left, 10) + numPixels;
             resizer.style.left = newLeftValue + 'px';
         });
     }

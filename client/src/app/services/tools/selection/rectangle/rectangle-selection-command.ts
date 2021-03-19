@@ -53,7 +53,8 @@ export class RectangleSelectionCommand extends Command {
         newCanvas.width = selectionCanvas.width;
         newCanvas.height = selectionCanvas.height;
         // apply the old canvas to the new one
-        context?.drawImage(selectionCanvas, 0, 0);
+        // tslint:disable:no-non-null-assertion
+        context!.drawImage(selectionCanvas, 0, 0);
         // return the new canvas
         return newCanvas;
     }

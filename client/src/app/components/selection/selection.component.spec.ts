@@ -48,7 +48,7 @@ describe('SelectionComponent', () => {
             },
             source: {
                 _dragRef: {
-                    reset() {
+                    reset(): void {
                         return;
                     },
                 },
@@ -71,7 +71,7 @@ describe('SelectionComponent', () => {
             },
             source: {
                 _dragRef: {
-                    reset() {
+                    reset(): void {
                         return;
                     },
                 },
