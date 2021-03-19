@@ -26,18 +26,6 @@ export class ToolSelectionService extends Tool {
     ) {
         super(drawingService, undoRedoService);
         this.selectionTool = selectionTool;
-        if (selectionTool.lineWidth != null) {
-            this.selectionToolLineWidth = selectionTool.lineWidth;
-        }
-        if (selectionTool.fillMode != null) {
-            this.selectionToolFillMode = selectionTool.fillMode;
-        }
-        if (selectionTool.primaryColor != null) {
-            this.selectionToolPrimaryColor = selectionTool.primaryColor;
-        }
-        if (selectionTool.secondaryColor != null) {
-            this.selectionToolSecondaryColor = selectionTool.secondaryColor;
-        }
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -92,15 +80,27 @@ export class ToolSelectionService extends Tool {
         return cornerCoords;
     }
 
+    clearCorners(cornerCoords: Vec2[]): Vec2[] {
+        return cornerCoords.fill({ x: 0, y: 0 });
+    }
+
     getSelectedToolSettings(): void {
-        this.selectionToolLineWidth = this.selectionTool.lineWidth!;
-        this.selectionToolFillMode = this.selectionTool.fillMode!;
-        this.selectionToolPrimaryColor = this.selectionTool.primaryColor!;
-        this.selectionToolSecondaryColor = this.selectionTool.secondaryColor!;
+        if (this.selectionTool.lineWidth != undefined) {
+            this.selectionToolLineWidth = this.selectionTool.lineWidth;
+        }
+        if (this.selectionTool.fillMode != undefined) {
+            this.selectionToolFillMode = this.selectionTool.fillMode;
+        }
+        if (this.selectionTool.primaryColor != undefined) {
+            this.selectionToolPrimaryColor = this.selectionTool.primaryColor;
+        }
+        if (this.selectionTool.secondaryColor != undefined) {
+            this.selectionToolSecondaryColor = this.selectionTool.secondaryColor;
+        }
     }
 
     setSelectionSettings(): void {
-        this.drawingService.baseCtx.fillStyle = '#fffff';
+        this.drawingService.baseCtx.fillStyle = 'white';
         this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
         this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
         this.selectionTool.setPrimaryColor('white');

@@ -3,6 +3,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { END_INDEX, START_INDEX } from '@app/constants/ellipse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
@@ -11,6 +12,7 @@ describe('RectangleSelectionService', () => {
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let resizerHandlerServiceSpy: jasmine.SpyObj<ResizerHandlerService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
@@ -22,20 +24,23 @@ describe('RectangleSelectionService', () => {
     let parentMouseLeaveSpy: jasmine.Spy;
     let parentMouseEnterSpy: jasmine.Spy;
 
-    let baseCtxDrawImageSpy: jasmine.Spy<any>;
-    let baseCtxClearRectSpy: jasmine.Spy<any>;
-    let selectionCtxDrawImageSpy: jasmine.Spy<any>;
-    let selectionCtxFillRectSpy: jasmine.Spy<any>;
-    let parentResetSelectedToolSettingsSpy: jasmine.Spy<any>;
-    let computeSquareCoordsSpy: jasmine.Spy<any>;
+    let baseCtxDrawImageSpy: jasmine.Spy;
+    let baseCtxFillRectSpy: jasmine.Spy;
+    let selectionCtxDrawImageSpy: jasmine.Spy;
+    let parentResetSelectedToolSettingsSpy: jasmine.Spy;
+    let computeSquareCoordsSpy: jasmine.Spy;
 
     let executeSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['resetResizers', 'setResizerPosition']);
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ResizerHandlerService, useValue: resizerHandlerServiceSpy },
+            ],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
 
@@ -45,6 +50,7 @@ describe('RectangleSelectionService', () => {
 
         service = TestBed.inject(RectangleSelectionService);
         undoRedoService = TestBed.inject(UndoRedoService);
+
         executeSpy = spyOn(undoRedoService, 'executeCommand');
 
         // Configuration of spy of service
@@ -55,6 +61,15 @@ describe('RectangleSelectionService', () => {
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
 
+        service['resizerHandlerService'].topLeftResizer = document.createElement('div');
+        service['resizerHandlerService'].topResizer = document.createElement('div');
+        service['resizerHandlerService'].topRightResizer = document.createElement('div');
+        service['resizerHandlerService'].rightResizer = document.createElement('div');
+        service['resizerHandlerService'].bottomRightResizer = document.createElement('div');
+        service['resizerHandlerService'].bottomResizer = document.createElement('div');
+        service['resizerHandlerService'].bottomLeftResizer = document.createElement('div');
+        service['resizerHandlerService'].leftResizer = document.createElement('div');
+
         parentMouseDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseDown');
         parentMouseUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseUp');
         parentKeyboardDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onKeyboardDown');
@@ -63,11 +78,10 @@ describe('RectangleSelectionService', () => {
         parentMouseEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseEnter');
         parentResetSelectedToolSettingsSpy = spyOn<any>(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'resetSelectedToolSettings');
 
-        baseCtxDrawImageSpy = spyOn<any>(baseCtxStub, 'drawImage').and.callThrough();
-        baseCtxClearRectSpy = spyOn<any>(baseCtxStub, 'clearRect').and.callThrough();
-        selectionCtxDrawImageSpy = spyOn<any>(selectionCtxStub, 'drawImage').and.callThrough();
-        selectionCtxFillRectSpy = spyOn<any>(selectionCtxStub, 'fillRect').and.callThrough();
-        computeSquareCoordsSpy = spyOn<any>(service, 'computeSquareCoords').and.callThrough();
+        baseCtxDrawImageSpy = spyOn(baseCtxStub, 'drawImage').and.callThrough();
+        baseCtxFillRectSpy = spyOn(baseCtxStub, 'fillRect').and.callThrough();
+        selectionCtxDrawImageSpy = spyOn(selectionCtxStub, 'drawImage').and.callThrough();
+        computeSquareCoordsSpy = spyOn(service, 'computeSquareCoords').and.callThrough();
 
         mouseEvent = {
             offsetX: 25,
@@ -92,6 +106,7 @@ describe('RectangleSelectionService', () => {
         service.isManipulating = true;
         service.onMouseDown(mouseEvent);
         expect(executeSpy).toHaveBeenCalled();
+        expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
         expect(service.cornerCoords[START_INDEX]).toEqual(expectedResult);
     });
@@ -299,7 +314,6 @@ describe('RectangleSelectionService', () => {
             { x: 100, y: 250 },
         ];
         service.onKeyboardUp(escKeyboardEvent);
-        expect(baseCtxDrawImageSpy).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
         expect(service.isEscapeDown).toBeFalsy();
     });
@@ -335,14 +349,14 @@ describe('RectangleSelectionService', () => {
 
     it('selectAll should fillRect with white', () => {
         service.selectAll();
-        expect(selectionCtxStub.fillStyle).toEqual('#ffffff');
-        expect(selectionCtxFillRectSpy).toHaveBeenCalled();
+        expect(baseCtxStub.fillStyle).toEqual('#ffffff');
+        expect(baseCtxFillRectSpy).toHaveBeenCalled();
         expect(selectionCtxDrawImageSpy).toHaveBeenCalled();
     });
 
-    it('selectAll should clearRect on baseCanvas', () => {
+    it('selectAll should fillRect on baseCanvas', () => {
         service.selectAll();
-        expect(baseCtxClearRectSpy).toHaveBeenCalled();
+        expect(baseCtxFillRectSpy).toHaveBeenCalled();
     });
 
     it('selectAll should set selectionCanvas left and top back to default values', () => {
@@ -355,99 +369,5 @@ describe('RectangleSelectionService', () => {
         ]);
         expect(service.inUse).toBeFalsy();
         expect(service.isManipulating).toBeTruthy();
-    });
-
-    it('validateCornerCoords should properly (-w, -h)', () => {
-        const startPoint: Vec2 = {
-            x: 400,
-            y: 350,
-        };
-        const endPoint: Vec2 = {
-            x: 150,
-            y: 100,
-        };
-        const selHeight = -250;
-        const selWidth = -250;
-        const expectedResult = [endPoint, startPoint];
-        service.cornerCoords = [startPoint, endPoint];
-        service.selectionHeight = selHeight;
-        service.selectionWidth = selWidth;
-        service.validateCornerCoords();
-        expect(service.cornerCoords).toEqual(expectedResult);
-    });
-
-    it('validateCornerCoords should properly set values (-w, +h)', () => {
-        const startPoint: Vec2 = {
-            x: 400,
-            y: 100,
-        };
-        const endPoint: Vec2 = {
-            x: 150,
-            y: 400,
-        };
-        const selWidth = -250;
-        const selHeight = 300;
-        const expectedResult = [
-            { x: 150, y: 100 },
-            { x: 150, y: 400 },
-        ];
-        service.cornerCoords = [startPoint, endPoint];
-        service.selectionHeight = selHeight;
-        service.selectionWidth = selWidth;
-        service.validateCornerCoords();
-        expect(service.cornerCoords).toEqual(expectedResult);
-    });
-
-    it('validateCorneCoords should properly set values (+w, -h)', () => {
-        const startPoint: Vec2 = {
-            x: 100,
-            y: 350,
-        };
-        const endPoint: Vec2 = {
-            x: 150,
-            y: 200,
-        };
-        const selWidth = 50;
-        const selHeight = -150;
-        const expectedResult = [
-            { x: 100, y: 200 },
-            { x: 150, y: 200 },
-        ];
-        service.cornerCoords = [startPoint, endPoint];
-        service.selectionHeight = selHeight;
-        service.selectionWidth = selWidth;
-        service.validateCornerCoords();
-        expect(service.cornerCoords).toEqual(expectedResult);
-    });
-
-    it('validateCornerCoords should properly set values (+w, +h)', () => {
-        const startPoint: Vec2 = {
-            x: 100,
-            y: 350,
-        };
-        const endPoint: Vec2 = {
-            x: 150,
-            y: 500,
-        };
-        const selWidth = 50;
-        const selHeight = 150;
-        const expectedResult = [
-            { x: 100, y: 350 },
-            { x: 150, y: 500 },
-        ];
-        service.cornerCoords = [startPoint, endPoint];
-        service.selectionHeight = selHeight;
-        service.selectionWidth = selWidth;
-        service.validateCornerCoords();
-        expect(service.cornerCoords).toEqual(expectedResult);
-    });
-
-    it('clearCorners should clear service.cornerCoords', () => {
-        const startPoint = { x: 250, y: 500 };
-        const endPoint = { x: 300, y: 600 };
-        const expectedPoint = { x: 0, y: 0 };
-        service.cornerCoords = [startPoint, endPoint];
-        service.clearCorners();
-        expect(service.cornerCoords).toEqual([expectedPoint, expectedPoint]);
     });
 });

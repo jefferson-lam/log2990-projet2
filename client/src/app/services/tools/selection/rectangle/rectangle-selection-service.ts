@@ -47,7 +47,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.rectangleService.isShiftDown = false;
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.clearCorners();
+            this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
             this.resizerHandlerService.resetResizers();
         }
@@ -171,7 +171,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.drawingService.selectionCanvas.width = this.selectionWidth;
         this.drawingService.selectionCanvas.height = this.selectionHeight;
         this.drawingService.selectionCtx.fillStyle = 'white';
-        this.drawingService.selectionCtx.fillRect(0, 0, this.drawingService.selectionCanvas.width, this.drawingService.selectionCanvas.height);
         this.drawingService.selectionCtx.drawImage(
             this.drawingService.canvas,
             0,
@@ -183,7 +182,8 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.selectionWidth,
             this.selectionHeight,
         );
-        this.drawingService.baseCtx.clearRect(0, 0, this.selectionWidth, this.selectionHeight);
+        this.drawingService.baseCtx.fillStyle = 'white';
+        this.drawingService.baseCtx.fillRect(0, 0, this.selectionWidth, this.selectionHeight);
         this.drawingService.selectionCanvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
         this.drawingService.selectionCanvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
         this.cornerCoords = [
@@ -198,9 +198,5 @@ export class RectangleSelectionService extends ToolSelectionService {
         const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
         this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
         this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
-    }
-
-    clearCorners(): void {
-        this.cornerCoords.fill({ x: 0, y: 0 });
     }
 }
