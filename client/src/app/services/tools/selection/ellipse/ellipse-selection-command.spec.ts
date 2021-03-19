@@ -6,7 +6,7 @@ import { OFFSET_RADIUS } from '@app/constants/selection-constants';
 import { EllipseSelectionCommand } from './ellipse-selection-command';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
-fdescribe('EllipseSelectionCommandService', () => {
+describe('EllipseSelectionCommandService', () => {
     let command: EllipseSelectionCommand;
     let ellipseSelectionService: EllipseSelectionService;
     let pathStub: Vec2[];
