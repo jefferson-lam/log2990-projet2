@@ -167,8 +167,9 @@ export class RectangleSelectionService extends ToolSelectionService {
                     this.selectionWidth,
                     this.selectionHeight,
                 );
-                this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetSelectedToolSettings();
+                this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.resizerHandlerService.resetResizers();
                 this.isManipulating = false;
                 this.isEscapeDown = false;
             }

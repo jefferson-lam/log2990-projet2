@@ -37,13 +37,6 @@ export class ResizerHandlerService {
     setResizerPosition(canvasPosition: Vec2, canvasWidth: number, canvasHeight: number) {
         this.topLeftResizer.style.left = canvasPosition.x + 'px';
         this.topLeftResizer.style.top = canvasPosition.y + 'px';
-        this.leftResizer.style.left = canvasPosition.x + 'px';
-        this.leftResizer.style.top = canvasPosition.y + canvasHeight / 2 + 'px';
-        this.bottomLeftResizer.style.left = canvasPosition.x + 'px';
-        this.bottomLeftResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
-
-        this.bottomResizer.style.left = canvasPosition.x + canvasWidth / 2 + 'px';
-        this.bottomResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
 
         this.topResizer.style.left = canvasPosition.x + canvasWidth / 2 + 'px';
         this.topResizer.style.top = canvasPosition.y + 'px';
@@ -56,5 +49,22 @@ export class ResizerHandlerService {
 
         this.bottomRightResizer.style.left = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
         this.bottomRightResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
+
+        this.bottomResizer.style.left = canvasPosition.x + canvasWidth / 2 + 'px';
+        this.bottomResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
+
+        this.bottomLeftResizer.style.left = canvasPosition.x + 'px';
+        this.bottomLeftResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
+
+        this.leftResizer.style.left = canvasPosition.x + 'px';
+        this.leftResizer.style.top = canvasPosition.y + canvasHeight / 2 + 'px';
     }
+
+    translateLeft(numPixels: number) {}
+
+    translateUp(numPixels: number) {}
+
+    translateDown(numPixels: number) {}
+
+    translateRight(numPixels: number) {}
 }

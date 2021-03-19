@@ -33,7 +33,6 @@ export class SelectionComponent implements OnInit {
         this.selectionCtx = this.selectionCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.selectionCtx = this.selectionCtx;
         this.drawingService.selectionCanvas = this.selectionCanvas.nativeElement;
-
         this.resizerHandlerService.leftResizer = this.leftResizer.nativeElement;
         this.resizerHandlerService.rightResizer = this.rightResizer.nativeElement;
         this.resizerHandlerService.bottomResizer = this.bottomResizer.nativeElement;
@@ -52,8 +51,16 @@ export class SelectionComponent implements OnInit {
     }
 
     setPosition(event: CdkDragEnd): void {
-        this.selectionCanvas.nativeElement.style.top = parseInt(this.selectionCanvas.nativeElement.style.top) + event.distance.y + 'px';
-        this.selectionCanvas.nativeElement.style.left = parseInt(this.selectionCanvas.nativeElement.style.left) + event.distance.x + 'px';
+        let newTopPosition = parseInt(this.selectionCanvas.nativeElement.style.top) + event.distance.y;
+        let newLeftPosition = parseInt(this.selectionCanvas.nativeElement.style.left) + event.distance.x;
+        if (newTopPosition < 0) {
+            newTopPosition = 0;
+        }
+        if (newLeftPosition < 0) {
+            newLeftPosition = 0;
+        }
+        this.selectionCanvas.nativeElement.style.top = newTopPosition + 'px';
+        this.selectionCanvas.nativeElement.style.left = newLeftPosition + 'px';
         event.source._dragRef.reset();
     }
 
