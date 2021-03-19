@@ -70,7 +70,7 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.inUse = false;
                 return;
             }
-            this.validateCornerCoords();
+            this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
             this.selectionWidth = Math.abs(this.selectionWidth);
             this.selectionHeight = Math.abs(this.selectionHeight);
             if (this.isSquare) {
@@ -155,18 +155,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             }
         } else if (this.isManipulating) {
             if (event.key === 'Escape' && this.isEscapeDown) {
-                // Case where user has defined the selection area
-                this.drawingService.baseCtx.drawImage(
-                    this.drawingService.selectionCanvas,
-                    0,
-                    0,
-                    this.selectionWidth,
-                    this.selectionHeight,
-                    this.cornerCoords[SelectionConstants.START_INDEX].x,
-                    this.cornerCoords[SelectionConstants.START_INDEX].y,
-                    this.selectionWidth,
-                    this.selectionHeight,
-                );
+                this.onMouseDown({} as MouseEvent);
                 this.resetSelectedToolSettings();
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resizerHandlerService.resetResizers();
@@ -203,20 +192,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         ];
         this.inUse = false;
         this.isManipulating = true;
-    }
-
-    validateCornerCoords() {
-        const tempCoord = Object.assign({}, this.cornerCoords[SelectionConstants.START_INDEX]);
-        if (this.selectionHeight < 0 && this.selectionWidth < 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
-            this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
-        } else if (this.selectionWidth < 0 && this.selectionHeight > 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX].x = this.cornerCoords[SelectionConstants.END_INDEX].x;
-            this.cornerCoords[SelectionConstants.END_INDEX].x = tempCoord.x;
-        } else if (this.selectionWidth > 0 && this.selectionHeight < 0) {
-            this.cornerCoords[SelectionConstants.START_INDEX].y = this.cornerCoords[SelectionConstants.END_INDEX].y;
-            this.cornerCoords[SelectionConstants.END_INDEX].y = tempCoord.y;
-        }
     }
 
     computeSquareCoords() {
