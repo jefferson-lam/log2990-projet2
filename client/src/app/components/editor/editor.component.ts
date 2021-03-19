@@ -69,7 +69,7 @@ export class EditorComponent {
     }
 
     setTool(newTool: Tool): void {
-        if (this.currentTool != newTool) {
+        if (this.currentTool !== newTool) {
             if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
                 if (this.currentTool.isManipulating) {
                     const emptyMouseEvent: MouseEvent = {} as MouseEvent;
