@@ -11,7 +11,6 @@ describe('SelectionComponent', () => {
     let setResizerPositionSpy: jasmine.Spy;
     let getTransformValuesSpy: jasmine.Spy;
     let componentSetResizerPositionSpy: jasmine.Spy;
-    // let cdkDragResetSpy: jasmine.Spy;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -47,6 +46,13 @@ describe('SelectionComponent', () => {
                 x: 200,
                 y: 300,
             },
+            source: {
+                _dragRef: {
+                    reset() {
+                        return;
+                    },
+                },
+            },
         } as CdkDragEnd;
         const expectedTop = '800px';
         const expectedLeft = '700px';
@@ -55,7 +61,6 @@ describe('SelectionComponent', () => {
         component.setCanvasPosition(mouseEvent);
         expect(component.selectionCanvas.nativeElement.style.top).toEqual(expectedTop);
         expect(component.selectionCanvas.nativeElement.style.left).toEqual(expectedLeft);
-        // expect(cdkDragResetSpy).toHaveBeenCalled();
     });
 
     it('setCanvasPosition, if newTop and newLeft are < 0, should set = 0', () => {
@@ -63,6 +68,13 @@ describe('SelectionComponent', () => {
             distance: {
                 x: -205,
                 y: -205,
+            },
+            source: {
+                _dragRef: {
+                    reset() {
+                        return;
+                    },
+                },
             },
         } as CdkDragEnd;
         const expectedTop = '0px';
@@ -133,6 +145,6 @@ describe('SelectionComponent', () => {
         component.selectionCanvas.nativeElement.style.transform = 'translate3d(100px, 50px, 0px)';
         const transformValues = component.getTransformValues(component.selectionCanvas.nativeElement);
         component.setResizerPosition(transformValues);
-        expect(setResizerPositionSpy).toHaveBeenCalledWith({ x: 750, y: 400 }, selHeight, selWidth);
+        expect(setResizerPositionSpy).toHaveBeenCalledWith({ x: 750, y: 400 }, selWidth, selHeight);
     });
 });
