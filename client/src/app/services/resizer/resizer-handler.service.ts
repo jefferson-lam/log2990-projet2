@@ -17,22 +17,12 @@ export class ResizerHandlerService {
 
     // TODO: Get elements by querySelectorAll and iterate through. Not working for some reason?
     resetResizers(): void {
-        this.topLeftResizer.style.left = 0 + 'px';
-        this.topLeftResizer.style.top = 0 + 'px';
-        this.leftResizer.style.left = 0 + 'px';
-        this.leftResizer.style.top = 0 + 'px';
-        this.bottomLeftResizer.style.left = 0 + 'px';
-        this.bottomLeftResizer.style.top = 0 + 'px';
-        this.bottomResizer.style.left = 0 + 'px';
-        this.bottomResizer.style.top = 0 + 'px';
-        this.topResizer.style.left = 0 + 'px';
-        this.topResizer.style.top = 0 + 'px';
-        this.topRightResizer.style.left = 0 + 'px';
-        this.topRightResizer.style.top = 0 + 'px';
-        this.rightResizer.style.left = 0 + 'px';
-        this.rightResizer.style.top = 0 + 'px';
-        this.bottomRightResizer.style.left = 0 + 'px';
-        this.bottomRightResizer.style.top = 0 + 'px';
+        const resizers = this.getAllResizers();
+        console.log(resizers);
+        resizers.forEach((resizer) => {
+            resizer.style.top = '0px';
+            resizer.style.left = '0px';
+        });
     }
 
     setResizerPosition(canvasPosition: Vec2, canvasWidth: number, canvasHeight: number): void {
@@ -61,11 +51,33 @@ export class ResizerHandlerService {
         this.leftResizer.style.top = canvasPosition.y + canvasHeight / 2 + 'px';
     }
 
-    translateLeft(numPixels: number): void {}
+    translateLeft(numPixels: number): void {
+        const resizers = this.getAllResizers();
+        resizers.forEach((resizer) => {
+            let newLeftValue = parseInt(resizer.style.left) - numPixels;
+            if (newLeftValue < 0) {
+                newLeftValue = 0;
+            }
+            resizer.style.left = newLeftValue + 'px';
+        });
+    }
 
     translateUp(numPixels: number): void {}
 
     translateDown(numPixels: number): void {}
 
     translateRight(numPixels: number): void {}
+
+    getAllResizers() {
+        return [
+            this.topLeftResizer,
+            this.topResizer,
+            this.topRightResizer,
+            this.rightResizer,
+            this.bottomRightResizer,
+            this.bottomResizer,
+            this.bottomLeftResizer,
+            this.leftResizer,
+        ];
+    }
 }
