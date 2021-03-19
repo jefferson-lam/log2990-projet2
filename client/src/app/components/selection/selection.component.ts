@@ -1,4 +1,4 @@
-import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -21,7 +21,8 @@ export class SelectionComponent implements AfterViewInit {
     @ViewChild('bottomLeftResizer', { static: false }) bottomLeftResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomRightResizer', { static: false }) bottomRightResizer: ElementRef<HTMLElement>;
 
-    private selectionCtx: CanvasRenderingContext2D;
+    public selectionCtx: CanvasRenderingContext2D;
+    public cdk: CdkDrag;
 
     constructor(
         private drawingService: DrawingService,
@@ -45,7 +46,7 @@ export class SelectionComponent implements AfterViewInit {
 
     repositionResizers(event: CdkDragMove): void {
         const transformValues: Vec2 = this.getTransformValues(this.selectionCanvas.nativeElement);
-        this.setResizersPosition(transformValues);
+        this.setResizerPosition(transformValues);
     }
 
     setCanvasPosition(event: CdkDragEnd): void {
@@ -65,16 +66,13 @@ export class SelectionComponent implements AfterViewInit {
     getTransformValues(element: HTMLElement): Vec2 {
         const style = window.getComputedStyle(element);
         const matrix = new WebKitCSSMatrix(style.transform);
-        if (!matrix) {
-            return { x: 0, y: 0 };
-        }
         return {
             x: matrix.m41,
             y: matrix.m42,
         };
     }
 
-    setResizersPosition(transformValues: Vec2): void {
+    setResizerPosition(transformValues: Vec2): void {
         const canvasWidth = this.selectionCanvas.nativeElement.width;
         const canvasHeight = this.selectionCanvas.nativeElement.height;
         const newCanvasPosition = {
