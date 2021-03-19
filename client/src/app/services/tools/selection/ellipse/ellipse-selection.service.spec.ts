@@ -22,7 +22,7 @@ fdescribe('EllipseToolSelectionService', () => {
     let parentMouseLeaveSpy: jasmine.Spy;
     let parentMouseEnterSpy: jasmine.Spy;
 
-    let baseCtxDrawImageSpy: jasmine.Spy<any>;
+    let baseCtxDrawImageSpy: jasmine.Spy;
     // let baseCtxClearRectSpy: jasmine.Spy<any>;
     // let selectionCtxDrawImageSpy: jasmine.Spy<any>;
     // let selectionCtxFillRectSpy: jasmine.Spy<any>;
@@ -59,7 +59,7 @@ fdescribe('EllipseToolSelectionService', () => {
         parentMouseLeaveSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseLeave');
         parentMouseEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseEnter');
 
-        baseCtxDrawImageSpy = spyOn<any>(baseCtxStub, 'drawImage').and.callThrough();
+        baseCtxDrawImageSpy = spyOn(baseCtxStub, 'drawImage').and.callThrough();
         // baseCtxClearRectSpy = spyOn<any>(baseCtxStub, 'clearRect').and.callThrough();
         // selectionCtxDrawImageSpy = spyOn<any>(selectionCtxStub, 'drawImage').and.callThrough();
         // selectionCtxFillRectSpy = spyOn<any>(selectionCtxStub, 'fillRect').and.callThrough();
