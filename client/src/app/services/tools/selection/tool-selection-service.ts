@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
@@ -16,7 +17,12 @@ export class ToolSelectionService extends Tool {
     selectionToolPrimaryColor: string;
     selectionToolSecondaryColor: string;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, selectionTool: Tool) {
+    constructor(
+        drawingService: DrawingService,
+        undoRedoService: UndoRedoService,
+        public resizerHandlerService: ResizerHandlerService,
+        selectionTool: Tool,
+    ) {
         super(drawingService, undoRedoService);
         this.selectionTool = selectionTool;
         if (selectionTool.lineWidth != null) {

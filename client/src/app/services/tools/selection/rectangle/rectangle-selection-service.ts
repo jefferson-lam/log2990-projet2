@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle/rectangle-selection-command';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
@@ -23,8 +24,13 @@ export class RectangleSelectionService extends ToolSelectionService {
     selectionHeight: number = 0;
     selectionWidth: number = 0;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public rectangleService: RectangleService) {
-        super(drawingService, undoRedoService, rectangleService);
+    constructor(
+        drawingService: DrawingService,
+        undoRedoService: UndoRedoService,
+        resizerHandlerService: ResizerHandlerService,
+        public rectangleService: RectangleService,
+    ) {
+        super(drawingService, undoRedoService, resizerHandlerService, rectangleService);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -43,6 +49,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.resetCanvasState(this.drawingService.selectionCanvas);
             this.clearCorners();
             this.resetSelectedToolSettings();
+            this.resizerHandlerService.resetResizers();
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
@@ -91,6 +98,11 @@ export class RectangleSelectionService extends ToolSelectionService {
             );
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
+            this.resizerHandlerService.setResizerPosition(
+                this.cornerCoords[SelectionConstants.START_INDEX],
+                this.selectionWidth,
+                this.selectionHeight,
+            );
             this.inUse = false;
             this.isManipulating = true;
         }
@@ -193,7 +205,7 @@ export class RectangleSelectionService extends ToolSelectionService {
     }
 
     validateCornerCoords() {
-        const tempCoord = this.cornerCoords[SelectionConstants.START_INDEX];
+        const tempCoord = Object.assign({}, this.cornerCoords[SelectionConstants.START_INDEX]);
         if (this.selectionHeight < 0 && this.selectionWidth < 0) {
             this.cornerCoords[SelectionConstants.START_INDEX] = this.cornerCoords[SelectionConstants.END_INDEX];
             this.cornerCoords[SelectionConstants.END_INDEX] = tempCoord;
@@ -207,7 +219,7 @@ export class RectangleSelectionService extends ToolSelectionService {
     }
 
     computeSquareCoords() {
-        const shortestSide = Math.min(this.selectionWidth, this.selectionHeight);
+        const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
         this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
         this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
     }

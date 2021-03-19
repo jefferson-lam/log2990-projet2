@@ -8,8 +8,17 @@
         id="selectionLayer"
         #selectionCanvas
         cdkDragBoundary="#selectionContainer"
+        (cdkDragMoved)="this.repositionResizers($event)"
         (cdkDragEnded)="this.setPosition($event)"
         [attr.width]="0"
         [attr.height]="0"
     ></canvas>
 </div>
+<div #leftResizer id="leftSlider"></div>
+<div #rightResizer id="rightSlider"></div>
+<div #topResizer id="topSlider"></div>
+<div #bottomResizer id="bottomSlider"></div>
+<div #bottomLeftResizer id="bottomLeftSlider"></div>
+<div #bottomRightResizer id="bottomRightSlider"></div>
+<div #topLeftResizer id="topLeftSlider"></div>
+<div #topRightResizer id="topRightSlider"></div>

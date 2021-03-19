@@ -12,3 +12,19 @@
     max-width: 100%;
     background-color: #607d8b;
 }
+
+#bottomSlider,
+#leftSlider,
+#rightSlider,
+#topSlider,
+#topLeftSlider,
+#topRightSlider,
+#bottomLeftSlider,
+#bottomRightSlider {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    color: black;
+    border-style: 1px solid black;
+    background-color: black;
+}
