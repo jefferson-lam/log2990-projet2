@@ -1,8 +1,12 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import { DatabaseService } from '@app/services/database/database.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { LocalServerService } from '@app/services/local-server/local-server.service';
 import { Message } from '@common/communication/message';
+import { ServerDrawing } from '@common/communication/server-drawing';
+import * as ServerConstants from '@common/validation/server-constants';
 import { timeout } from 'rxjs/operators';
 import { TagInputComponent } from './tag-input/tag-input.component';
 import { TitleInputComponent } from './title-input/title-input.component';
@@ -11,9 +15,10 @@ import { TitleInputComponent } from './title-input/title-input.component';
     templateUrl: './save-drawing.component.html',
     styleUrls: ['./save-drawing.component.scss'],
 })
-export class SaveDrawingComponent {
+export class SaveDrawingComponent implements AfterViewInit {
     @ViewChild('tagInput') private tagInput: TagInputComponent;
     @ViewChild('titleInput') private titleInput: TitleInputComponent;
+
     resultMessage: string = '';
     saveProgressEnum: typeof SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress;
     saveProgress: SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress.CHOOSING_SETTING;
@@ -22,7 +27,18 @@ export class SaveDrawingComponent {
     areTagsValid: boolean = true;
     isSavePossible: boolean = false;
 
-    constructor(private database: DatabaseService, @Inject(MatDialogRef) private dialogRef: MatDialogRef<SaveDrawingComponent>) {}
+    imageURL: string;
+
+    constructor(
+        private database: DatabaseService,
+        private localServerService: LocalServerService,
+        private drawingService: DrawingService,
+        @Inject(MatDialogRef) private dialogRef: MatDialogRef<SaveDrawingComponent>,
+    ) {}
+
+    ngAfterViewInit(): void {
+        this.imageURL = this.drawingService.canvas.toDataURL();
+    }
 
     verifyTitleValid(isTitleValid: boolean): void {
         this.isTitleValid = isTitleValid;
@@ -54,6 +70,7 @@ export class SaveDrawingComponent {
                     }
                     this.resultMessage = this.request.body;
                     this.dialogRef.disableClose = false;
+                    this.sendDrawingToServer();
                 },
                 next: (result: Message) => {
                     this.request = result;
@@ -66,5 +83,11 @@ export class SaveDrawingComponent {
                     this.dialogRef.disableClose = false;
                 },
             });
+    }
+
+    private sendDrawingToServer(): void {
+        const insertedId = this.resultMessage.slice(ServerConstants.ID_MESSAGE_SLICE);
+        const drawing: ServerDrawing = { id: insertedId, image: this.imageURL };
+        this.localServerService.sendDrawing(drawing).subscribe();
     }
 }
