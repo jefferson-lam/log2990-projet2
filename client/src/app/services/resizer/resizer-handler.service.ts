@@ -15,7 +15,8 @@ export class ResizerHandlerService {
     bottomLeftResizer: HTMLElement;
     bottomRightResizer: HTMLElement;
 
-    resetResizers() {
+    // TODO: Get elements by querySelectorAll and iterate through. Not working for some reason?
+    resetResizers(): void {
         this.topLeftResizer.style.left = 0 + 'px';
         this.topLeftResizer.style.top = 0 + 'px';
         this.leftResizer.style.left = 0 + 'px';
@@ -34,7 +35,7 @@ export class ResizerHandlerService {
         this.bottomRightResizer.style.top = 0 + 'px';
     }
 
-    setResizerPosition(canvasPosition: Vec2, canvasWidth: number, canvasHeight: number) {
+    setResizerPosition(canvasPosition: Vec2, canvasWidth: number, canvasHeight: number): void {
         this.topLeftResizer.style.left = canvasPosition.x + 'px';
         this.topLeftResizer.style.top = canvasPosition.y + 'px';
 
@@ -60,11 +61,11 @@ export class ResizerHandlerService {
         this.leftResizer.style.top = canvasPosition.y + canvasHeight / 2 + 'px';
     }
 
-    translateLeft(numPixels: number) {}
+    translateLeft(numPixels: number): void {}
 
-    translateUp(numPixels: number) {}
+    translateUp(numPixels: number): void {}
 
-    translateDown(numPixels: number) {}
+    translateDown(numPixels: number): void {}
 
-    translateRight(numPixels: number) {}
+    translateRight(numPixels: number): void {}
 }

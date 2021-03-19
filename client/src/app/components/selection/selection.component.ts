@@ -1,5 +1,5 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
@@ -9,7 +9,7 @@ import { RectangleSelectionService } from '@app/services/tools/selection/rectang
     templateUrl: './selection.component.html',
     styleUrls: ['./selection.component.scss'],
 })
-export class SelectionComponent implements OnInit {
+export class SelectionComponent implements AfterViewInit {
     @ViewChild('selectionCanvas', { static: false }) selectionCanvas: ElementRef<HTMLCanvasElement>;
 
     @ViewChild('leftResizer', { static: false }) leftResizer: ElementRef<HTMLElement>;
@@ -43,14 +43,12 @@ export class SelectionComponent implements OnInit {
         this.resizerHandlerService.bottomRightResizer = this.bottomRightResizer.nativeElement;
     }
 
-    ngOnInit(): void {}
-
     repositionResizers(event: CdkDragMove): void {
         const transformValues: Vec2 = this.getTransformValues(this.selectionCanvas.nativeElement);
         this.setResizersPosition(transformValues);
     }
 
-    setPosition(event: CdkDragEnd): void {
+    setCanvasPosition(event: CdkDragEnd): void {
         let newTopPosition = parseInt(this.selectionCanvas.nativeElement.style.top) + event.distance.y;
         let newLeftPosition = parseInt(this.selectionCanvas.nativeElement.style.left) + event.distance.x;
         if (newTopPosition < 0) {
