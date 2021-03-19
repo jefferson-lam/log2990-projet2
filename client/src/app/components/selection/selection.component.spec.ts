@@ -11,7 +11,6 @@ describe('SelectionComponent', () => {
     let setResizerPositionSpy: jasmine.Spy;
     let getTransformValuesSpy: jasmine.Spy;
     let componentSetResizerPositionSpy: jasmine.Spy;
-    // let cdkDragResetSpy: jasmine.Spy;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -55,7 +54,6 @@ describe('SelectionComponent', () => {
         component.setCanvasPosition(mouseEvent);
         expect(component.selectionCanvas.nativeElement.style.top).toEqual(expectedTop);
         expect(component.selectionCanvas.nativeElement.style.left).toEqual(expectedLeft);
-        // expect(cdkDragResetSpy).toHaveBeenCalled();
     });
 
     it('setCanvasPosition, if newTop and newLeft are < 0, should set = 0', () => {

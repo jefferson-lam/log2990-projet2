@@ -7,7 +7,7 @@ import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.ser
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
-fdescribe('EllipseToolSelectionService', () => {
+describe('EllipseToolSelectionService', () => {
     let service: EllipseSelectionService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
