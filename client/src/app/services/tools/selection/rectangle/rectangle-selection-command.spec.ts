@@ -15,7 +15,7 @@ describe('RectangleSelectionCommandService', () => {
 
     let selectionCtxStub: CanvasRenderingContext2D;
 
-    let baseCtxClearRectSpy: jasmine.Spy;
+    let baseCtxFillRectSpy: jasmine.Spy;
     let baseCtxDrawImageSpy: jasmine.Spy;
 
     // Constants
@@ -50,7 +50,7 @@ describe('RectangleSelectionCommandService', () => {
         rectangleSelectionService.transformValues = TEST_TRANSFORM_VALUES;
         rectangleSelectionService.isSquare = TEST_IS_SQUARE;
 
-        baseCtxClearRectSpy = spyOn(baseCtxStub, 'clearRect').and.callThrough();
+        baseCtxFillRectSpy = spyOn(baseCtxStub, 'fillRect').and.callThrough();
         baseCtxDrawImageSpy = spyOn(baseCtxStub, 'drawImage').and.callThrough();
 
         command = new RectangleSelectionCommand(baseCtxStub, selectionCtxStub.canvas, rectangleSelectionService);
@@ -71,7 +71,7 @@ describe('RectangleSelectionCommandService', () => {
 
     it('execute should correctly clearRect with correct parameters', () => {
         command.execute();
-        expect(baseCtxClearRectSpy).toHaveBeenCalled();
+        expect(baseCtxFillRectSpy).toHaveBeenCalled();
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
     });
 
