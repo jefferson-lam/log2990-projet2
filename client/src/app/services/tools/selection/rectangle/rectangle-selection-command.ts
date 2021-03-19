@@ -30,7 +30,8 @@ export class RectangleSelectionCommand extends Command {
     }
 
     execute(): void {
-        this.ctx.clearRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
+        this.ctx.fillStyle = 'white';
+        this.ctx.fillRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
         // When implementing scaling, we will have to sum selectionWidth and selectionHeight to a
         // the distance scaled by the mouse
         this.ctx.drawImage(
