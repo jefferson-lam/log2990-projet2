@@ -1,4 +1,4 @@
-import { CdkDrag, CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -21,8 +21,7 @@ export class SelectionComponent implements AfterViewInit {
     @ViewChild('bottomLeftResizer', { static: false }) bottomLeftResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomRightResizer', { static: false }) bottomRightResizer: ElementRef<HTMLElement>;
 
-    public selectionCtx: CanvasRenderingContext2D;
-    public cdk: CdkDrag;
+    selectionCtx: CanvasRenderingContext2D;
 
     constructor(
         private drawingService: DrawingService,
@@ -50,8 +49,8 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     setCanvasPosition(event: CdkDragEnd): void {
-        let newTopPosition = parseInt(this.selectionCanvas.nativeElement.style.top) + event.distance.y;
-        let newLeftPosition = parseInt(this.selectionCanvas.nativeElement.style.left) + event.distance.x;
+        let newTopPosition = parseInt(this.selectionCanvas.nativeElement.style.top, 10) + event.distance.y;
+        let newLeftPosition = parseInt(this.selectionCanvas.nativeElement.style.left, 10) + event.distance.x;
         if (newTopPosition < 0) {
             newTopPosition = 0;
         }
@@ -76,8 +75,8 @@ export class SelectionComponent implements AfterViewInit {
         const canvasWidth = this.selectionCanvas.nativeElement.width;
         const canvasHeight = this.selectionCanvas.nativeElement.height;
         const newCanvasPosition = {
-            x: parseInt(this.selectionCanvas.nativeElement.style.left) + transformValues.x,
-            y: parseInt(this.selectionCanvas.nativeElement.style.top) + transformValues.y,
+            x: parseInt(this.selectionCanvas.nativeElement.style.left, 10) + transformValues.x,
+            y: parseInt(this.selectionCanvas.nativeElement.style.top, 10) + transformValues.y,
         };
         this.resizerHandlerService.setResizerPosition(newCanvasPosition, canvasWidth, canvasHeight);
     }

@@ -124,13 +124,15 @@ describe('SelectionComponent', () => {
     });
 
     it('setResizersPosition should correctly calculate new canvas position, and call service function', () => {
-        component.selectionCanvas.nativeElement.height = 250;
-        component.selectionCanvas.nativeElement.width = 500;
+        const selHeight = 250;
+        const selWidth = 500;
+        component.selectionCanvas.nativeElement.height = selHeight;
+        component.selectionCanvas.nativeElement.width = selWidth;
         component.selectionCanvas.nativeElement.style.top = '350px';
         component.selectionCanvas.nativeElement.style.left = '650px';
         component.selectionCanvas.nativeElement.style.transform = 'translate3d(100px, 50px, 0px)';
         const transformValues = component.getTransformValues(component.selectionCanvas.nativeElement);
         component.setResizerPosition(transformValues);
-        expect(setResizerPositionSpy).toHaveBeenCalledWith({ x: 750, y: 400 }, 500, 250);
+        expect(setResizerPositionSpy).toHaveBeenCalledWith({ x: 750, y: 400 }, selHeight, selWidth);
     });
 });

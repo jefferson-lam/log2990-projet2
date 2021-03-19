@@ -194,7 +194,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.isManipulating = true;
     }
 
-    computeSquareCoords() {
+    computeSquareCoords(): void {
         const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
         this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
         this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;

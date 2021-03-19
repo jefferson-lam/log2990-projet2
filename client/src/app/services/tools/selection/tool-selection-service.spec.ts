@@ -50,6 +50,7 @@ describe('ToolSelectionService', () => {
 
         service = TestBed.inject(ToolSelectionService);
 
+        // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].selectionCtx = selectionCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
@@ -144,12 +145,13 @@ describe('ToolSelectionService', () => {
     });
 
     it('getSelectionToolSettings should set correct selectionToolSettings if settings are not null', () => {
-        service.selectionTool.lineWidth = 20;
+        const lineWidth = 20;
+        service.selectionTool.lineWidth = lineWidth;
         service.selectionTool.fillMode = FillMode.OUTLINE_FILL;
         service.selectionTool.primaryColor = 'red';
         service.selectionTool.secondaryColor = 'black';
         service.getSelectedToolSettings();
-        expect(service.selectionToolLineWidth).toEqual(20);
+        expect(service.selectionToolLineWidth).toEqual(lineWidth);
         expect(service.selectionToolFillMode).toEqual(FillMode.OUTLINE_FILL);
         expect(service.selectionToolPrimaryColor).toEqual('red');
         expect(service.selectionToolSecondaryColor).toEqual('black');
