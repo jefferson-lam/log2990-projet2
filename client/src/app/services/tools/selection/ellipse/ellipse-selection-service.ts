@@ -5,6 +5,7 @@ import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constan
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EllipseSelectionCommand } from '@app/services/tools/selection/ellipse/ellipse-selection-command';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
@@ -24,8 +25,13 @@ export class EllipseSelectionService extends ToolSelectionService {
     selectionHeight: number = 0;
     selectionWidth: number = 0;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public ellipseService: EllipseService) {
-        super(drawingService, undoRedoService, ellipseService);
+    constructor(
+        drawingService: DrawingService,
+        undoRedoService: UndoRedoService,
+        resizerHandlerService: ResizerHandlerService,
+        public ellipseService: EllipseService,
+    ) {
+        super(drawingService, undoRedoService, resizerHandlerService, ellipseService);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -42,7 +48,8 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.isShiftDown = false;
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.clearCorners();
+            this.resizerHandlerService.resetResizers();
+            this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
@@ -78,6 +85,11 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.deleteSelectionZoneOnBaseCanvas();
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
+            this.resizerHandlerService.setResizerPosition(
+                this.cornerCoords[SelectionConstants.START_INDEX],
+                this.selectionWidth,
+                this.selectionHeight,
+            );
             this.inUse = false;
             this.isManipulating = true;
         }
@@ -131,17 +143,8 @@ export class EllipseSelectionService extends ToolSelectionService {
         } else if (this.isManipulating) {
             if (event.key === 'Escape' && this.isEscapeDown) {
                 // Case where user has defined the selection area
-                this.drawingService.baseCtx.drawImage(
-                    this.drawingService.selectionCanvas,
-                    0,
-                    0,
-                    this.selectionWidth,
-                    this.selectionHeight,
-                    this.cornerCoords[SelectionConstants.START_INDEX].x,
-                    this.cornerCoords[SelectionConstants.START_INDEX].y,
-                    this.selectionWidth,
-                    this.selectionHeight,
-                );
+                this.onMouseDown({} as MouseEvent);
+                this.resizerHandlerService.resetResizers();
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetSelectedToolSettings();
                 this.isManipulating = false;
@@ -149,10 +152,6 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.isShiftDown = false;
             }
         }
-    }
-
-    clearCorners(): void {
-        this.cornerCoords.fill({ x: 0, y: 0 });
     }
 
     drawSelectionOnSelectionCanvas(): void {
