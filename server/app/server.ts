@@ -11,7 +11,7 @@ export class Server {
 
     constructor(@inject(TYPES.Application) private application: Application) {}
 
-    init(): void {
+    async init(): Promise<void> {
         this.application.app.set('port', this.appPort);
 
         this.server = http.createServer(this.application.app);
@@ -59,6 +59,6 @@ export class Server {
         // tslint:disable-next-line:no-non-null-assertion
         const bind: string = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr!.port}`;
         // tslint:disable-next-line:no-console
-        console.log(bind);
+        console.log(`Listening on ${bind}`);
     }
 }

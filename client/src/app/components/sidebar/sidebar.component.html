@@ -9,17 +9,20 @@
                     >add_box</mat-icon
                 >
             </li>
-            <li id="exportButton">
-                <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
-                    >open_in_new</mat-icon
-                >
+            <li>
+                <mat-icon id="save-drawing-button" matTooltip="Sauvegarder" [matTooltipPosition]="'right'" (click)="saveDrawing()">save_alt</mat-icon>
             </li>
-            <li><mat-icon matTooltip="Sauvegarder" [matTooltipPosition]="'right'">save_alt</mat-icon></li>
             <li id="undoButton" [class.unclickable]="!isUndoPossible" (click)="undo()">
                 <mat-icon matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
             </li>
             <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
                 <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
+            </li>
+
+            <li id="exportButton">
+                <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
+                    >open_in_new</mat-icon
+                >
             </li>
         </ul>
         <ul class="tools-sidebar">
@@ -46,6 +49,7 @@
                 <app-sidebar-ellipse class="sidebar-tool-options" *ngSwitchCase="'2'"></app-sidebar-ellipse>
                 <app-sidebar-line class="sidebar-tool-options" *ngSwitchCase="'l'"></app-sidebar-line>
                 <app-sidebar-polygone class="sidebar-tool-options" *ngSwitchCase="'3'"></app-sidebar-polygone>
+                <app-sidebar-aerosol class="sidebar-tool-options" *ngSwitchCase="'a'"></app-sidebar-aerosol>
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

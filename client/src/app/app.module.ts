@@ -10,6 +10,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -29,6 +30,13 @@ import { MainPageCarrouselComponent } from './components/main-page/main-page-car
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { SelectionComponent } from './components/selection/selection.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveCompletePageComponent } from './components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
+import { SaveDrawingComponent } from './components/sidebar/save-drawing-page/save-drawing.component';
+import { SaveErrorPageComponent } from './components/sidebar/save-drawing-page/save-error-page/save-error-page.component';
+import { SaveSavingPageComponent } from './components/sidebar/save-drawing-page/save-saving-page/save-saving-page.component';
+import { TagInputComponent } from './components/sidebar/save-drawing-page/tag-input/tag-input.component';
+import { TitleInputComponent } from './components/sidebar/save-drawing-page/title-input/title-input.component';
+import { SidebarAerosolComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-aerosol/sidebar-aerosol.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
@@ -47,6 +55,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MainPageCarrouselComponent,
         NewDrawingBoxComponent,
         ResizerComponent,
+        SidebarAerosolComponent,
         SidebarComponent,
         SidebarPencilComponent,
         SidebarEraserComponent,
@@ -54,7 +63,13 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarEllipseComponent,
         SidebarLineComponent,
         SelectionComponent,
+        SaveDrawingComponent,
+        SaveCompletePageComponent,
+        SaveSavingPageComponent,
+        SaveErrorPageComponent,
         SidebarPolygoneComponent,
+        TagInputComponent,
+        TitleInputComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
@@ -79,6 +94,12 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatSliderModule,
         MatToolbarModule,
         MatTooltipModule,
+        MatSliderModule,
+        MatRadioModule,
+        MatCheckboxModule,
+        DragDropModule,
+        FormsModule,
+        MatProgressSpinnerModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

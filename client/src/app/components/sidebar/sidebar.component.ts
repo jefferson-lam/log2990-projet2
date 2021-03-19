@@ -13,6 +13,7 @@ export class SidebarComponent implements OnChanges {
     @Output() notifyOnToolSelect: EventEmitter<Tool> = new EventEmitter<Tool>();
     @Output() openExportPopUp: EventEmitter<void> = new EventEmitter<void>();
     @Output() openNewDrawingPopUp: EventEmitter<void> = new EventEmitter<void>();
+    @Output() openSavePopUp: EventEmitter<void> = new EventEmitter<void>();
     @Input() currentTool: Tool;
     @Input() isUndoPossible: boolean = false;
     @Input() isRedoPossible: boolean = false;
@@ -77,6 +78,10 @@ export class SidebarComponent implements OnChanges {
 
     exportDrawing(): void {
         this.openExportPopUp.emit();
+    }
+
+    saveDrawing(): void {
+        this.openSavePopUp.emit();
     }
 
     undo(): void {
