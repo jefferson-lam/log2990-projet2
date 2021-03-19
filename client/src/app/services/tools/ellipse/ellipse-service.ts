@@ -15,8 +15,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class EllipseService extends Tool {
     cornerCoords: Vec2[] = [];
     isCircle: boolean = false;
-    lineWidth: number = 20; // TODO: Change back to 20 after finding a way to change settings when changing over to selection
-    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
+    lineWidth: number = 20;
+    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = '#B5CF60';
     secondaryColor: string = '#2F2A36';
 
@@ -133,12 +133,10 @@ export class EllipseService extends Tool {
     }
 
     setPrimaryColor(newColor: string): void {
-        // TODO: add color check
         this.primaryColor = newColor;
     }
 
     setSecondaryColor(newColor: string): void {
-        // TODO: add color check
         this.secondaryColor = newColor;
     }
 

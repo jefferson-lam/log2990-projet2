@@ -29,7 +29,8 @@ describe('SidebarComponent', () => {
     let commandExecuteSpy: jasmine.Spy;
     let selectToolEmitterSpy: jasmine.Spy;
     let selectToolSpy: jasmine.Spy;
-    let newDrawingClickedSpy: jasmine.Spy;
+    let openExportPopUpSpy: jasmine.Spy;
+    let openNewDrawingPopUpSpy: jasmine.Spy;
     let undoServiceSpy: jasmine.Spy;
     let redoServiceSpy: jasmine.Spy;
     let refreshSpy: jasmine.Spy;
@@ -68,7 +69,8 @@ describe('SidebarComponent', () => {
         commandExecuteSpy = spyOn(mockCommand, 'execute');
         selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
         selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
-        newDrawingClickedSpy = spyOn(component.newDrawingClicked, 'emit');
+        openExportPopUpSpy = spyOn(component.openExportPopUp, 'emit');
+        openNewDrawingPopUpSpy = spyOn(component.openNewDrawingPopUp, 'emit');
         component.currentTool = pencilStub;
         undoServiceSpy = spyOn(undoRedoService, 'undo').and.callThrough();
         redoServiceSpy = spyOn(undoRedoService, 'redo').and.callThrough();
@@ -208,8 +210,14 @@ describe('SidebarComponent', () => {
         const newDrawingButton = fixture.debugElement.nativeElement.querySelector('#new-drawing-button');
         newDrawingButton.click();
         fixture.detectChanges();
-        expect(newDrawingClickedSpy).toHaveBeenCalled();
-        expect(newDrawingClickedSpy).toHaveBeenCalledWith(true);
+        expect(openNewDrawingPopUpSpy).toHaveBeenCalled();
+    });
+
+    it('pressing on exportDrawing should emit to editor', () => {
+        const exportDrawingButton = fixture.debugElement.nativeElement.querySelector('#export-drawing-button');
+        exportDrawingButton.click();
+        fixture.detectChanges();
+        expect(openExportPopUpSpy).toHaveBeenCalled();
     });
 
     it('clicking on undo button when undo pile is not empty and tool is not used should call undoRedoService.undo', () => {

@@ -27,10 +27,6 @@ export class SidebarLineComponent implements OnInit {
         this.junctionRadiusChanged.subscribe((newJunctionRadius: number) => this.settingsManager.setJunctionRadius(newJunctionRadius));
     }
 
-    setMax(numberInput: number): number {
-        return numberInput;
-    }
-
     emitToolSize(): void {
         this.toolSizeChanged.emit(this.toolSize);
     }

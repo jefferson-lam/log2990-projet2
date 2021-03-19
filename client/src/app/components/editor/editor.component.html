@@ -1,8 +1,9 @@
 <div class="container">
     <app-sidebar
         (notifyOnToolSelect)="updateToolFromSidebarClick($event)"
-        (newDrawingClicked)="openModalPopUp()"
         [currentTool]="currentTool"
+        (openExportPopUp)="openExportPopUp()"
+        (openNewDrawingPopUp)="openNewDrawingPopUp()"
     ></app-sidebar>
     <div class="drawing-container">
         <app-drawing class="drawing" tabindex="0" [currentTool]="currentTool"></app-drawing>

@@ -1,0 +1,41 @@
+<div class="modal-dialog">
+  <h1 mat-dialog-title>Exporter le dessin</h1>
+
+  <div id='exportCanvasContainer'>
+    <canvas id="exportCanvas" #exportCanvas [width]='baseCanvas.width' [height]='baseCanvas.height' [style.width]='canvasStyleWidth' [style.height]='canvasStyleHeight'></canvas>
+    <img #exportImg [style.width]='canvasStyleWidth' [style.height]='canvasStyleHeight'>
+  </div>
+
+  <mat-form-field>
+    <mat-label for='filter'>Filtre appliquée : </mat-label>
+    <mat-select [(value)]='filter' (selectionChange)='applyFilter($event.value)' id='filter'>
+      <mat-option value="none">Aucun filtre</mat-option>
+      <mat-option value="grayscale(100%)">Ton de gris</mat-option>
+      <mat-option value="invert(100%)">Inversion de couleur</mat-option>
+      <mat-option value="hue-rotate(50deg)">Changement de teinte</mat-option>
+      <mat-option value="drop-shadow(30px 30px 10px black)">Ombrage</mat-option>
+      <mat-option value="sepia(100%)">Sepia</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label for='nom'>Nom du fichier :</mat-label>
+    <input matInput [(ngModel)]='name'  id='nom'>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label for='type'>Format d'image : </mat-label>
+    <mat-select [(value)]='type' id='type'>
+      <mat-option value='png'>png</mat-option>
+      <mat-option value='jpeg'>jpeg</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <br>
+
+  <div mat-dialog-actions>
+    <button mat-button mat-dialog-close id="cancelButton">Annuler</button>
+    <button mat-button mat-dialog-close id="saveButton" (click)="saveImage()">Confirmer</button>
+  </div>
+</div>
+

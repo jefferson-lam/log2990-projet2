@@ -11,7 +11,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class SidebarComponent implements OnChanges {
     @Output() notifyOnToolSelect: EventEmitter<Tool> = new EventEmitter<Tool>();
-    @Output() newDrawingClicked: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() openExportPopUp: EventEmitter<void> = new EventEmitter<void>();
+    @Output() openNewDrawingPopUp: EventEmitter<void> = new EventEmitter<void>();
     @Input() currentTool: Tool;
     @Input() isUndoPossible: boolean = false;
     @Input() isRedoPossible: boolean = false;
@@ -29,6 +30,7 @@ export class SidebarComponent implements OnChanges {
         { service: 'LineService', name: 'Ligne', icon: 'remove', keyShortcut: 'l', helpShortcut: '(Touche L)' },
         { service: 'TextService', name: 'Texte', icon: 'text_format', keyShortcut: 't', helpShortcut: '(Touche T)' },
         { service: 'StampService', name: 'Étampe', icon: 'how_to_vote', keyShortcut: 'd', helpShortcut: '(Touche D)' },
+        { service: 'AerosolService', name: 'Aérosol', icon: 'blur_on', keyShortcut: 'a', helpShortcut: '(Touche A)' },
         { service: 'PipetteService', name: 'Pipette', icon: 'invert_colors', keyShortcut: 'i', helpShortcut: '(Touche I)' },
         { service: 'RectangleSelectionService', name: 'Rectangle de Selection', icon: 'blur_linear', keyShortcut: 'r', helpShortcut: '(Touche R)' },
         { service: 'EllipseSelectionService', name: 'Ellipse de selection', icon: 'blur_circular', keyShortcut: 's', helpShortcut: '(Touche S)' },
@@ -70,7 +72,11 @@ export class SidebarComponent implements OnChanges {
     }
 
     openNewDrawing(): void {
-        this.newDrawingClicked.emit(true);
+        this.openNewDrawingPopUp.emit();
+    }
+
+    exportDrawing(): void {
+        this.openExportPopUp.emit();
     }
 
     undo(): void {

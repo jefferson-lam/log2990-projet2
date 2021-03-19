@@ -1,7 +1,9 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
+import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
@@ -12,8 +14,9 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     templateUrl: './editor.component.html',
     styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent {
+export class EditorComponent implements OnInit {
     currentTool: Tool;
+    isPopUpOpen: boolean;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -23,30 +26,56 @@ export class EditorComponent {
     ) {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
+        this.isPopUpOpen = false;
+    }
+
+    ngOnInit(): void {
+        this.newDialog.afterAllClosed.subscribe(() => {
+            this.isPopUpOpen = false;
+        });
+    }
+
+    @HostListener('window:keydown.control.e', ['$event'])
+    onCtrlEKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.openExportPopUp();
+    }
+
+    @HostListener('window:keydown.control.o', ['$event'])
+    onCtrlOKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.openNewDrawingPopUp();
+    }
+
+    @HostListener('window:keydown.control.shift.z', ['$event'])
+    onCtrlShiftZKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+            this.undoRedoService.redo();
+        }
+    }
+
+    @HostListener('window:keydown.control.z', ['$event'])
+    onCtrlZKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+            this.undoRedoService.undo();
+        }
+    }
+
+    @HostListener('window:keydown.control.a', ['$event'])
+    onCtrlAKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.setTool(this.toolManager.getTool('r'));
+        if (this.currentTool instanceof RectangleSelectionService) {
+            this.currentTool.selectAll();
+        }
     }
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (event.key.match(/^(1|2|c|l|e|r|s)$/)) {
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s)$/)) {
             this.setTool(this.toolManager.selectTool(event));
-        } else if (event.ctrlKey && event.code === 'KeyO') {
-            event.preventDefault();
-            this.openModalPopUp();
-        } else if (event.ctrlKey && event.code === 'KeyZ') {
-            // TODO: lineTool can have mouseup and be drawing
-            if (!this.currentTool.inUse) {
-                if (event.shiftKey) {
-                    this.undoRedoService.redo();
-                } else {
-                    this.undoRedoService.undo();
-                }
-            }
-        } else if (event.ctrlKey && event.code === 'KeyA') {
-            event.preventDefault();
-            this.currentTool = this.toolManager.getTool('r');
-            if (this.currentTool instanceof RectangleSelectionService) {
-                this.currentTool.selectAll();
-            }
         } else if (event.key === 'Escape') {
             if (this.currentTool instanceof RectangleSelectionService) {
                 this.currentTool.onKeyboardDown(event);
@@ -83,12 +112,20 @@ export class EditorComponent {
         this.currentTool = newTool;
     }
 
-    openModalPopUp(): void {
-        if (!this.isCanvasEmpty()) {
-            this.newDialog.open(NewDrawingBoxComponent, {
-                width: '130px;',
-                height: '200px',
+    openExportPopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            this.newDialog.open(ExportDrawingComponent, {
+                maxWidth: MAX_WIDTH_FORM + 'px',
+                maxHeight: MAX_HEIGHT_FORM + 'px',
             });
+            this.isPopUpOpen = true;
+        }
+    }
+
+    openNewDrawingPopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            this.newDialog.open(NewDrawingBoxComponent);
+            this.isPopUpOpen = true;
         }
     }
 
