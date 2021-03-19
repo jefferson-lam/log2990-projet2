@@ -7,6 +7,7 @@ import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.ser
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
+// tslint:disable:max-file-line-count
 describe('RectangleSelectionService', () => {
     let service: RectangleSelectionService;
     let mouseEvent: MouseEvent;
@@ -76,7 +77,7 @@ describe('RectangleSelectionService', () => {
         parentKeyboardUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onKeyboardUp');
         parentMouseLeaveSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseLeave');
         parentMouseEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseEnter');
-        parentResetSelectedToolSettingsSpy = spyOn<any>(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'resetSelectedToolSettings');
+        parentResetSelectedToolSettingsSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'resetSelectedToolSettings');
 
         baseCtxDrawImageSpy = spyOn(baseCtxStub, 'drawImage').and.callThrough();
         baseCtxFillRectSpy = spyOn(baseCtxStub, 'fillRect').and.callThrough();

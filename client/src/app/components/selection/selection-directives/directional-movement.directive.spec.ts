@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SelectionComponent } from '@app/components/selection/selection.component';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
-import { SelectionComponent } from '../selection.component';
 import { DirectionalMovementDirective } from './directional-movement.directive';
 
 describe('DirectionalMovementDirective', () => {
@@ -8,6 +8,7 @@ describe('DirectionalMovementDirective', () => {
     let resizerHandlerService: ResizerHandlerService;
 
     beforeEach(() => {
+        resizerHandlerService = TestBed.inject(ResizerHandlerService);
         fixture = TestBed.configureTestingModule({
             declarations: [SelectionComponent],
         }).createComponent(SelectionComponent);

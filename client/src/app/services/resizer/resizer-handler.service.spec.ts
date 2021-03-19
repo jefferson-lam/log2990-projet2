@@ -3,7 +3,7 @@ import { ResizerHandlerService } from './resizer-handler.service';
 
 describe('ResizerHandlerService', () => {
     let service: ResizerHandlerService;
-    let resizers: HTMLElement[] = new Array<HTMLElement>();
+    const resizers: HTMLElement[] = new Array<HTMLElement>();
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
