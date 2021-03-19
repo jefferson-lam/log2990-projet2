@@ -31,6 +31,11 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+
+        this.baseCtx.fillStyle = 'white';
+        this.baseCtx.fillRect(0, 0, this.baseCtx.canvas.width, this.baseCtx.canvas.height);
+        // Restore to default value
+        this.baseCtx.fillStyle = 'black';
     }
 
     ngOnChanges(changes: SimpleChanges): void {
