@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle/rectangle-selection-command';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
@@ -23,8 +24,13 @@ export class RectangleSelectionService extends ToolSelectionService {
     selectionHeight: number = 0;
     selectionWidth: number = 0;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public rectangleService: RectangleService) {
-        super(drawingService, undoRedoService, rectangleService);
+    constructor(
+        drawingService: DrawingService,
+        undoRedoService: UndoRedoService,
+        resizerHandlerService: ResizerHandlerService,
+        public rectangleService: RectangleService,
+    ) {
+        super(drawingService, undoRedoService, resizerHandlerService, rectangleService);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -36,10 +42,14 @@ export class RectangleSelectionService extends ToolSelectionService {
             const command: Command = new RectangleSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             this.undoRedoService.executeCommand(command);
             this.isManipulating = false;
+            this.isSquare = false;
+            this.isShiftDown = false;
+            this.rectangleService.isShiftDown = false;
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.clearCorners();
+            this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
+            this.resizerHandlerService.resetResizers();
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
@@ -61,11 +71,13 @@ export class RectangleSelectionService extends ToolSelectionService {
                 return;
             }
             this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
-            this.validateSelectionSize();
+            this.selectionWidth = Math.abs(this.selectionWidth);
+            this.selectionHeight = Math.abs(this.selectionHeight);
+            if (this.isSquare) {
+                this.computeSquareCoords();
+            }
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
-            this.drawingService.selectionCtx.fillStyle = 'white';
-            this.drawingService.selectionCtx.fillRect(0, 0, this.drawingService.selectionCanvas.width, this.drawingService.selectionCanvas.height);
             this.drawingService.selectionCtx.drawImage(
                 this.drawingService.canvas,
                 this.cornerCoords[SelectionConstants.START_INDEX].x,
@@ -77,7 +89,8 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.drawingService.baseCtx.clearRect(
+            this.drawingService.baseCtx.fillStyle = 'white';
+            this.drawingService.baseCtx.fillRect(
                 this.cornerCoords[SelectionConstants.START_INDEX].x,
                 this.cornerCoords[SelectionConstants.START_INDEX].y,
                 this.selectionWidth,
@@ -85,10 +98,13 @@ export class RectangleSelectionService extends ToolSelectionService {
             );
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
+            this.resizerHandlerService.setResizerPosition(
+                this.cornerCoords[SelectionConstants.START_INDEX],
+                this.selectionWidth,
+                this.selectionHeight,
+            );
             this.inUse = false;
             this.isManipulating = true;
-            this.isSquare = false;
-            this.rectangleService.isShiftDown = false;
         }
     }
 
@@ -139,20 +155,10 @@ export class RectangleSelectionService extends ToolSelectionService {
             }
         } else if (this.isManipulating) {
             if (event.key === 'Escape' && this.isEscapeDown) {
-                // Case where user has defined the selection area
-                this.drawingService.baseCtx.drawImage(
-                    this.drawingService.selectionCanvas,
-                    0,
-                    0,
-                    this.selectionWidth,
-                    this.selectionHeight,
-                    this.cornerCoords[SelectionConstants.START_INDEX].x,
-                    this.cornerCoords[SelectionConstants.START_INDEX].y,
-                    this.selectionWidth,
-                    this.selectionHeight,
-                );
-                this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.onMouseDown({} as MouseEvent);
                 this.resetSelectedToolSettings();
+                this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.resizerHandlerService.resetResizers();
                 this.isManipulating = false;
                 this.isEscapeDown = false;
             }
@@ -165,7 +171,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.drawingService.selectionCanvas.width = this.selectionWidth;
         this.drawingService.selectionCanvas.height = this.selectionHeight;
         this.drawingService.selectionCtx.fillStyle = 'white';
-        this.drawingService.selectionCtx.fillRect(0, 0, this.drawingService.selectionCanvas.width, this.drawingService.selectionCanvas.height);
         this.drawingService.selectionCtx.drawImage(
             this.drawingService.canvas,
             0,
@@ -177,7 +182,8 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.selectionWidth,
             this.selectionHeight,
         );
-        this.drawingService.baseCtx.clearRect(0, 0, this.selectionWidth, this.selectionHeight);
+        this.drawingService.baseCtx.fillStyle = 'white';
+        this.drawingService.baseCtx.fillRect(0, 0, this.selectionWidth, this.selectionHeight);
         this.drawingService.selectionCanvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
         this.drawingService.selectionCanvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
         this.cornerCoords = [
@@ -188,17 +194,9 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.isManipulating = true;
     }
 
-    validateSelectionSize() {
-        this.selectionWidth = Math.abs(this.selectionWidth);
-        this.selectionHeight = Math.abs(this.selectionHeight);
-        if (this.isSquare) {
-            const shortestSide = Math.min(this.selectionWidth, this.selectionHeight);
-            this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
-            this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
-        }
-    }
-
-    clearCorners(): void {
-        this.cornerCoords.fill({ x: 0, y: 0 });
+    computeSquareCoords() {
+        const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
+        this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
+        this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
     }
 }

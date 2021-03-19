@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Tool } from '@app/classes/tool';
+import { Vec2 } from '@app/classes/vec2';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { FillMode } from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolSelectionService } from './tool-selection-service';
 
-fdescribe('ToolSelectionService', () => {
+describe('ToolSelectionService', () => {
     let service: ToolSelectionService;
     let mouseEvent: MouseEvent;
     let keyboardEvent: KeyboardEvent;
@@ -131,6 +132,29 @@ fdescribe('ToolSelectionService', () => {
         expect(selectedToolSpy.onKeyboardUp).toHaveBeenCalledWith(keyboardEvent);
     });
 
+    it('getSelectionToolSettings should not set settings if the selectedTools settings are null', () => {
+        service.selectionTool.lineWidth = undefined;
+        service.selectionTool.fillMode = undefined;
+        service.selectionTool.primaryColor = undefined;
+        service.selectionTool.secondaryColor = undefined;
+        service.getSelectedToolSettings();
+        expect(service.selectionToolLineWidth).toEqual(1);
+        expect(service.selectionToolPrimaryColor).toEqual('white');
+        expect(service.selectionToolSecondaryColor).toEqual('black');
+    });
+
+    it('getSelectionToolSettings should set correct selectionToolSettings if settings are not null', () => {
+        service.selectionTool.lineWidth = 20;
+        service.selectionTool.fillMode = FillMode.OUTLINE_FILL;
+        service.selectionTool.primaryColor = 'red';
+        service.selectionTool.secondaryColor = 'black';
+        service.getSelectedToolSettings();
+        expect(service.selectionToolLineWidth).toEqual(20);
+        expect(service.selectionToolFillMode).toEqual(FillMode.OUTLINE_FILL);
+        expect(service.selectionToolPrimaryColor).toEqual('red');
+        expect(service.selectionToolSecondaryColor).toEqual('black');
+    });
+
     it('resetCanvasState should reset the canvas to its default values', () => {
         const testCanvas = document.createElement('canvas');
         service.resetCanvasState(testCanvas);
@@ -156,5 +180,86 @@ fdescribe('ToolSelectionService', () => {
         expect(selectedToolSpy.setPrimaryColor).toHaveBeenCalledWith('white');
         expect(selectedToolSpy.setSecondaryColor).toHaveBeenCalledWith('black');
         expect(setLineDashSpy).toHaveBeenCalledWith([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
+    });
+
+    it('validateCornerCoords should properly (-w, -h)', () => {
+        const startPoint: Vec2 = {
+            x: 400,
+            y: 350,
+        };
+        const endPoint: Vec2 = {
+            x: 150,
+            y: 100,
+        };
+        const selHeight = -250;
+        const selWidth = -250;
+        const expectedResult = [endPoint, startPoint];
+        const result = service.validateCornerCoords([startPoint, endPoint], selWidth, selHeight);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('validateCornerCoords should properly set values (-w, +h)', () => {
+        const startPoint: Vec2 = {
+            x: 400,
+            y: 100,
+        };
+        const endPoint: Vec2 = {
+            x: 150,
+            y: 400,
+        };
+        const selWidth = -250;
+        const selHeight = 300;
+        const expectedResult = [
+            { x: 150, y: 100 },
+            { x: 400, y: 400 },
+        ];
+        const result = service.validateCornerCoords([startPoint, endPoint], selWidth, selHeight);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('validateCorneCoords should properly set values (+w, -h)', () => {
+        const startPoint: Vec2 = {
+            x: 100,
+            y: 350,
+        };
+        const endPoint: Vec2 = {
+            x: 150,
+            y: 200,
+        };
+        const selWidth = 50;
+        const selHeight = -150;
+        const expectedResult = [
+            { x: 100, y: 200 },
+            { x: 150, y: 350 },
+        ];
+        const result = service.validateCornerCoords([startPoint, endPoint], selWidth, selHeight);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('validateCornerCoords should properly set values (+w, +h)', () => {
+        const startPoint: Vec2 = {
+            x: 100,
+            y: 350,
+        };
+        const endPoint: Vec2 = {
+            x: 150,
+            y: 500,
+        };
+        const selWidth = 50;
+        const selHeight = 150;
+        const expectedResult = [
+            { x: 100, y: 350 },
+            { x: 150, y: 500 },
+        ];
+        const result = service.validateCornerCoords([startPoint, endPoint], selWidth, selHeight);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('clearCorners should clear service.cornerCoords', () => {
+        const startPoint = { x: 250, y: 500 };
+        const endPoint = { x: 300, y: 600 };
+        const expectedPoint = { x: 0, y: 0 };
+        const result = service.clearCorners([startPoint, endPoint]);
+        expect(result).toEqual([expectedPoint, expectedPoint]);
     });
 });
