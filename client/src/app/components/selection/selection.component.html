@@ -9,7 +9,7 @@
         #selectionCanvas
         cdkDragBoundary="#selectionContainer"
         (cdkDragMoved)="this.repositionResizers($event)"
-        (cdkDragEnded)="this.setPosition($event)"
+        (cdkDragEnded)="this.setCanvasPosition($event)"
         [attr.width]="0"
         [attr.height]="0"
     ></canvas>
