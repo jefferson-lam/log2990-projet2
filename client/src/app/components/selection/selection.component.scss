@@ -13,21 +13,12 @@
     background-color: #607d8b;
 }
 
-#bottomSlider,
-#leftSlider,
-#rightSlider,
-#topSlider,
-#topLeftSlider,
-#topRightSlider,
-#bottomLeftSlider,
-#bottomRightSlider {
+.resizer {
     position: absolute;
     color: black;
     border-style: 1px solid black;
+    // TODO: Find better color? black gets camouflaged
     background-color: black;
-}
-
-.resizer {
     height: 10px;
     width: 10px;
     z-index: 13;
