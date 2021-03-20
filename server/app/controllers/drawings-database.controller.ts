@@ -1,4 +1,3 @@
-import { Drawing } from '@app/classes/drawing';
 import { TYPES } from '@app/types';
 import { Message } from '@common/communication/message';
 import { NextFunction, Request, Response, Router } from 'express';
@@ -96,9 +95,8 @@ export class DrawingsDatabaseController {
          *         description: Drawing has been successfully created.
          */
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
-            const newDrawing: Drawing = req.body;
-            const title = newDrawing.title;
-            const tags = newDrawing.tags;
+            const title = req.body.title;
+            const tags = req.body.tags;
             this.databaseService.saveDrawing(title, tags).then((result) => {
                 res.json(result);
             });
