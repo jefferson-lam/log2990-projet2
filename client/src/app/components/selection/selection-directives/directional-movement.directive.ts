@@ -24,6 +24,17 @@ export class DirectionalMovementDirective {
         }
     }
 
+    @HostListener('keydown.control.z', ['$event'])
+    onCtrlZDown(event: KeyboardEvent): void {
+        event.stopPropagation();
+        console.log('Essayer');
+    }
+
+    @HostListener('keydown.escape', ['$event'])
+    onEscapeDown(event: KeyboardEvent): void {
+        console.log('Escape called from directive.');
+    }
+
     translateLeft(numPixels: number): void {
         this.selectionCanvas.nativeElement.style.left = parseInt(this.selectionCanvas.nativeElement.style.left, 10) - numPixels + 'px';
         this.resizerHandlerService.translateLeft(NUM_PIXELS);
