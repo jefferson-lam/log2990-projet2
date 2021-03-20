@@ -10,7 +10,7 @@ describe('Drawing database service', () => {
     });
 
     it('checkTagsValid should handle invalid tag amount error', () => {
-        let testTags: string[] = [];
+        const testTags: string[] = [];
         for (let i = 0; i < DatabaseConstants.MAX_TAGS_COUNT + 1; i++) {
             testTags.push('test');
         }

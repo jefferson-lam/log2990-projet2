@@ -25,10 +25,6 @@ export class SidebarRectangleComponent implements OnInit {
         this.fillModeChanged.subscribe((newFillMode: number) => this.settingsManager.setFillMode(newFillMode));
     }
 
-    setMax(numberInput: number): number {
-        return numberInput;
-    }
-
     emitToolSize(): void {
         this.toolSizeChanged.emit(this.toolSize);
     }
