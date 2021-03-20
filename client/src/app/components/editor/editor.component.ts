@@ -86,19 +86,6 @@ export class EditorComponent implements OnInit {
     onKeyboardDown(event: KeyboardEvent): void {
         if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3)$/)) {
             this.setTool(this.toolManager.selectTool(event));
-        } else if (event.key === 'Escape') {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.currentTool.onKeyboardDown(event);
-            }
-        }
-    }
-
-    @HostListener('window:keyup', ['$event'])
-    onKeyboardUp(event: KeyboardEvent): void {
-        if (event.key === 'Escape') {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.currentTool.onKeyboardUp(event);
-            }
         }
     }
 

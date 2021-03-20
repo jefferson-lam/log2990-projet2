@@ -45,6 +45,7 @@ import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-opt
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
+import { KeyboardListenerDirective } from './components/selection/selection-directives/keyboard-listener.directive';
 
 @NgModule({
     declarations: [
@@ -72,6 +73,7 @@ import { DirectionalMovementDirective } from './components/selection/selection-d
         TagInputComponent,
         TitleInputComponent,
         DirectionalMovementDirective,
+        KeyboardListenerDirective,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

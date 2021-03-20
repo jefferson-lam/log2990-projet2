@@ -165,6 +165,27 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
+    undoSelection(): void {
+        if (this.isManipulating) {
+            this.drawingService.baseCtx.drawImage(
+                this.drawingService.selectionCanvas,
+                0,
+                0,
+                this.selectionWidth,
+                this.selectionHeight,
+                this.cornerCoords[0].x,
+                this.cornerCoords[0].y,
+                this.selectionWidth,
+                this.selectionHeight,
+            );
+            this.resetSelectedToolSettings();
+            this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resizerHandlerService.resetResizers();
+            this.isManipulating = false;
+            this.isEscapeDown = false;
+        }
+    }
+
     selectAll(): void {
         this.selectionWidth = this.drawingService.canvas.width;
         this.selectionHeight = this.drawingService.canvas.height;
