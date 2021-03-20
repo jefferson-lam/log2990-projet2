@@ -8,7 +8,7 @@ import { expect } from 'chai';
 import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-// These tests were taken from the example given here: TODO INSERT URL
+// These tests were taken from the example given on polymtl's log2990 mongodb example.
 
 // tslint:disable: no-unused-expression
 // tslint:disable: no-string-literal

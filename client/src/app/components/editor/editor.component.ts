@@ -3,6 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
+import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
+import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -46,6 +48,12 @@ export class EditorComponent implements OnInit {
         this.openNewDrawingPopUp();
     }
 
+    @HostListener('window:keydown.control.s', ['$event'])
+    onCtrlSKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.openSavePopUp();
+    }
+
     @HostListener('window:keydown.control.shift.z', ['$event'])
     onCtrlShiftZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
@@ -74,7 +82,7 @@ export class EditorComponent implements OnInit {
     }
 
     openExportPopUp(): void {
-        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+        if (!this.isPopUpOpen) {
             this.newDialog.open(ExportDrawingComponent, {
                 maxWidth: MAX_WIDTH_FORM + 'px',
                 maxHeight: MAX_HEIGHT_FORM + 'px',
@@ -90,12 +98,19 @@ export class EditorComponent implements OnInit {
         }
     }
 
+    openSavePopUp(): void {
+        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            this.newDialog.open(SaveDrawingComponent);
+            this.isPopUpOpen = true;
+        }
+    }
+
     isCanvasEmpty(): boolean {
         // Thanks to user Kaiido on stackoverflow.com
         // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank/17386803#comment96825186_17386803
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         const baseCtx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
         const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
-        return !pixelBuffer.some((color) => color !== 0);
+        return !pixelBuffer.some((color) => color !== WHITE_RGBA_DECIMAL);
     }
 }

@@ -4,6 +4,8 @@ export const TYPES = {
     DateService: Symbol('DateService'),
     DrawingsDatabaseController: Symbol('DrawingsDatabaseController'),
     DrawingsDatabaseService: Symbol('DrawingsDatabaseService'),
+    LocalDrawingsService: Symbol('LocalDrawingsService'),
+    LocalDrawingsController: Symbol('LocalDrawingsController'),
     IndexController: Symbol('IndexController'),
     IndexService: Symbol('IndexService'),
     Server: Symbol('Server'),
