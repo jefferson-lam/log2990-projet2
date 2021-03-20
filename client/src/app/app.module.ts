@@ -28,6 +28,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { KeyboardListenerDirective } from './components/selection/selection-directives/keyboard-listener.directive';
 import { SelectionComponent } from './components/selection/selection.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveCompletePageComponent } from './components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
@@ -44,8 +45,6 @@ import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-optio
 import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-polygone/sidebar-polygone.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
-import { KeyboardListenerDirective } from './components/selection/selection-directives/keyboard-listener.directive';
 
 @NgModule({
     declarations: [
@@ -72,7 +71,6 @@ import { KeyboardListenerDirective } from './components/selection/selection-dire
         SidebarPolygoneComponent,
         TagInputComponent,
         TitleInputComponent,
-        DirectionalMovementDirective,
         KeyboardListenerDirective,
     ],
     entryComponents: [MainPageCarrouselComponent],
