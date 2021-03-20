@@ -8,6 +8,7 @@ import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
+import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -139,12 +140,21 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(eventSpy);
     });
 
+    it("should call select tool when 'r' key is down", () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'r' });
+        component.onKeyboardDown(eventSpy);
+
+        expect(toolManagerSpy.selectTool).toHaveBeenCalled();
+        expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(eventSpy);
+    });
+
     it('should prevent keydown default when ctrl+relevant key is down', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: '', key: '' });
         component.onCtrlZKeyDown(eventSpy);
         component.onCtrlOKeyDown(eventSpy);
         component.onCtrlEKeyDown(eventSpy);
         component.onCtrlShiftZKeyDown(eventSpy);
+        component.onCtrlAKeyDown(eventSpy);
 
         expect(eventSpy.preventDefault).toHaveBeenCalled();
     });
@@ -333,6 +343,13 @@ describe('EditorComponent', () => {
         expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
         expect(component.isPopUpOpen).toBeFalse();
+    });
+
+    it('ctrl+a should switch the current tool to rectangleSelection and call its selectAll method', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
+        component.onCtrlAKeyDown(eventSpy);
+        expect(toolManagerSpy.getTool).toHaveBeenCalled();
+        expect(toolManagerSpy.getTool).toHaveBeenCalledWith(RECTANGLE_SELECTION_KEY);
     });
 
     it("openSavePopUp should not open anything if pop up is open and canvas isn't empty", () => {
