@@ -15,10 +15,8 @@ export class ResizerHandlerService {
     bottomLeftResizer: HTMLElement;
     bottomRightResizer: HTMLElement;
 
-    // TODO: Get elements by querySelectorAll and iterate through. Not working for some reason?
     resetResizers(): void {
         const resizers = this.getAllResizers();
-        console.log(resizers);
         resizers.forEach((resizer) => {
             resizer.style.top = '0px';
             resizer.style.left = '0px';
@@ -63,15 +61,30 @@ export class ResizerHandlerService {
     }
 
     translateUp(numPixels: number): void {
-        return;
+        const resizers = this.getAllResizers();
+        resizers.forEach((resizer) => {
+            let newLeftValue = parseInt(resizer.style.top, 10) - numPixels;
+            if (newLeftValue < 0) {
+                newLeftValue = 0;
+            }
+            resizer.style.left = newLeftValue + 'px';
+        });
     }
 
     translateDown(numPixels: number): void {
-        return;
+        const resizers = this.getAllResizers();
+        resizers.forEach((resizer) => {
+            const newLeftValue = parseInt(resizer.style.top, 10) + numPixels;
+            resizer.style.left = newLeftValue + 'px';
+        });
     }
 
     translateRight(numPixels: number): void {
-        return;
+        const resizers = this.getAllResizers();
+        resizers.forEach((resizer) => {
+            const newLeftValue = parseInt(resizer.style.left, 10) + numPixels;
+            resizer.style.left = newLeftValue + 'px';
+        });
     }
 
     getAllResizers(): HTMLElement[] {

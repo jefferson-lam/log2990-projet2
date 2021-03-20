@@ -30,7 +30,7 @@ mat-icon {
     padding: 0;
     width: 60px;
     position: absolute;
-    top: 210px;
+    top: 250px;
 }
 .tools-sidebar li {
     cursor: pointer;
@@ -64,6 +64,7 @@ mat-icon {
     position: absolute;
 }
 .options-sidebar li {
+    color: white;
     cursor: pointer;
     position: relative;
     left: 0;
@@ -122,21 +123,16 @@ mat-drawer-content {
     overflow: hidden;
 }
 
-//TODO : duplicate? see line 59
-.options-sidebar {
-    padding: 0;
-}
-
 #sidebar {
     z-index: 3;
 }
 
-.tools-option-container{
-  display: flex;
-  position: relative;
+.tools-option-container {
+    display: flex;
+    position: relative;
 }
 
 .options-sidebar .unclickable {
-  pointer-events: none;
-  background-color: gray;
+    pointer-events: none;
+    background-color: gray;
 }

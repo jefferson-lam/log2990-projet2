@@ -63,8 +63,12 @@ export class EraserCommand extends Command {
         if (!index) index = 1;
         ctx.beginPath();
         ctx.fillStyle = 'white';
-        ctx.rect(path[path.length - index].x - this.lineWidth / 2, path[path.length - index].y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
-        ctx.fill();
+        ctx.fillRect(
+            path[path.length - index].x - this.lineWidth / 2,
+            path[path.length - index].y - this.lineWidth / 2,
+            this.lineWidth,
+            this.lineWidth,
+        );
     }
 
     private getCorners(lastPoint: Vec2, beforeLastPoint: Vec2, lineWidth: number): Vec2[] {

@@ -16,7 +16,7 @@ export class EllipseService extends Tool {
     cornerCoords: Vec2[] = [];
     isCircle: boolean = false;
     lineWidth: number = 20;
-    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE;
+    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = '#B5CF60';
     secondaryColor: string = '#2F2A36';
 
@@ -133,12 +133,10 @@ export class EllipseService extends Tool {
     }
 
     setPrimaryColor(newColor: string): void {
-        // TODO: add color check
         this.primaryColor = newColor;
     }
 
     setSecondaryColor(newColor: string): void {
-        // TODO: add color check
         this.secondaryColor = newColor;
     }
 

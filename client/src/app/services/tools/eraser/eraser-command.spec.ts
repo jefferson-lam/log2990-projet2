@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import { MAX_RGB_VALUE } from '@app/constants/color-constants';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { EraserCommand } from './eraser-command';
 
@@ -87,28 +88,26 @@ describe('EraserCommand', () => {
 
     it('eraseSquare should call canvas functions', () => {
         const beginSpy = spyOn(baseCtxStub, 'beginPath').and.callThrough();
-        const rectSpy = spyOn(baseCtxStub, 'rect').and.callThrough();
-        const fillSpy = spyOn(baseCtxStub, 'fill').and.callThrough();
+        const fillRectSpy = spyOn(baseCtxStub, 'fillRect').and.callThrough();
 
         command['eraseSquare'](command['ctx'], command['path']);
 
         expect(eraseSquareSpy).toHaveBeenCalledWith(baseCtxStub, pathStub);
         expect(beginSpy).toHaveBeenCalled();
-        expect(rectSpy).toHaveBeenCalled();
-        expect(fillSpy).toHaveBeenCalled();
+        expect(command['ctx'].fillStyle).toBe('#ffffff');
+        expect(fillRectSpy).toHaveBeenCalled();
     });
 
     it('eraseSquare should call canvas functions with index', () => {
         const beginSpy = spyOn(baseCtxStub, 'beginPath').and.callThrough();
-        const rectSpy = spyOn(baseCtxStub, 'rect').and.callThrough();
-        const fillSpy = spyOn(baseCtxStub, 'fill').and.callThrough();
+        const fillRectSpy = spyOn(baseCtxStub, 'fillRect').and.callThrough();
 
         command['eraseSquare'](command['ctx'], command['path'], 2);
 
         expect(eraseSquareSpy).toHaveBeenCalledWith(baseCtxStub, pathStub, 2);
         expect(beginSpy).toHaveBeenCalled();
-        expect(rectSpy).toHaveBeenCalled();
-        expect(fillSpy).toHaveBeenCalled();
+        expect(command['ctx'].fillStyle).toBe('#ffffff');
+        expect(fillRectSpy).toHaveBeenCalled();
     });
 
     it('getCorners of positive vector coordinates product returns bottom left and top right corners', () => {
@@ -142,5 +141,27 @@ describe('EraserCommand', () => {
 
         expect(cornersSpy).toHaveBeenCalled();
         expect(corners).toEqual(expectedCorners);
+    });
+
+    it('should set the pixel of the canvas to white', () => {
+        let imageData: ImageData = new ImageData(new Uint8ClampedArray([1, 1, 1, 1]), 1, 1);
+        baseCtxStub.putImageData(imageData, 0, 0);
+
+        imageData = baseCtxStub.getImageData(0, 0, 1, 1);
+        expect(imageData.data[0]).not.toEqual(MAX_RGB_VALUE); // R
+        expect(imageData.data[1]).not.toEqual(MAX_RGB_VALUE); // G
+        expect(imageData.data[2]).not.toEqual(MAX_RGB_VALUE); // B
+        // tslint:disable-next-line:no-magic-numbers
+        expect(imageData.data[3]).not.toEqual(MAX_RGB_VALUE); // A
+
+        command['eraseSquare'](baseCtxStub, [{ x: 1, y: 1 }]);
+
+        // Premier pixel seulement
+        imageData = baseCtxStub.getImageData(0, 0, 1, 1);
+        expect(imageData.data[0]).toEqual(MAX_RGB_VALUE); // R
+        expect(imageData.data[1]).toEqual(MAX_RGB_VALUE); // G
+        expect(imageData.data[2]).toEqual(MAX_RGB_VALUE); // B
+        // tslint:disable-next-line:no-magic-numbers
+        expect(imageData.data[3]).toEqual(MAX_RGB_VALUE); // A
     });
 });

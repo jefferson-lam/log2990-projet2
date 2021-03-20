@@ -52,6 +52,12 @@ export abstract class Tool {
 
     setSecondaryColor(secondaryColor: string): void {}
 
+    setSidesCount(newSidesCount: number): void {}
+
+    setWaterDropWidth(newSize: number): void {}
+
+    setEmissionCount(newEmissionCount: number): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }
