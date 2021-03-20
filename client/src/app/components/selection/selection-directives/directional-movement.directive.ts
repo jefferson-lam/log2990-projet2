@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 
 const NUM_PIXELS = 3;
@@ -7,51 +7,52 @@ const NUM_PIXELS = 3;
     providers: [ResizerHandlerService],
 })
 export class DirectionalMovementDirective {
-    constructor(private selectionCanvas: ElementRef, public resizerHandlerService: ResizerHandlerService) {}
+    keyPressed: Map<string, number> = new Map();
+    leftMovement: number;
+    @Output() onCanvasMovement = new EventEmitter();
+
+    constructor(private element: ElementRef) {}
 
     @HostListener('keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (event.key === 'ArrowLeft') {
+        if (!this.keyPressed.get(event.key)) {
+            // First press
+            this.keyPressed.set(event.key, event.timeStamp);
+        }
+        if (this.keyPressed.get('ArrowLeft')) {
             this.translateLeft(NUM_PIXELS);
-        } else if (event.key === 'ArrowRight') {
+        }
+        if (this.keyPressed.get('ArrowUp')) {
+            this.translateUp(NUM_PIXELS);
+        }
+        if (this.keyPressed.get('ArrowRight')) {
             this.translateRight(NUM_PIXELS);
         }
-        if (event.key === 'ArrowUp') {
-            this.translateUp(NUM_PIXELS);
-        } else if (event.key === 'ArrowDown') {
+        if (this.keyPressed.get('ArrowDown')) {
             this.translateDown(NUM_PIXELS);
         }
+        this.onCanvasMovement.emit(true);
     }
 
-    @HostListener('keydown.control.z', ['$event'])
-    onCtrlZDown(event: KeyboardEvent): void {
-        event.stopPropagation();
-        console.log('Essayer');
-    }
-
-    @HostListener('keydown.escape', ['$event'])
-    onEscapeDown(event: KeyboardEvent): void {
-        console.log('Escape called from directive.');
+    @HostListener('keyup', ['$event'])
+    onKeyboardUp(event: KeyboardEvent): void {
+        this.keyPressed.set(event.key, 0);
     }
 
     translateLeft(numPixels: number): void {
-        this.selectionCanvas.nativeElement.style.left = parseInt(this.selectionCanvas.nativeElement.style.left, 10) - numPixels + 'px';
-        this.resizerHandlerService.translateLeft(NUM_PIXELS);
+        this.element.nativeElement.style.left = parseInt(this.element.nativeElement.style.left, 10) - numPixels + 'px';
     }
 
     translateRight(numPixels: number): void {
-        this.selectionCanvas.nativeElement.style.left = parseInt(this.selectionCanvas.nativeElement.style.left, 10) + numPixels + 'px';
-        this.resizerHandlerService.translateRight(NUM_PIXELS);
+        this.element.nativeElement.style.left = parseInt(this.element.nativeElement.style.left, 10) + numPixels + 'px';
     }
 
     translateUp(numPixels: number): void {
-        this.selectionCanvas.nativeElement.style.top = parseInt(this.selectionCanvas.nativeElement.style.top, 10) - numPixels + 'px';
-        this.resizerHandlerService.translateUp(NUM_PIXELS);
+        this.element.nativeElement.style.top = parseInt(this.element.nativeElement.style.top, 10) - numPixels + 'px';
     }
 
     translateDown(numPixels: number): void {
-        this.selectionCanvas.nativeElement.style.top = parseInt(this.selectionCanvas.nativeElement.style.top, 10) + numPixels + 'px';
-        this.resizerHandlerService.translateDown(NUM_PIXELS);
+        this.element.nativeElement.style.top = parseInt(this.element.nativeElement.style.top, 10) + numPixels + 'px';
     }
 }

@@ -8,6 +8,7 @@
         id="selectionLayer"
         #selectionCanvas
         cdkDragBoundary="#selectionContainer"
+        (onCanvasMovement)="this.onCanvasMove($event)"
         (cdkDragMoved)="this.repositionResizers($event)"
         (cdkDragEnded)="this.setCanvasPosition($event)"
         [attr.width]="0"
