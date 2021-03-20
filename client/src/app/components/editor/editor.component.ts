@@ -106,7 +106,7 @@ export class EditorComponent implements OnInit {
     }
 
     setTool(newTool: Tool): void {
-        if (this.currentTool != newTool) {
+        if (this.currentTool !== newTool) {
             if (this.currentTool instanceof RectangleSelectionService) {
                 if (this.currentTool.isManipulating) {
                     const emptyMouseEvent: MouseEvent = {} as MouseEvent;
