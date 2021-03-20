@@ -182,12 +182,6 @@ describe('PolygoneService', () => {
         expect(service.inUse).toEqual(false);
     });
 
-    it('drawPolygoneType should call getDrawTypeRadius and change return value to xRadius', () => {
-        const getPredictionRadiusSpy = spyOn<any>(service, 'getPredictionCircleRadius').and.callThrough();
-        // tslint:disable:no-string-literal
-        service['drawPredictionCircle'](baseCtxStub, service.cornerCoords);
-        expect(getPredictionRadiusSpy).toHaveBeenCalled();
-    });
     it('getRadiiXAndY should set expected x and y radius', () => {
         const start = service.cornerCoords[PolygoneConstants.START_INDEX];
         const end = service.cornerCoords[PolygoneConstants.END_INDEX];

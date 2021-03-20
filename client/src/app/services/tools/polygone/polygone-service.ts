@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PolygoneConstants from '@app/constants/polygone-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
@@ -112,29 +113,26 @@ export class PolygoneService extends Tool {
     private getRadiiXAndY(path: Vec2[]): number[] {
         let xRadius = Math.abs(path[PolygoneConstants.END_INDEX].x - path[PolygoneConstants.START_INDEX].x) / 2;
         let yRadius = Math.abs(path[PolygoneConstants.END_INDEX].y - path[PolygoneConstants.START_INDEX].y) / 2;
+
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
         xRadius = yRadius = shortestSide;
+
         return [xRadius, yRadius];
     }
 
     private drawPredictionCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const radiiXAndY = this.getRadiiXAndY(path);
-        const xRadius = radiiXAndY[PolygoneConstants.X_INDEX];
-        const yRadius = radiiXAndY[PolygoneConstants.Y_INDEX];
         const polygoneCenterX = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]).x;
         const polygoneCenterY = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]).y;
+        const radiiXAndY = this.getRadiiXAndY(path);
+        const radiusWithin = radiiXAndY[EllipseConstants.X_INDEX];
 
         ctx.beginPath();
         ctx.strokeStyle = 'black';
         ctx.lineWidth = PolygoneConstants.PREDICTION_CIRCLE_WIDTH;
         ctx.setLineDash([PolygoneConstants.LINE_DISTANCE]);
-        ctx.arc(polygoneCenterX, polygoneCenterY, this.getPredictionCircleRadius(xRadius, yRadius) + this.lineWidth / 2, 0, 2 * Math.PI);
+        ctx.arc(polygoneCenterX, polygoneCenterY, radiusWithin, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.setLineDash([]);
-    }
-
-    private getPredictionCircleRadius(xRadius: number, yRadius: number): number {
-        return Math.sqrt(xRadius ** 2 + yRadius ** 2);
     }
 
     private getPolygoneCenter(start: Vec2, end: Vec2): Vec2 {
