@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { ColorSliderComponent } from './color-slider.component';
 
@@ -139,31 +138,6 @@ describe('ColorSliderComponent', () => {
         component.mousedown = true;
         component.onMouseMove(mouseEventMove);
         expect(component.selectedHeight).toEqual(mouseEventMove.offsetY);
-    });
-
-    it('onMouseMove should set selectedHeight to 0 if offsetY has a negative value', () => {
-        component.mousedown = true;
-        mouseEventMove = {
-            offsetX: 25,
-            offsetY: -2,
-            button: 0,
-        } as MouseEvent;
-        component.mousedown = true;
-        component.onMouseMove(mouseEventMove);
-        expect(component.selectedHeight).toEqual(0);
-    });
-
-    it('onMouseMove should set selectedHeight to canvas height if offsetY has a higher value', () => {
-        component.mousedown = true;
-        component.canvas.nativeElement.height = ColorConstants.SLIDER_HEIGHT;
-        mouseEventMove = {
-            offsetX: 25,
-            offsetY: 202,
-            button: 0,
-        } as MouseEvent;
-        component.mousedown = true;
-        component.onMouseMove(mouseEventMove);
-        expect(component.selectedHeight).toEqual(component.canvas.nativeElement.height);
     });
 
     it('onMouseMove should call drawSelection() if mouseDown is true', () => {

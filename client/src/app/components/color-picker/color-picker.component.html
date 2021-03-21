@@ -1,10 +1,10 @@
 <div class="colorpicker-wrapper">
-  <div class="container flex">
-    <div> Primaire </div>
-    <div id="secondaryText"> Secondaire </div>
-  </div>
+    <div class="container flex">
+        <div>Primaire</div>
+        <div id="secondaryText">Secondaire</div>
+    </div>
     <div class="color-display">
-      <div
+        <div
             class="color-preview"
             [ngStyle]="{ 'background-color': colorService.convertRgbaToString(primaryColor) || 'black' }"
             (click)="togglePrimaryPickerOpen()"
@@ -19,7 +19,7 @@
         ></div>
     </div>
     <div class="colorhistory-wrapper">
-        <app-color-history [savedColors]="savedColors"></app-color-history>
+        <app-color-history></app-color-history>
     </div>
     <ng-container *ngIf="showPrimaryOptions">
         <app-color-options
