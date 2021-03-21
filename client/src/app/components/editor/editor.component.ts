@@ -6,8 +6,10 @@ import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
+import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -70,15 +72,55 @@ export class EditorComponent implements OnInit {
         }
     }
 
+    @HostListener('window:keydown.control.a', ['$event'])
+    onCtrlAKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.setTool(this.toolManager.getTool(RECTANGLE_SELECTION_KEY));
+        if (this.currentTool instanceof RectangleSelectionService) {
+            this.currentTool.selectAll();
+        }
+    }
+
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isPopUpOpen && event.key.match(/^(1|2|3|a|c|l|e)$/)) {
-            this.currentTool = this.toolManager.selectTool(event);
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3)$/)) {
+            this.setTool(this.toolManager.selectTool(event));
+        } else if (event.key === 'Escape') {
+            if (this.currentTool instanceof RectangleSelectionService) {
+                this.currentTool.onKeyboardDown(event);
+            }
+        }
+    }
+
+    @HostListener('window:keyup', ['$event'])
+    onKeyboardUp(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            if (this.currentTool instanceof RectangleSelectionService) {
+                this.currentTool.onKeyboardUp(event);
+            }
         }
     }
 
     updateToolFromSidebarClick(newTool: Tool): void {
-        this.currentTool = newTool;
+        this.setTool(newTool);
+    }
+
+    setTool(newTool: Tool): void {
+        if (this.currentTool !== newTool) {
+            if (this.currentTool instanceof RectangleSelectionService) {
+                if (this.currentTool.isManipulating) {
+                    const emptyMouseEvent: MouseEvent = {} as MouseEvent;
+                    this.currentTool.onMouseDown(emptyMouseEvent);
+                } else if (this.currentTool.inUse) {
+                    const resetKeyboardEvent: KeyboardEvent = {
+                        key: 'Escape',
+                    } as KeyboardEvent;
+                    this.currentTool.isEscapeDown = true;
+                    this.currentTool.onKeyboardUp(resetKeyboardEvent);
+                }
+            }
+            this.currentTool = newTool;
+        }
     }
 
     openExportPopUp(): void {

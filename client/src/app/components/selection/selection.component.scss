@@ -1,0 +1,25 @@
+#selectionLayer {
+    position: absolute;
+    z-index: 12;
+    border: 1px dashed #000000;
+    // TODO:
+    // Make background-color transparent, while keeping border only when selection is active.
+}
+
+#selectionContainer {
+    width: 2600px;
+    height: 2000px;
+    max-width: 100%;
+    background-color: #607d8b;
+}
+
+.resizer {
+    position: absolute;
+    color: black;
+    border-style: 1px solid black;
+    // TODO: Find better color? black gets camouflaged
+    background-color: black;
+    height: 10px;
+    width: 10px;
+    z-index: 13;
+}
