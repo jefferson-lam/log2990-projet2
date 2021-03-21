@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { MAX_RGB_VALUE } from '@app/constants/color-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -18,6 +19,7 @@ export class ExportDrawingComponent implements AfterViewInit {
     link: HTMLAnchorElement;
 
     baseCanvas: HTMLCanvasElement;
+    baseCtx: CanvasRenderingContext2D;
 
     type: string;
     name: string;
@@ -25,17 +27,42 @@ export class ExportDrawingComponent implements AfterViewInit {
 
     constructor(drawingService: DrawingService) {
         this.baseCanvas = drawingService.canvas;
+        this.baseCtx = this.baseCanvas.getContext('2d') as CanvasRenderingContext2D;
         this.setPopupSizes();
         this.type = 'png';
         this.name = 'Image';
-        this.filter = 'original';
+        this.filter = 'none';
         this.link = document.createElement('a');
     }
 
     ngAfterViewInit(): void {
         this.exportCanvas = this.exportCanvasRef.nativeElement;
         this.exportCtx = this.exportCanvas.getContext('2d') as CanvasRenderingContext2D;
-        this.exportCtx.drawImage(this.baseCanvas, 0, 0);
+        this.refreshCanvas();
+    }
+
+    changeWhiteToAlpha(imgData: ImageData): void {
+        // tslint:disable-next-line:no-magic-numbers
+        for (let i = 0; i < imgData.data.length; i += 4) {
+            if (imgData.data[i] === MAX_RGB_VALUE && imgData.data[i + 1] === MAX_RGB_VALUE && imgData.data[i + 2] === MAX_RGB_VALUE) {
+                imgData.data[i] = 0;
+                imgData.data[i + 1] = 0;
+                imgData.data[i + 2] = 0;
+                // tslint:disable-next-line:no-magic-numbers
+                imgData.data[i + 3] = 0;
+            }
+        }
+        this.exportCtx.putImageData(imgData, 0, 0);
+    }
+
+    refreshCanvas(clearBackground: boolean = false): void {
+        const imgData = this.baseCtx.getImageData(0, 0, this.baseCanvas.width, this.baseCanvas.height);
+        if (clearBackground) {
+            this.changeWhiteToAlpha(imgData);
+        } else {
+            this.exportCtx.putImageData(imgData, 0, 0);
+        }
+        this.exportCtx.drawImage(this.exportCanvas, 0, 0);
         this.exportImg.nativeElement.src = this.exportCanvas.toDataURL();
     }
 
@@ -50,24 +77,15 @@ export class ExportDrawingComponent implements AfterViewInit {
     }
 
     applyFilter(filter: string): void {
-        this.exportCanvas.style.filter = filter;
-        this.exportImg.nativeElement.style.filter = filter;
-    }
-
-    createBackground(): void {
-        if (this.exportCanvas.style.filter === 'invert(0%)') {
-            this.exportCtx.fillStyle = 'black';
+        this.exportCtx.filter = filter;
+        if (filter !== 'invert(100%)') {
+            this.refreshCanvas(true);
         } else {
-            this.exportCtx.fillStyle = 'white';
+            this.refreshCanvas();
         }
-        this.exportCtx.fillRect(0, 0, this.exportCanvas.width, this.exportCanvas.height);
-        this.exportCtx.drawImage(this.baseCanvas, 0, 0);
     }
 
     saveImage(): void {
-        if (this.type === 'jpeg') {
-            this.createBackground();
-        }
         this.link.download = this.name + '.' + this.type;
         this.link.href = this.exportCanvas.toDataURL('image/' + this.type);
         this.link.click();

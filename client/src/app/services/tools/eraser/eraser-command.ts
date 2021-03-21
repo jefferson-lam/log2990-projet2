@@ -54,10 +54,7 @@ export class EraserCommand extends Command {
         ctx.lineTo(topLast.x, topLast.y);
         ctx.lineTo(bottomLast.x, bottomLast.y);
         ctx.closePath();
-        ctx.save();
-        ctx.clip();
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.restore();
+        ctx.fill();
 
         this.eraseSquare(ctx, path, index + 1);
     }
@@ -65,7 +62,8 @@ export class EraserCommand extends Command {
     private eraseSquare(ctx: CanvasRenderingContext2D, path: Vec2[], index?: number): void {
         if (!index) index = 1;
         ctx.beginPath();
-        ctx.clearRect(
+        ctx.fillStyle = 'white';
+        ctx.fillRect(
             path[path.length - index].x - this.lineWidth / 2,
             path[path.length - index].y - this.lineWidth / 2,
             this.lineWidth,

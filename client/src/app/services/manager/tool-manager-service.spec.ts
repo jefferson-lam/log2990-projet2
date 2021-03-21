@@ -23,7 +23,6 @@ describe('ToolManagerService', () => {
         eraserServiceSpy = jasmine.createSpyObj('EraserService', ['setPrimaryColor', 'onMouseUp']);
         pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setPrimaryColor', 'onMouseUp']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['setPrimaryColor', 'onMouseUp']);
-
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },

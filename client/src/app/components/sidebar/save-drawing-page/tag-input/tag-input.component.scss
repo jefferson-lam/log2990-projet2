@@ -1,0 +1,67 @@
+div {
+    font-size: 12px;
+}
+.Satisfied {
+    color: green;
+}
+
+.Failed {
+    font-weight: bold;
+    color: red;
+}
+
+.tagDiv {
+    display: flex;
+    justify-content: space-between;
+    align-content: space-between;
+}
+
+.tag {
+    background: rgb(224, 224, 224);
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.tagLabel {
+    float: left;
+    padding-right: 15px;
+    padding-bottom: 0px;
+    margin: 0px 0px 0px 0px;
+}
+
+.tagDeleteButton {
+    margin-top: 3px;
+    float: right;
+    width: 13.34px;
+    height: 13.14px;
+    padding: 0px 0px 0px 0px;
+}
+
+.icon {
+    font-size: 3px;
+}
+
+.tagDeleteButton {
+    background-color: inherit;
+    border: none;
+    outline: none;
+}
+
+.tagDeleteButton:hover {
+    background: rgb(182, 178, 178);
+}
+
+#addTagButton {
+    cursor: pointer;
+    background-color: inherit;
+    border-radius: 3px;
+    margin-left: 5px;
+}
+
+#addTagButton:hover:enabled {
+    background: rgb(182, 178, 178);
+}
+
+#addTagButton:disabled {
+    cursor: not-allowed;
+}

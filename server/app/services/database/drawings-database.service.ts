@@ -1,7 +1,7 @@
-import { Drawing } from '@app/classes/drawing';
 import { TagValidatorService } from '@app/services/database/tag-validator/tag-validator.service';
 import { TitleValidatorService } from '@app/services/database/title-validator/title-validator.service';
 import { TYPES } from '@app/types';
+import { Drawing } from '@common/communication/drawing';
 import { Message } from '@common/communication/message';
 import * as DatabaseConstants from '@common/validation/database-constants';
 import { inject, injectable } from 'inversify';
@@ -69,6 +69,38 @@ export class DrawingsDatabaseService {
             };
             return successMessage;
         } catch (error) {
+            return this.generateErrorMessage(error);
+        } finally {
+            if (this.client !== undefined) {
+                this.closeConnection();
+            }
+        }
+    }
+
+    async getDrawingsByTags(tags: string[]): Promise<Message> {
+        try {
+            const drawingsCollection = await this.getCollection();
+            const collectionDrawings: Drawing[] = await drawingsCollection.find().toArray();
+            const drawingsWithTags: Drawing[] = new Array();
+            for (const drawing of collectionDrawings) {
+                let hasAllTags = true;
+                for (const tag of tags) {
+                    if (!drawing.tags.includes(tag)) {
+                        hasAllTags = false;
+                        break;
+                    }
+                }
+                if (hasAllTags) {
+                    drawingsWithTags.push(drawing);
+                }
+            }
+            const successMessage: Message = {
+                title: DatabaseConstants.SUCCESS_MESSAGE,
+                body: JSON.stringify(drawingsWithTags),
+            };
+            return successMessage;
+        } catch (error) {
+            console.error('Error while getting drawings: ', error);
             return this.generateErrorMessage(error);
         } finally {
             if (this.client !== undefined) {

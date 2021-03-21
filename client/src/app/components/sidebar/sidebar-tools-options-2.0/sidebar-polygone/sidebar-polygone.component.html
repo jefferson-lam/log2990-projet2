@@ -3,7 +3,7 @@
   <div>
     <div>
       <div id="numberOfSidesSettings">
-        <p> Nombre de côtés : </p>
+        <p> Nombre de côtés : {{polygoneSidesCount}} </p>
         <mat-slider id="countSides" color="warn"
                     thumbLabel
                     [tickInterval]='tickInterval'
@@ -14,7 +14,7 @@
         </mat-slider>
       </div>
       <div id="widthSetting">
-        <p> Épaisseur : </p>
+        <p> Épaisseur : {{toolSize}} </p>
         <mat-slider id="widthLine" color="warn"
                     thumbLabel
                     [tickInterval]='tickInterval'

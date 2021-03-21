@@ -1,4 +1,3 @@
-import { Drawing } from '@app/classes/drawing';
 import { TYPES } from '@app/types';
 import { Message } from '@common/communication/message';
 import { NextFunction, Request, Response, Router } from 'express';
@@ -96,9 +95,8 @@ export class DrawingsDatabaseController {
          *         description: Drawing has been successfully created.
          */
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
-            const newDrawing: Drawing = req.body;
-            const title = newDrawing.title;
-            const tags = newDrawing.tags;
+            const title = req.body.title;
+            const tags = req.body.tags;
             this.databaseService.saveDrawing(title, tags).then((result) => {
                 res.json(result);
             });
@@ -107,7 +105,7 @@ export class DrawingsDatabaseController {
         /**
          * @swagger
          *
-         * /api/database/get:
+         * /api/database/getId:
          *   get:
          *     description: Return drawing with specific id.
          *     tags:
@@ -128,10 +126,47 @@ export class DrawingsDatabaseController {
          *         schema:
          *           $ref: '#/definitions/Message'
          */
-        this.router.get('/get', async (req: Request, res: Response, next: NextFunction) => {
+        this.router.get('/getId', async (req: Request, res: Response, next: NextFunction) => {
             // Send the request to the service and send the response
             const drawingID: string = req.query._id;
             this.databaseService.getDrawing(drawingID).then((result: Message) => {
+                res.json(result);
+            });
+        });
+
+        /**
+         * @swagger
+         *
+         * /api/database/getTags:
+         *   get:
+         *     description: Return drawing with specific tags.
+         *     tags:
+         *       - Database
+         *     parameters:
+         *       - in: query
+         *         name: tags
+         *         required: true
+         *         schema:
+         *           type: array
+         *           items:
+         *             type: string
+         *         explode: false
+         *         style: matrix
+         *         description: Tags attached to drawings.
+         *     produces:
+         *       - application/json
+         *     responses:
+         *       200:
+         *         description: Returns drawings with all tags.
+         *         schema:
+         *           $ref: '#/definitions/Message'
+         */
+        this.router.get('/getTags', async (req: Request, res: Response, next: NextFunction) => {
+            // Send the request to the service and send the response
+            // Turn single string or array of strings into array of strings
+            const tagsString: string = req.query.tags as string;
+            const tags: string[] = tagsString.split(',');
+            this.databaseService.getDrawingsByTags(tags).then((result: Message) => {
                 res.json(result);
             });
         });

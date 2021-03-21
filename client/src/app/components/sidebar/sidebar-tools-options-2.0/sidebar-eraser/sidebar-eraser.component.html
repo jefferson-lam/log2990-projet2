@@ -3,10 +3,9 @@
   <div>
     <div>
       <div id="width-setting">
-        <p> Épaisseur : </p>
+        <p> Épaisseur : {{toolSize}}</p>
         <mat-slider id="width" color="warn"
                     thumbLabel
-                    [displayWith]="setMax"
                     [tickInterval]='tickInterval'
                     [min]="min"
                     [max]="max"

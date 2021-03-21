@@ -1,5 +1,4 @@
 import { Application } from '@app/app';
-// import { DrawingsDatabaseService } from '@app/services/drawings-database.service';
 import { TYPES } from '@app/types';
 import * as HttpRequestCodes from '@common/communication/http-code-constants';
 import { Message } from '@common/communication/message';
@@ -10,7 +9,6 @@ import { testingContainer } from '../../test/test-utils';
 // tslint:disable:no-any
 
 describe('DrawingsDatabaseController', () => {
-    // let databaseService: Stubbed<DrawingsDatabaseService>;
     let app: Express.Application;
 
     const successMessage: Message = {
@@ -23,6 +21,7 @@ describe('DrawingsDatabaseController', () => {
         container.rebind(TYPES.DrawingsDatabaseService).toConstantValue({
             saveDrawing: sandbox.stub().resolves(successMessage),
             getDrawing: sandbox.stub().resolves(successMessage),
+            getDrawingsByTags: sandbox.stub().resolves(successMessage),
             getDrawings: sandbox.stub().resolves(successMessage),
             dropDrawing: sandbox.stub().resolves(successMessage),
         });
@@ -42,8 +41,20 @@ describe('DrawingsDatabaseController', () => {
         const testID = '604055a4efc7ff42043e0a8c';
 
         return supertest(app)
-            .get('/api/database/get')
+            .get('/api/database/getId')
             .query({ _id: testID })
+            .expect(HttpRequestCodes.HTTP_STATUS_OK)
+            .then((response: any) => {
+                expect(response.body).to.deep.equal(successMessage);
+            });
+    });
+
+    it('should return message from database service on valid get request with specific tags', async () => {
+        const testTags = "'1', '2'";
+
+        return supertest(app)
+            .get('/api/database/getTags')
+            .query({ tags: testTags })
             .expect(HttpRequestCodes.HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(successMessage);

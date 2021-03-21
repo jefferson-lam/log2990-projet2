@@ -1,12 +1,14 @@
 import { DrawingsDatabaseService } from '@app/services/database/drawings-database.service';
 import { TagValidatorService } from '@app/services/database/tag-validator/tag-validator.service';
 import { TitleValidatorService } from '@app/services/database/title-validator/title-validator.service';
+import { Drawing } from '@common/communication/drawing';
 import { Message } from '@common/communication/message';
 import * as DatabaseConstants from '@common/validation/database-constants';
 import { expect } from 'chai';
+import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-// These tests were taken from the example given here: TODO INSERT URL
+// These tests were taken from the example given on polymtl's log2990 mongodb example.
 
 // tslint:disable: no-unused-expression
 // tslint:disable: no-string-literal
@@ -110,7 +112,7 @@ describe('Drawing database service', () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
         const testTitle = 'Title';
-        let testTags: string[] = [];
+        const testTags: string[] = [];
         for (let i = 0; i < DatabaseConstants.MAX_TAGS_COUNT + 1; i++) {
             testTags.push('test');
         }
@@ -163,6 +165,63 @@ describe('Drawing database service', () => {
         const testID = '203f0175c969185bc849ae10';
         databaseService
             .getDrawing(testID)
+            .then((result: Message) => {
+                expect(result.title).to.equals('Error');
+                done();
+            })
+            .catch((error: unknown) => {
+                done(error);
+            });
+    });
+
+    it('getDrawingsByTags should return successfull message on successfull connection', async () => {
+        const testUri = await mongoServer.getUri();
+        databaseService['uri'] = testUri;
+
+        const client = await MongoClient.connect(testUri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+
+        const testTags = ['1', '5'];
+        const drawings: Drawing[] = [
+            {
+                title: 'test1',
+                tags: ['1', '2', '3'],
+            },
+            {
+                title: 'test2',
+                tags: ['2'],
+            },
+            {
+                title: 'test3',
+                tags: ['3'],
+            },
+            {
+                title: 'test4',
+                tags: ['4'],
+            },
+            {
+                title: 'test5',
+                tags: ['1', '5'],
+            },
+        ];
+        for (const drawing of drawings) {
+            await client.db('DrawingsDB').collection('drawings').insertOne(drawing);
+        }
+        databaseService['client'] = client;
+        const result = await databaseService.getDrawingsByTags(testTags);
+        expect(result.body).includes('1');
+        expect(result.body).includes('5');
+        expect(result.title).to.equals('Success');
+        expect(databaseService['client'].isConnected()).to.be.false;
+    });
+
+    it('getDrawingsByTags should return error message on unsuccessfull connection', (done: Mocha.Done) => {
+        const testUri = 'BAD_URL';
+        databaseService['uri'] = testUri;
+        databaseService
+            .getDrawingsByTags([])
             .then((result: Message) => {
                 expect(result.title).to.equals('Error');
                 done();

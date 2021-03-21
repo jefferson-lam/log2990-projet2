@@ -8,7 +8,9 @@ import { DateService } from '@app/services/date.service';
 import { IndexService } from '@app/services/index.service';
 import { Container } from 'inversify';
 import { Application } from './app';
+import { LocalDrawingsController } from './controllers/local-drawings.controller';
 import { Server } from './server';
+import { LocalDrawingsService } from './services/local-drawings.service';
 import { TYPES } from './types';
 
 export const containerBootstrapper: () => Promise<Container> = async () => {
@@ -24,6 +26,8 @@ export const containerBootstrapper: () => Promise<Container> = async () => {
 
     container.bind(TYPES.DrawingsDatabaseController).to(DrawingsDatabaseController);
     container.bind(TYPES.DrawingsDatabaseService).to(DrawingsDatabaseService);
+    container.bind(TYPES.LocalDrawingsController).to(LocalDrawingsController);
+    container.bind(TYPES.LocalDrawingsService).to(LocalDrawingsService);
 
     container.bind(TYPES.TagValidatorService).to(TagValidatorService);
     container.bind(TYPES.TitleValidatorService).to(TitleValidatorService);
