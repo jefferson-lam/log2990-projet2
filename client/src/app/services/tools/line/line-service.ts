@@ -144,6 +144,7 @@ export class LineService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.clearPath();
         this.inUse = false;
+        this.shiftDown = false;
     }
 
     stickToClosest45Angle(): void {
