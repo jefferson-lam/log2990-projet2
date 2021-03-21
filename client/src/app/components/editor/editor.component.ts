@@ -73,19 +73,19 @@ export class EditorComponent implements OnInit {
         }
     }
 
+    @HostListener('window:keydown', ['$event'])
+    onKeyboardDown(event: KeyboardEvent): void {
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3)$/)) {
+            this.setTool(this.toolManager.selectTool(event));
+        }
+    }
+
     @HostListener('window:keydown.control.a', ['$event'])
     onCtrlAKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         this.setTool(this.toolManager.getTool(RECTANGLE_SELECTION_KEY));
         if (this.currentTool instanceof RectangleSelectionService) {
             this.currentTool.selectAll();
-        }
-    }
-
-    @HostListener('window:keydown', ['$event'])
-    onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3)$/)) {
-            this.setTool(this.toolManager.selectTool(event));
         }
     }
 
