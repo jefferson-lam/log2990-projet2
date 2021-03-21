@@ -79,22 +79,42 @@ describe('LineCommand', () => {
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
-    it('drawLine should call arc if withJunction', () => {
-        const arcSpy = spyOn(baseCtxStub, 'arc');
+    it('drawLine should call drawJunctions if withJunction', () => {
+        const drawJunctionsSpy = spyOn(command, 'drawJunctions');
+        command.withJunction = true;
 
         // tslint:disable-next-line:no-string-literal
         command['drawLine'](baseCtxStub, pathStub);
 
-        expect(arcSpy).toHaveBeenCalled();
+        expect(drawJunctionsSpy).toHaveBeenCalled();
     });
 
-    it('drawLine should not call arc if not withJunction', () => {
+    it('drawJunctions should set fillstyle', () => {
+        command.drawJunctions(baseCtxStub, pathStub);
+
+        expect(baseCtxStub.fillStyle).toBe('#000000');
+    });
+
+    it('drawJunctions should call arc and other canvas functions', () => {
+        const beginPathSpy = spyOn(baseCtxStub, 'beginPath');
         const arcSpy = spyOn(baseCtxStub, 'arc');
+        const fillSpy = spyOn(baseCtxStub, 'fill');
+
+        command.drawJunctions(baseCtxStub, pathStub);
+
+        expect(beginPathSpy).toHaveBeenCalled();
+        expect(arcSpy).toHaveBeenCalled();
+        expect(arcSpy).toHaveBeenCalledTimes(pathStub.length);
+        expect(fillSpy).toHaveBeenCalled();
+    });
+
+    it('drawLine should not call drawJunctions if not withJunction', () => {
+        const drawJunctionsSpy = spyOn(command, 'drawJunctions');
 
         command.withJunction = false;
         // tslint:disable-next-line:no-string-literal
         command['drawLine'](baseCtxStub, pathStub);
 
-        expect(arcSpy).not.toHaveBeenCalled();
+        expect(drawJunctionsSpy).not.toHaveBeenCalled();
     });
 });

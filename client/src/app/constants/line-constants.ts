@@ -1,7 +1,5 @@
 export const STARTING_POINT = 0;
 
-export const ENDING_POINT = 1;
-
 export const PIXEL_PROXIMITY_LIMIT = 20;
 
 export const DEGREES_0 = 0;
@@ -24,7 +22,7 @@ export const DEGREES_360 = 360;
 
 export const MAX_LINE_WIDTH = 200;
 
-export const MIN_LINE_WIDTH = 0.25;
+export const MIN_LINE_WIDTH = 1;
 
 export const MAX_JUNCTION_RADIUS = 200;
 

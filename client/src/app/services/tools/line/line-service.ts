@@ -17,17 +17,22 @@ export class LineService extends Tool {
 
     previewCommand: LineCommand;
 
-    shiftDown: boolean = false;
+    shiftDown: boolean;
 
-    withJunction: boolean = true;
-    junctionRadius: number = LineConstants.MIN_LINE_WIDTH;
-    lineWidth: number = LineConstants.MIN_LINE_WIDTH;
-    primaryColor: string = LineConstants.DEFAULT_PRIMARY_COLOR;
+    withJunction: boolean;
+    junctionRadius: number;
+    lineWidth: number;
+    primaryColor: string;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
         this.previewCommand = new LineCommand(drawingService.previewCtx, this);
+        this.shiftDown = false;
+        this.withJunction = false;
+        this.junctionRadius = LineConstants.MIN_JUNCTION_RADIUS;
+        this.lineWidth = LineConstants.MIN_LINE_WIDTH;
+        this.primaryColor = LineConstants.DEFAULT_PRIMARY_COLOR;
     }
 
     setPrimaryColor(newColor: string): void {

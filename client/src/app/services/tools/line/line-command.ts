@@ -48,15 +48,23 @@ export class LineCommand extends Command {
         ctx.beginPath();
         ctx.lineWidth = this.lineWidth;
         ctx.strokeStyle = this.primaryColor;
+        ctx.lineJoin = 'bevel';
+        ctx.moveTo(path[LineConstants.STARTING_POINT].x, path[LineConstants.STARTING_POINT].y);
         for (const point of path) {
-            if (this.withJunction) {
-                ctx.arc(point.x, point.y, this.junctionRadius, LineConstants.DEGREES_0, LineConstants.DEGREES_360);
-                ctx.fillStyle = this.primaryColor;
-                ctx.fill();
-            }
-            ctx.moveTo(point.x, point.y);
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
+        if (this.withJunction) {
+            this.drawJunctions(ctx, path);
+        }
+    }
+
+    drawJunctions(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.fillStyle = this.primaryColor;
+        for (const point of path) {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, this.junctionRadius, LineConstants.DEGREES_0, LineConstants.DEGREES_360);
+            ctx.fill();
+        }
     }
 }
