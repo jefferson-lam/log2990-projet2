@@ -1,6 +1,5 @@
 import { LocalDrawingsService } from '@app/services/local-drawings.service';
 import { TYPES } from '@app/types';
-import * as HttpRequestCodes from '@common/communication/http-code-constants';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import { NextFunction, Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
@@ -52,8 +51,10 @@ export class LocalDrawingsController {
          *
          */
         this.router.get('/get', async (req: Request, res: Response, next: NextFunction) => {
-            const drawing: ServerDrawing | undefined = this.localDrawingsService.getDrawing(req.query.id);
-            res.json(drawing);
+            // const drawing: ServerDrawing | undefined = this.localDrawingsService.getDrawing(req.query.id);
+            this.localDrawingsService.getDrawing(req.query.id).then((message) => {
+                res.json(message);
+            });
         });
 
         /**
@@ -74,8 +75,10 @@ export class LocalDrawingsController {
          *           items:
          *             $ref: '#/definitions/ServerDrawings'
          */
-        this.router.get('/all', (req: Request, res: Response, next: NextFunction) => {
-            res.json(this.localDrawingsService.getAllDrawings());
+        this.router.get('/all', async (req: Request, res: Response, next: NextFunction) => {
+            this.localDrawingsService.getAllDrawings().then((message) => {
+                res.json(message);
+            });
         });
 
         /**
@@ -101,8 +104,30 @@ export class LocalDrawingsController {
          */
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
             const drawing: ServerDrawing = req.body;
-            this.localDrawingsService.saveDrawing(drawing);
-            res.sendStatus(HttpRequestCodes.HTTP_STATUS_CREATED);
+            this.localDrawingsService.saveDrawing(drawing).then((message) => {
+                res.json(message);
+                // res.sendStatus(HttpRequestCodes.HTTP_STATUS_CREATED);
+            });
+        });
+
+        /**
+         * @swagger
+         *
+         * /api/drawings/delete:
+         *   get:
+         *     description: Delete drawing with corresponding id
+         *     tags:
+         *       - LocalDrawings
+         *     produces:
+         *       - application/json
+         *     responses:
+         *       200:
+         *          description: Ok
+         */
+        this.router.delete('/delete', (req: Request, res: Response, next: NextFunction) => {
+            this.localDrawingsService.deleteDrawing(req.query.id).then((message) => {
+                res.json(message);
+            });
         });
     }
 }
