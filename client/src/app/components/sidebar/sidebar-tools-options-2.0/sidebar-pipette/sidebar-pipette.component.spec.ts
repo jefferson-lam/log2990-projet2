@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import * as PipetteConstants from '@app/constants/pipette-constants';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { SidebarPipetteComponent } from './sidebar-pipette.component';
 
@@ -43,11 +44,11 @@ fdescribe('SidebarPipetteComponent', () => {
     });
 
     it('drawPreview should call canvas functions if centerPixel is not transparent', () => {
-        const arrayData = new Uint8ClampedArray(11 * 11 * 4);
+        const arrayData = new Uint8ClampedArray(PipetteConstants.RAWDATA_SIZE * PipetteConstants.RAWDATA_SIZE * PipetteConstants.RGBA_SIZE);
         for (let i = 0; i < arrayData.length; i++) {
-            arrayData[i] = 255;
+            arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
         }
-        const pixelData = new ImageData(arrayData, 11, 11);
+        const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
         component.rawData = pixelData;
 
         const clipSpy = spyOn(component, 'clipPreview');
@@ -63,7 +64,7 @@ fdescribe('SidebarPipetteComponent', () => {
     });
 
     it('drawPreview should not call canvas functions if centerPixel is transparent', () => {
-        const pixelData = new ImageData(11, 11);
+        const pixelData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
         pipetteService.previewData = pixelData;
 
         const clipSpy = spyOn(component, 'clipPreview');
@@ -79,11 +80,11 @@ fdescribe('SidebarPipetteComponent', () => {
     });
 
     it('drawPreview should call putImageData() if centerPixel is not transparent', () => {
-        const arrayData = new Uint8ClampedArray(11 * 11 * 4);
+        const arrayData = new Uint8ClampedArray(PipetteConstants.RAWDATA_SIZE * PipetteConstants.RAWDATA_SIZE * PipetteConstants.RGBA_SIZE);
         for (let i = 0; i < arrayData.length; i++) {
-            arrayData[i] = 255;
+            arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
         }
-        const pixelData = new ImageData(arrayData, 11, 11);
+        const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
         component.rawData = pixelData;
 
         const putImageDataSpy = spyOn(component.ctx, 'putImageData');

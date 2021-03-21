@@ -37,8 +37,8 @@ export class SidebarPipetteComponent implements OnInit {
         this.ctx.imageSmoothingEnabled = false;
         this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
 
-        const centerPixel = new Uint32Array(this.rawData.data.buffer)[60];
-        if (centerPixel != 0) {
+        const centerPixel = new Uint32Array(this.rawData.data.buffer)[PipetteConstants.CENTER_VALUE];
+        if (centerPixel !== 0) {
             (document.getElementById('pipettePreview') as HTMLCanvasElement).style.display = 'block';
             this.clipPreview(this.ctx);
             this.ctx.putImageData(this.rawData, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION);
@@ -50,14 +50,14 @@ export class SidebarPipetteComponent implements OnInit {
         }
     }
 
-    clipPreview(ctx: CanvasRenderingContext2D) {
+    clipPreview(ctx: CanvasRenderingContext2D): void {
         this.ctx.beginPath();
         this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.clip();
         this.ctx.closePath();
     }
 
-    zoomPreview(ctx: CanvasRenderingContext2D) {
+    zoomPreview(ctx: CanvasRenderingContext2D): void {
         this.ctx.drawImage(
             this.ctx.canvas,
             PipetteConstants.RAWDATA_POSITION,
@@ -71,7 +71,7 @@ export class SidebarPipetteComponent implements OnInit {
         );
     }
 
-    centerPixelStroke(ctx: CanvasRenderingContext2D) {
+    centerPixelStroke(ctx: CanvasRenderingContext2D): void {
         this.ctx.strokeStyle = PipetteConstants.BLACK_STROKE;
         this.ctx.lineWidth = PipetteConstants.CENTER_PIXEL_LINE_WIDTH;
         this.ctx.strokeRect(
@@ -82,7 +82,7 @@ export class SidebarPipetteComponent implements OnInit {
         );
     }
 
-    previewStroke(ctx: CanvasRenderingContext2D) {
+    previewStroke(ctx: CanvasRenderingContext2D): void {
         this.ctx.beginPath();
         this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.lineWidth = PipetteConstants.OUTER_BORDER_LINE_WIDTH;

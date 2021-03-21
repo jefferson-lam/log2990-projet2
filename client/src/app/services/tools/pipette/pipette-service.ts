@@ -6,9 +6,9 @@ import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PipetteConstants from '@app/constants/pipette-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { ToolManagerService } from '../../manager/tool-manager-service';
-import { UndoRedoService } from '../../undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -34,8 +34,8 @@ export class PipetteService extends Tool {
         if (this.inBound) {
             this.mousePosition = this.getPositionFromMouse(event);
             const contextData = this.drawingService.baseCtx.getImageData(
-                this.mousePosition.x - 5,
-                this.mousePosition.y - 5,
+                this.mousePosition.x - PipetteConstants.OFFSET,
+                this.mousePosition.y - PipetteConstants.OFFSET,
                 PipetteConstants.RAWDATA_SIZE,
                 PipetteConstants.RAWDATA_SIZE,
             );
@@ -75,13 +75,13 @@ export class PipetteService extends Tool {
     }
 
     setPrimaryColor(color: Rgba): void {
-        if (color.alpha != 0) {
+        if (color.alpha !== 0) {
             this.colorService.setPrimaryColor(color);
         }
     }
 
     setSecondaryColor(color: Rgba): void {
-        if (color.alpha != 0) {
+        if (color.alpha !== 0) {
             this.colorService.setSecondaryColor(color);
         }
     }

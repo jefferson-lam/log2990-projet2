@@ -146,7 +146,12 @@ fdescribe('PipetteServiceService', () => {
 
     it('pixelDataToRgba should pick the right color', () => {
         service.inUse = true;
-        const arrayData = new Uint8ClampedArray([255, 255, 255, 1]);
+        const arrayData = new Uint8ClampedArray([
+            PipetteConstants.NON_TRANSPARENT_FF,
+            PipetteConstants.NON_TRANSPARENT_FF,
+            PipetteConstants.NON_TRANSPARENT_FF,
+            1,
+        ]);
         const pixelData = new ImageData(arrayData, 1, 1);
         const expectedColor = { red: '255', green: '255', blue: '255', alpha: 1 };
 
@@ -160,13 +165,13 @@ fdescribe('PipetteServiceService', () => {
     it('setPrimaryColor should call colorService.setPrimaryColor if color is not transparent', () => {
         service.inUse = true;
         service.setPrimaryColor(colorPlaceholderBlack);
-        expect(colorService.setPrimaryColor).toHaveBeenCalled;
+        expect(colorService.setPrimaryColor).toHaveBeenCalled();
     });
 
     it('setPrimaryColor should not call colorService.setPrimaryColor if color is transparent', () => {
         service.inUse = true;
         service.setPrimaryColor(colorPlaceholderTransparent);
-        expect(colorService.setPrimaryColor).not.toHaveBeenCalled;
+        expect(colorService.setPrimaryColor).not.toHaveBeenCalled();
     });
 
     it('setPrimaryColor should set primary color if color is not transparent', () => {
@@ -189,14 +194,14 @@ fdescribe('PipetteServiceService', () => {
         service.inUse = true;
 
         service.setSecondaryColor(colorPlaceholderBlack);
-        expect(colorService.secondaryColor).toHaveBeenCalled;
+        expect(colorService.secondaryColor).toHaveBeenCalled();
     });
 
     it('setSecondaryColor should not call colorService.setSecondaryColor if color is transparent', () => {
         service.inUse = true;
 
         service.setSecondaryColor(colorPlaceholderTransparent);
-        expect(colorService.secondaryColor).not.toHaveBeenCalled;
+        expect(colorService.secondaryColor).not.toHaveBeenCalled();
     });
 
     it('setSecondaryColor should set secondary color if color is not transparent', () => {
@@ -217,7 +222,12 @@ fdescribe('PipetteServiceService', () => {
 
     it('setPreviewData should set preview data', () => {
         service.inUse = true;
-        const arrayData = new Uint8ClampedArray([255, 255, 255, 1]);
+        const arrayData = new Uint8ClampedArray([
+            PipetteConstants.NON_TRANSPARENT_FF,
+            PipetteConstants.NON_TRANSPARENT_FF,
+            PipetteConstants.NON_TRANSPARENT_FF,
+            1,
+        ]);
         const pixelData = new ImageData(arrayData, 1, 1);
 
         service.setPreviewData(pixelData);

@@ -25,3 +25,11 @@ export const CENTER_PIXEL_LINE_WIDTH = 2;
 export const OUTER_BORDER_LINE_WIDTH = 5;
 
 export const BLACK_STROKE = '#000';
+
+export const RGBA_SIZE = 4;
+
+export const NON_TRANSPARENT_FF = 255;
+
+export const CENTER_VALUE = 60;
+
+export const OFFSET = 5;
