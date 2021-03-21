@@ -36,6 +36,7 @@ describe('KeyboardListenerDirective', () => {
         resizerHandlerService = {} as ResizerHandlerService;
         rectangleService = new RectangleService(drawingService, undoRedoService);
         ellipseService = new EllipseService(drawingService, undoRedoService);
+        toolStub = {} as ToolStub;
 
         rectangleSelectionService = new RectangleSelectionService(drawingService, undoRedoService, resizerHandlerService, rectangleService);
         ellipseSelectionService = new EllipseSelectionService(drawingService, undoRedoService, resizerHandlerService, ellipseService);
@@ -47,7 +48,6 @@ describe('KeyboardListenerDirective', () => {
     });
 
     it('should create an instance', () => {
-        const directive = new KeyboardListenerDirective(toolManager);
         expect(directive).toBeTruthy();
     });
 

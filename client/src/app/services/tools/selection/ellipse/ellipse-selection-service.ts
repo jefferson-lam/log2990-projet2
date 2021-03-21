@@ -157,7 +157,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     undoSelection(): void {
         if (this.isManipulating) {
-            this.clipEllise(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 0);
+            this.clipEllise(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
             this.drawingService.baseCtx.drawImage(
                 this.drawingService.selectionCanvas,
                 0,
@@ -185,7 +185,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         let radiusY: number;
         startX = radiusX = this.selectionWidth / 2;
         startY = radiusY = this.selectionHeight / 2;
-        this.clipEllise(this.drawingService.selectionCtx, { x: 0, y: 0 }, this.selectionHeight, this.selectionWidth, 0);
+        this.clipEllise(this.drawingService.selectionCtx, { x: 0, y: 0 }, this.selectionHeight, this.selectionWidth, 1);
         this.drawingService.selectionCtx.drawImage(
             this.drawingService.canvas,
             this.cornerCoords[SelectionConstants.START_INDEX].x,
@@ -201,15 +201,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         // Draw outline on selectionCanvas, this outline will be on selectionCanvas but not part of the clipped zone.
         this.drawingService.selectionCtx.beginPath();
         this.drawingService.selectionCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
-        this.drawingService.selectionCtx.ellipse(
-            startX,
-            startY,
-            radiusX + SelectionConstants.OFFSET_RADIUS,
-            radiusY + SelectionConstants.OFFSET_RADIUS,
-            ROTATION,
-            START_ANGLE,
-            END_ANGLE,
-        );
+        this.drawingService.selectionCtx.ellipse(startX, startY, radiusX + 2, radiusY + 2, ROTATION, START_ANGLE, END_ANGLE);
         this.drawingService.selectionCtx.stroke();
     }
 
@@ -244,7 +236,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(start.x, start.y);
-        ctx.ellipse(startX, startY, xRadius - offset, yRadius - offset, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(startX, startY, xRadius + offset, yRadius + offset, ROTATION, START_ANGLE, END_ANGLE);
         ctx.clip();
     }
 
