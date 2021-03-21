@@ -2,20 +2,17 @@ canvas {
     cursor: crosshair;
     border: 1px solid #000000;
     position: absolute;
-    left: 0;
-    top: 0;
 }
 
 #canvas {
     z-index: 0;
     background-color: white;
-  min-width: 250px;
-  min-height: 250px;
+    min-width: 250px;
+    min-height: 250px;
 }
 
 #previewLayer {
-    border: 1px solid #000000;
-    border-style: dashed;
+    border: 1px dashed #000000;
     z-index: 1;
 }
 
