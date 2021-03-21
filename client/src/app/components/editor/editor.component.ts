@@ -21,6 +21,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class EditorComponent implements OnInit {
     currentTool: Tool;
     isPopUpOpen: boolean;
+    isUndoSelection: boolean;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -31,6 +32,7 @@ export class EditorComponent implements OnInit {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
         this.isPopUpOpen = false;
+        this.isUndoSelection = false;
     }
 
     ngOnInit(): void {
@@ -68,9 +70,16 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.control.z', ['$event'])
     onCtrlZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+            if (this.currentTool.isManipulating) {
+                this.currentTool.undoSelection();
+                this.isUndoSelection = true;
+            }
+        }
+        if (!this.isPopUpOpen && !this.currentTool.inUse && !this.isUndoSelection) {
             this.undoRedoService.undo();
         }
+        this.isUndoSelection = false;
     }
 
     @HostListener('window:keydown', ['$event'])
