@@ -24,7 +24,7 @@ class ToolStub extends Tool {}
 // tslint:disable:no-any
 // tslint:disable:no-string-literal
 // tslint:disable:max-file-line-count
-fdescribe('EditorComponent', () => {
+describe('EditorComponent', () => {
     let component: EditorComponent;
     let fixture: ComponentFixture<EditorComponent>;
     let toolStub: ToolStub;
