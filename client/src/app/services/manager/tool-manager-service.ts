@@ -9,6 +9,7 @@ import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 
 @Injectable({
@@ -25,6 +26,7 @@ export class ToolManagerService {
         public ellipseService: EllipseService,
         public drawingService: DrawingService,
         public rectangleSelectionService: RectangleSelectionService,
+        public ellipseSelectionService: EllipseSelectionService,
         public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
     ) {
@@ -40,6 +42,7 @@ export class ToolManagerService {
             .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
             .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
             .set(ToolManagerConstants.RECTANGLE_SELECTION_KEY, this.rectangleSelectionService)
+            .set(ToolManagerConstants.ELLIPSE_SELECTION_KEY, this.ellipseSelectionService)
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
             .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService);
     }

@@ -14,4 +14,6 @@ export const SELECTION_LINE_WIDTH = 1;
 
 export const DEFAULT_LINE_DASH = 3;
 
+export const OFFSET_RADIUS = 1;
+
 export const BUTTON_OFFSET = 9;

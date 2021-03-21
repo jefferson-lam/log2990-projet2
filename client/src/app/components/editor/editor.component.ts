@@ -9,6 +9,7 @@ import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants'
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -86,7 +87,7 @@ export class EditorComponent implements OnInit {
         if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3)$/)) {
             this.setTool(this.toolManager.selectTool(event));
         } else if (event.key === 'Escape') {
-            if (this.currentTool instanceof RectangleSelectionService) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.onKeyboardDown(event);
             }
         }
@@ -95,7 +96,7 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keyup', ['$event'])
     onKeyboardUp(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
-            if (this.currentTool instanceof RectangleSelectionService) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.onKeyboardUp(event);
             }
         }
@@ -107,7 +108,7 @@ export class EditorComponent implements OnInit {
 
     setTool(newTool: Tool): void {
         if (this.currentTool !== newTool) {
-            if (this.currentTool instanceof RectangleSelectionService) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
                 if (this.currentTool.isManipulating) {
                     const emptyMouseEvent: MouseEvent = {} as MouseEvent;
                     this.currentTool.onMouseDown(emptyMouseEvent);

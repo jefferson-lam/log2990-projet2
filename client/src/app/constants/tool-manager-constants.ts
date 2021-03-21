@@ -12,4 +12,6 @@ export const ELLIPSE_KEY = '2';
 
 export const RECTANGLE_SELECTION_KEY = 'r';
 
+export const ELLIPSE_SELECTION_KEY = 's';
+
 export const POLYGONE_KEY = '3';
