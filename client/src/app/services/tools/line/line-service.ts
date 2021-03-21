@@ -14,13 +14,10 @@ export class LineService extends Tool {
     mousePosition: Vec2;
     initialPoint: Vec2;
     linePathData: Vec2[];
-    canvasState: ImageData;
 
     previewCommand: LineCommand;
 
     shiftDown: boolean = false;
-    isEscapeKeyDown: boolean = false;
-    isBackspaceKeyDown: boolean = false;
 
     withJunction: boolean = true;
     junctionRadius: number = LineConstants.MIN_LINE_WIDTH;
@@ -75,91 +72,95 @@ export class LineService extends Tool {
      * event does not work for these modifiers.
      */
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.inUse) {
-            if (event.key === 'Shift' && !this.shiftDown) {
-                const angle = this.calculateAngle(this.linePathData[LineConstants.STARTING_POINT], this.mousePosition);
-                const finalAngle = this.roundAngleToNearestMultiple(angle, LineConstants.DEGREES_45);
-                const finalLineCoord: Vec2 = this.calculateLengthAndFlatten(
-                    this.linePathData[LineConstants.STARTING_POINT],
-                    this.mousePosition,
-                    finalAngle,
-                );
-                this.linePathData[LineConstants.ENDING_POINT] = this.rotateLine(
-                    this.linePathData[LineConstants.STARTING_POINT],
-                    finalLineCoord,
-                    finalAngle,
-                );
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.previewCommand.setValues(this.drawingService.previewCtx, this);
-                this.previewCommand.execute();
-                this.shiftDown = true;
-            } else if (event.key === 'Escape') {
-                this.isEscapeKeyDown = true;
-            } else if (event.key === 'Backspace') {
-                this.isBackspaceKeyDown = true;
-            }
+        if (this.inUse && event.key === 'Shift') {
+            this.stickToClosest45Angle();
+            this.drawPreview();
+            this.shiftDown = true;
         }
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
         if (this.inUse) {
-            if (event.key === 'Shift') {
-                this.shiftDown = false;
-                this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.previewCommand.setValues(this.drawingService.previewCtx, this);
-                this.previewCommand.execute();
-            } else if (event.key === 'Escape' && this.isEscapeKeyDown) {
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.clearPath();
-                this.inUse = false;
-                this.isEscapeKeyDown = false;
-            } else if (event.key === 'Backspace' && this.isBackspaceKeyDown) {
-                this.drawingService.baseCtx.putImageData(this.canvasState, 0, 0);
-                // TODO : decide if backspace is considered an undo or not?
-                this.undoRedoService.undoPile.pop();
+            switch (event.key) {
+                case 'Shift':
+                    this.shiftDown = false;
+                    this.linePathData[this.linePathData.length - 1] = this.mousePosition;
+                    this.drawPreview();
+                    break;
+                case 'Escape':
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    this.clearPath();
+                    this.inUse = false;
+                    break;
+                case 'Backspace':
+                    this.linePathData.pop();
+                    this.finishLine();
+                    break;
             }
         }
     }
 
-    onMouseClick(event: MouseEvent): void {
+    onMouseDown(event: MouseEvent): void {
         if (!this.inUse) {
             this.clearPath();
             this.inUse = true;
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.initialPoint = this.mouseDownCoord;
-            this.linePathData[LineConstants.STARTING_POINT] = this.mouseDownCoord;
-            this.canvasState = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
+            this.initialPoint = this.getPositionFromMouse(event);
+            this.linePathData[LineConstants.STARTING_POINT] = this.initialPoint;
+            this.linePathData.push(this.initialPoint);
         } else {
-            const distanceToInitialPoint = this.calculateDistance(this.linePathData[LineConstants.ENDING_POINT], this.initialPoint);
-            if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
-                this.linePathData[LineConstants.ENDING_POINT] = this.initialPoint;
-            }
-            // We do a save of the current state of the canvas in order to deal with the user's 'undo last line' option on backspace.
-            this.canvasState = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
-            const command: Command = new LineCommand(this.drawingService.baseCtx, this);
-            if (this.linePathData[LineConstants.STARTING_POINT] !== this.linePathData[LineConstants.ENDING_POINT])
-                this.undoRedoService.executeCommand(command);
-            this.linePathData[LineConstants.STARTING_POINT] = this.linePathData[LineConstants.ENDING_POINT];
+            this.linePathData.push(this.linePathData[this.linePathData.length - 1]);
+            this.drawPreview();
         }
     }
 
     onMouseDoubleClick(event: MouseEvent): void {
         if (this.inUse) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.clearPath();
-            this.inUse = false;
+            this.linePathData.splice(this.linePathData.length - 2, 2);
+            this.finishLine();
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
             this.mousePosition = this.getPositionFromMouse(event);
-            this.linePathData[LineConstants.ENDING_POINT] = this.mousePosition;
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
+            if (this.shiftDown) {
+                this.stickToClosest45Angle();
+                this.drawPreview();
+            } else {
+                const distanceToInitialPoint = this.calculateDistance(this.mousePosition, this.initialPoint);
+                if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
+                    this.linePathData[this.linePathData.length - 1] = this.initialPoint;
+                } else {
+                    this.linePathData[this.linePathData.length - 1] = this.mousePosition;
+                }
+                this.drawPreview();
+            }
         }
+    }
+
+    finishLine(): void {
+        const command: Command = new LineCommand(this.drawingService.baseCtx, this);
+        this.undoRedoService.executeCommand(command);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.clearPath();
+        this.inUse = false;
+    }
+
+    stickToClosest45Angle(): void {
+        const angle = this.calculateAngle(this.linePathData[this.linePathData.length - 2], this.mousePosition);
+        const finalAngle = this.roundAngleToNearestMultiple(angle, LineConstants.DEGREES_45);
+        const finalLineCoord: Vec2 = this.calculateLengthAndFlatten(this.linePathData[this.linePathData.length - 2], this.mousePosition, finalAngle);
+        this.linePathData[this.linePathData.length - 1] = this.rotateLine(
+            this.linePathData[this.linePathData.length - 2],
+            finalLineCoord,
+            finalAngle,
+        );
+    }
+
+    drawPreview(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.previewCommand.setValues(this.drawingService.previewCtx, this);
+        this.previewCommand.execute();
     }
 
     private clearPath(): void {
