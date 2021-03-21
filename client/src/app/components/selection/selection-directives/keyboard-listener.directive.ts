@@ -20,12 +20,6 @@ export class KeyboardListenerDirective {
         });
     }
 
-    @HostListener('keydown.control.z', ['$event'])
-    onCtrlZKeyDown(event: KeyboardEvent): void {
-        event.stopPropagation();
-        this.currentTool.undoSelection();
-    }
-
     @HostListener('keydown.escape', ['$event'])
     onEscapeDown(event: KeyboardEvent): void {
         this.currentTool.onKeyboardDown(event);

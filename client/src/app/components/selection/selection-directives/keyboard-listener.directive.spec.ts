@@ -11,6 +11,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subject } from 'rxjs';
 import { KeyboardListenerDirective } from './keyboard-listener.directive';
 
+class ToolStub extends Tool {}
+
 describe('KeyboardListenerDirective', () => {
     let toolManager: ToolManagerService;
     let drawingService: DrawingService;
@@ -23,6 +25,7 @@ describe('KeyboardListenerDirective', () => {
     let directive: KeyboardListenerDirective;
     let keyboardDownEventSpy: jasmine.Spy;
     let keyboardUpEventSpy: jasmine.Spy;
+    let toolStub: ToolStub;
 
     beforeEach(() => {
         toolManager = TestBed.inject(ToolManagerService);
@@ -48,25 +51,21 @@ describe('KeyboardListenerDirective', () => {
         expect(directive).toBeTruthy();
     });
 
-    it('should prevent keydown default when ctrl+relevant key is down', () => {
-        const eventSpy = jasmine.createSpyObj('event', ['stopPropagation'], { ctrlKey: true, code: '', key: 'z' });
-        directive.currentTool = rectangleSelectionService;
-        const undoSelectionSpy = spyOn(toolManager.rectangleSelectionService, 'undoSelection').and.callFake(() => {
-            return;
-        });
-        directive.onCtrlZKeyDown(eventSpy);
-        expect(eventSpy.stopPropagation).toHaveBeenCalled();
-        expect(undoSelectionSpy).toHaveBeenCalled();
-    });
-
     it('directives currenttool should change to Rectangle if toolManagers subject changes', () => {
         toolManager.currentToolSubject.next(rectangleSelectionService);
         expect(directive.currentTool).toBeInstanceOf(RectangleSelectionService);
+        expect(directive.currentTool).toEqual(rectangleSelectionService);
     });
 
     it('directives currenttool should change to Ellipse if toolManagers subject changes', () => {
         toolManager.currentToolSubject.next(ellipseSelectionService);
         expect(directive.currentTool).toBeInstanceOf(EllipseSelectionService);
+        expect(directive.currentTool).toEqual(ellipseSelectionService);
+    });
+
+    it('directives currenttool should not change if tool is not of type ToolSelectionService', () => {
+        toolManager.currentToolSubject.next(toolStub);
+        expect(directive.currentTool).toBeUndefined();
     });
 
     it("should call select tool when 'Escape' key is down", () => {
