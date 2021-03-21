@@ -47,11 +47,4 @@ describe('SidebarEraserComponent', () => {
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
     });
-
-    it('setMax should return input value if it is equal or under MAXWIDTH', () => {
-        const MAX_WIDTH_RANDOM = 200;
-        const newWitdh = MAX_WIDTH_RANDOM;
-        const returnValue = component.setMax(newWitdh);
-        expect(returnValue).toEqual(newWitdh);
-    });
 });

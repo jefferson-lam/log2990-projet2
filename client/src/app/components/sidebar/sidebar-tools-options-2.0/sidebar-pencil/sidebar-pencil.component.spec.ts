@@ -41,13 +41,6 @@ describe('SidebarPencilComponent', () => {
         expect(emitSpy).toHaveBeenCalled();
     });
 
-    it('setMax should return input value if it is equal or under MAXWIDTH', () => {
-        const MAX_WIDTH_RANDOM = 200;
-        const newWitdh = MAX_WIDTH_RANDOM;
-        const returnValue = component.setMax(newWitdh);
-        expect(returnValue).toEqual(newWitdh);
-    });
-
     it('should call settingsManager setLineWidth() after tool size change', () => {
         const setLineWidthSpy = spyOn(settingsManagerService, 'setLineWidth');
         component.ngOnInit();
