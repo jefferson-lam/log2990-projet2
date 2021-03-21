@@ -38,7 +38,7 @@ export class PipetteService extends Tool {
         }
     }
 
-    onMouseClick(event: MouseEvent): void {
+    onMouseDown(event: MouseEvent): void {
         this.ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.mousePosition = this.getPositionFromMouse(event);
         let pixelData = this.ctx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);

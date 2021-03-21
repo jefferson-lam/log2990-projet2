@@ -1,24 +1,24 @@
 <div id="settings-container">
-  <h2 id="title"> Options du crayon </h2>
-  <div>
+    <h2 id="title">Options du crayon</h2>
     <div>
-      <div id="width-setting">
-        <p> Épaisseur : </p>
-        <mat-slider id="width" color="warn"
-                    thumbLabel
-                    [displayWith]="setMax"
-                    [tickInterval]='tickInterval'
-                    [min]="min"
-                    [max]="max"
-                    [(value)]="toolSize"
-                    (change)="emitToolSize()">
-        </mat-slider>
-      </div>
-      <br>
-      <div id="colorPicker">
-        <app-color-picker></app-color-picker>
-      </div>
-      </div>
+        <div id="width-setting">
+            <p>Épaisseur :</p>
+            <mat-slider
+                id="width"
+                color="warn"
+                thumbLabel
+                [displayWith]="setMax"
+                [tickInterval]="tickInterval"
+                [min]="min"
+                [max]="max"
+                [(value)]="toolSize"
+                (change)="emitToolSize()"
+            >
+            </mat-slider>
+        </div>
+        <br />
+        <div id="colorPicker">
+            <app-color-picker></app-color-picker>
+        </div>
     </div>
 </div>
-

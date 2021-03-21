@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Rgba } from '@app/classes/rgba';
 import * as MouseConstants from '@app/constants/mouse-constants';
+import * as PipetteConstants from '@app/constants/pipette-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '../color/color.service';
 import { PipetteService } from './pipette-service';
@@ -9,14 +10,14 @@ import { PipetteService } from './pipette-service';
 fdescribe('PipetteServiceService', () => {
     let service: PipetteService;
     let colorService: ColorService;
-    let mouseEvent: MouseEvent;
+    let leftMouseButton: MouseEvent;
+    let rightMouseButton: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let newColor: Rgba;
     const colorPlaceholderBlack: Rgba = { red: '0', green: '0', blue: '0', alpha: 1 };
 
     let baseCtxStub: CanvasRenderingContext2D;
-    //let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -33,9 +34,16 @@ fdescribe('PipetteServiceService', () => {
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].canvas = baseCtxStub.canvas;
 
-        mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
+        leftMouseButton = {
+            offsetX: PipetteConstants.OFFSET_TESTS_X,
+            offsetY: PipetteConstants.OFFSET_TESTS_Y,
+            button: MouseConstants.MouseButton.Left,
+        } as MouseEvent;
+
+        rightMouseButton = {
+            offsetX: PipetteConstants.OFFSET_TESTS_X,
+            offsetY: PipetteConstants.OFFSET_TESTS_Y,
+            button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
     });
 
@@ -50,7 +58,7 @@ fdescribe('PipetteServiceService', () => {
         let getPositionFromMouseSpy: jasmine.Spy;
         getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.callThrough();
 
-        service.onMouseMove(mouseEvent);
+        service.onMouseMove(leftMouseButton);
         expect(getPositionFromMouseSpy).toHaveBeenCalled();
     });
 
@@ -61,7 +69,7 @@ fdescribe('PipetteServiceService', () => {
         let getPositionFromMouseSpy: jasmine.Spy;
         getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse');
 
-        service.onMouseMove(mouseEvent);
+        service.onMouseMove(leftMouseButton);
         expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
     });
 
@@ -72,7 +80,7 @@ fdescribe('PipetteServiceService', () => {
         let setPreviewDataSpy: jasmine.Spy;
         setPreviewDataSpy = spyOn(service, 'setPreviewData');
 
-        service.onMouseMove(mouseEvent);
+        service.onMouseMove(leftMouseButton);
         expect(setPreviewDataSpy).toHaveBeenCalled();
     });
 
@@ -83,51 +91,39 @@ fdescribe('PipetteServiceService', () => {
         let setPreviewDataSpy: jasmine.Spy;
         setPreviewDataSpy = spyOn(service, 'setPreviewData');
 
-        service.onMouseMove(mouseEvent);
+        service.onMouseMove(leftMouseButton);
         expect(setPreviewDataSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseClick should call getPositionFromMouse', () => {
+    it('onMouseDown should call getPositionFromMouse', () => {
         service.inUse = true;
 
         let getPositionFromMouseSpy: jasmine.Spy;
         getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.callThrough();
 
-        service.onMouseClick(mouseEvent);
+        service.onMouseDown(leftMouseButton);
         expect(getPositionFromMouseSpy).toHaveBeenCalled();
     });
 
-    it('onMouseClick should call setPrimaryColor if left click', () => {
+    it('onMouseDown should call setPrimaryColor if left click', () => {
         service.inUse = true;
         service.inBound = true;
-
-        mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
-            button: MouseConstants.MouseButton.Left,
-        } as MouseEvent;
 
         let setPrimaryColorSpy: jasmine.Spy;
         setPrimaryColorSpy = spyOn(service, 'setPrimaryColor');
 
-        service.onMouseClick(mouseEvent);
+        service.onMouseDown(leftMouseButton);
         expect(setPrimaryColorSpy).toHaveBeenCalled();
     });
 
-    it('onMouseClick should call setSecondaryColor if right click', () => {
+    it('onMouseDown should call setSecondaryColor if right click', () => {
         service.inUse = true;
         service.inBound = true;
-
-        mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
-            button: MouseConstants.MouseButton.Right,
-        } as MouseEvent;
 
         let setSecondaryColorSpy: jasmine.Spy;
         setSecondaryColorSpy = spyOn(service, 'setSecondaryColor');
 
-        service.onMouseClick(mouseEvent);
+        service.onMouseDown(rightMouseButton);
         expect(setSecondaryColorSpy).toHaveBeenCalled();
     });
 

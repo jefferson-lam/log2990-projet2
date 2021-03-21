@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import * as PipetteConstants from '@app/constants/pipette-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { PipetteService } from '@app/services/tools/pipette-service';
 
@@ -10,11 +11,11 @@ import { PipetteService } from '@app/services/tools/pipette-service';
 export class SidebarPipetteComponent implements OnInit {
     ctx: CanvasRenderingContext2D;
     colorService: ColorService;
-    rawData: ImageData = new ImageData(11, 11);
-    previewData: ImageData = new ImageData(220, 220);
+    rawData: ImageData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
+    previewData: ImageData = new ImageData(PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
     inBound: boolean = false;
 
-    constructor(colorService: ColorService, public pipetteService: PipetteService) {}
+    constructor(public pipetteService: PipetteService) {}
 
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
@@ -34,17 +35,53 @@ export class SidebarPipetteComponent implements OnInit {
             this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         }
         this.ctx.imageSmoothingEnabled = false;
+        this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
 
+        this.clipPreview(this.ctx);
+        this.ctx.putImageData(this.rawData, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION);
+        this.zoomPreview(this.ctx);
+        this.centerPixelStroke(this.ctx);
+        this.previewStroke(this.ctx);
+    }
+
+    clipPreview(ctx: CanvasRenderingContext2D) {
         this.ctx.beginPath();
-        this.ctx.arc(110, 110, 110, 0, Math.PI * 2, true);
+        this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.clip();
         this.ctx.closePath();
+    }
 
-        this.ctx.putImageData(this.rawData, 110, 110);
+    zoomPreview(ctx: CanvasRenderingContext2D) {
+        this.ctx.drawImage(
+            this.ctx.canvas,
+            PipetteConstants.RAWDATA_POSITION,
+            PipetteConstants.RAWDATA_POSITION,
+            PipetteConstants.RAWDATA_SIZE,
+            PipetteConstants.RAWDATA_SIZE,
+            0,
+            0,
+            PipetteConstants.PREVIEWDATA_SIZE,
+            PipetteConstants.PREVIEWDATA_SIZE,
+        );
+    }
 
-        this.ctx.drawImage(this.ctx.canvas, 110, 110, 11, 11, 0, 0, 220, 220);
-        // Put center pixel in evidence
-        this.ctx.strokeStyle = '#000';
-        this.ctx.strokeRect(100, 100, 20, 20);
+    centerPixelStroke(ctx: CanvasRenderingContext2D) {
+        this.ctx.strokeStyle = PipetteConstants.BLACK_STROKE;
+        this.ctx.lineWidth = PipetteConstants.CENTER_PIXEL_LINE_WIDTH;
+        this.ctx.strokeRect(
+            PipetteConstants.CENTER_PIXEL_POSITION,
+            PipetteConstants.CENTER_PIXEL_POSITION,
+            PipetteConstants.CENTER_PIXEL_SIZE,
+            PipetteConstants.CENTER_PIXEL_SIZE,
+        );
+    }
+
+    previewStroke(ctx: CanvasRenderingContext2D) {
+        this.ctx.beginPath();
+        this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
+        this.ctx.lineWidth = PipetteConstants.OUTER_BORDER_LINE_WIDTH;
+        this.ctx.strokeStyle = PipetteConstants.BLACK_STROKE;
+        this.ctx.stroke();
+        this.ctx.closePath();
     }
 }
