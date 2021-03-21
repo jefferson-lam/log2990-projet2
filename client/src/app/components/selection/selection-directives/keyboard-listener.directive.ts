@@ -19,7 +19,7 @@ export class KeyboardListenerDirective {
     }
 
     @HostListener('keydown.control.z', ['$event'])
-    onCtrlZDown(event: KeyboardEvent): void {
+    onCtrlZKeyDown(event: KeyboardEvent): void {
         event.stopPropagation();
         if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
             this.currentTool.undoSelection();
