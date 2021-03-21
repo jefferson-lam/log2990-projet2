@@ -1,7 +1,7 @@
-import { Drawing } from '@app/classes/drawing';
 import { DrawingsDatabaseService } from '@app/services/database/drawings-database.service';
 import { TagValidatorService } from '@app/services/database/tag-validator/tag-validator.service';
 import { TitleValidatorService } from '@app/services/database/title-validator/title-validator.service';
+import { Drawing } from '@common/communication/drawing';
 import { Message } from '@common/communication/message';
 import * as DatabaseConstants from '@common/validation/database-constants';
 import { expect } from 'chai';
@@ -112,7 +112,7 @@ describe('Drawing database service', () => {
         const testUri = await mongoServer.getUri();
         databaseService['uri'] = testUri;
         const testTitle = 'Title';
-        let testTags: string[] = [];
+        const testTags: string[] = [];
         for (let i = 0; i < DatabaseConstants.MAX_TAGS_COUNT + 1; i++) {
             testTags.push('test');
         }
@@ -184,7 +184,7 @@ describe('Drawing database service', () => {
         });
 
         const testTags = ['1', '5'];
-        let drawings: Drawing[] = [
+        const drawings: Drawing[] = [
             {
                 title: 'test1',
                 tags: ['1', '2', '3'],
@@ -206,7 +206,7 @@ describe('Drawing database service', () => {
                 tags: ['1', '5'],
             },
         ];
-        for (let drawing of drawings) {
+        for (const drawing of drawings) {
             await client.db('DrawingsDB').collection('drawings').insertOne(drawing);
         }
         databaseService['client'] = client;

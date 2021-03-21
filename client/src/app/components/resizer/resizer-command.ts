@@ -49,6 +49,9 @@ export class ResizerCommand extends Command {
         this.baseCtx.canvas.width = this.previewWidth;
         this.baseCtx.canvas.height = this.previewHeight;
 
+        this.baseCtx.fillStyle = 'white';
+        this.baseCtx.fillRect(0, 0, this.previewWidth, this.previewHeight);
+
         // Place resizers
         this.sideResizer.style.left = this.baseCtx.canvas.width + 'px';
         this.sideResizer.style.top = this.baseCtx.canvas.height / 2 + 'px';

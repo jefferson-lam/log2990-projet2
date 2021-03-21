@@ -24,10 +24,6 @@ export class SidebarPencilComponent implements OnInit {
         this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));
     }
 
-    setMax(numberInput: number): number {
-        return numberInput;
-    }
-
     emitToolSize(): void {
         this.toolSizeChanged.emit(this.toolSize);
     }

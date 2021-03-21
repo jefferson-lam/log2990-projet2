@@ -45,12 +45,6 @@ describe('SidebarRectangleComponent', () => {
         expect(emitSpy).toHaveBeenCalled();
     });
 
-    it('setMax should return input value', () => {
-        const newWidth = 200;
-        const returnValue = component.setMax(newWidth);
-        expect(returnValue).toEqual(newWidth);
-    });
-
     it('should call subscribe method when created', () => {
         component.ngOnInit();
         expect(toolSizeChangedSubscribeSpy).toHaveBeenCalled();

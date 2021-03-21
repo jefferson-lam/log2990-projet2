@@ -283,30 +283,14 @@ describe('EditorComponent', () => {
         expect(eventSpy['preventDefault']).toHaveBeenCalled();
     });
 
-    it("openExportPopUp should open export pop up if canvas isn't empty and pop up isn't open", () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
-            return false;
-        });
+    it("openExportPopUp should open export pop up if pop up isn't open", () => {
         const mockConfig = { maxWidth: MAX_WIDTH_FORM + 'px', maxHeight: MAX_HEIGHT_FORM + 'px' };
         component.isPopUpOpen = false;
         component.openExportPopUp();
 
-        expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
         expect(component.isPopUpOpen).toBeTrue();
-    });
-
-    it('openExportPopUp should not open anything if canvas is empty and pop up closed', () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
-            return true;
-        });
-        component.isPopUpOpen = false;
-        component.openExportPopUp();
-
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-        expect(component.isPopUpOpen).toBeFalse();
     });
 
     it('openExportPopUp should not open anything if pop up is open', () => {
@@ -370,11 +354,12 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).not.toHaveBeenCalled();
     });
 
-    it('isCanvasEmpty should return true if nothing has been drawn', () => {
-        const isCanvasEmptySpy = spyOn(component, 'isCanvasEmpty').and.callThrough();
+    it('isCanvasEmpty should return true if canvas only white', () => {
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const isCanvasEmptySpy = spyOn(component, 'isCanvasEmpty').and.callThrough();
 
         const returnValue = component.isCanvasEmpty();
 
