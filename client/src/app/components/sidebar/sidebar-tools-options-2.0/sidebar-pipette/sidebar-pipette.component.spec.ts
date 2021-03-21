@@ -43,11 +43,11 @@ fdescribe('SidebarPipetteComponent', () => {
     });
 
     it('drawPreview should call canvas functions if centerPixel is not transparent', () => {
-        let arrayData = new Uint8ClampedArray(11 * 11 * 4);
+        const arrayData = new Uint8ClampedArray(11 * 11 * 4);
         for (let i = 0; i < arrayData.length; i++) {
             arrayData[i] = 255;
         }
-        let pixelData = new ImageData(arrayData, 11, 11);
+        const pixelData = new ImageData(arrayData, 11, 11);
         component.rawData = pixelData;
 
         const clipSpy = spyOn(component, 'clipPreview');
@@ -63,7 +63,7 @@ fdescribe('SidebarPipetteComponent', () => {
     });
 
     it('drawPreview should not call canvas functions if centerPixel is transparent', () => {
-        let pixelData = new ImageData(11, 11);
+        const pixelData = new ImageData(11, 11);
         pipetteService.previewData = pixelData;
 
         const clipSpy = spyOn(component, 'clipPreview');
@@ -79,11 +79,11 @@ fdescribe('SidebarPipetteComponent', () => {
     });
 
     it('drawPreview should call putImageData() if centerPixel is not transparent', () => {
-        let arrayData = new Uint8ClampedArray(11 * 11 * 4);
+        const arrayData = new Uint8ClampedArray(11 * 11 * 4);
         for (let i = 0; i < arrayData.length; i++) {
             arrayData[i] = 255;
         }
-        let pixelData = new ImageData(arrayData, 11, 11);
+        const pixelData = new ImageData(arrayData, 11, 11);
         component.rawData = pixelData;
 
         const putImageDataSpy = spyOn(component.ctx, 'putImageData');
@@ -92,8 +92,8 @@ fdescribe('SidebarPipetteComponent', () => {
     });
 
     it('drawPreview should not call putImageData() if centerPixel is transparent', () => {
-        let arrayData = new Uint8ClampedArray([0, 0, 0, 0]);
-        let pixelData = new ImageData(arrayData, 1, 1);
+        const arrayData = new Uint8ClampedArray([0, 0, 0, 0]);
+        const pixelData = new ImageData(arrayData, 1, 1);
         pipetteService.previewData = pixelData;
 
         const putImageDataSpy = spyOn(component.ctx, 'putImageData');

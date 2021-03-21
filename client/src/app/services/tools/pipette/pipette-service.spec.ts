@@ -32,8 +32,8 @@ fdescribe('PipetteServiceService', () => {
         colorService = TestBed.inject(ColorService);
         newColor = { red: '100', green: '0', blue: '233', alpha: 0.8 };
 
-        service['drawingService'].baseCtx = baseCtxStub;
-        service['drawingService'].canvas = baseCtxStub.canvas;
+        service.drawingService.baseCtx = baseCtxStub;
+        service.drawingService.canvas = baseCtxStub.canvas;
 
         leftMouseButton = {
             offsetX: PipetteConstants.OFFSET_TESTS_X,
@@ -146,11 +146,11 @@ fdescribe('PipetteServiceService', () => {
 
     it('pixelDataToRgba should pick the right color', () => {
         service.inUse = true;
-        let arrayData = new Uint8ClampedArray([255, 255, 255, 1]);
-        let pixelData = new ImageData(arrayData, 1, 1);
-        let expectedColor = { red: '255', green: '255', blue: '255', alpha: 1 };
+        const arrayData = new Uint8ClampedArray([255, 255, 255, 1]);
+        const pixelData = new ImageData(arrayData, 1, 1);
+        const expectedColor = { red: '255', green: '255', blue: '255', alpha: 1 };
 
-        let result = service.pixelDataToRgba(pixelData);
+        const result = service.pixelDataToRgba(pixelData);
         expect(result.red).toEqual(expectedColor.red);
         expect(result.green).toEqual(expectedColor.green);
         expect(result.blue).toEqual(expectedColor.blue);
@@ -217,8 +217,8 @@ fdescribe('PipetteServiceService', () => {
 
     it('setPreviewData should set preview data', () => {
         service.inUse = true;
-        let arrayData = new Uint8ClampedArray([255, 255, 255, 1]);
-        let pixelData = new ImageData(arrayData, 1, 1);
+        const arrayData = new Uint8ClampedArray([255, 255, 255, 1]);
+        const pixelData = new ImageData(arrayData, 1, 1);
 
         service.setPreviewData(pixelData);
         expect(service.previewData).toEqual(pixelData);

@@ -33,7 +33,7 @@ export class PipetteService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.inBound) {
             this.mousePosition = this.getPositionFromMouse(event);
-            let contextData = this.drawingService.baseCtx.getImageData(
+            const contextData = this.drawingService.baseCtx.getImageData(
                 this.mousePosition.x - 5,
                 this.mousePosition.y - 5,
                 PipetteConstants.RAWDATA_SIZE,
@@ -46,7 +46,7 @@ export class PipetteService extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.mousePosition = this.getPositionFromMouse(event);
-        let pixelData = this.ctx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);
+        const pixelData = this.ctx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);
 
         if (event.button === MouseConstants.MouseButton.Left && this.inBound) {
             this.setPrimaryColor(this.pixelDataToRgba(pixelData));
@@ -65,12 +65,12 @@ export class PipetteService extends Tool {
     }
 
     pixelDataToRgba(data: ImageData): Rgba {
-        let red = data.data[PipetteConstants.RED_POSTITION];
-        let green = data.data[PipetteConstants.GREEN_POSTITION];
-        let blue = data.data[PipetteConstants.BLUE_POSTITION];
-        let alpha = data.data[PipetteConstants.ALPHA_POSTITION];
+        const red = data.data[PipetteConstants.RED_POSTITION];
+        const green = data.data[PipetteConstants.GREEN_POSTITION];
+        const blue = data.data[PipetteConstants.BLUE_POSTITION];
+        const alpha = data.data[PipetteConstants.ALPHA_POSTITION];
 
-        let color = { red: red.toString(), green: green.toString(), blue: blue.toString(), alpha: alpha };
+        const color = { red: red.toString(), green: green.toString(), blue: blue.toString(), alpha };
         return color;
     }
 

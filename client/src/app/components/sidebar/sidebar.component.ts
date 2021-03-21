@@ -70,7 +70,7 @@ export class SidebarComponent implements OnChanges {
     }
 
     closeSettings(): void {
-        //this.opened = false;
+        // this.opened = false;
     }
 
     openNewDrawing(): void {
