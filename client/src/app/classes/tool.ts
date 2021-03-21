@@ -40,6 +40,8 @@ export abstract class Tool {
 
     onMouseEnter(event: MouseEvent): void {}
 
+    onToolChange(newTool: Tool): void {}
+
     setLineWidth(width: number): void {}
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {}

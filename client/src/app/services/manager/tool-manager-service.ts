@@ -62,6 +62,11 @@ export class ToolManagerService {
         }
     }
 
+    onToolChange(newTool: Tool): void {
+        if (this.currentTool !== newTool) {
+        }
+    }
+
     setPrimaryColorTools(color: string): void {
         this.rectangleService.setPrimaryColor(color);
         this.ellipseService.setPrimaryColor(color);
