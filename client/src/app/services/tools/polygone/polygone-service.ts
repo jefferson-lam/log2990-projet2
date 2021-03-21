@@ -45,7 +45,6 @@ export class PolygoneService extends Tool {
             this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
             const command: Command = new PolygoneCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
-            this.drawShape = true;
         }
         this.inUse = false;
         this.clearCornerCoords();
