@@ -51,7 +51,6 @@ export class LocalDrawingsController {
          *
          */
         this.router.get('/get', async (req: Request, res: Response, next: NextFunction) => {
-            // const drawing: ServerDrawing | undefined = this.localDrawingsService.getDrawing(req.query.id);
             this.localDrawingsService.getDrawing(req.query.id).then((message) => {
                 res.json(message);
             });
@@ -106,7 +105,6 @@ export class LocalDrawingsController {
             const drawing: ServerDrawing = req.body;
             this.localDrawingsService.saveDrawing(drawing).then((message) => {
                 res.json(message);
-                // res.sendStatus(HttpRequestCodes.HTTP_STATUS_CREATED);
             });
         });
 
