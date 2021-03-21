@@ -16,6 +16,7 @@ fdescribe('PipetteServiceService', () => {
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let newColor: Rgba;
     const colorPlaceholderBlack: Rgba = { red: '0', green: '0', blue: '0', alpha: 1 };
+    const colorPlaceholderTransparent: Rgba = { red: '0', green: '0', blue: '0', alpha: 0 };
 
     let baseCtxStub: CanvasRenderingContext2D;
 
@@ -156,13 +157,19 @@ fdescribe('PipetteServiceService', () => {
         expect(result.alpha).toEqual(expectedColor.alpha);
     });
 
-    it('setPrimaryColor should call colorService.setPrimaryColor', () => {
+    it('setPrimaryColor should call colorService.setPrimaryColor if color is not transparent', () => {
         service.inUse = true;
         service.setPrimaryColor(colorPlaceholderBlack);
         expect(colorService.setPrimaryColor).toHaveBeenCalled;
     });
 
-    it('setPrimaryColor should set primary color', () => {
+    it('setPrimaryColor should not call colorService.setPrimaryColor if color is transparent', () => {
+        service.inUse = true;
+        service.setPrimaryColor(colorPlaceholderTransparent);
+        expect(colorService.setPrimaryColor).not.toHaveBeenCalled;
+    });
+
+    it('setPrimaryColor should set primary color if color is not transparent', () => {
         service.inUse = true;
         colorService.primaryColor = colorPlaceholderBlack;
 
@@ -170,19 +177,42 @@ fdescribe('PipetteServiceService', () => {
         expect(colorService.primaryColor).toEqual(newColor);
     });
 
-    it('setSecondaryColor should call colorService.setSecondaryColor', () => {
+    it('setPrimaryColor should not set primary color if color is transparent', () => {
+        service.inUse = true;
+        colorService.primaryColor = colorPlaceholderBlack;
+
+        service.setPrimaryColor(colorPlaceholderTransparent);
+        expect(colorService.primaryColor).toEqual(colorPlaceholderBlack);
+    });
+
+    it('setSecondaryColor should call colorService.setSecondaryColor if color is not transparent', () => {
         service.inUse = true;
 
         service.setSecondaryColor(colorPlaceholderBlack);
         expect(colorService.secondaryColor).toHaveBeenCalled;
     });
 
-    it('setSecondaryColor should set secondary color', () => {
+    it('setSecondaryColor should not call colorService.setSecondaryColor if color is transparent', () => {
+        service.inUse = true;
+
+        service.setSecondaryColor(colorPlaceholderTransparent);
+        expect(colorService.secondaryColor).not.toHaveBeenCalled;
+    });
+
+    it('setSecondaryColor should set secondary color if color is not transparent', () => {
         service.inUse = true;
         colorService.secondaryColor = colorPlaceholderBlack;
 
         service.setSecondaryColor(newColor);
         expect(colorService.secondaryColor).toEqual(newColor);
+    });
+
+    it('setSecondaryColor should set secondary color if color is not transparent', () => {
+        service.inUse = true;
+        colorService.secondaryColor = colorPlaceholderBlack;
+
+        service.setSecondaryColor(colorPlaceholderTransparent);
+        expect(colorService.secondaryColor).toEqual(colorPlaceholderBlack);
     });
 
     it('setPreviewData should set preview data', () => {

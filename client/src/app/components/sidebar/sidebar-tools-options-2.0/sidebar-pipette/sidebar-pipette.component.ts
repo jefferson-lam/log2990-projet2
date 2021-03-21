@@ -37,11 +37,17 @@ export class SidebarPipetteComponent implements OnInit {
         this.ctx.imageSmoothingEnabled = false;
         this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
 
-        this.clipPreview(this.ctx);
-        this.ctx.putImageData(this.rawData, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION);
-        this.zoomPreview(this.ctx);
-        this.centerPixelStroke(this.ctx);
-        this.previewStroke(this.ctx);
+        const centerPixel = new Uint32Array(this.rawData.data.buffer)[60];
+        if (centerPixel != 0) {
+            (document.getElementById('pipettePreview') as HTMLCanvasElement).style.display = 'block';
+            this.clipPreview(this.ctx);
+            this.ctx.putImageData(this.rawData, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION);
+            this.zoomPreview(this.ctx);
+            this.centerPixelStroke(this.ctx);
+            this.previewStroke(this.ctx);
+        } else {
+            (document.getElementById('pipettePreview') as HTMLCanvasElement).style.display = 'none';
+        }
     }
 
     clipPreview(ctx: CanvasRenderingContext2D) {

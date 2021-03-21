@@ -1,6 +1,6 @@
 canvas {
     cursor: crosshair;
-    border: 1px solid #000000;
+    // border: 1px solid #000000;
     position: absolute;
     left: 0;
     top: 0;
@@ -9,8 +9,8 @@ canvas {
 #canvas {
     z-index: 0;
     background-color: white;
-  min-width: 250px;
-  min-height: 250px;
+    min-width: 250px;
+    min-height: 250px;
 }
 
 #previewLayer {
