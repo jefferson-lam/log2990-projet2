@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as PipetteConstants from '@app/constants/pipette-constants';
 import { ColorService } from '@app/services/color/color.service';
-import { PipetteService } from '@app/services/tools/pipette-service';
+import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 
 @Component({
     selector: 'app-sidebar-pipette',

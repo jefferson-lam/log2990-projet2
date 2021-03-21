@@ -3,8 +3,8 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Rgba } from '@app/classes/rgba';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PipetteConstants from '@app/constants/pipette-constants';
+import { ColorService } from '@app/services/color/color.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ColorService } from '../color/color.service';
 import { PipetteService } from './pipette-service';
 
 fdescribe('PipetteServiceService', () => {

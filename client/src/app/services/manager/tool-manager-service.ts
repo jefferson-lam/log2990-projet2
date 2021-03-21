@@ -9,7 +9,7 @@ import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
-import { PipetteService } from '../tools/pipette-service';
+import { PipetteService } from '../tools/pipette/pipette-service';
 
 @Injectable({
     providedIn: 'root',

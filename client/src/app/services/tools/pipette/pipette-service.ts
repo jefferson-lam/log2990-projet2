@@ -4,11 +4,11 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PipetteConstants from '@app/constants/pipette-constants';
+import { ColorService } from '@app/services/color/color.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { ColorService } from '../color/color.service';
-import { ToolManagerService } from '../manager/tool-manager-service';
-import { UndoRedoService } from '../undo-redo/undo-redo.service';
+import { ToolManagerService } from '../../manager/tool-manager-service';
+import { UndoRedoService } from '../../undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -22,7 +22,7 @@ export class PipetteService extends Tool {
     inBoundSource: Subject<boolean> = new BehaviorSubject<boolean>(this.inBound);
     inBoundObservable: Observable<boolean> = this.inBoundSource.asObservable();
 
-    previewData: ImageData = new ImageData(11, 11);
+    previewData: ImageData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
     previewDataSource: Subject<ImageData> = new BehaviorSubject<ImageData>(this.previewData);
     previewDataObservable: Observable<ImageData> = this.previewDataSource.asObservable();
 
@@ -33,7 +33,12 @@ export class PipetteService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.inBound) {
             this.mousePosition = this.getPositionFromMouse(event);
-            let contextData = this.drawingService.baseCtx.getImageData(this.mousePosition.x - 5, this.mousePosition.y - 5, 11, 11);
+            let contextData = this.drawingService.baseCtx.getImageData(
+                this.mousePosition.x - 5,
+                this.mousePosition.y - 5,
+                PipetteConstants.RAWDATA_SIZE,
+                PipetteConstants.RAWDATA_SIZE,
+            );
             this.setPreviewData(contextData);
         }
     }
