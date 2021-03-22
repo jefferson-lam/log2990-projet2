@@ -11,7 +11,6 @@ const CONTINUOUS_PRESS_DELAY_MS = 100;
 export class DirectionalMovementDirective {
     keyPressed: Map<string, number> = new Map();
     leftMovement: number;
-    private hasFirstClickHappened: boolean = false;
     private hasMovedOnce: boolean = false;
     @Output() onCanvasMovement = new EventEmitter();
 
@@ -20,33 +19,29 @@ export class DirectionalMovementDirective {
     @HostListener('keydown', ['$event'])
     async onKeyboardDown(event: KeyboardEvent): Promise<void> {
         event.preventDefault();
-
+        console.log('KEYDOWN: ', event.key);
         if (!this.keyPressed.get(event.key)) {
             // First press
             this.keyPressed.set(event.key, event.timeStamp);
             this.translateSelection();
             await this.delay(FIRST_PRESS_DELAY_MS);
-            this.hasFirstClickHappened = true;
         }
 
         if (this.hasMovedOnce) {
             return;
         }
 
-        if (this.hasFirstClickHappened) {
-            if (!this.hasMovedOnce) {
-                this.hasMovedOnce = true;
-                await this.delay(CONTINUOUS_PRESS_DELAY_MS);
-                this.translateSelection();
-                this.hasMovedOnce = false;
-            }
+        if (!this.hasMovedOnce) {
+            this.hasMovedOnce = true;
+            await this.delay(CONTINUOUS_PRESS_DELAY_MS);
+            this.translateSelection();
+            this.hasMovedOnce = false;
         }
     }
 
     @HostListener('keyup', ['$event'])
     onKeyboardUp(event: KeyboardEvent): void {
         this.keyPressed.set(event.key, 0);
-        this.hasFirstClickHappened = false;
     }
 
     translateLeft(numPixels: number): void {
