@@ -58,13 +58,13 @@ describe('ToolManagerService', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
-    it('select tool on c keypress should select pencil', () => {
+    it('select tool on c keypress should not select pencil', () => {
         const keyboardEvent = {
             key: 'c',
         } as KeyboardEvent;
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
     it('select tool should return pencil as a default value', () => {
@@ -73,7 +73,6 @@ describe('ToolManagerService', () => {
         } as KeyboardEvent;
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('select tool on l keypress should select line', () => {
