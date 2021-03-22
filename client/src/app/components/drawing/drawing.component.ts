@@ -40,9 +40,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         const newTool = changes.currentTool.currentValue;
-        console.log(newTool);
         const canvasStyle = document.getElementsByTagName('canvas')[1].style;
-        console.log(canvasStyle);
         if (newTool === this.toolManager.pencilService) {
             canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
         } else if (newTool === this.toolManager.eraserService) {
