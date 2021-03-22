@@ -272,7 +272,7 @@ describe('PolygoneService', () => {
         } as KeyboardEvent;
 
         service.onKeyboardDown(keyEvent);
-        expect(service.drawShape).toEqual(false);
+        expect(service.inUse).toEqual(false);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
