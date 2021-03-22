@@ -82,7 +82,8 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.drawingService.selectionCanvas.height = this.selectionHeight;
             // We clip the part of the selectionCanvas that we want to select, in this case an ellipse
             this.drawSelectionOnSelectionCanvas();
-            this.deleteSelectionZoneOnBaseCanvas();
+            // We delete the contents of the selection zone. Fill with white to conserve the white background.
+            this.fillEllipse(this.drawingService.baseCtx, this.cornerCoords, this.isCircle, 'white');
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
             this.resizerHandlerService.setResizerPosition(
@@ -157,7 +158,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     undoSelection(): void {
         if (this.isManipulating) {
-            this.clipEllise(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
+            this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
             this.drawingService.baseCtx.drawImage(
                 this.drawingService.selectionCanvas,
                 0,
@@ -185,7 +186,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         let radiusY: number;
         startX = radiusX = this.selectionWidth / 2;
         startY = radiusY = this.selectionHeight / 2;
-        this.clipEllise(this.drawingService.selectionCtx, { x: 0, y: 0 }, this.selectionHeight, this.selectionWidth, 1);
+        this.clipEllipse(this.drawingService.selectionCtx, { x: 0, y: 0 }, this.selectionHeight, this.selectionWidth, 1);
         this.drawingService.selectionCtx.drawImage(
             this.drawingService.canvas,
             this.cornerCoords[SelectionConstants.START_INDEX].x,
@@ -205,24 +206,24 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.drawingService.selectionCtx.stroke();
     }
 
-    deleteSelectionZoneOnBaseCanvas(): void {
+    fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean, fillColor: string): void {
         const ellipseCenter = this.getEllipseCenter(
-            this.cornerCoords[SelectionConstants.START_INDEX],
-            this.cornerCoords[SelectionConstants.END_INDEX],
-            this.isCircle,
+            cornerCoords[SelectionConstants.START_INDEX],
+            cornerCoords[SelectionConstants.END_INDEX],
+            isCircle,
         );
         const startX = ellipseCenter.x;
         const startY = ellipseCenter.y;
         const radiiXAndY = this.getRadiiXAndY(this.cornerCoords);
         const xRadius = radiiXAndY[0];
         const yRadius = radiiXAndY[1];
-        this.drawingService.baseCtx.beginPath();
-        this.drawingService.baseCtx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
-        this.drawingService.baseCtx.fillStyle = 'white';
-        this.drawingService.baseCtx.fill();
+        ctx.beginPath();
+        ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.fillStyle = fillColor;
+        ctx.fill();
     }
 
-    clipEllise(ctx: CanvasRenderingContext2D, start: Vec2, height: number, width: number, offset: number): void {
+    clipEllipse(ctx: CanvasRenderingContext2D, start: Vec2, height: number, width: number, offset: number): void {
         const end: Vec2 = {
             x: start.x + width,
             y: start.y + height,

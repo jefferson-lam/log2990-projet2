@@ -105,9 +105,9 @@ describe('EllipseSelectionCommandService', () => {
         const size = 250;
         const expectedStartX = 125;
         const expectedStartY = 125;
-        const expectedXRadius = 124;
-        const expectedYRadius = 124;
-        command.clipEllise(baseCtxStub, { x: 0, y: 0 }, size, size, OFFSET_RADIUS);
+        const expectedXRadius = 126;
+        const expectedYRadius = 126;
+        command.clipEllipse(baseCtxStub, { x: 0, y: 0 }, size, size, OFFSET_RADIUS);
         expect(ellipseCtxSpy).toHaveBeenCalledWith(
             expectedStartX,
             expectedStartY,

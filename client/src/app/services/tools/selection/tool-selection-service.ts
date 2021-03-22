@@ -116,6 +116,4 @@ export class ToolSelectionService extends Tool {
         this.selectionTool.setSecondaryColor(this.selectionToolSecondaryColor);
         this.drawingService.previewCtx.setLineDash([]);
     }
-
-    undoSelection() {}
 }

@@ -24,12 +24,13 @@ describe('RectangleSelectionService', () => {
     let parentKeyboardUpSpy: jasmine.Spy;
     let parentMouseLeaveSpy: jasmine.Spy;
     let parentMouseEnterSpy: jasmine.Spy;
+    let parentResetSelectedToolSettingsSpy: jasmine.Spy;
 
     let baseCtxDrawImageSpy: jasmine.Spy;
     let baseCtxFillRectSpy: jasmine.Spy;
     let selectionCtxDrawImageSpy: jasmine.Spy;
-    let parentResetSelectedToolSettingsSpy: jasmine.Spy;
     let computeSquareCoordsSpy: jasmine.Spy;
+    let resetCanvasStateSpy: jasmine.Spy;
 
     let executeSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
@@ -83,6 +84,7 @@ describe('RectangleSelectionService', () => {
         baseCtxFillRectSpy = spyOn(baseCtxStub, 'fillRect').and.callThrough();
         selectionCtxDrawImageSpy = spyOn(selectionCtxStub, 'drawImage').and.callThrough();
         computeSquareCoordsSpy = spyOn(service, 'computeSquareCoords').and.callThrough();
+        resetCanvasStateSpy = spyOn(service, 'resetCanvasState').and.callThrough();
 
         mouseEvent = {
             offsetX: 25,
@@ -329,6 +331,42 @@ describe('RectangleSelectionService', () => {
         expect(baseCtxDrawImageSpy).not.toHaveBeenCalled();
         expect(parentResetSelectedToolSettingsSpy).not.toHaveBeenCalled();
         expect(service.isManipulating).toBeTruthy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('undoSelection should pass if isManipulating is false', () => {
+        service.isManipulating = false;
+        expect(() => {
+            service.undoSelection();
+        }).not.toThrow();
+    });
+
+    it('undoSelection should call appropriate functions to restore state', () => {
+        const sw = 75;
+        const sh = 210;
+        service.isManipulating = true;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.undoSelection();
+        expect(baseCtxDrawImageSpy).toHaveBeenCalled();
+        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(
+            selectionCtxStub.canvas,
+            0,
+            0,
+            sw,
+            sh,
+            service.cornerCoords[0].x,
+            service.cornerCoords[0].y,
+            sw,
+            sh,
+        );
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
         expect(service.isEscapeDown).toBeFalsy();
     });
 
