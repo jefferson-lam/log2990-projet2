@@ -100,6 +100,11 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.currentTool.onMouseEnter(event);
     }
 
+    @HostListener('contextmenu', ['$event'])
+    onContextMenu(event: MouseEvent): void {
+        event.preventDefault();
+    }
+
     get baseWidth(): number {
         return this.canvasSize.x;
     }

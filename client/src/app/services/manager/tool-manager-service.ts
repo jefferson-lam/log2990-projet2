@@ -7,6 +7,7 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 
@@ -23,6 +24,7 @@ export class ToolManagerService {
         public rectangleService: RectangleService,
         public ellipseService: EllipseService,
         public drawingService: DrawingService,
+        public pipetteService: PipetteService,
         public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
     ) {
@@ -37,6 +39,7 @@ export class ToolManagerService {
             .set(ToolManagerConstants.LINE_KEY, this.lineService)
             .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
             .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
+            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
             .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService);
     }

@@ -68,10 +68,6 @@ export class SidebarComponent implements OnChanges {
         this.opened = true;
     }
 
-    closeSettings(): void {
-        this.opened = false;
-    }
-
     openNewDrawing(): void {
         this.openNewDrawingPopUp.emit();
     }
