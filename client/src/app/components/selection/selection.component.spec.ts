@@ -10,6 +10,7 @@ describe('SelectionComponent', () => {
     let resizerHandlerService: ResizerHandlerService;
     let setResizerPositionSpy: jasmine.Spy;
     let getTransformValuesSpy: jasmine.Spy;
+    let repositionResizersSpy: jasmine.Spy;
     let componentSetResizerPositionSpy: jasmine.Spy;
 
     beforeEach(async(() => {
@@ -28,10 +29,21 @@ describe('SelectionComponent', () => {
         });
         getTransformValuesSpy = spyOn(component, 'getTransformValues').and.callThrough();
         componentSetResizerPositionSpy = spyOn(component, 'setResizerPosition').and.callThrough();
+        repositionResizersSpy = spyOn(component, 'repositionResizers').and.callThrough();
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('onCanvasMove should call repositionResizers if emittedValue is true', () => {
+        component.onCanvasMove(true);
+        expect(repositionResizersSpy).toHaveBeenCalled();
+    });
+
+    it('onCanvasMove should call repositionResizers if emittedValue is false', () => {
+        component.onCanvasMove(false);
+        expect(repositionResizersSpy).not.toHaveBeenCalled();
     });
 
     it('repositionResizers should call transformValues and setResizerPosition', () => {

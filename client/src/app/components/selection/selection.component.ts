@@ -38,6 +38,12 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.bottomRightResizer = this.bottomRightResizer.nativeElement;
     }
 
+    onCanvasMove(emitValue: boolean) {
+        if (emitValue) {
+            this.repositionResizers({} as CdkDragMove);
+        }
+    }
+
     repositionResizers(event: CdkDragMove): void {
         const transformValues: Vec2 = this.getTransformValues(this.selectionCanvas.nativeElement);
         this.setResizerPosition(transformValues);
