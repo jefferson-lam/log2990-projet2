@@ -7,8 +7,8 @@
         <mat-slider id="width" color="warn"
                     thumbLabel
                     [tickInterval]='tickInterval'
-                    [min]="min"
-                    [max]="max"
+                    [min]="minLineWidth"
+                    [max]="maxLineWidth"
                     [(value)]="toolSize"
                     (change)="emitToolSize()">
         </mat-slider>
@@ -17,7 +17,7 @@
         <div id="junction-type">
           <p> Points de jonction : </p>
           <mat-checkbox id="dot-bool" color="warn"
-                        [(checked)]="withJunction"
+                        [checked]="withJunction"
                         (change)="emitWithJunction()"
           ></mat-checkbox>
         </div>
@@ -26,8 +26,8 @@
           <mat-slider  color="warn"
                        thumbLabel
                        [tickInterval]="1"
-                       [min]="1"
-                       [max]="100"
+                       [min]="minJunctionRadius"
+                       [max]="maxJunctionRadius"
                        [(value)]="junctionRadius"
                        (change)="emitJunctionRadius()"></mat-slider>
         </div>

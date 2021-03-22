@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
 
 @Component({
@@ -11,6 +11,10 @@ export class RgbSelectorComponent implements OnChanges {
     green: string = '0';
     blue: string = '0';
     invalidInput: boolean = false;
+
+    @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
+    @ViewChild('greenInput', { static: false }) greenInput: ElementRef<HTMLInputElement>;
+    @ViewChild('blueInput', { static: false }) blueInput: ElementRef<HTMLInputElement>;
 
     @Input()
     initialColor: Rgba = { red: '255', green: '255', blue: '255', alpha: 1 };
@@ -29,13 +33,10 @@ export class RgbSelectorComponent implements OnChanges {
     onInput(evt: Event): void {
         const input = (evt.target as HTMLInputElement).value;
         if (input !== undefined && this.isValidHexCode(input)) {
-            if ('red-input' === (evt.target as HTMLInputElement).id) {
-                this.red = this.convertHexToDec(input);
-            } else if ('green-input' === (evt.target as HTMLInputElement).id) {
-                this.green = this.convertHexToDec(input);
-            } else {
-                this.blue = this.convertHexToDec(input);
-            }
+            this.red = this.convertHexToDec(this.redInput.nativeElement.value);
+            this.green = this.convertHexToDec(this.greenInput.nativeElement.value);
+            this.blue = this.convertHexToDec(this.blueInput.nativeElement.value);
+
             this.emitColor(this.newColor);
             this.invalidInput = false;
         } else {

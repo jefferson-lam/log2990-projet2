@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Rgba } from '@app/classes/rgba';
-import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { ColorHistoryComponent } from './color-history/color-history.component';
 import { ColorPickerComponent } from './color-picker.component';
@@ -71,34 +70,6 @@ describe('ColorPickerComponent', () => {
         expect(component.showPrimaryOptions).toBeFalse();
     });
 
-    it('saveColor pushes colors with full opacity', () => {
-        component.saveColor(newColor);
-        // new color is set exactly the same as primary color
-        expect(component.savedColors[0]).not.toEqual(newColor);
-        expect(component.savedColors[0].alpha).toEqual(1);
-    });
-
-    it('saveColor removes last color when color history reaches maximum capacity', () => {
-        const popSpy = spyOn(component.savedColors, 'pop');
-        component.savedColors.length = ColorConstants.MAX_SAVED_COLORS;
-        component.saveColor(newColor);
-        expect(popSpy).toHaveBeenCalled();
-    });
-
-    it('saveColor keeps all existing colors when color history has not reached max capacity', () => {
-        const popSpy = spyOn(component.savedColors, 'pop');
-        component.savedColors.length = 1;
-        component.saveColor(newColor);
-        expect(popSpy).not.toHaveBeenCalled();
-    });
-
-    it('saveColor adds new color to the start of array', () => {
-        component.saveColor(newColor);
-        const pushedColor = newColor;
-        pushedColor.alpha = 1;
-        expect(component.savedColors[0]).toEqual(pushedColor);
-    });
-
     it('confirmColorPick sets primary color is showPrimary is true', () => {
         const setPrimaryColorSpy = spyOn(colorService, 'setPrimaryColor');
         component.showPrimaryOptions = true;
@@ -114,7 +85,7 @@ describe('ColorPickerComponent', () => {
     });
 
     it('confirmColorPick calls saveColor', () => {
-        const saveColorSpy = spyOn(component, 'saveColor');
+        const saveColorSpy = spyOn(colorService, 'saveColor');
         component.confirmColorPick(newColor);
         expect(saveColorSpy).toHaveBeenCalled();
     });

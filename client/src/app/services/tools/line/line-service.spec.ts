@@ -16,12 +16,7 @@ describe('LineService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    // let drawLineSpy: jasmine.Spy<any>;
     let rotateLineSpy: jasmine.Spy<any>;
-
-    let getImageDataSpy: jasmine.Spy<any>;
-    let putImageDataSpy: jasmine.Spy<any>;
-    let ctxArcSpy: jasmine.Spy<any>;
 
     let executeSpy: jasmine.Spy;
     let previewExecuteSpy: jasmine.Spy;
@@ -50,16 +45,9 @@ describe('LineService', () => {
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
 
-        getImageDataSpy = spyOn<any>(service['drawingService'].baseCtx, 'getImageData').and.callThrough();
-        putImageDataSpy = spyOn<any>(service['drawingService'].baseCtx, 'putImageData').and.callThrough();
-        ctxArcSpy = spyOn<any>(service['drawingService'].baseCtx, 'arc').and.callThrough();
-
-        service.linePathData = [
-            { x: 133, y: 256 },
-            { x: 257, y: 399 },
-        ];
-        service.mousePosition = { x: 289, y: 400 };
         service.initialPoint = { x: 394, y: 432 };
+        service.linePathData = [service.initialPoint, { x: 133, y: 256 }, { x: 257, y: 399 }];
+        service.mousePosition = { x: 289, y: 400 };
 
         mouseEvent = {
             offsetX: 25,
@@ -157,12 +145,6 @@ describe('LineService', () => {
         expect(service.withJunction).toBeTruthy();
     });
 
-    it(' mouseClick should set mouseDownCoord to correct position', () => {
-        const expectedResult: Vec2 = { x: 25, y: 25 };
-        service.onMouseClick(mouseEvent);
-        expect(service.mouseDownCoord).toEqual(expectedResult);
-    });
-
     it('keyboard down events should not do anything if user is not drawing', () => {
         const keyboardEvent = {
             key: 'Shift',
@@ -173,27 +155,98 @@ describe('LineService', () => {
         }).not.toThrow();
     });
 
-    it('on shift keyboard down event should call rotate line if shift key is not down and is drawing', () => {
+    it('onKeyboardDown event should set shiftDown to true and call stickToClosest45Angle and drawPreview if inUse && shift key', () => {
+        const closestAnglespy = spyOn(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
         const shiftKeyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
+
         service.shiftDown = false;
         service.inUse = true;
         service.onKeyboardDown(shiftKeyboardEvent);
-        expect(rotateLineSpy).toHaveBeenCalled();
-        expect(setPreviewValuesSpy).toHaveBeenCalled();
-        expect(previewExecuteSpy).toHaveBeenCalled();
+
+        expect(closestAnglespy).toHaveBeenCalled();
+        expect(drawPreviewSpy).toHaveBeenCalled();
+        expect(service.shiftDown).toBeTrue();
     });
-    it('on shift keyboard down event should not rotateline if shift key is already pressed', () => {
+
+    it('onKeyboardDown event should not set shiftDown to true and not call stickToClosest45Angle and drawPreview if inUse && not shift key', () => {
+        const closestAnglespy = spyOn(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const shiftKeyboardEvent = {
+            key: 'e',
+        } as KeyboardEvent;
+
+        service.shiftDown = false;
+        service.inUse = true;
+        service.onKeyboardDown(shiftKeyboardEvent);
+
+        expect(closestAnglespy).not.toHaveBeenCalled();
+        expect(drawPreviewSpy).not.toHaveBeenCalled();
+        expect(service.shiftDown).toBeFalse();
+    });
+
+    it('onKeyboardDown event should not set shiftDown to true and not call stickToClosest45Angle and drawPreview if not inUse && shift key', () => {
+        const closestAnglespy = spyOn(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
         const shiftKeyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
-        service.shiftDown = true;
-        service.inUse = true;
+
+        service.shiftDown = false;
+        service.inUse = false;
         service.onKeyboardDown(shiftKeyboardEvent);
-        expect(rotateLineSpy).not.toHaveBeenCalled();
-        expect(setPreviewValuesSpy).not.toHaveBeenCalled();
-        expect(previewExecuteSpy).not.toHaveBeenCalled();
+
+        expect(closestAnglespy).not.toHaveBeenCalled();
+        expect(drawPreviewSpy).not.toHaveBeenCalled();
+        expect(service.shiftDown).toBeFalse();
+    });
+
+    it('on shift keyboard down event should not call stickToClosest45Angle and drawPreview if not inUse', () => {
+        const closestAnglespy = spyOn(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const shiftKeyboardEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+
+        service.shiftDown = false;
+        service.inUse = false;
+        service.onKeyboardDown(shiftKeyboardEvent);
+
+        expect(closestAnglespy).not.toHaveBeenCalled();
+        expect(drawPreviewSpy).not.toHaveBeenCalled();
+    });
+
+    it('stickToClosest45Angle should call calculateAngle', () => {
+        const calculateAngleSpy = spyOn(service, 'calculateAngle');
+
+        service.stickToClosest45Angle();
+
+        expect(calculateAngleSpy).toHaveBeenCalled();
+        expect(calculateAngleSpy).toHaveBeenCalledWith(service.linePathData[service.linePathData.length - 2], service.mousePosition);
+    });
+
+    it('stickToClosest45Angle should call roundAngleToNearestMultiple', () => {
+        const roundAngleSpy = spyOn(service, 'roundAngleToNearestMultiple');
+
+        service.stickToClosest45Angle();
+
+        expect(roundAngleSpy).toHaveBeenCalled();
+    });
+
+    it('stickToClosest45Angle should call calculateLengthAndFlatten', () => {
+        const calculateLengthSpy = spyOn(service, 'calculateLengthAndFlatten').and.callThrough();
+
+        service.stickToClosest45Angle();
+
+        expect(calculateLengthSpy).toHaveBeenCalled();
+    });
+
+    it('stickToClosest45Angle should call rotateline', () => {
+        service.stickToClosest45Angle();
+
+        expect(rotateLineSpy).toHaveBeenCalled();
     });
 
     it('on shift keyup should set preview line back to mouse position only if user is drawing', () => {
@@ -218,132 +271,165 @@ describe('LineService', () => {
         }).not.toThrow();
     });
 
-    it('on escape keyboard down event should set internal attribute isEscapeKeyDown to true if user is drawing', () => {
-        const escapeKeyboardEvent = {
-            key: 'Escape',
-        } as KeyboardEvent;
-
-        service.inUse = true;
-        service.onKeyboardDown(escapeKeyboardEvent);
-        expect(service.isEscapeKeyDown).toBeTruthy();
-    });
-
     it('on escape keyboard up should cancel the line currently being drawn', () => {
         const escapeKeyboardEvent = {
             key: 'Escape',
         } as KeyboardEvent;
 
         service.inUse = true;
-        service.isEscapeKeyDown = true;
         service.onKeyboardUp(escapeKeyboardEvent);
-        expect(service.isEscapeKeyDown).toBeFalsy();
         expect(service.inUse).toBeFalsy();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
-    it('on backspace keyboard down should set internal attribute isBackspaceDown to true', () => {
+    it('on backspace keyboard up should call pop of linePathData and finishLine', () => {
         const backspaceKeyboardEvent = {
             key: 'Backspace',
         } as KeyboardEvent;
-        service.inUse = true;
-        service.onKeyboardDown(backspaceKeyboardEvent);
-        expect(service.isBackspaceKeyDown).toBeTruthy();
-    });
+        const popSpy = spyOn(service.linePathData, 'pop');
+        const finishLineSpy = spyOn(service, 'finishLine');
 
-    it('on backspace keyboard up should restore the state of the canvas to delete the last drawn line', () => {
-        const backspaceKeyboardEvent = {
-            key: 'Backspace',
-        } as KeyboardEvent;
-        const canvasWidth = 350;
-        const canvasHeight = 350;
         service.inUse = true;
-        service.isBackspaceKeyDown = true;
-        service.canvasState = drawServiceSpy.baseCtx.getImageData(0, 0, canvasWidth, canvasHeight);
         service.onKeyboardUp(backspaceKeyboardEvent);
-        expect(putImageDataSpy).toHaveBeenCalledWith(service.canvasState, 0, 0);
+
+        expect(popSpy).toHaveBeenCalled();
+        expect(finishLineSpy).toHaveBeenCalled();
     });
 
-    it('on backspace up should not trigger if the backspace key was not down', () => {
-        const backspaceKeyboardEvent = {
-            key: 'Backspace',
-        } as KeyboardEvent;
-        service.inUse = true;
-        service.isBackspaceKeyDown = false;
-        service.onKeyboardUp(backspaceKeyboardEvent);
-        expect(putImageDataSpy).not.toHaveBeenCalled();
-    });
-
-    it('on mouse click should start drawing if user has not started a drawing yet', () => {
-        service.onMouseClick(mouseEvent);
+    it('onMouseDown should start drawing if user has not started a drawing yet', () => {
+        service.onMouseDown(mouseEvent);
         expect(service.inUse).toBeTruthy();
-        expect(service.mouseDownCoord).toEqual({ x: 25, y: 25 });
+        expect(service.initialPoint).toEqual({ x: 25, y: 25 });
         expect(service.linePathData[0]).toEqual({ x: 25, y: 25 });
+        expect(service.linePathData.length).toBe(2);
     });
 
-    it('on mouse click, canvas should save its state to allow undo', () => {
+    it('onMouseDown should call drawPreview if inUse', () => {
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
         service.inUse = true;
-        service.onMouseClick(mouseEvent);
-        expect(getImageDataSpy).toHaveBeenCalled();
+        service.onMouseDown(mouseEvent);
+        expect(drawPreviewSpy).toHaveBeenCalled();
     });
 
-    it('on mouse click, if withJunction is set to false, will only draw line and not draw arcs', () => {
-        const mouseMoveEvent = {
-            offsetX: 399,
-            offsetY: 420,
-        } as MouseEvent;
+    it('onMouseDown should push new point on path if inUse', () => {
+        const previousLength = service.linePathData.length;
         service.inUse = true;
-        service.withJunction = false;
-        service.onMouseMove(mouseMoveEvent);
-        service.onMouseClick(mouseMoveEvent);
-        expect(ctxArcSpy).not.toHaveBeenCalled();
+        service.onMouseDown(mouseEvent);
+        expect(service.linePathData.length).toBe(previousLength + 1);
     });
 
-    it('on mouse click should draw a line to the mouse position when user has started a drawing', () => {
-        service.inUse = true;
-        service.onMouseClick(mouseEvent);
-        expect(executeSpy).toHaveBeenCalled();
-        expect(service.linePathData[0]).toEqual({ x: 257, y: 399 });
-    });
+    it('on mouse dblclick should remove last two points and call finisLine()', () => {
+        const finishLineSpy = spyOn(service, 'finishLine');
+        const spliceSpy = spyOn(service.linePathData, 'splice');
 
-    it('on mouse click, drawn line ending point should connect to initial point if distance is within 20px', () => {
-        const mouseMoveEvent = {
-            offsetX: 399,
-            offsetY: 425,
-        } as MouseEvent;
-        service.inUse = true;
-        service.onMouseMove(mouseMoveEvent);
-        service.onMouseClick(mouseMoveEvent);
-        expect(executeSpy).toHaveBeenCalled();
-    });
-
-    it('on mouse click, should call executeCommand only if point is different from previous', () => {
-        service.inUse = true;
-        service.onMouseClick(mouseEvent);
-        service.onMouseClick(mouseEvent);
-        expect(executeSpy).toHaveBeenCalled();
-        expect(executeSpy).toHaveBeenCalledTimes(1);
-    });
-
-    it('on mouse dblclick should clear linePathData and stop drawing', () => {
         service.inUse = true;
         service.onMouseDoubleClick(mouseEvent);
-        expect(service.linePathData).toEqual([]);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(service.inUse).toBeFalsy();
+
+        expect(spliceSpy).toHaveBeenCalled();
+        expect(spliceSpy).toHaveBeenCalledWith(service.linePathData.length - 2, 2);
+        expect(finishLineSpy).toHaveBeenCalled();
     });
 
     it('mouse double click should not do anything if user is not drawing', () => {
+        const finishLineSpy = spyOn(service, 'finishLine');
+        const spliceSpy = spyOn(service.linePathData, 'splice');
+
         service.inUse = false;
-        expect((): void => {
-            service.onMouseDoubleClick(mouseEvent);
-        }).not.toThrow();
+        service.onMouseDoubleClick(mouseEvent);
+
+        expect(spliceSpy).not.toHaveBeenCalled();
+        expect(spliceSpy).not.toHaveBeenCalledWith(service.linePathData.length - 2, 2);
+        expect(finishLineSpy).not.toHaveBeenCalled();
     });
 
-    it('on mouse move should not draw if user is not drawing', () => {
+    it('onMouseMove should not draw if user is not drawing', () => {
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const getPositionSpy = spyOn(service, 'getPositionFromMouse');
+
         service.inUse = false;
-        expect((): void => {
-            service.onMouseMove(mouseEvent);
-        }).not.toThrow();
+        service.onMouseMove(mouseEvent);
+
+        expect(drawPreviewSpy).not.toHaveBeenCalled();
+        expect(getPositionSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call getPositionFromMouse if inUse', () => {
+        const getPositionSpy = spyOn(service, 'getPositionFromMouse').and.callThrough();
+
+        service.inUse = true;
+        service.onMouseMove(mouseEvent);
+
+        expect(getPositionSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call stickToClosest45Angle and drawPreview if inUse and shiftDown', () => {
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const closestAngleSpy = spyOn(service, 'stickToClosest45Angle');
+
+        service.inUse = true;
+        service.shiftDown = true;
+        service.onMouseMove(mouseEvent);
+
+        expect(closestAngleSpy).toHaveBeenCalled();
+        expect(drawPreviewSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call calculateDistance and drawPreview if inUse and not shiftDown', () => {
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const calculateDistanceSpy = spyOn(service, 'calculateDistance');
+
+        service.inUse = true;
+        service.shiftDown = false;
+        service.onMouseMove(mouseEvent);
+
+        expect(calculateDistanceSpy).toHaveBeenCalled();
+        expect(calculateDistanceSpy).toHaveBeenCalledWith(service.mousePosition, service.initialPoint);
+        expect(drawPreviewSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should set last point of path to initial point if distance with mousePosition less than 20px and inUse and not shiftDown', () => {
+        const calculateDistanceSpy = spyOn(service, 'calculateDistance').and.callFake(() => {
+            return LineConstants.PIXEL_PROXIMITY_LIMIT - 1;
+        });
+
+        service.inUse = true;
+        service.shiftDown = false;
+        service.onMouseMove(mouseEvent);
+
+        expect(calculateDistanceSpy).toHaveBeenCalled();
+        expect(calculateDistanceSpy).toHaveBeenCalledWith(service.mousePosition, service.initialPoint);
+        expect(service.linePathData[service.linePathData.length - 1]).toBe(service.initialPoint);
+    });
+
+    it('onMouseMove should set last point of path to mousePosition if distance between mousePosition and initilaPoint greater than 20px and inUse and not shiftDown', () => {
+        const calculateDistanceSpy = spyOn(service, 'calculateDistance').and.callFake(() => {
+            return LineConstants.PIXEL_PROXIMITY_LIMIT + 1;
+        });
+
+        service.inUse = true;
+        service.shiftDown = false;
+        service.onMouseMove(mouseEvent);
+
+        expect(calculateDistanceSpy).toHaveBeenCalled();
+        expect(calculateDistanceSpy).toHaveBeenCalledWith(service.mousePosition, service.initialPoint);
+        expect(service.linePathData[service.linePathData.length - 1]).toBe(service.mousePosition);
+    });
+
+    it('finishLine should create and execute new LineCommand', () => {
+        service.finishLine();
+
+        expect(executeSpy).toHaveBeenCalled();
+    });
+
+    it('finishLine should clear previewCtx,path and set inUse to false', () => {
+        const clearPathSpy = spyOn<any>(service, 'clearPath');
+
+        service.finishLine();
+
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
+        expect(clearPathSpy).toHaveBeenCalled();
+        expect(service.inUse).toBeFalse();
     });
 
     /**
