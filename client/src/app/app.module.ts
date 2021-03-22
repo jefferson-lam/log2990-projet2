@@ -45,6 +45,7 @@ import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-optio
 import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-polygone/sidebar-polygone.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SidebarRectangleSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle-selection/sidebar-rectangle-selection/sidebar-rectangle-selection.component';
 
 @NgModule({
     declarations: [
@@ -72,6 +73,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         TagInputComponent,
         TitleInputComponent,
         KeyboardListenerDirective,
+        SidebarRectangleSelectionComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
