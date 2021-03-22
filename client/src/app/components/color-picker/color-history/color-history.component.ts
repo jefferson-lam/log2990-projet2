@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
 import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from '@app/services/color/color.service';
@@ -8,14 +8,13 @@ import { ColorService } from '@app/services/color/color.service';
     templateUrl: './color-history.component.html',
     styleUrls: ['./color-history.component.scss'],
 })
-export class ColorHistoryComponent implements AfterViewInit, OnChanges, OnInit {
+export class ColorHistoryComponent implements AfterViewInit, OnInit {
     private ctx: CanvasRenderingContext2D;
     primary: Rgba;
     secondary: Rgba;
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
 
-    @Input()
     savedColors: Rgba[] = new Array();
 
     constructor(public colorService: ColorService) {}
@@ -26,6 +25,10 @@ export class ColorHistoryComponent implements AfterViewInit, OnChanges, OnInit {
         });
         this.colorService.secondaryObservable.subscribe((newColor: Rgba) => {
             this.secondary = newColor;
+        });
+        this.colorService.savedColorsObservable.subscribe((colors: Rgba[]) => {
+            this.savedColors = colors;
+            this.drawHistory();
         });
     }
 
@@ -54,12 +57,6 @@ export class ColorHistoryComponent implements AfterViewInit, OnChanges, OnInit {
                 }
                 this.ctx.fillRect(x, y, x + width / ColorConstants.COLOR_HISTORY_COLUMNS, y + height / ColorConstants.COLOR_HISTORY_ROWS);
             }
-        }
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.savedColors) {
-            this.drawHistory();
         }
     }
 

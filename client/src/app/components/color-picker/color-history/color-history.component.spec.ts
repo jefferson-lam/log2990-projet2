@@ -1,4 +1,3 @@
-import { SimpleChange, SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from '@app/services/color/color.service';
@@ -71,22 +70,6 @@ describe('ColorHistoryComponent', () => {
         const drawSpy = spyOn(component, 'drawHistory');
         component.ngAfterViewInit();
         expect(drawSpy).toHaveBeenCalled();
-    });
-
-    it('should call drawHistory if savedColors changes', () => {
-        const drawSpy = spyOn(component, 'drawHistory');
-        component.ngOnChanges({
-            savedColors: new SimpleChange(null, component.savedColors, false),
-        });
-        fixture.detectChanges();
-        expect(drawSpy).toHaveBeenCalled();
-    });
-
-    it('should not call drawHistory if savedColors doesnt change', () => {
-        const drawSpy = spyOn(component, 'drawHistory');
-        component.ngOnChanges({} as SimpleChanges);
-        fixture.detectChanges();
-        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('should fill history with set colors if savedColors is not empty', () => {
