@@ -34,7 +34,7 @@
                     id="icon-button-{{ tool.name }}"
                     matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
                     [matTooltipPosition]="'right'"
-                    (click)="onSelectTool(tool);"
+                    (click)="onSelectTool(tool)"
                 >
                     {{ tool.icon }}
                 </mat-icon>
@@ -52,6 +52,7 @@
                 <app-sidebar-line class="sidebar-tool-options" *ngSwitchCase="'l'"></app-sidebar-line>
                 <app-sidebar-polygone class="sidebar-tool-options" *ngSwitchCase="'3'"></app-sidebar-polygone>
                 <app-sidebar-aerosol class="sidebar-tool-options" *ngSwitchCase="'a'"></app-sidebar-aerosol>
+                <app-sidebar-pipette class="sidebar-tool-options" *ngSwitchCase="'i'"></app-sidebar-pipette>
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

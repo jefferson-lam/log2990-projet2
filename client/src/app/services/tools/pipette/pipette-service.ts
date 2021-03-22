@@ -49,10 +49,10 @@ export class PipetteService extends Tool {
         const pixelData = this.ctx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1);
 
         if (event.button === MouseConstants.MouseButton.Left && this.inBound) {
-            this.setPrimaryColor(this.pixelDataToRgba(pixelData));
+            this.setPrimaryColorAsRgba(this.pixelDataToRgba(pixelData));
         }
         if (event.button === MouseConstants.MouseButton.Right && this.inBound) {
-            this.setSecondaryColor(this.pixelDataToRgba(pixelData));
+            this.setSecondaryColorAsRgba(this.pixelDataToRgba(pixelData));
         }
     }
 
@@ -74,14 +74,14 @@ export class PipetteService extends Tool {
         return color;
     }
 
-    setPrimaryColor(color: Rgba): void {
+    setPrimaryColorAsRgba(color: Rgba): void {
         if (color.alpha !== 0) {
             this.colorService.setPrimaryColor(color);
             this.colorService.saveColor(color);
         }
     }
 
-    setSecondaryColor(color: Rgba): void {
+    setSecondaryColorAsRgba(color: Rgba): void {
         if (color.alpha !== 0) {
             this.colorService.setSecondaryColor(color);
             this.colorService.saveColor(color);

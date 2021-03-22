@@ -12,6 +12,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle-servic
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { Subject } from 'rxjs';
+import { PipetteService } from '../tools/pipette/pipette-service';
 
 @Injectable({
     providedIn: 'root',
@@ -31,6 +32,7 @@ export class ToolManagerService {
         public ellipseSelectionService: EllipseSelectionService,
         public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
+        public pipetteService: PipetteService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -46,7 +48,8 @@ export class ToolManagerService {
             .set(ToolManagerConstants.RECTANGLE_SELECTION_KEY, this.rectangleSelectionService)
             .set(ToolManagerConstants.ELLIPSE_SELECTION_KEY, this.ellipseSelectionService)
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
-            .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService);
+            .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
+            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService);
     }
 
     selectTool(event: KeyboardEvent): Tool {
