@@ -18,11 +18,13 @@
             <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
                 <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
             </li>
-
             <li id="exportButton">
                 <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
                     >open_in_new</mat-icon
                 >
+            </li>
+            <li id="selectAllButton">
+                <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
             </li>
         </ul>
         <ul class="tools-sidebar">

@@ -55,6 +55,8 @@ export class SelectionComponent implements AfterViewInit {
         this.selectionCanvas.nativeElement.style.top = newTopPosition + 'px';
         this.selectionCanvas.nativeElement.style.left = newLeftPosition + 'px';
         event.source._dragRef.reset();
+        // To handle the case where the selection is moved to negative values when done dragging
+        this.setResizerPosition({ x: 0, y: 0 });
     }
 
     getTransformValues(element: HTMLElement): Vec2 {
