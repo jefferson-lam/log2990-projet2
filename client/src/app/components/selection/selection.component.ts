@@ -3,7 +3,6 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
-import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 @Component({
     selector: 'app-selection',
     templateUrl: './selection.component.html',
@@ -23,11 +22,7 @@ export class SelectionComponent implements AfterViewInit {
 
     selectionCtx: CanvasRenderingContext2D;
 
-    constructor(
-        private drawingService: DrawingService,
-        public resizerHandlerService: ResizerHandlerService,
-        public rectangleSelectionService: RectangleSelectionService,
-    ) {}
+    constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {}
 
     ngAfterViewInit(): void {
         this.selectionCtx = this.selectionCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
