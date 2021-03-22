@@ -21,6 +21,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class EditorComponent implements OnInit {
     currentTool: Tool;
     isPopUpOpen: boolean;
+    isUndoSelection: boolean;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -31,6 +32,7 @@ export class EditorComponent implements OnInit {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
         this.isPopUpOpen = false;
+        this.isUndoSelection = false;
     }
 
     ngOnInit(): void {
@@ -68,8 +70,22 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.control.z', ['$event'])
     onCtrlZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+            if (this.currentTool.isManipulating) {
+                this.currentTool.undoSelection();
+                this.isUndoSelection = true;
+            }
+        }
+        if (!this.isPopUpOpen && !this.currentTool.inUse && !this.isUndoSelection) {
             this.undoRedoService.undo();
+        }
+        this.isUndoSelection = false;
+    }
+
+    @HostListener('window:keydown', ['$event'])
+    onKeyboardDown(event: KeyboardEvent): void {
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3)$/)) {
+            this.setTool(this.toolManager.selectTool(event));
         }
     }
 
@@ -79,26 +95,6 @@ export class EditorComponent implements OnInit {
         this.setTool(this.toolManager.getTool(RECTANGLE_SELECTION_KEY));
         if (this.currentTool instanceof RectangleSelectionService) {
             this.currentTool.selectAll();
-        }
-    }
-
-    @HostListener('window:keydown', ['$event'])
-    onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3)$/)) {
-            this.setTool(this.toolManager.selectTool(event));
-        } else if (event.key === 'Escape') {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.currentTool.onKeyboardDown(event);
-            }
-        }
-    }
-
-    @HostListener('window:keyup', ['$event'])
-    onKeyboardUp(event: KeyboardEvent): void {
-        if (event.key === 'Escape') {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.currentTool.onKeyboardUp(event);
-            }
         }
     }
 

@@ -11,6 +11,7 @@ import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -18,6 +19,7 @@ import { RectangleSelectionService } from '@app/services/tools/selection/rectang
 export class ToolManagerService {
     keyBindings: Map<string, Tool> = new Map();
     currentTool: Tool;
+    currentToolSubject: Subject<Tool> = new Subject<Tool>();
     constructor(
         public pencilService: PencilService,
         public eraserService: EraserService,
@@ -48,7 +50,9 @@ export class ToolManagerService {
     }
 
     selectTool(event: KeyboardEvent): Tool {
-        return this.getTool(event.key);
+        const tool = this.getTool(event.key);
+        this.currentToolSubject.next(tool);
+        return tool;
     }
 
     getTool(keyShortcut: string): Tool {

@@ -39,7 +39,7 @@ export class EllipseSelectionCommand extends Command {
         this.ctx.fill();
 
         // Clip the ctx to only fit the what is inside the outline that is offset by 1
-        this.clipEllise(this.ctx, this.transformValues, this.selectionHeight, this.selectionWidth);
+        this.clipEllipse(this.ctx, this.transformValues, this.selectionHeight, this.selectionWidth, OFFSET_RADIUS);
         this.ctx.drawImage(
             this.selectionCanvas,
             0,
@@ -67,7 +67,7 @@ export class EllipseSelectionCommand extends Command {
         return newCanvas;
     }
 
-    clipEllise(ctx: CanvasRenderingContext2D, start: Vec2, height: number, width: number): void {
+    clipEllipse(ctx: CanvasRenderingContext2D, start: Vec2, height: number, width: number, offset: number): void {
         const end: Vec2 = {
             x: start.x + width,
             y: start.y + height,
@@ -81,7 +81,7 @@ export class EllipseSelectionCommand extends Command {
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(this.transformValues.x, this.transformValues.y);
-        ctx.ellipse(startX, startY, xRadius - OFFSET_RADIUS, yRadius - OFFSET_RADIUS, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(startX, startY, xRadius + offset, yRadius + offset, ROTATION, START_ANGLE, END_ANGLE);
         ctx.clip();
     }
 

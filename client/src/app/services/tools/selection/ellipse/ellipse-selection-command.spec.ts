@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { END_ANGLE, END_INDEX, ROTATION, START_ANGLE, START_INDEX } from '@app/constants/ellipse-constants';
+import { OFFSET_RADIUS } from '@app/constants/selection-constants';
 import { EllipseSelectionCommand } from './ellipse-selection-command';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
@@ -104,9 +105,9 @@ describe('EllipseSelectionCommandService', () => {
         const size = 250;
         const expectedStartX = 125;
         const expectedStartY = 125;
-        const expectedXRadius = 124;
-        const expectedYRadius = 124;
-        command.clipEllise(baseCtxStub, { x: 0, y: 0 }, size, size);
+        const expectedXRadius = 126;
+        const expectedYRadius = 126;
+        command.clipEllipse(baseCtxStub, { x: 0, y: 0 }, size, size, OFFSET_RADIUS);
         expect(ellipseCtxSpy).toHaveBeenCalledWith(
             expectedStartX,
             expectedStartY,

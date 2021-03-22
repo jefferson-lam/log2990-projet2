@@ -11,6 +11,9 @@ import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants'
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
+import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subject } from 'rxjs';
 import { EditorComponent } from './editor.component';
@@ -25,6 +28,7 @@ describe('EditorComponent', () => {
     let component: EditorComponent;
     let fixture: ComponentFixture<EditorComponent>;
     let toolStub: ToolStub;
+    let rectangleSelectionService: RectangleSelectionService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let keyboardEventSpy: jasmine.Spy;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
@@ -34,6 +38,8 @@ describe('EditorComponent', () => {
     let savePopUpSpy: jasmine.Spy;
     let exportPopUpSpy: jasmine.Spy;
     let newDrawingPopUpSpy: jasmine.Spy;
+    let undoSelectionSpy: jasmine.Spy;
+    let selectAllSpy: jasmine.Spy;
 
     beforeEach(async(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -66,6 +72,12 @@ describe('EditorComponent', () => {
         fixture.detectChanges();
         keyboardEventSpy = spyOn(component, 'onKeyboardDown').and.callThrough();
         component.currentTool = toolStub;
+        rectangleSelectionService = new RectangleSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new RectangleService({} as DrawingService, {} as UndoRedoService),
+        );
 
         undoSpy = spyOn(component.undoRedoService, 'undo');
         redoSpy = spyOn(component.undoRedoService, 'redo');
@@ -73,6 +85,12 @@ describe('EditorComponent', () => {
         savePopUpSpy = spyOn(component, 'openSavePopUp').and.callThrough();
         exportPopUpSpy = spyOn(component, 'openExportPopUp').and.callThrough();
         newDrawingPopUpSpy = spyOn(component, 'openNewDrawingPopUp').and.callThrough();
+        undoSelectionSpy = spyOn(rectangleSelectionService, 'undoSelection').and.callFake(() => {
+            return;
+        });
+        selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+            return;
+        });
     });
 
     it('should create', () => {
@@ -167,6 +185,21 @@ describe('EditorComponent', () => {
         expect(eventSpy['preventDefault']).toHaveBeenCalled();
     });
 
+    it('ctrl+z should call undoSelection from SelectionService if isManipulating is true', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: 'z' });
+        rectangleSelectionService.isManipulating = true;
+        component.currentTool = rectangleSelectionService;
+        component.onCtrlZKeyDown(eventSpy);
+        expect(undoSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl+z should not call standard undo if isUndoSelection is set to true', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: 'z' });
+        component.isUndoSelection = true;
+        component.onCtrlZKeyDown(eventSpy);
+        expect(undoSpy).not.toHaveBeenCalled();
+    });
+
     it("should not call openExportPopUp or openNewDrawingPopUp when only 'ctrl' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: '', key: '' });
         component.onKeyboardDown(eventSpy);
@@ -246,6 +279,16 @@ describe('EditorComponent', () => {
     it('setTool should set current tool', () => {
         component.setTool(toolStub);
         expect(component.currentTool).toBe(toolStub);
+    });
+
+    it('ctrl+a should call selectAll and switch to RectangleSelectionService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, shiftKey: true, code: '', key: 'a' });
+        const setToolSpy = spyOn(component, 'setTool').and.callFake(() => {
+            component.currentTool = rectangleSelectionService;
+        });
+        component.onCtrlAKeyDown(eventSpy);
+        expect(setToolSpy).toHaveBeenCalled();
+        expect(selectAllSpy).toHaveBeenCalled();
     });
 
     it("openNewDrawingPopUp should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open", () => {

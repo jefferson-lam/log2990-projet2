@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constants';
 import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
@@ -24,6 +25,14 @@ describe('EllipseToolSelectionService', () => {
     let parentKeyboardUpSpy: jasmine.Spy;
     let parentMouseLeaveSpy: jasmine.Spy;
     let parentMouseEnterSpy: jasmine.Spy;
+    let parentResetSelectedToolSettingsSpy: jasmine.Spy;
+
+    let resetCanvasStateSpy: jasmine.Spy;
+    let clipEllipseSpy: jasmine.Spy;
+    let baseCtxDrawImage: jasmine.Spy;
+    let baseCtxEllipseSpy: jasmine.Spy;
+    let baseCtxFillSpy: jasmine.Spy;
+    let baseCtxClipSpy: jasmine.Spy;
 
     // let selectionCtxDrawImageSpy: jasmine.Spy<any>;
     // let selectionCtxFillRectSpy: jasmine.Spy<any>;
@@ -72,9 +81,14 @@ describe('EllipseToolSelectionService', () => {
         parentKeyboardUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onKeyboardUp');
         parentMouseLeaveSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseLeave');
         parentMouseEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseEnter');
+        parentResetSelectedToolSettingsSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'resetSelectedToolSettings');
 
-        // selectionCtxDrawImageSpy = spyOn<any>(selectionCtxStub, 'drawImage').and.callThrough();
-        // selectionCtxFillRectSpy = spyOn<any>(selectionCtxStub, 'fillRect').and.callThrough();
+        clipEllipseSpy = spyOn(service, 'clipEllipse').and.callThrough();
+        baseCtxDrawImage = spyOn(baseCtxStub, 'drawImage').and.callThrough();
+        baseCtxEllipseSpy = spyOn(baseCtxStub, 'ellipse').and.callThrough();
+        baseCtxFillSpy = spyOn(baseCtxStub, 'fill').and.callThrough();
+        baseCtxClipSpy = spyOn(baseCtxStub, 'clip').and.callThrough();
+        resetCanvasStateSpy = spyOn(service, 'resetCanvasState').and.callThrough();
 
         mouseEvent = {
             offsetX: 25,
@@ -354,5 +368,91 @@ describe('EllipseToolSelectionService', () => {
         service.onToolChange();
         expect(onMouseDownSpy).not.toHaveBeenCalled();
         expect(onKeyboardUpSpy).not.toHaveBeenCalled();
+    });
+
+    it('undoSelection should pass if isManipulating is false', () => {
+        service.isManipulating = false;
+        expect(() => {
+            service.undoSelection();
+        }).not.toThrow();
+    });
+
+    it('undoSelection should call appropriate functions to restore state', () => {
+        const sw = 75;
+        const sh = 210;
+        service.isManipulating = true;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.undoSelection();
+        expect(clipEllipseSpy).toHaveBeenCalled();
+        expect(baseCtxDrawImage).toHaveBeenCalledWith(
+            selectionCtxStub.canvas,
+            0,
+            0,
+            service.selectionWidth,
+            service.selectionHeight,
+            service.cornerCoords[0].x,
+            service.cornerCoords[0].y,
+            service.selectionWidth,
+            service.selectionHeight,
+        );
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('fillEllipse should fill ellipse on ctx with correct params', () => {
+        const expectedStartX = 62.5;
+        const expectedStartY = 145;
+        const expectedXRadius = 37.5;
+        const expectedYRadius = 105;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.fillEllipse(baseCtxStub, service.cornerCoords, false, 'white');
+        expect(baseCtxEllipseSpy).toHaveBeenCalled();
+        expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
+            expectedStartX,
+            expectedStartY,
+            expectedXRadius,
+            expectedYRadius,
+            ROTATION,
+            START_ANGLE,
+            END_ANGLE,
+        );
+        expect(baseCtxFillSpy).toHaveBeenCalled();
+    });
+
+    it('clipEllipse should clip ellipse on ctx with correct params', () => {
+        const expectedStartX = 62.5;
+        const expectedStartY = 145;
+        const expectedXRadius = 37.5;
+        const expectedYRadius = 105;
+        const sw = 75;
+        const sh = 210;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.clipEllipse(baseCtxStub, service.cornerCoords[0], sh, sw, 0);
+        expect(baseCtxEllipseSpy).toHaveBeenCalled();
+        expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
+            expectedStartX,
+            expectedStartY,
+            expectedXRadius,
+            expectedYRadius,
+            ROTATION,
+            START_ANGLE,
+            END_ANGLE,
+        );
+        expect(baseCtxClipSpy).toHaveBeenCalled();
     });
 });
