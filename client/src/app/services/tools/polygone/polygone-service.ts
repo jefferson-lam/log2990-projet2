@@ -20,7 +20,6 @@ export class PolygoneService extends Tool {
     fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = '#b5cf60';
     secondaryColor: string = '#2F2A36';
-    drawShape: boolean;
 
     previewCommand: PolygoneCommand;
 

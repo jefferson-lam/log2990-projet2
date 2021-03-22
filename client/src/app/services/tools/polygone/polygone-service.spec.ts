@@ -77,7 +77,6 @@ describe('PolygoneService', () => {
     it('onMouseUp should call executeCommand and change primary color', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.inUse = true;
-        service.drawShape = true;
         service.fillMode = 1;
         service.onMouseUp(mouseEvent);
         expect(executeSpy).toHaveBeenCalled();
