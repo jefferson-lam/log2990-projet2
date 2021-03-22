@@ -24,14 +24,12 @@ export class LocalDrawingsService {
         }
     }
 
-    // TODO: determine when it would be impossible to get all drawings
     async getAllDrawings(): Promise<Message> {
         return { title: 'Success', body: JSON.stringify(this.clientDrawings) };
     }
 
     async getDrawing(wantedId: string): Promise<Message> {
         try {
-            // TODO: handle drawing can be undefined
             const drawing = this.clientDrawings.find(({ id }) => id === wantedId);
             if (drawing === undefined) {
                 throw new Error('Drawing does not exist, failed to get');
@@ -44,7 +42,6 @@ export class LocalDrawingsService {
 
     async deleteDrawing(wantedId: string): Promise<Message> {
         try {
-            // TODO: handle when id doesn't exist
             const indexToDelete = this.clientDrawings.findIndex(({ id }) => id === wantedId);
             if (indexToDelete === ServerConstants.ID_NOT_EXIST) {
                 throw new Error('Drawing does not exist, failed to delete');
