@@ -1,6 +1,7 @@
 <div class="modal-dialog" (keydown)="$event.stopPropagation()">
     <div id="topBar">
         <h1 mat-dialog-title id="titleTopBar">Carrousel</h1>
+      <div *ngIf='invalidTag' id='tagValidity'> Add valid tagg </div>
         <mat-form-field class="tagsList">
             <mat-label id="filterTag"> Filtrage par étiquette </mat-label>
             <mat-chip-list #chipList aria-label="Fruit selection">
@@ -22,10 +23,8 @@
 
     <div mat-dialog-content id="galleryPreview">
         <div id="galleryContainer" *ngIf="!this.deleted">
-            <div id="galleryShowcase">
-                <mat-icon class="slideLeft" (click)="showcasePreviousDrawing()" (keydown.arrowLeft)="showcasePreviousDrawing()"
-                    >navigate_before</mat-icon
-                >
+            <div id="galleryShowcase" (keydown.arrowRight)="showcaseNextDrawing()" (keydown.arrowLeft)="showcasePreviousDrawing()">
+                <mat-icon class="slideLeft" (click)="showcasePreviousDrawing()" >navigate_before</mat-icon>
                 <div class="gridContainer">
                     <div id="previewGalleryImage" *ngFor="let drawing of showCasedDrawings; let i = index">
                         <div class="drawingTitle">
@@ -39,7 +38,7 @@
                         </div>
                     </div>
                 </div>
-                <mat-icon class="slideRight" (click)="showcaseNextDrawing()" (keydown.arrowRight)="showcaseNextDrawing()">navigate_next</mat-icon>
+                <mat-icon class="slideRight" (click)="showcaseNextDrawing()" >navigate_next</mat-icon>
             </div>
         </div>
     </div>

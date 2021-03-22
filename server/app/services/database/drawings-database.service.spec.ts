@@ -184,7 +184,7 @@ describe('Drawing database service', () => {
         });
 
         const testTags = ['1', '5'];
-        let drawings: Drawing[] = [
+        const drawings: Drawing[] = [
             {
                 title: 'test1',
                 tags: ['1', '2', '3'],
@@ -206,7 +206,7 @@ describe('Drawing database service', () => {
                 tags: ['1', '5'],
             },
         ];
-        for (let drawing of drawings) {
+        for (const drawing of drawings) {
             await client.db('DrawingsDB').collection('drawings').insertOne(drawing);
         }
         databaseService['client'] = client;

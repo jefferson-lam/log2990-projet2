@@ -22,6 +22,7 @@ export class MainPageCarrouselComponent {
     @Input() newTagAdded: boolean;
     @Input() deleteDrawingTrue: boolean;
 
+    invalidTag: boolean;
     tagCtrl: FormControl = new FormControl();
     filteredTags: Observable<string[]>;
 
@@ -116,6 +117,9 @@ export class MainPageCarrouselComponent {
                         this.showCasedDrawings.push(newPreviewDrawing);
                     }
                 }
+            },
+            error: (serverDrawing: ServerDrawing) => {
+                this.invalidTag = true;
             },
         });
     }
