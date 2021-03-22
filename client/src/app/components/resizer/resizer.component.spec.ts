@@ -221,12 +221,12 @@ describe('ResizerComponent', () => {
         component.isSideResizerDown = true;
         const cdkDragMove = {
             pointerPosition: {
-                x: 300,
+                x: 600,
                 y: 300,
             },
         } as CdkDragMove;
         component.setPreviewSize(cdkDragMove);
-        expect(component.previewCtx.canvas.width).toBe(cdkDragMove.pointerPosition.x);
+        expect(component.previewCtx.canvas.width).toBe(cdkDragMove.pointerPosition.x - CanvasConstants.LEFT_MARGIN);
         expect(component.previewCtx.canvas.height).not.toBe(cdkDragMove.pointerPosition.y);
     });
 
@@ -234,12 +234,12 @@ describe('ResizerComponent', () => {
         component.isCornerResizerDown = true;
         const cdkDragMove = {
             pointerPosition: {
-                x: 300,
+                x: 600,
                 y: 300,
             },
         } as CdkDragMove;
         component.setPreviewSize(cdkDragMove);
-        expect(component.previewCtx.canvas.width).toBe(cdkDragMove.pointerPosition.x);
+        expect(component.previewCtx.canvas.width).toBe(cdkDragMove.pointerPosition.x - CanvasConstants.LEFT_MARGIN);
         expect(component.previewCtx.canvas.height).toBe(cdkDragMove.pointerPosition.y);
     });
 
@@ -247,12 +247,12 @@ describe('ResizerComponent', () => {
         component.isBottomResizerDown = true;
         const cdkDragMove = {
             pointerPosition: {
-                x: 300,
+                x: 600,
                 y: 300,
             },
         } as CdkDragMove;
         component.setPreviewSize(cdkDragMove);
-        expect(component.previewCtx.canvas.width).not.toBe(cdkDragMove.pointerPosition.x);
+        expect(component.previewCtx.canvas.width).not.toBe(cdkDragMove.pointerPosition.x - CanvasConstants.LEFT_MARGIN);
         expect(component.previewCtx.canvas.height).toBe(cdkDragMove.pointerPosition.y);
     });
 
