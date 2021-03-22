@@ -29,7 +29,8 @@ mat-icon {
     list-style-type: none;
     padding: 0;
     width: 60px;
-    position: relative;
+    position: absolute;
+    top: 250px;
 }
 .tools-sidebar li {
     cursor: pointer;
@@ -60,7 +61,7 @@ mat-icon {
     list-style-type: none;
     padding: 0;
     width: 60px;
-    position: relative;
+    position: absolute;
 }
 .options-sidebar li {
     color: white;
