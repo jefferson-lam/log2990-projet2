@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Rgba } from '@app/classes/rgba';
+import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from './color.service';
 
 describe('ColorService', () => {
@@ -81,5 +82,39 @@ describe('ColorService', () => {
         const expectedColorString = 'rgba(' + newColor.red + ', ' + newColor.green + ', ' + newColor.blue + ', ' + newColor.alpha + ')';
         const newColorString = service.convertRgbaToString(newColor);
         expect(newColorString).toBe(expectedColorString);
+    });
+
+    it('should not save new color if it already exists in savedColors', () => {
+        const unshiftSpy = spyOn(service.savedColors, 'unshift');
+        service.savedColors.push(colorPlaceholderBlack);
+        service.saveColor(colorPlaceholderBlack);
+        expect(unshiftSpy).not.toHaveBeenCalled();
+    });
+
+    it('saveColor pushes colors with full opacity', () => {
+        service.saveColor(newColor);
+        expect(service.savedColors[0]).not.toEqual(newColor);
+        expect(service.savedColors[0].alpha).toEqual(1);
+    });
+
+    it('saveColor removes last color when color history reaches maximum capacity', () => {
+        const popSpy = spyOn(service.savedColors, 'pop');
+        service.savedColors.length = ColorConstants.MAX_SAVED_COLORS;
+        service.saveColor(newColor);
+        expect(popSpy).toHaveBeenCalled();
+    });
+
+    it('saveColor keeps all existing colors when color history has not reached max capacity', () => {
+        const popSpy = spyOn(service.savedColors, 'pop');
+        service.savedColors.length = 1;
+        service.saveColor(newColor);
+        expect(popSpy).not.toHaveBeenCalled();
+    });
+
+    it('saveColor adds new color to the start of array', () => {
+        service.saveColor(newColor);
+        const pushedColor = newColor;
+        pushedColor.alpha = 1;
+        expect(service.savedColors[0]).toEqual(pushedColor);
     });
 });
