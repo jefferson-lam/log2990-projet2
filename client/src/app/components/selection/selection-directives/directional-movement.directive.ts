@@ -19,7 +19,6 @@ export class DirectionalMovementDirective {
     @HostListener('keydown', ['$event'])
     async onKeyboardDown(event: KeyboardEvent): Promise<void> {
         event.preventDefault();
-        console.log('KEYDOWN: ', event.key);
         if (!this.keyPressed.get(event.key)) {
             // First press
             this.keyPressed.set(event.key, event.timeStamp);
@@ -31,12 +30,10 @@ export class DirectionalMovementDirective {
             return;
         }
 
-        if (!this.hasMovedOnce) {
-            this.hasMovedOnce = true;
-            await this.delay(CONTINUOUS_PRESS_DELAY_MS);
-            this.translateSelection();
-            this.hasMovedOnce = false;
-        }
+        this.hasMovedOnce = true;
+        await this.delay(CONTINUOUS_PRESS_DELAY_MS);
+        this.translateSelection();
+        this.hasMovedOnce = false;
     }
 
     @HostListener('keyup', ['$event'])

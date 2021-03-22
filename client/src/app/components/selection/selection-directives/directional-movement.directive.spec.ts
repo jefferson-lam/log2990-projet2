@@ -181,20 +181,4 @@ fdescribe('DirectionalMovementDirective', () => {
         expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_POSITION);
         flush();
     }));
-
-    it('onKeyBoardDown should not move selection left by increments of NUM_PIXELS if hasMovedOnce is true', fakeAsync((): void => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowLeft', timeStamp: '100' });
-
-        selectionCanvas.nativeElement.style.left = '10px';
-        selectionCanvas.nativeElement.style.top = '10px';
-        selectionCanvas.nativeElement.style.right = '10px';
-
-        directive.onKeyboardDown(eventSpy);
-        tick(FIRST_PRESS_DELAY);
-        tick(100);
-
-        directive.onKeyboardDown(eventSpy);
-        tick(100);
-        flush();
-    }));
 });
