@@ -234,6 +234,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             } as KeyboardEvent;
             this.isEscapeDown = true;
             this.onKeyboardUp(resetKeyboardEvent);
+            this.rectangleService.inUse = false;
         }
     }
 }

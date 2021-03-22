@@ -280,6 +280,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             } as KeyboardEvent;
             this.isEscapeDown = true;
             this.onKeyboardUp(resetKeyboardEvent);
+            this.ellipseService.inUse = false;
         }
     }
 }
