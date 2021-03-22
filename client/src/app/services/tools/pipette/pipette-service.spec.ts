@@ -163,20 +163,24 @@ describe('PipetteServiceService', () => {
         expect(result.alpha).toEqual(expectedColor.alpha);
     });
 
-    it('setPrimaryColor should call colorService.setPrimaryColor if color is not transparent', () => {
+    it('setPrimaryColor should call colorService functions if color is not transparent', () => {
         service.inUse = true;
         const setPrimaryColorSpy = spyOn(colorService, 'setPrimaryColor');
+        const saveColorSpy = spyOn(colorService, 'saveColor');
 
         service.setPrimaryColor(colorPlaceholderBlack);
         expect(setPrimaryColorSpy).toHaveBeenCalled();
+        expect(saveColorSpy).toHaveBeenCalled();
     });
 
-    it('setPrimaryColor should not call colorService.setPrimaryColor if color is transparent', () => {
+    it('setPrimaryColor should not call colorService functions if color is transparent', () => {
         service.inUse = true;
         const setPrimaryColorSpy = spyOn(colorService, 'setPrimaryColor');
+        const saveColorSpy = spyOn(colorService, 'saveColor');
 
         service.setPrimaryColor(colorPlaceholderTransparent);
         expect(setPrimaryColorSpy).not.toHaveBeenCalled();
+        expect(saveColorSpy).not.toHaveBeenCalled();
     });
 
     it('setPrimaryColor should set primary color if color is not transparent', () => {
@@ -198,17 +202,21 @@ describe('PipetteServiceService', () => {
     it('setSecondaryColor should call colorService.setSecondaryColor if color is not transparent', () => {
         service.inUse = true;
         const setSecondaryColorSpy = spyOn(colorService, 'setSecondaryColor');
+        const saveColorSpy = spyOn(colorService, 'saveColor');
 
         service.setSecondaryColor(colorPlaceholderBlack);
         expect(setSecondaryColorSpy).toHaveBeenCalled();
+        expect(saveColorSpy).toHaveBeenCalled();
     });
 
     it('setSecondaryColor should not call colorService.setSecondaryColor if color is transparent', () => {
         service.inUse = true;
         const setSecondaryColorSpy = spyOn(colorService, 'setSecondaryColor');
+        const saveColorSpy = spyOn(colorService, 'saveColor');
 
         service.setSecondaryColor(colorPlaceholderTransparent);
         expect(setSecondaryColorSpy).not.toHaveBeenCalled();
+        expect(saveColorSpy).not.toHaveBeenCalled();
     });
 
     it('setSecondaryColor should set secondary color if color is not transparent', () => {

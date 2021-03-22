@@ -77,12 +77,14 @@ export class PipetteService extends Tool {
     setPrimaryColor(color: Rgba): void {
         if (color.alpha !== 0) {
             this.colorService.setPrimaryColor(color);
+            this.colorService.saveColor(color);
         }
     }
 
     setSecondaryColor(color: Rgba): void {
         if (color.alpha !== 0) {
             this.colorService.setSecondaryColor(color);
+            this.colorService.saveColor(color);
         }
     }
 
