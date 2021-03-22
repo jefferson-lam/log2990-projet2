@@ -78,6 +78,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             }
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
+            // Draw selection onto selectionCanvas
             this.drawingService.selectionCtx.drawImage(
                 this.drawingService.canvas,
                 this.cornerCoords[SelectionConstants.START_INDEX].x,
@@ -89,6 +90,7 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
+            // Erase the contents on the base canvas
             this.drawingService.baseCtx.fillStyle = 'white';
             this.drawingService.baseCtx.fillRect(
                 this.cornerCoords[SelectionConstants.START_INDEX].x,
@@ -96,6 +98,7 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
+            //
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
             this.resizerHandlerService.setResizerPosition(
@@ -173,8 +176,8 @@ export class RectangleSelectionService extends ToolSelectionService {
                 0,
                 this.selectionWidth,
                 this.selectionHeight,
-                this.cornerCoords[0].x,
-                this.cornerCoords[0].y,
+                this.cornerCoords[SelectionConstants.START_INDEX].x,
+                this.cornerCoords[SelectionConstants.START_INDEX].y,
                 this.selectionWidth,
                 this.selectionHeight,
             );

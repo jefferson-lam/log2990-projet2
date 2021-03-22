@@ -8,6 +8,7 @@ import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.ser
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
+// tslint:disable:max-file-line-count
 describe('EllipseToolSelectionService', () => {
     let service: EllipseSelectionService;
     let mouseEvent: MouseEvent;
@@ -351,13 +352,15 @@ describe('EllipseToolSelectionService', () => {
     });
 
     it('undoSelection should call appropriate functions to restore state', () => {
+        const sw = 75;
+        const sh = 210;
         service.isManipulating = true;
         service.cornerCoords = [
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
-        service.selectionWidth = 75;
-        service.selectionHeight = 210;
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
         service.undoSelection();
         expect(clipEllipseSpy).toHaveBeenCalled();
         expect(baseCtxDrawImage).toHaveBeenCalledWith(
