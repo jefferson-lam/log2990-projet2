@@ -1,0 +1,11 @@
+<div id="settings-container">
+    <div>
+        <h2 id="title">Prévisualisation de la pipette</h2>
+        <div id="colorPicker">
+            <app-color-picker></app-color-picker>
+        </div>
+        <div id="pipettePreview" [style.display]="this.inBound == false ? 'none' : 'block'">
+            <canvas #canvas id="cv" class="color-preview" height="220" width="220"></canvas>
+        </div>
+    </div>
+</div>

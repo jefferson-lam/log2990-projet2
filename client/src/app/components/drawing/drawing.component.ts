@@ -40,7 +40,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         const newTool = changes.currentTool.currentValue;
-        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
+        const canvasStyle = (document.getElementById('previewLayer') as HTMLCanvasElement).style;
         if (newTool === this.toolManager.pencilService) {
             canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
         } else if (newTool === this.toolManager.eraserService) {
@@ -98,6 +98,11 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     @HostListener('mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.currentTool.onMouseEnter(event);
+    }
+
+    @HostListener('contextmenu', ['$event'])
+    onContextMenu(event: MouseEvent): void {
+        event.preventDefault();
     }
 
     get baseWidth(): number {
