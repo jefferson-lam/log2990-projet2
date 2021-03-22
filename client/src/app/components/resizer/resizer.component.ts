@@ -45,36 +45,29 @@ export class ResizerComponent implements AfterViewInit {
      *
      */
     setPreviewSize(event: CdkDragMove): void {
-        this.previewCtx.canvas.width = event.pointerPosition.x;
-        this.previewCtx.canvas.height = event.pointerPosition.y;
+        if (this.isSideResizerDown) {
+            this.previewCtx.canvas.width = event.pointerPosition.x;
+        } else if (this.isCornerResizerDown) {
+            this.previewCtx.canvas.width = event.pointerPosition.x;
+            this.previewCtx.canvas.height = event.pointerPosition.y;
+        } else if (this.isBottomResizerDown) {
+            this.previewCtx.canvas.height = event.pointerPosition.y;
+        }
         this.lockMinCanvasValue();
         this.drawPreviewOfNewSize();
     }
 
     drawPreviewOfNewSize(): void {
-        if (this.isSideResizerDown) {
-            this.cornerResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
-            this.bottomResizer.nativeElement.style.left = this.previewCtx.canvas.width / 2 + 'px';
+        this.sideResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
+        this.sideResizer.nativeElement.style.top = this.previewCtx.canvas.height / 2 + 'px';
+        this.cornerResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
+        this.cornerResizer.nativeElement.style.top = this.previewCtx.canvas.height + 'px';
+        this.bottomResizer.nativeElement.style.top = this.previewCtx.canvas.height + 'px';
+        this.bottomResizer.nativeElement.style.left = this.previewCtx.canvas.width / 2 + 'px';
 
-            this.sideResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
-            this.sideResizer.nativeElement.style.transform = '';
-        } else if (this.isCornerResizerDown) {
-            this.sideResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
-            this.sideResizer.nativeElement.style.top = this.previewCtx.canvas.height / 2 + 'px';
-
-            this.bottomResizer.nativeElement.style.left = this.previewCtx.canvas.width / 2 + 'px';
-            this.bottomResizer.nativeElement.style.top = this.previewCtx.canvas.height + 'px';
-
-            this.cornerResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
-            this.cornerResizer.nativeElement.style.top = this.previewCtx.canvas.height + 'px';
-            this.cornerResizer.nativeElement.style.transform = '';
-        } else if (this.isBottomResizerDown) {
-            this.cornerResizer.nativeElement.style.top = this.previewCtx.canvas.height + 'px';
-            this.sideResizer.nativeElement.style.top = this.previewCtx.canvas.height / 2 + 'px';
-
-            this.bottomResizer.nativeElement.style.top = this.previewCtx.canvas.height + 'px';
-            this.bottomResizer.nativeElement.style.transform = '';
-        }
+        this.sideResizer.nativeElement.style.transform = '';
+        this.cornerResizer.nativeElement.style.transform = '';
+        this.bottomResizer.nativeElement.style.transform = '';
     }
 
     expandCanvas(event: CdkDragEnd): void {
