@@ -52,19 +52,20 @@ export class ToolManagerService {
     }
 
     getTool(keyShortcut: string): Tool {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.currentTool.onMouseUp({} as MouseEvent);
         if (this.keyBindings.has(keyShortcut)) {
-            this.currentTool = this.keyBindings.get(keyShortcut) as Tool;
+            this.currentTool = this.onToolChange(this.keyBindings.get(keyShortcut) as Tool);
             return this.currentTool;
         } else {
             return this.currentTool;
         }
     }
 
-    onToolChange(newTool: Tool): void {
+    onToolChange(newTool: Tool): Tool {
         if (this.currentTool !== newTool) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.currentTool.onToolChange();
         }
+        return newTool;
     }
 
     setPrimaryColorTools(color: string): void {

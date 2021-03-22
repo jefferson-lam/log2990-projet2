@@ -371,4 +371,30 @@ describe('RectangleSelectionService', () => {
         expect(service.inUse).toBeFalsy();
         expect(service.isManipulating).toBeTruthy();
     });
+
+    it('onToolChange should call onMouseDown if isManipulating is true', () => {
+        service.isManipulating = true;
+        const onMouseDownSpy = spyOn(service, 'onMouseDown');
+        service.onToolChange();
+        expect(onMouseDownSpy).toHaveBeenCalled();
+    });
+
+    it('onToolChange should call onKeyboardUp with escape if inUse is true', () => {
+        service.isManipulating = false;
+        service.inUse = true;
+        const onKeyboardUpSpy = spyOn(service, 'onKeyboardUp');
+        service.onToolChange();
+        expect(onKeyboardUpSpy).toHaveBeenCalled();
+        expect(service.isEscapeDown).toBeTrue();
+    });
+
+    it('onToolChange should not do anything if isManipulating and inUse are false', () => {
+        service.isManipulating = false;
+        service.inUse = false;
+        const onMouseDownSpy = spyOn(service, 'onMouseDown');
+        const onKeyboardUpSpy = spyOn(service, 'onKeyboardUp');
+        service.onToolChange();
+        expect(onMouseDownSpy).not.toHaveBeenCalled();
+        expect(onKeyboardUpSpy).not.toHaveBeenCalled();
+    });
 });

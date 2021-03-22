@@ -240,4 +240,17 @@ export class EllipseSelectionService extends ToolSelectionService {
         const centerY = start.y + Math.sign(yVector) * displacementY;
         return { x: centerX, y: centerY };
     }
+
+    onToolChange(): void {
+        if (this.isManipulating) {
+            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
+            this.onMouseDown(emptyMouseEvent);
+        } else if (this.inUse) {
+            const resetKeyboardEvent: KeyboardEvent = {
+                key: 'Escape',
+            } as KeyboardEvent;
+            this.isEscapeDown = true;
+            this.onKeyboardUp(resetKeyboardEvent);
+        }
+    }
 }

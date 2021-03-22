@@ -234,4 +234,8 @@ export class LineService extends Tool {
         // eliminate floating point numbers, and the include the edge case: 0 as an final angle.
         return Math.floor((angleBetweenTwoPoints + multiple / 2) / multiple) * multiple;
     }
+
+    onToolChange(): void {
+        this.onMouseDoubleClick({} as MouseEvent);
+    }
 }

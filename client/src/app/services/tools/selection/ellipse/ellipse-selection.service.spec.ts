@@ -7,6 +7,7 @@ import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.ser
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
+// tslint:disable:max-file-line-count
 describe('EllipseToolSelectionService', () => {
     let service: EllipseSelectionService;
     let mouseEvent: MouseEvent;
@@ -327,5 +328,31 @@ describe('EllipseToolSelectionService', () => {
         service.isManipulating = true;
         service.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
         expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('onToolChange should call onMouseDown if isManipulating is true', () => {
+        service.isManipulating = true;
+        const onMouseDownSpy = spyOn(service, 'onMouseDown');
+        service.onToolChange();
+        expect(onMouseDownSpy).toHaveBeenCalled();
+    });
+
+    it('onToolChange should call onKeyboardUp with escape if inUse is true', () => {
+        service.isManipulating = false;
+        service.inUse = true;
+        const onKeyboardUpSpy = spyOn(service, 'onKeyboardUp');
+        service.onToolChange();
+        expect(onKeyboardUpSpy).toHaveBeenCalled();
+        expect(service.isEscapeDown).toBeTrue();
+    });
+
+    it('onToolChange should not do anything if isManipulating and inUse are false', () => {
+        service.isManipulating = false;
+        service.inUse = false;
+        const onMouseDownSpy = spyOn(service, 'onMouseDown');
+        const onKeyboardUpSpy = spyOn(service, 'onKeyboardUp');
+        service.onToolChange();
+        expect(onMouseDownSpy).not.toHaveBeenCalled();
+        expect(onKeyboardUpSpy).not.toHaveBeenCalled();
     });
 });

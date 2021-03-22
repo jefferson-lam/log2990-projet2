@@ -189,4 +189,12 @@ describe('AerosolService', () => {
         service.setPrimaryColor('black');
         expect(service.primaryColor).toEqual('black');
     });
+
+    it('onToolChange should call onMouseUp', () => {
+        const onMouseUpSpy = spyOn(service, 'onMouseUp');
+
+        service.onToolChange();
+
+        expect(onMouseUpSpy).toHaveBeenCalled();
+    });
 });

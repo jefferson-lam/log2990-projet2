@@ -243,8 +243,8 @@ describe('EditorComponent', () => {
         expect(redoSpy).not.toHaveBeenCalled();
     });
 
-    it('updateToolFromSidebarClick should set current tool', () => {
-        component.updateToolFromSidebarClick(toolStub);
+    it('setTool should set current tool', () => {
+        component.setTool(toolStub);
         expect(component.currentTool).toBe(toolStub);
     });
 

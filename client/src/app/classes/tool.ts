@@ -40,7 +40,7 @@ export abstract class Tool {
 
     onMouseEnter(event: MouseEvent): void {}
 
-    onToolChange(newTool: Tool): void {}
+    onToolChange(): void {}
 
     setLineWidth(width: number): void {}
 

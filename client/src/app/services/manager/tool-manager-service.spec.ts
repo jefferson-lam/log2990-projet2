@@ -20,8 +20,8 @@ describe('ToolManagerService', () => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['setPrimaryColor', 'setSecondaryColor', 'onMouseUp']);
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['setPrimaryColor', 'setSecondaryColor', 'onMouseUp']);
-        eraserServiceSpy = jasmine.createSpyObj('EraserService', ['setPrimaryColor', 'onMouseUp']);
-        pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setPrimaryColor', 'onMouseUp']);
+        eraserServiceSpy = jasmine.createSpyObj('EraserService', ['setPrimaryColor', 'onMouseUp', 'onToolChange']);
+        pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setPrimaryColor', 'onMouseUp', 'onToolChange']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['setPrimaryColor', 'onMouseUp']);
         TestBed.configureTestingModule({
             providers: [
@@ -106,5 +106,21 @@ describe('ToolManagerService', () => {
         service.setSecondaryColorTools(RANDOM_COLOR);
         expect(rectangleServiceSpy.setSecondaryColor).toHaveBeenCalled();
         expect(ellipseServiceSpy.setSecondaryColor).toHaveBeenCalled();
+    });
+
+    it('onToolChange should not call clearCanvas and currentTool.onToolChange if same tool as before', () => {
+        service.currentTool = pencilServiceSpy;
+        service.onToolChange(pencilServiceSpy);
+
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(pencilServiceSpy.onToolChange).not.toHaveBeenCalled();
+    });
+
+    it('onToolChange should clearCanvas and call currentTool.onToolChange if different tool', () => {
+        service.currentTool = pencilServiceSpy;
+        service.onToolChange(eraserServiceSpy);
+
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(pencilServiceSpy.onToolChange).toHaveBeenCalled();
     });
 });

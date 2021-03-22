@@ -1,6 +1,6 @@
 <div class="container">
     <app-sidebar
-        (notifyOnToolSelect)="updateToolFromSidebarClick($event)"
+        (notifyOnToolSelect)="setTool($event)"
         [currentTool]="currentTool"
         (openExportPopUp)="openExportPopUp()"
         (openNewDrawingPopUp)="openNewDrawingPopUp()"

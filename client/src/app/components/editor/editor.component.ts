@@ -102,26 +102,8 @@ export class EditorComponent implements OnInit {
         }
     }
 
-    updateToolFromSidebarClick(newTool: Tool): void {
-        this.setTool(newTool);
-    }
-
     setTool(newTool: Tool): void {
-        if (this.currentTool !== newTool) {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                if (this.currentTool.isManipulating) {
-                    const emptyMouseEvent: MouseEvent = {} as MouseEvent;
-                    this.currentTool.onMouseDown(emptyMouseEvent);
-                } else if (this.currentTool.inUse) {
-                    const resetKeyboardEvent: KeyboardEvent = {
-                        key: 'Escape',
-                    } as KeyboardEvent;
-                    this.currentTool.isEscapeDown = true;
-                    this.currentTool.onKeyboardUp(resetKeyboardEvent);
-                }
-            }
-            this.currentTool = newTool;
-        }
+        this.currentTool = newTool;
     }
 
     openExportPopUp(): void {

@@ -127,4 +127,8 @@ export class PolygoneService extends Tool {
     private clearCornerCoords(): void {
         this.cornerCoords.fill({ x: 0, y: 0 });
     }
+
+    onToolChange(): void {
+        this.onMouseUp({} as MouseEvent);
+    }
 }

@@ -761,4 +761,10 @@ describe('LineService', () => {
 
         expect(service.rotateLine(initialPoint, currentPoint, LineConstants.DEGREES_315)).toEqual(expectedPoint);
     });
+
+    it('onToolChange should call onMouseDoubleClick', () => {
+        const onMouseDoubleClickSpy = spyOn(service, 'onMouseDoubleClick');
+        service.onToolChange();
+        expect(onMouseDoubleClickSpy).toHaveBeenCalled();
+    });
 });

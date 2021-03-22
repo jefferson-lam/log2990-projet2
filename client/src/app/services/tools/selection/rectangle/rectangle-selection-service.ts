@@ -199,4 +199,17 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
         this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
     }
+
+    onToolChange(): void {
+        if (this.isManipulating) {
+            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
+            this.onMouseDown(emptyMouseEvent);
+        } else if (this.inUse) {
+            const resetKeyboardEvent: KeyboardEvent = {
+                key: 'Escape',
+            } as KeyboardEvent;
+            this.isEscapeDown = true;
+            this.onKeyboardUp(resetKeyboardEvent);
+        }
+    }
 }
