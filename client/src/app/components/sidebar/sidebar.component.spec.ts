@@ -198,11 +198,6 @@ describe('SidebarComponent', () => {
         });
     });
 
-    it('calling openSettings should set internal attribute opened to true', () => {
-        component.openSettings();
-        expect(component.opened).toBeTruthy();
-    });
-
     it('pressing on newDrawing should emit to editor', () => {
         const newDrawingButton = fixture.debugElement.nativeElement.querySelector('#new-drawing-button');
         newDrawingButton.click();

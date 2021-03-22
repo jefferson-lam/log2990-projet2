@@ -46,9 +46,9 @@ export class ResizerComponent implements AfterViewInit {
      */
     setPreviewSize(event: CdkDragMove): void {
         if (this.isSideResizerDown) {
-            this.previewCtx.canvas.width = event.pointerPosition.x;
+            this.previewCtx.canvas.width = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN;
         } else if (this.isCornerResizerDown) {
-            this.previewCtx.canvas.width = event.pointerPosition.x;
+            this.previewCtx.canvas.width = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN;
             this.previewCtx.canvas.height = event.pointerPosition.y;
         } else if (this.isBottomResizerDown) {
             this.previewCtx.canvas.height = event.pointerPosition.y;
