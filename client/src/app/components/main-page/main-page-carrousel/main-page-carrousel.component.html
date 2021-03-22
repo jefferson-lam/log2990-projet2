@@ -4,7 +4,7 @@
         <mat-form-field class="tagsList">
             <mat-label id="filterTag"> Filtrage par étiquette </mat-label>
             <mat-chip-list #chipList aria-label="Fruit selection">
-                <mat-chip *ngFor="let tag of tagValue" [selectable]="selectable" [removable]="removable" (removed)="removeTag(tag)">
+                <mat-chip *ngFor="let tag of tags" [selectable]="selectable" [removable]="removable" (removed)="removeTag(tag)">
                     {{ tag }}
                     <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                 </mat-chip>
@@ -23,7 +23,9 @@
     <div mat-dialog-content id="galleryPreview">
         <div id="galleryContainer" *ngIf="!this.deleted">
             <div id="galleryShowcase">
-                <mat-icon class="slideLeft" (click)="showcasePrevDrawing()" (keydown.arrowLeft)="showcasePrevDrawing()">navigate_before</mat-icon>
+                <mat-icon class="slideLeft" (click)="showcasePreviousDrawing()" (keydown.arrowLeft)="showcasePreviousDrawing()"
+                    >navigate_before</mat-icon
+                >
                 <div class="gridContainer">
                     <div id="previewGalleryImage" *ngFor="let drawing of showCasedDrawings; let i = index">
                         <div class="drawingTitle">
