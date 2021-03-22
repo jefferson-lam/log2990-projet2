@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { Tool } from '@app/classes/tool';
+import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -93,6 +95,14 @@ export class SidebarComponent implements OnChanges {
     redo(): void {
         if (!this.currentTool.inUse) {
             this.undoRedoService.redo();
+        }
+    }
+
+    selectAll(): void {
+        this.currentTool = this.toolManagerService.getTool(RECTANGLE_SELECTION_KEY);
+        this.notifyOnToolSelect.emit(this.currentTool);
+        if (this.currentTool instanceof RectangleSelectionService) {
+            this.currentTool.selectAll();
         }
     }
 }
