@@ -241,6 +241,8 @@ describe('PolygoneService', () => {
         service.onToolChange();
 
         expect(onMouseUpSpy).toHaveBeenCalled();
+    });
+
     it('getPolygoneCenter should set polygone center', () => {
         const start = service.cornerCoords[PolygoneConstants.START_INDEX];
         const end = service.cornerCoords[PolygoneConstants.END_INDEX];
