@@ -46,7 +46,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         } else if (newTool === this.toolManager.eraserService) {
             canvasStyle.cursor = 'none';
         } else {
-            canvasStyle.setProperty('cursor', 'crosshair');
+            canvasStyle.cursor = 'crosshair';
         }
     }
 
