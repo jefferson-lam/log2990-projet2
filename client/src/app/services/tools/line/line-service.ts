@@ -127,18 +127,19 @@ export class LineService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.inUse) {
-            this.mousePosition = this.getPositionFromMouse(event);
-            const distanceToInitialPoint = this.calculateDistance(this.mousePosition, this.initialPoint);
-            if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
-                this.linePathData[this.linePathData.length - 1] = this.initialPoint;
-            } else if (this.shiftDown) {
-                this.stickToClosest45Angle();
-            } else {
-                this.linePathData[this.linePathData.length - 1] = this.mousePosition;
-            }
-            this.drawPreview();
+        if (!this.inUse) {
+            return;
         }
+        this.mousePosition = this.getPositionFromMouse(event);
+        const distanceToInitialPoint = this.calculateDistance(this.mousePosition, this.initialPoint);
+        if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
+            this.linePathData[this.linePathData.length - 1] = this.initialPoint;
+        } else if (this.shiftDown) {
+            this.stickToClosest45Angle();
+        } else {
+            this.linePathData[this.linePathData.length - 1] = this.mousePosition;
+        }
+        this.drawPreview();
     }
 
     finishLine(): void {
