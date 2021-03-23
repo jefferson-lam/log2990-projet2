@@ -9,7 +9,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
 // tslint:disable:max-file-line-count
-fdescribe('EllipseToolSelectionService', () => {
+describe('EllipseToolSelectionService', () => {
     let service: EllipseSelectionService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;

@@ -69,12 +69,9 @@ export class RectangleSelectionService extends ToolSelectionService {
             super.onMouseUp(event);
             this.selectionWidth = this.cornerCoords[SelectionConstants.END_INDEX].x - this.cornerCoords[SelectionConstants.START_INDEX].x;
             this.selectionHeight = this.cornerCoords[SelectionConstants.END_INDEX].y - this.cornerCoords[SelectionConstants.START_INDEX].y;
-            if (this.selectionWidth === 0 || this.selectionHeight === 0) {
-                this.resetSelectedToolSettings();
-                this.inUse = false;
+            if (!this.validateSelectionHeightAndWidth()) {
                 return;
             }
-            this.validateSelectionHeightAndWidth();
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
             this.selectRectangle(
@@ -208,7 +205,12 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.resizerHandlerService.setResizerPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
     }
 
-    private validateSelectionHeightAndWidth(): void {
+    private validateSelectionHeightAndWidth(): boolean {
+        if (this.selectionWidth === 0 || this.selectionHeight === 0) {
+            this.resetSelectedToolSettings();
+            this.inUse = false;
+            return false;
+        }
         this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
         if (this.isSquare) {
             const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
@@ -217,6 +219,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
         this.selectionWidth = Math.abs(this.selectionWidth);
         this.selectionHeight = Math.abs(this.selectionHeight);
+        return true;
     }
 
     private selectRectangle(
@@ -225,7 +228,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         cornerCoords: Vec2[],
         selectionWidth: number,
         selectionHeight: number,
-    ) {
+    ): void {
         selectionCtx.drawImage(
             baseCtx.canvas,
             cornerCoords[SelectionConstants.START_INDEX].x,
@@ -238,8 +241,8 @@ export class RectangleSelectionService extends ToolSelectionService {
             selectionHeight,
         );
         // Erase the contents on the base canvas
-        this.drawingService.baseCtx.fillStyle = 'white';
-        this.drawingService.baseCtx.fillRect(
+        baseCtx.fillStyle = 'white';
+        baseCtx.fillRect(
             cornerCoords[SelectionConstants.START_INDEX].x,
             cornerCoords[SelectionConstants.START_INDEX].y,
             selectionWidth,
