@@ -118,11 +118,11 @@ export class EllipseSelectionService extends ToolSelectionService {
     onKeyboardUp(event: KeyboardEvent): void {
         super.onKeyboardUp(event);
         if (this.inUse) {
+            // Case where the user is still selecting.
             if (event.key === 'Shift' && this.isShiftDown) {
                 this.isCircle = false;
                 this.isShiftDown = false;
             } else if (event.key === 'Escape' && this.isEscapeDown) {
-                // Case where the user is still selecting.
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetSelectedToolSettings();
                 // Erase the rectangle drawn as a preview of selection

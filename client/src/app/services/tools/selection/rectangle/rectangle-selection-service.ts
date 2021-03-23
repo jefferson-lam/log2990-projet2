@@ -35,6 +35,7 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     onMouseDown(event: MouseEvent): void {
         if (this.isManipulating) {
+            // transformValues represent where the canvas' topleft corner was moved
             this.transformValues = {
                 x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
                 y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
