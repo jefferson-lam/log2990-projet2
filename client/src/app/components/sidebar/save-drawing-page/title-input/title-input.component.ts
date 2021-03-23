@@ -20,6 +20,7 @@ export class TitleInputComponent {
     noSpecialCharacterDivClass: string;
 
     validateTitle(title: string): void {
+        title = title.trim();
         let unsatisfiedRequirements = 0;
         // Change class for min length requirement
         if (this.tagIsShorterThanMinLength(title)) {
