@@ -75,29 +75,6 @@ describe('SelectionComponent', () => {
         expect(component.selectionCanvas.nativeElement.style.left).toEqual(expectedLeft);
     });
 
-    it('setCanvasPosition, if newTop and newLeft are < 0, should set = 0', () => {
-        const mouseEvent = {
-            distance: {
-                x: -205,
-                y: -205,
-            },
-            source: {
-                _dragRef: {
-                    reset(): void {
-                        return;
-                    },
-                },
-            },
-        } as CdkDragEnd;
-        const expectedTop = '0px';
-        const expectedLeft = '0px';
-        component.selectionCanvas.nativeElement.style.top = '200px';
-        component.selectionCanvas.nativeElement.style.left = '200px';
-        component.setCanvasPosition(mouseEvent);
-        expect(component.selectionCanvas.nativeElement.style.top).toEqual(expectedTop);
-        expect(component.selectionCanvas.nativeElement.style.left).toEqual(expectedLeft);
-    });
-
     it('getTransformValues returns the correct transform values', () => {
         const expectedResult = {
             x: 0,

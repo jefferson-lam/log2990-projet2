@@ -50,19 +50,11 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     setCanvasPosition(event: CdkDragEnd): void {
-        let newTopPosition = parseInt(this.selectionCanvas.nativeElement.style.top, 10) + event.distance.y;
-        let newLeftPosition = parseInt(this.selectionCanvas.nativeElement.style.left, 10) + event.distance.x;
-        if (newTopPosition < 0) {
-            newTopPosition = 0;
-        }
-        if (newLeftPosition < 0) {
-            newLeftPosition = 0;
-        }
+        const newTopPosition = parseInt(this.selectionCanvas.nativeElement.style.top, 10) + event.distance.y;
+        const newLeftPosition = parseInt(this.selectionCanvas.nativeElement.style.left, 10) + event.distance.x;
         this.selectionCanvas.nativeElement.style.top = newTopPosition + 'px';
         this.selectionCanvas.nativeElement.style.left = newLeftPosition + 'px';
         event.source._dragRef.reset();
-        // To handle the case where the selection is moved to negative values when done dragging
-        this.setResizerPosition({ x: 0, y: 0 });
     }
 
     getTransformValues(element: HTMLElement): Vec2 {
