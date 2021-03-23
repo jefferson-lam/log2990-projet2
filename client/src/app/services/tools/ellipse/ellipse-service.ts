@@ -72,7 +72,6 @@ export class EllipseService extends Tool {
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();
 
-            // this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
             this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
         }
     }
@@ -96,7 +95,6 @@ export class EllipseService extends Tool {
                 this.previewCommand.setValues(this.drawingService.previewCtx, this);
                 this.previewCommand.execute();
 
-                // this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
                 this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
             }
         }
@@ -111,7 +109,6 @@ export class EllipseService extends Tool {
                 this.previewCommand.setValues(this.drawingService.previewCtx, this);
                 this.previewCommand.execute();
 
-                // this.drawEllipse(this.drawingService.previewCtx, this.cornerCoords);
                 this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
             }
         } else {
@@ -134,12 +131,10 @@ export class EllipseService extends Tool {
     }
 
     setPrimaryColor(newColor: string): void {
-        // TODO: add color check
         this.primaryColor = newColor;
     }
 
     setSecondaryColor(newColor: string): void {
-        // TODO: add color check
         this.secondaryColor = newColor;
     }
 

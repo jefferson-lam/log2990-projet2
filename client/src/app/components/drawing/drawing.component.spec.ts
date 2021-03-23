@@ -11,7 +11,6 @@ import { DrawingComponent } from './drawing.component';
 
 class ToolStub extends Tool {}
 
-// TODO : Déplacer dans un fichier accessible à tous
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
 
