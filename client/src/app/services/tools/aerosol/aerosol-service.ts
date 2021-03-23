@@ -79,14 +79,6 @@ export class AerosolService extends Tool {
         this.onMouseUp(event);
     }
 
-    onMouseEnter(event: MouseEvent): void {
-        if (event.buttons === MouseConstants.MouseButton.Left) {
-            this.inUse = false;
-        } else {
-            this.inUse = true;
-        }
-    }
-
     private getRandomEmission(event: MouseEvent, radius: number): Vec2 {
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.randomAngle = Math.random() * (2 * Math.PI);

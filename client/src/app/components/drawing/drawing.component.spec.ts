@@ -1,6 +1,7 @@
 import { SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
@@ -10,10 +11,6 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingComponent } from './drawing.component';
 
 class ToolStub extends Tool {}
-
-// TODO : Déplacer dans un fichier accessible à tous
-const DEFAULT_WIDTH = 1000;
-const DEFAULT_HEIGHT = 800;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
@@ -60,15 +57,15 @@ describe('DrawingComponent', () => {
     it('should have a default WIDTH and HEIGHT', () => {
         const height = component.baseHeight;
         const width = component.baseWidth;
-        expect(height).toEqual(DEFAULT_HEIGHT);
-        expect(width).toEqual(DEFAULT_WIDTH);
+        expect(height).toEqual(CanvasConstants.DEFAULT_HEIGHT);
+        expect(width).toEqual(CanvasConstants.DEFAULT_WIDTH);
     });
 
     it('previewCanvas should have a default WIDTH and HEIGHT', () => {
         const height = component.previewHeight;
         const width = component.previewWidth;
-        expect(height).toEqual(DEFAULT_HEIGHT);
-        expect(width).toEqual(DEFAULT_WIDTH);
+        expect(height).toEqual(CanvasConstants.DEFAULT_HEIGHT);
+        expect(width).toEqual(CanvasConstants.DEFAULT_WIDTH);
     });
 
     it('should get pencilStub', () => {

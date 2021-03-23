@@ -1,5 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import { LocalServerService } from './local-server.service';
 
@@ -61,8 +62,16 @@ describe('LocalServerService', () => {
         req.flush(drawing);
     });
 
+    it('dropDrawing should return expected message (HttpClient called once)', () => {
+        const testId = 'abc123456789';
+        service.deleteDrawing(testId).subscribe(() => {}, fail);
+        const req = httpMock.expectOne(baseUrl + `/delete?id=${testId}`);
+        expect(req.request.method).toBe('DELETE');
+        req.flush(drawing);
+    });
+
     it('should handle http error safely', () => {
-        service.sendDrawing(drawing).subscribe((response: void) => {
+        service.sendDrawing(drawing).subscribe((response: Message) => {
             expect(response).toBeUndefined();
         }, fail);
 

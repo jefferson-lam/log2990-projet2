@@ -122,12 +122,10 @@ export class RectangleService extends Tool {
     }
 
     setPrimaryColor(newColor: string): void {
-        // TODO: add color check
         this.primaryColor = newColor;
     }
 
     setSecondaryColor(newColor: string): void {
-        // TODO: add color check
         this.secondaryColor = newColor;
     }
 

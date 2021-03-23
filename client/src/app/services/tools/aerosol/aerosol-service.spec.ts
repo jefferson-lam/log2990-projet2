@@ -155,21 +155,6 @@ describe('AerosolService', () => {
         expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseEnter should set mouseDown to false if mouse is not down', () => {
-        service.inUse = true;
-        const mouseEventNoClick = {
-            buttons: MouseConstants.MouseButton.Left,
-        } as MouseEvent;
-        service.onMouseEnter(mouseEventNoClick);
-        expect(service.inUse).toBeFalse();
-    });
-
-    it('onMouseEnter should not set mouseDown to false if mouse is down', () => {
-        service.inUse = true;
-        service.onMouseEnter(mouseEvent);
-        expect(service.inUse).toBeTrue();
-    });
-
     it('setLineWidth should set size when called', () => {
         service.setLineWidth(AerosolConstants.INIT_LINE_WIDTH);
         expect(service.lineWidth).toEqual(AerosolConstants.INIT_LINE_WIDTH);
