@@ -2,8 +2,6 @@
     position: absolute;
     z-index: 12;
     border: 1px dashed #000000;
-    // TODO:
-    // Make background-color transparent, while keeping border only when selection is active.
 }
 
 #selectionContainer {
@@ -17,9 +15,9 @@
     position: absolute;
     color: black;
     border-style: 1px solid black;
-    // TODO: Find better color? black gets camouflaged
     background-color: black;
-    height: 10px;
-    width: 10px;
+    height: 7px;
+    width: 7px;
     z-index: 13;
+    visibility: hidden;
 }

@@ -10,7 +10,7 @@ export class DirectionalMovementDirective {
     keyPressed: Map<string, number> = new Map();
     leftMovement: number;
     private hasMovedOnce: boolean = false;
-    @Output() onCanvasMovement = new EventEmitter();
+    @Output() canvasMovement: EventEmitter<boolean> = new EventEmitter();
 
     constructor(private element: ElementRef) {}
 
@@ -55,7 +55,7 @@ export class DirectionalMovementDirective {
         this.element.nativeElement.style.top = parseInt(this.element.nativeElement.style.top, 10) + numPixels + 'px';
     }
 
-    private delay(ms: number): Promise<void> {
+    async delay(ms: number): Promise<void> {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
@@ -72,6 +72,6 @@ export class DirectionalMovementDirective {
         if (this.keyPressed.get('ArrowDown')) {
             this.translateDown(NUM_PIXELS);
         }
-        this.onCanvasMovement.emit(true);
+        this.canvasMovement.emit(true);
     }
 }

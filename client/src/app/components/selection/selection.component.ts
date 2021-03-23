@@ -38,8 +38,8 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.bottomRightResizer = this.bottomRightResizer.nativeElement;
     }
 
-    onCanvasMove(emitValue: boolean) {
-        if (emitValue) {
+    onCanvasMove(didCanvasMove: boolean): void {
+        if (didCanvasMove) {
             this.repositionResizers({} as CdkDragMove);
         }
     }

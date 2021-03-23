@@ -16,4 +16,6 @@ export const DEFAULT_LINE_DASH = 3;
 
 export const OFFSET_RADIUS = 1;
 
-export const BUTTON_OFFSET = 9;
+export const BUTTON_OFFSET = 6;
+
+export const DRAWN_ELLIPSE_RADIUS_OFFSET = 3;
