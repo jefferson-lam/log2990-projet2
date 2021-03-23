@@ -66,13 +66,13 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('resetShowcasedDrawings should call getDrawingsByTag if tagsValue has more than one tag', () => {
-        component.tags = ['test1', 'test2'];
+        component.tagsInSearch = ['test1', 'test2'];
         component['resetShowcasedDrawings']();
-        expect(databaseServiceSpy.getDrawingsByTags).toHaveBeenCalledWith(component.tags);
+        expect(databaseServiceSpy.getDrawingsByTags).toHaveBeenCalledWith(component.tagsInSearch);
     });
 
     it('resetShowcasedDrawings should call getDrawings if tagsValue has no tags', () => {
-        component.tags = [];
+        component.tagsInSearch = [];
         component['resetShowcasedDrawings']();
         expect(databaseServiceSpy.getDrawings).toHaveBeenCalled();
         expect(databaseServiceSpy.getDrawingsByTags).not.toHaveBeenCalled();

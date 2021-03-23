@@ -5,10 +5,12 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { ImageFormat } from '@app/classes/image-format';
 import * as CarouselConstants from '@app/constants/carousel-constants';
 import { DatabaseService } from '@app/services/database/database.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
 import { Drawing } from '@common/communication/database';
 import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
+import * as DatabaseConstants from '@common/validation/database-constants';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
@@ -22,27 +24,31 @@ export class MainPageCarrouselComponent {
     @Input() newTagAdded: boolean;
     @Input() deleteDrawingTrue: boolean;
 
-    invalidTag: boolean;
     tagCtrl: FormControl = new FormControl();
     filteredTags: Observable<string[]>;
 
+    existingTag: boolean = true;
+    deleted: boolean = false;
+    noValidDrawing: boolean = false;
     visible: boolean = true;
     selectable: boolean = true;
     removable: boolean = true;
     deleteClick: boolean;
+    drawingLoading: boolean;
+    imageNotInServer: boolean;
+    imageCannotOpen: boolean;
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
     allTags: string[] = [''];
-    tags: string[] = [];
+    tagsInSearch: string[] = [];
 
-    deleted: boolean = false;
     drawingCounter: number = 0;
     fetchedDrawingByTag: string[];
     showCasedDrawings: ImageFormat[];
-
+    placeHolderDrawing: ImageFormat = new ImageFormat();
     previewDrawings: ImageFormat[] = [];
 
-    constructor(private database: DatabaseService, private localServerService: LocalServerService) {
+    constructor(private database: DatabaseService, private localServerService: LocalServerService, private drawingService: DrawingService) {
         this.filteredTags = this.tagCtrl.valueChanges.pipe(
             startWith(null),
             map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
@@ -53,24 +59,27 @@ export class MainPageCarrouselComponent {
     addTag(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
-
-        if ((value || '').trim()) {
-            this.tags.push(value.trim());
-        }
-
-        if (input) {
+        if (this.existingTag) {
             input.value = '';
+        } else {
+            if ((value || '').trim()) {
+                this.tagsInSearch.push(value.trim());
+            }
+            if (input) {
+                input.value = '';
+            }
+
+            this.tagCtrl.setValue(null);
         }
 
-        this.tagCtrl.setValue(null);
         this.resetShowcasedDrawings();
     }
 
     removeTag(tag: string): void {
-        const index = this.tags.indexOf(tag);
+        const index = this.tagsInSearch.indexOf(tag);
 
         if (index >= 0) {
-            this.tags.splice(index, 1);
+            this.tagsInSearch.splice(index, 1);
         }
         this.resetShowcasedDrawings();
     }
@@ -80,21 +89,37 @@ export class MainPageCarrouselComponent {
         this.previewDrawings = [];
         this.showCasedDrawings = [];
         this.drawingCounter = 0;
-
+        this.drawingLoading = true;
         let drawingsWithMatchingTags: Drawing[];
-        if (this.tags.length > 0) {
-            this.database.getDrawingsByTags(this.tags).subscribe({
+
+        if (this.tagsInSearch.length > 0) {
+            this.database.getDrawingsByTags(this.tagsInSearch).subscribe({
                 next: (result: Message) => {
+                    if (result.title === DatabaseConstants.ERROR_MESSAGE || result.body === JSON.stringify([])) {
+                        this.existingTag = true;
+                    } else {
+                        this.existingTag = false;
+                    }
                     drawingsWithMatchingTags = JSON.parse(result.body);
                 },
                 complete: () => {
+                    this.drawingLoading = false;
+                    this.noValidDrawing = drawingsWithMatchingTags.length === 0;
                     for (const drawing of drawingsWithMatchingTags) {
                         this.addDrawingToDisplay(drawing._id, drawing);
+                    }
+
+                    console.log(this.showCasedDrawings.length);
+                    let currentCarrouselSize = this.showCasedDrawings.length;
+                    while (currentCarrouselSize < CarouselConstants.MAX_CAROUSEL_SIZE) {
+                        this.showCasedDrawings.push(this.placeHolderDrawing);
+                        currentCarrouselSize++;
                     }
                 },
             });
             return;
         }
+
         this.database.getDrawings().subscribe({
             next: (result: Message) => {
                 drawingsWithMatchingTags = JSON.parse(result.body);
@@ -103,6 +128,13 @@ export class MainPageCarrouselComponent {
                 for (const drawing of drawingsWithMatchingTags) {
                     this.addDrawingToDisplay(drawing._id, drawing);
                 }
+                let currentCarrouselSize = drawingsWithMatchingTags.length;
+                while (currentCarrouselSize < CarouselConstants.MAX_CAROUSEL_SIZE) {
+                    this.showCasedDrawings.push(this.placeHolderDrawing);
+                    currentCarrouselSize++;
+                }
+
+                this.drawingLoading = false;
             },
         });
     }
@@ -117,9 +149,6 @@ export class MainPageCarrouselComponent {
                         this.showCasedDrawings.push(newPreviewDrawing);
                     }
                 }
-            },
-            error: (serverDrawing: ServerDrawing) => {
-                this.invalidTag = true;
             },
         });
     }
@@ -155,15 +184,16 @@ export class MainPageCarrouselComponent {
         const idDrawingToDelete = this.showCasedDrawings[indexToDelete].id;
         this.database.dropDrawing(idDrawingToDelete).subscribe({
             next: (result) => {
-                console.log(result);
+                console.log('@Hee-Min, Delete method in carrousel in progress: ' + result);
             },
         });
         this.showCasedDrawings.splice(1, 1);
         this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
+        this.resetShowcasedDrawings();
     }
 
-    openDrawingEditor(): void {
-        console.log('opens_canvas_with_drawing');
+    openEditorWithDrawing(dataUrl: string): void {
+        this.drawingService.drawSavedImage(dataUrl);
     }
 
     private _filter(value: string): string[] {

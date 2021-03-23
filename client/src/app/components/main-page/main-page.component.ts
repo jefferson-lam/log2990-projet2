@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { IndexService } from '@app/services/index/index.service';
@@ -46,5 +46,11 @@ export class MainPageComponent {
             height: '700px',
             width: '1800px',
         });
+    }
+
+    @HostListener('window:keydown.control.g', ['$event'])
+    onCtrlShiftGKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.openCarousel();
     }
 }
