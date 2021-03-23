@@ -1,5 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import { LocalServerService } from './local-server.service';
 
@@ -70,7 +71,7 @@ describe('LocalServerService', () => {
     });
 
     it('should handle http error safely', () => {
-        service.sendDrawing(drawing).subscribe((response: void) => {
+        service.sendDrawing(drawing).subscribe((response: Message) => {
             expect(response).toBeUndefined();
         }, fail);
 
