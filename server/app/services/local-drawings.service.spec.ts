@@ -1,5 +1,6 @@
 import { TYPES } from '@app/types';
 import { ServerDrawing } from '@common/communication/server-drawing';
+import * as ServerConstants from '@common/validation/server-constants';
 import { expect } from 'chai';
 import 'mocha';
 import { testingContainer } from '../../test/test-utils';
@@ -21,49 +22,79 @@ describe('Local Drawings service', () => {
             id: '222',
             image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
         };
-    });
-
-    it('should get all drawings', (done: Mocha.Done) => {
         localDrawingsService.clientDrawings.push(newDrawing1);
         localDrawingsService.clientDrawings.push(newDrawing2);
-        const drawings = localDrawingsService.getAllDrawings();
-        expect(drawings).to.equals(localDrawingsService.clientDrawings);
-        done();
     });
 
-    it('should return drawing with corresponding id', (done: Mocha.Done) => {
-        localDrawingsService.clientDrawings.push(newDrawing1);
-        localDrawingsService.clientDrawings.push(newDrawing2);
+    it('getAllDrawings should get all drawings and return success message', (done: Mocha.Done) => {
+        localDrawingsService.getAllDrawings().then((message) => {
+            expect(message.title).to.equals(ServerConstants.SUCCESS_MESSAGE);
+            expect(message.body).to.equal(JSON.stringify(localDrawingsService.clientDrawings));
+            done();
+        });
+    });
+
+    it('getDrawing should return success message if retrieved drawing with corresponding id', (done: Mocha.Done) => {
         const wantedId = '222';
-        const drawing = localDrawingsService.getDrawing(wantedId);
-        expect(drawing).to.equals(newDrawing2);
-        done();
+        localDrawingsService.getDrawing(wantedId).then((message) => {
+            expect(message.title).to.equals(ServerConstants.SUCCESS_MESSAGE);
+            expect(message.body).to.equal(JSON.stringify(newDrawing2));
+            done();
+        });
     });
 
-    it('should return undefined when id doesnt exist in the server', (done: Mocha.Done) => {
-        localDrawingsService.clientDrawings.push(newDrawing1);
-        localDrawingsService.clientDrawings.push(newDrawing2);
+    it('getDrawing should return error message when id doesnt exist in the server', (done: Mocha.Done) => {
         const wantedId = '333';
-        const drawing = localDrawingsService.getDrawing(wantedId);
-        expect(drawing).to.equals(undefined);
-        done();
+        localDrawingsService
+            .getDrawing(wantedId)
+            .then((message) => {
+                expect(message.title).to.equals(ServerConstants.ERROR_MESSAGE);
+                done();
+            })
+            .catch((error) => {
+                done(error);
+            });
     });
 
-    it('should save new drawing in clientDrawings', (done: Mocha.Done) => {
-        localDrawingsService.saveDrawing(newDrawing1);
-        expect(localDrawingsService.clientDrawings[0]).to.equals(newDrawing1);
-        done();
+    it('saveDrawing should save new drawing in clientDrawings and return success message', (done: Mocha.Done) => {
+        localDrawingsService.clientDrawings.splice(0);
+        localDrawingsService.saveDrawing(newDrawing1).then((message) => {
+            expect(message.title).to.equals(ServerConstants.SUCCESS_MESSAGE);
+            expect(localDrawingsService.clientDrawings[0]).to.equals(newDrawing1);
+            done();
+        });
     });
 
-    it('should save new drawing at the end of the array when not the first', (done: Mocha.Done) => {
-        localDrawingsService.clientDrawings.push(newDrawing1);
-        localDrawingsService.clientDrawings.push(newDrawing2);
-        const newDrawing3 = {
-            id: '333',
-            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
-        };
-        localDrawingsService.saveDrawing(newDrawing3);
-        expect(localDrawingsService.clientDrawings[2]).to.equals(newDrawing3);
-        done();
+    it('saveDrawing should fail if drawing id already exists', (done: Mocha.Done) => {
+        localDrawingsService
+            .saveDrawing(newDrawing1)
+            .then((message) => {
+                expect(message.title).to.equals('Error during local save');
+                done();
+            })
+            .catch((error) => {
+                done(error);
+            });
+    });
+
+    it('deleteDrawing should return success message if deleted drawing with corresponding id', (done: Mocha.Done) => {
+        const idToDelete = '222';
+        localDrawingsService.deleteDrawing(idToDelete).then((message) => {
+            expect(message.title).to.equals(ServerConstants.SUCCESS_MESSAGE);
+            done();
+        });
+    });
+
+    it('deleteDrawing should return error message if requested id doesnt exist ', (done: Mocha.Done) => {
+        const idToDelete = '223332';
+        localDrawingsService
+            .deleteDrawing(idToDelete)
+            .then((message) => {
+                expect(message.title).to.equals(ServerConstants.ERROR_MESSAGE);
+                done();
+            })
+            .catch((error) => {
+                done(error);
+            });
     });
 });
