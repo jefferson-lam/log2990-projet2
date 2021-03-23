@@ -19,7 +19,6 @@ export class SidebarComponent implements OnChanges {
     @Input() isRedoPossible: boolean = false;
     @Input() selectedTool: SidebarToolButton;
     @Input() isCanvasEmpty: boolean;
-    opened: boolean = false;
     shouldRun: boolean;
 
     sidebarToolButtons: SidebarToolButton[] = [
@@ -62,14 +61,6 @@ export class SidebarComponent implements OnChanges {
         this.currentTool = this.toolManagerService.getTool(tool.keyShortcut);
         this.notifyOnToolSelect.emit(this.currentTool);
         this.selectedTool = tool;
-    }
-
-    openSettings(): void {
-        this.opened = true;
-    }
-
-    closeSettings(): void {
-        this.opened = false;
     }
 
     openNewDrawing(): void {

@@ -1,20 +1,23 @@
 <div id="input-boxes">
-  <div class="colorInput">
-    <label for="red"> R:
-    <input type="text" id="red-input" maxlength="2" value="{{ printDecToHex(red) }}" size="1" (input)="onInput($event)" />
-  </label>
-  </div>
-  <div class="colorInput">
-    <label for="green"> V:
-      <input type="text" id="green-input" maxlength="2" value="{{ printDecToHex(green) }}" size="1" (input)="onInput($event)" />
-  </label>
-  </div>
-  <div class="colorInput">
-    <label for="blue"> B:
-      <input type="text" id="blue-input" maxlength="2" value="{{ printDecToHex(blue) }}" size="1" (input)="onInput($event)" />
-  </label>
-  </div>
+    <div class="colorInput">
+        <label for="red">
+            R:
+            <input type="text" id="red-input" #redInput maxlength="2" value="{{ printDecToHex(red) }}" size="1" (input)="onInput($event)" />
+        </label>
+    </div>
+    <div class="colorInput">
+        <label for="green">
+            V:
+            <input type="text" id="green-input" #greenInput maxlength="2" value="{{ printDecToHex(green) }}" size="1" (input)="onInput($event)" />
+        </label>
+    </div>
+    <div class="colorInput">
+        <label for="blue">
+            B:
+            <input type="text" id="blue-input" #blueInput maxlength="2" value="{{ printDecToHex(blue) }}" size="1" (input)="onInput($event)" />
+        </label>
+    </div>
 </div>
 <div *ngIf="invalidInput">
-    <p>Please enter a valid hex value.</p>
+    <p>Entrez une valeur hexadécimale valide.</p>
 </div>

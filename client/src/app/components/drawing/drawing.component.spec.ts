@@ -163,6 +163,13 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
     });
 
+    it('should call onContextmenu when receiving a contextmenu event', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault']);
+        component.onContextMenu(eventSpy);
+
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
+    });
+
     it('ngOnChanges should set cursor to none if eraserService selected', () => {
         const canvasStyle = document.getElementsByTagName('canvas')[1].style;
         component.ngOnChanges({

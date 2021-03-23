@@ -27,6 +27,13 @@ export class LocalServerService {
             .pipe(catchError(this.handleError<ServerDrawing>('getDrawingById')));
     }
 
+    deleteDrawing(drawingId: string): Observable<void> {
+        const testParams = new HttpParams().set('id', drawingId);
+        return this.http
+            .delete<void>(this.DRAWINGS_URL + '/delete', { params: testParams })
+            .pipe(catchError(this.handleError<void>('deleteDrawing')));
+    }
+
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return (error: Error): Observable<T> => {
             return of(result as T);

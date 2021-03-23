@@ -43,6 +43,7 @@ import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-opti
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
+import { SidebarPipetteComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pipette/sidebar-pipette.component';
 import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-polygone/sidebar-polygone.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -64,6 +65,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarRectangleComponent,
         SidebarEllipseComponent,
         SidebarLineComponent,
+        SidebarPipetteComponent,
         SaveDrawingComponent,
         SaveCompletePageComponent,
         SaveSavingPageComponent,

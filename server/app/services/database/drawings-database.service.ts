@@ -41,7 +41,7 @@ export class DrawingsDatabaseService {
             console.log('Inserted new object with id:', insertResponse.insertedId);
             const successMessage: Message = {
                 title: DatabaseConstants.SUCCESS_MESSAGE,
-                body: `Inserted new drawing with id: ${insertResponse.insertedId}`,
+                body: `${insertResponse.insertedId}`,
             };
             return successMessage;
         } catch (error) {
@@ -141,7 +141,7 @@ export class DrawingsDatabaseService {
             console.log('Drawing deletion count:', deletionDetails.result.n);
             const successMessage: Message = {
                 title: DatabaseConstants.SUCCESS_MESSAGE,
-                body: `Deleted drawing count: ${JSON.stringify(deletionDetails.result.n)}`,
+                body: `${JSON.stringify(deletionDetails.result.n)}`,
             };
             return successMessage;
         } catch (error) {

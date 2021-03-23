@@ -11,7 +11,7 @@ export class Server {
 
     constructor(@inject(TYPES.Application) private application: Application) {}
 
-    async init(): Promise<void> {
+    init(): void {
         this.application.app.set('port', this.appPort);
 
         this.server = http.createServer(this.application.app);
