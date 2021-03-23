@@ -41,8 +41,7 @@ export class EllipseService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
+            this.cornerCoords[EllipseConstants.END_INDEX] = this.getPositionFromMouse(event);
             const command: Command = new EllipseCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
