@@ -71,27 +71,14 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.inUse = false;
                 return;
             }
-            this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
-            if (this.isCircle) {
-                const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
-                this.cornerCoords = this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight, shortestSide);
-                this.selectionHeight = this.selectionWidth = shortestSide;
-            }
-            this.selectionWidth = Math.abs(this.selectionWidth);
-            this.selectionHeight = Math.abs(this.selectionHeight);
+            this.validateSelectionHeightAndWidth();
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
             // We clip the part of the selectionCanvas that we want to select, in this case an ellipse
             this.drawSelectionOnSelectionCanvas();
             // We delete the contents of the selection zone. Fill with white to conserve the white background.
             this.fillEllipse(this.drawingService.baseCtx, this.cornerCoords, this.isCircle, 'white');
-            this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
-            this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
-            this.resizerHandlerService.setResizerPosition(
-                this.cornerCoords[SelectionConstants.START_INDEX],
-                this.selectionWidth,
-                this.selectionHeight,
-            );
+            this.setSelectionCanvasPosition();
             this.inUse = false;
             this.isManipulating = true;
         }
@@ -244,6 +231,23 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.moveTo(start.x, start.y);
         ctx.ellipse(startX, startY, xRadius + offset, yRadius + offset, ROTATION, START_ANGLE, END_ANGLE);
         ctx.clip();
+    }
+
+    private validateSelectionHeightAndWidth() {
+        this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
+        if (this.isCircle) {
+            const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
+            this.cornerCoords = this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight, shortestSide);
+            this.selectionHeight = this.selectionWidth = shortestSide;
+        }
+        this.selectionWidth = Math.abs(this.selectionWidth);
+        this.selectionHeight = Math.abs(this.selectionHeight);
+    }
+
+    setSelectionCanvasPosition() {
+        this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
+        this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
+        this.resizerHandlerService.setResizerPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {
