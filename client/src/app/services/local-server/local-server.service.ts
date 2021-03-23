@@ -2,7 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
-import { Observable, of } from 'rxjs';
+import * as ServerConstants from '@common/validation/server-constants';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -37,7 +38,11 @@ export class LocalServerService {
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return (error: Error): Observable<T> => {
-            return of(result as T);
+            const errorMessage: Message = {
+                title: ServerConstants.ERROR_MESSAGE,
+                body: error.message,
+            };
+            return throwError(errorMessage);
         };
     }
 }
