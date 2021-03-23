@@ -74,43 +74,17 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.inUse = false;
                 return;
             }
-            this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
-            if (this.isSquare) {
-                const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
-                this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight, shortestSide);
-                this.selectionHeight = this.selectionWidth = shortestSide;
-            }
-            this.selectionWidth = Math.abs(this.selectionWidth);
-            this.selectionHeight = Math.abs(this.selectionHeight);
+            this.validateSelectionHeightAndWidth();
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
-            // Draw selection onto selectionCanvas
-            this.drawingService.selectionCtx.drawImage(
-                this.drawingService.canvas,
-                this.cornerCoords[SelectionConstants.START_INDEX].x,
-                this.cornerCoords[SelectionConstants.START_INDEX].y,
-                this.selectionWidth,
-                this.selectionHeight,
-                0,
-                0,
+            this.selectRectangle(
+                this.drawingService.selectionCtx,
+                this.drawingService.baseCtx,
+                this.cornerCoords,
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            // Erase the contents on the base canvas
-            this.drawingService.baseCtx.fillStyle = 'white';
-            this.drawingService.baseCtx.fillRect(
-                this.cornerCoords[SelectionConstants.START_INDEX].x,
-                this.cornerCoords[SelectionConstants.START_INDEX].y,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
-            this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
-            this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
-            this.resizerHandlerService.setResizerPosition(
-                this.cornerCoords[SelectionConstants.START_INDEX],
-                this.selectionWidth,
-                this.selectionHeight,
-            );
+            this.setSelectionCanvasPosition();
             this.inUse = false;
             this.isManipulating = true;
         }
@@ -195,26 +169,21 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.selectionHeight = this.drawingService.canvas.height;
         this.drawingService.selectionCanvas.width = this.selectionWidth;
         this.drawingService.selectionCanvas.height = this.selectionHeight;
-        this.drawingService.selectionCtx.fillStyle = 'white';
-        this.drawingService.selectionCtx.drawImage(
-            this.drawingService.canvas,
-            0,
-            0,
-            this.selectionWidth,
-            this.selectionHeight,
-            0,
-            0,
-            this.selectionWidth,
-            this.selectionHeight,
-        );
-        this.drawingService.baseCtx.fillStyle = 'white';
-        this.drawingService.baseCtx.fillRect(0, 0, this.selectionWidth, this.selectionHeight);
-        this.drawingService.selectionCanvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
-        this.drawingService.selectionCanvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
         this.cornerCoords = [
             { x: 0, y: 0 },
             { x: this.selectionWidth, y: this.selectionHeight },
         ];
+
+        this.selectRectangle(
+            this.drawingService.selectionCtx,
+            this.drawingService.baseCtx,
+            this.cornerCoords,
+            this.selectionWidth,
+            this.selectionHeight,
+        );
+        this.drawingService.selectionCanvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
+        this.drawingService.selectionCanvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
+
         this.inUse = false;
         this.isManipulating = true;
     }
@@ -231,5 +200,50 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.onKeyboardUp(resetKeyboardEvent);
             this.rectangleService.inUse = false;
         }
+    }
+
+    private setSelectionCanvasPosition(): void {
+        this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
+        this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
+        this.resizerHandlerService.setResizerPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
+    }
+
+    private validateSelectionHeightAndWidth(): void {
+        this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
+        if (this.isSquare) {
+            const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
+            this.cornerCoords = this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight, shortestSide);
+            this.selectionHeight = this.selectionWidth = shortestSide;
+        }
+        this.selectionWidth = Math.abs(this.selectionWidth);
+        this.selectionHeight = Math.abs(this.selectionHeight);
+    }
+
+    private selectRectangle(
+        selectionCtx: CanvasRenderingContext2D,
+        baseCtx: CanvasRenderingContext2D,
+        cornerCoords: Vec2[],
+        selectionWidth: number,
+        selectionHeight: number,
+    ) {
+        selectionCtx.drawImage(
+            baseCtx.canvas,
+            cornerCoords[SelectionConstants.START_INDEX].x,
+            cornerCoords[SelectionConstants.START_INDEX].y,
+            selectionWidth,
+            selectionHeight,
+            0,
+            0,
+            selectionWidth,
+            selectionHeight,
+        );
+        // Erase the contents on the base canvas
+        this.drawingService.baseCtx.fillStyle = 'white';
+        this.drawingService.baseCtx.fillRect(
+            cornerCoords[SelectionConstants.START_INDEX].x,
+            cornerCoords[SelectionConstants.START_INDEX].y,
+            selectionWidth,
+            selectionHeight,
+        );
     }
 }
