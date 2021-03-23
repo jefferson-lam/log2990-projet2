@@ -184,18 +184,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         );
         this.drawingService.selectionCtx.restore();
         // Draw outline on selectionCanvas, this outline will be on selectionCanvas but not part of the clipped zone.
-        this.drawingService.selectionCtx.beginPath();
-        this.drawingService.selectionCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
-        this.drawingService.selectionCtx.ellipse(
-            startX,
-            startY,
-            radiusX + SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET,
-            radiusY + SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET,
-            ROTATION,
-            START_ANGLE,
-            END_ANGLE,
-        );
-        this.drawingService.selectionCtx.stroke();
+        this.drawOutlineEllipse(this.drawingService.selectionCtx, startX, startY, radiusX, radiusY, SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET);
     }
 
     fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean, fillColor: string): void {
@@ -233,7 +222,28 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.clip();
     }
 
-    private validateSelectionHeightAndWidth() {
+    drawOutlineEllipse(ctx: CanvasRenderingContext2D, startX: number, startY: number, radiusX: number, radiusY: number, offset: number): void {
+        ctx.beginPath();
+        ctx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
+        ctx.ellipse(startX, startY, radiusX + offset, radiusY + offset, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.stroke();
+    }
+
+    onToolChange(): void {
+        if (this.isManipulating) {
+            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
+            this.onMouseDown(emptyMouseEvent);
+        } else if (this.inUse) {
+            const resetKeyboardEvent: KeyboardEvent = {
+                key: 'Escape',
+            } as KeyboardEvent;
+            this.isEscapeDown = true;
+            this.onKeyboardUp(resetKeyboardEvent);
+            this.ellipseService.inUse = false;
+        }
+    }
+
+    private validateSelectionHeightAndWidth(): void {
         this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
         if (this.isCircle) {
             const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
@@ -244,7 +254,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.selectionHeight = Math.abs(this.selectionHeight);
     }
 
-    setSelectionCanvasPosition() {
+    private setSelectionCanvasPosition(): void {
         this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
         this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
         this.resizerHandlerService.setResizerPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
@@ -277,19 +287,5 @@ export class EllipseSelectionService extends ToolSelectionService {
         const centerX = start.x + Math.sign(xVector) * displacementX;
         const centerY = start.y + Math.sign(yVector) * displacementY;
         return { x: centerX, y: centerY };
-    }
-
-    onToolChange(): void {
-        if (this.isManipulating) {
-            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
-            this.onMouseDown(emptyMouseEvent);
-        } else if (this.inUse) {
-            const resetKeyboardEvent: KeyboardEvent = {
-                key: 'Escape',
-            } as KeyboardEvent;
-            this.isEscapeDown = true;
-            this.onKeyboardUp(resetKeyboardEvent);
-            this.ellipseService.inUse = false;
-        }
     }
 }

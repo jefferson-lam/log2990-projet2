@@ -9,7 +9,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
 // tslint:disable:max-file-line-count
-describe('EllipseToolSelectionService', () => {
+fdescribe('EllipseToolSelectionService', () => {
     let service: EllipseSelectionService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -33,6 +33,8 @@ describe('EllipseToolSelectionService', () => {
     let baseCtxEllipseSpy: jasmine.Spy;
     let baseCtxFillSpy: jasmine.Spy;
     let baseCtxClipSpy: jasmine.Spy;
+    let selectionCtxEllipseSpy: jasmine.Spy;
+    let selectionCtxStrokeSpy: jasmine.Spy;
 
     // let selectionCtxDrawImageSpy: jasmine.Spy<any>;
     // let selectionCtxFillRectSpy: jasmine.Spy<any>;
@@ -89,6 +91,8 @@ describe('EllipseToolSelectionService', () => {
         baseCtxFillSpy = spyOn(baseCtxStub, 'fill').and.callThrough();
         baseCtxClipSpy = spyOn(baseCtxStub, 'clip').and.callThrough();
         resetCanvasStateSpy = spyOn(service, 'resetCanvasState').and.callThrough();
+        selectionCtxEllipseSpy = spyOn(selectionCtxStub, 'ellipse').and.callThrough();
+        selectionCtxStrokeSpy = spyOn(selectionCtxStub, 'stroke').and.callThrough();
 
         mouseEvent = {
             offsetX: 25,
@@ -454,5 +458,26 @@ describe('EllipseToolSelectionService', () => {
             END_ANGLE,
         );
         expect(baseCtxClipSpy).toHaveBeenCalled();
+    });
+
+    it('drawOutlineEllipse should stroke ellipse with correct params and set correct path', () => {
+        const expectedStartX = 62.5;
+        const expectedStartY = 145;
+        const xRadius = 37.5;
+        const yRadius = 105;
+        const expectedXRadius = 39.5;
+        const expectedYRadius = 107;
+        service.drawOutlineEllipse(selectionCtxStub, expectedStartX, expectedStartY, xRadius, yRadius, 2);
+        expect(selectionCtxEllipseSpy).toHaveBeenCalled();
+        expect(selectionCtxEllipseSpy).toHaveBeenCalledWith(
+            expectedStartX,
+            expectedStartY,
+            expectedXRadius,
+            expectedYRadius,
+            ROTATION,
+            START_ANGLE,
+            END_ANGLE,
+        );
+        expect(selectionCtxStrokeSpy).toHaveBeenCalled();
     });
 });
