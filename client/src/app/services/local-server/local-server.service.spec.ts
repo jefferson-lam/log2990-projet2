@@ -2,6 +2,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
+import * as ServerConstants from '@common/validation/server-constants';
 import { LocalServerService } from './local-server.service';
 
 // tslint:disable: no-empty
@@ -71,10 +72,12 @@ describe('LocalServerService', () => {
     });
 
     it('should handle http error safely', () => {
-        service.sendDrawing(drawing).subscribe((response: Message) => {
-            expect(response).toBeUndefined();
-        }, fail);
-
+        service
+            .sendDrawing(drawing)
+            .toPromise()
+            .then((result: Message) => {
+                expect(result.title).toContain(ServerConstants.ERROR_MESSAGE);
+            });
         const req = httpMock.expectOne(baseUrl + '/send');
         expect(req.request.method).toBe('POST');
         req.error(new ErrorEvent('Random error occured'));
