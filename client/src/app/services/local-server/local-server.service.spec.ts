@@ -77,7 +77,8 @@ describe('LocalServerService', () => {
             .toPromise()
             .then((result: Message) => {
                 expect(result.title).toContain(ServerConstants.ERROR_MESSAGE);
-            });
+            })
+            .catch((error) => {});
         const req = httpMock.expectOne(baseUrl + '/send');
         expect(req.request.method).toBe('POST');
         req.error(new ErrorEvent('Random error occured'));
