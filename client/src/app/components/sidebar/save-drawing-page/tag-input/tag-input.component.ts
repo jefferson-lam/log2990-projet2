@@ -31,6 +31,7 @@ export class TagInputComponent {
     maxTagsCountDivClass: string;
 
     addTag(tag: string): void {
+        tag = tag.trim();
         if (this.validateTag(tag)) {
             this.tags.push(tag);
         }
@@ -45,6 +46,7 @@ export class TagInputComponent {
     }
 
     validateTag(tag: string): boolean {
+        tag = tag.trim();
         let unsatisfiedRequirements = 0;
         // Change class for distinct tags requirement
         if (this.tags.includes(tag)) {
