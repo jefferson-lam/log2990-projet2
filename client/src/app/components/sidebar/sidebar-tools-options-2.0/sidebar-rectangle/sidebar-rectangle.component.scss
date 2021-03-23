@@ -1,27 +1,28 @@
-*{
-  font-family: 'Rubik', serif;
+* {
+    font-family: 'Rubik', serif;
 }
-#settings-container{
-  color: #EEE;
-  margin-left: 10px;
+#settings-container {
+    color: #eee;
+    margin-left: 10px;
 }
-#title{
-  font-weight: bolder;
-  font-size: x-large;
+#title {
+    font-weight: bolder;
+    font-size: x-large;
 }
-#width-setting{
-  display: block;
-  margin-top: 10px;
+#width-setting {
+    display: block;
+    margin-top: 10px;
 }
-#trace-type{
-  flex-direction: column-reverse;
-  margin-top: 10px;
+#trace-type {
+    flex-direction: column-reverse;
+    margin-top: 10px;
 }
-
-.mat-radio-button{
-  margin:5px;
+#color-picker {
+    margin-top: 25px;
 }
-
-#colorPicker{
-  margin-left: -20px;
+.mat-radio-button {
+    margin: 5px;
+}
+#colorPicker {
+    margin-left: -20px;
 }

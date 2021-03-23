@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -12,26 +13,26 @@ export class LocalServerService {
 
     constructor(private http: HttpClient) {}
 
-    sendDrawing(drawing: ServerDrawing): Observable<void> {
-        return this.http.post<void>(this.DRAWINGS_URL + '/send', drawing).pipe(catchError(this.handleError<void>('sendDrawing')));
+    sendDrawing(drawing: ServerDrawing): Observable<Message> {
+        return this.http.post<Message>(this.DRAWINGS_URL + '/send', drawing).pipe(catchError(this.handleError<Message>('sendDrawing')));
     }
 
-    getAllDrawings(): Observable<ServerDrawing[]> {
-        return this.http.get<ServerDrawing[]>(this.DRAWINGS_URL + '/all').pipe(catchError(this.handleError<ServerDrawing[]>('getAllDrawings')));
+    getAllDrawings(): Observable<Message> {
+        return this.http.get<Message>(this.DRAWINGS_URL + '/all').pipe(catchError(this.handleError<Message>('getAllDrawings')));
     }
 
-    getDrawingById(drawingId: string): Observable<ServerDrawing> {
+    getDrawingById(drawingId: string): Observable<Message> {
         const testParams = new HttpParams().set('id', drawingId);
         return this.http
-            .get<ServerDrawing>(this.DRAWINGS_URL + '/get', { params: testParams })
-            .pipe(catchError(this.handleError<ServerDrawing>('getDrawingById')));
+            .get<Message>(this.DRAWINGS_URL + '/get', { params: testParams })
+            .pipe(catchError(this.handleError<Message>('getDrawingById')));
     }
 
-    deleteDrawing(drawingId: string): Observable<void> {
+    deleteDrawing(drawingId: string): Observable<Message> {
         const testParams = new HttpParams().set('id', drawingId);
         return this.http
-            .delete<void>(this.DRAWINGS_URL + '/delete', { params: testParams })
-            .pipe(catchError(this.handleError<void>('deleteDrawing')));
+            .delete<Message>(this.DRAWINGS_URL + '/delete', { params: testParams })
+            .pipe(catchError(this.handleError<Message>('deleteDrawing')));
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
