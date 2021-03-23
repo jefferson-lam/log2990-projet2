@@ -1,9 +1,11 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { ResizerComponent } from '@app/components/resizer/resizer.component';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 describe('ResizerComponent', () => {
     let component: ResizerComponent;
@@ -18,13 +20,17 @@ describe('ResizerComponent', () => {
     let cornerResizer: HTMLElement;
     let bottomResizer: HTMLElement;
     const drawingService: DrawingService = new DrawingService();
+    const undoRedoService: UndoRedoService = new UndoRedoService(drawingService);
 
     const cdkDragEndEvent: CdkDragEnd = {} as CdkDragEnd;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ResizerComponent],
-            providers: [{ provide: DrawingService, useValue: drawingService }],
+            providers: [
+                { provide: DrawingService, useValue: drawingService },
+                { provide: UndoRedoService, useValue: undoRedoService },
+            ],
         }).compileComponents();
     }));
 
@@ -208,13 +214,45 @@ describe('ResizerComponent', () => {
         expect(component.isCornerResizerDown).toEqual(true);
     });
 
-    it('ngAfterViewInit should change baseCtx if baseCanvas is not null', () => {
-        const spyViewInit = spyOn(component, 'ngAfterViewInit').and.callThrough();
+    it('ngAfterViewInit should set resetCanvasSize to default values if drawingService.imageURL is null', () => {
+        drawingService.imageURL = '';
+        const previousCommand = new ResizerCommand(1, 1);
+        const expectedCommand = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
+        undoRedoService.resetCanvasSize = previousCommand;
 
         component.ngAfterViewInit();
 
-        expect(spyViewInit).toHaveBeenCalled();
-        expect(component.sideResizer).toBeDefined();
+        expect(undoRedoService.resetCanvasSize).toEqual(expectedCommand);
+    });
+
+    it('ngAfterViewInit should set resetCanvasSize if drawingService.imageURL is not null', () => {
+        drawingService.imageURL = 'notempty';
+        const previousCommand = new ResizerCommand(2, 2);
+        undoRedoService.resetCanvasSize = previousCommand;
+
+        component.ngAfterViewInit();
+
+        expect(undoRedoService.resetCanvasSize).not.toEqual(previousCommand);
+    });
+
+    it('ngAfterViewInit should reset UndoRedoService and execute resetCanvasSize if drawingService.imageURL is not null', () => {
+        drawingService.imageURL = 'notempty';
+
+        const resetSpy = spyOn(undoRedoService, 'reset');
+
+        component.ngAfterViewInit();
+
+        expect(resetSpy).toHaveBeenCalled();
+    });
+
+    it('ngAfterViewInit should drawImage on canvas if drawingService.imageURL is not null', () => {
+        drawingService.imageURL = 'notempty';
+
+        const drawImageSpy = spyOn(component.baseCtx, 'drawImage');
+
+        component.ngAfterViewInit();
+
+        expect(drawImageSpy).toHaveBeenCalled();
     });
 
     it('setPreviewSize should set width if isSideResizerDown and over min value', () => {

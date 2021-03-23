@@ -50,6 +50,11 @@ export class UndoRedoService {
         this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.resetCanvasSize.execute();
+        if (this.drawingService.imageURL !== '') {
+            const image = new Image();
+            image.src = this.drawingService.imageURL;
+            this.drawingService.baseCtx.drawImage(image, 0, 0, image.width, image.height);
+        }
         this.undoPile.forEach((c) => c.execute());
     }
 }

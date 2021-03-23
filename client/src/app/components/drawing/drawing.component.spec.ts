@@ -19,12 +19,14 @@ describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;
+    let undoRedoStub: UndoRedoService;
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
     let lineStub: ToolStub;
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
+        undoRedoStub = new UndoRedoService(drawingStub);
         pencilStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         eraserStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         lineStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
@@ -33,6 +35,7 @@ describe('DrawingComponent', () => {
             declarations: [DrawingComponent],
             providers: [
                 { provide: DrawingService, useValue: drawingStub },
+                { provide: UndoRedoService, useValue: undoRedoStub },
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
                 { provide: LineService, useValue: lineStub },
