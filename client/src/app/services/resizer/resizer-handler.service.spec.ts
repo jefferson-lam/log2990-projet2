@@ -45,10 +45,10 @@ describe('ResizerHandlerService', () => {
         const yOrigin = '750px';
         const expectedVisibility = 'visible';
 
-        const xMean = canvasPosition.x + canvasWidth / 2 + 'px';
+        const xMean = canvasPosition.x + canvasWidth / 2 - BUTTON_OFFSET / 2 + 'px';
         const xMax = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
         const yMax = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
-        const yMean = canvasPosition.y + canvasHeight / 2 + 'px';
+        const yMean = canvasPosition.y + canvasHeight / 2 - BUTTON_OFFSET / 2 + 'px';
 
         service.setResizerPosition(canvasPosition, canvasWidth, canvasHeight);
         expect(service.topLeftResizer.style.left).toEqual(xOrigin);
