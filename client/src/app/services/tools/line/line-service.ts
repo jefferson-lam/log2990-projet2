@@ -24,6 +24,8 @@ export class LineService extends Tool {
     lineWidth: number;
     primaryColor: string;
 
+    isShiftDown = false;
+
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
@@ -77,7 +79,7 @@ export class LineService extends Tool {
      * event does not work for these modifiers.
      */
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.inUse && event.key === 'Shift') {
+        if (this.inUse && event.key === 'Shift' && !this.shiftDown) {
             this.stickToClosest45Angle();
             this.drawPreview();
             this.shiftDown = true;
@@ -128,18 +130,15 @@ export class LineService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
             this.mousePosition = this.getPositionFromMouse(event);
-            if (this.shiftDown) {
+            const distanceToInitialPoint = this.calculateDistance(this.mousePosition, this.initialPoint);
+            if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
+                this.linePathData[this.linePathData.length - 1] = this.initialPoint;
+            } else if (this.shiftDown) {
                 this.stickToClosest45Angle();
-                this.drawPreview();
             } else {
-                const distanceToInitialPoint = this.calculateDistance(this.mousePosition, this.initialPoint);
-                if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
-                    this.linePathData[this.linePathData.length - 1] = this.initialPoint;
-                } else {
-                    this.linePathData[this.linePathData.length - 1] = this.mousePosition;
-                }
-                this.drawPreview();
+                this.linePathData[this.linePathData.length - 1] = this.mousePosition;
             }
+            this.drawPreview();
         }
     }
 
