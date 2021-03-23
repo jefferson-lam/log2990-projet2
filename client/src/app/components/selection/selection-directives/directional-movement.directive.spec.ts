@@ -28,6 +28,13 @@ describe('DirectionalMovementDirective', () => {
         expect(directive).toBeTruthy();
     });
 
+    it('onKeyboardDown should immediately return if Escape key is pressed', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'Escape' });
+        expect(() => {
+            directive.onKeyboardDown(eventSpy);
+        }).not.toThrow();
+    });
+
     it('onKeyBoardDown should move selection left by NUM_PIXELS pixels if released immediately after specified timeout', fakeAsync((): void => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowLeft', timeStamp: '100' });
 

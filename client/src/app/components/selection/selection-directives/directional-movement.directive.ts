@@ -17,6 +17,9 @@ export class DirectionalMovementDirective {
     @HostListener('keydown', ['$event'])
     async onKeyboardDown(event: KeyboardEvent): Promise<void> {
         event.preventDefault();
+        if (event.key === 'Escape') {
+            return;
+        }
         if (!this.keyPressed.get(event.key)) {
             // First press
             this.keyPressed.set(event.key, event.timeStamp);

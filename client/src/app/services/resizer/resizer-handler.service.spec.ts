@@ -6,8 +6,6 @@ import { ResizerHandlerService } from './resizer-handler.service';
 describe('ResizerHandlerService', () => {
     let service: ResizerHandlerService;
 
-    const NUM_PIXELS = 3;
-
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ResizerHandlerService);
@@ -31,6 +29,7 @@ describe('ResizerHandlerService', () => {
         resizers.forEach((resizer) => {
             expect(resizer.style.top).toEqual('0px');
             expect(resizer.style.left).toEqual('0px');
+            expect(resizer.style.visibility).toEqual('hidden');
         });
     });
 
@@ -44,6 +43,7 @@ describe('ResizerHandlerService', () => {
 
         const xOrigin = '750px';
         const yOrigin = '750px';
+        const expectedVisibility = 'visible';
 
         const xMean = canvasPosition.x + canvasWidth / 2 + 'px';
         const xMax = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
@@ -53,93 +53,35 @@ describe('ResizerHandlerService', () => {
         service.setResizerPosition(canvasPosition, canvasWidth, canvasHeight);
         expect(service.topLeftResizer.style.left).toEqual(xOrigin);
         expect(service.topLeftResizer.style.top).toEqual(yOrigin);
+        expect(service.topLeftResizer.style.visibility).toEqual(expectedVisibility);
 
         expect(service.topResizer.style.left).toEqual(xMean);
         expect(service.topResizer.style.top).toEqual(yOrigin);
+        expect(service.topResizer.style.visibility).toEqual(expectedVisibility);
 
         expect(service.topRightResizer.style.left).toEqual(xMax);
         expect(service.topRightResizer.style.top).toEqual(yOrigin);
+        expect(service.topRightResizer.style.visibility).toEqual(expectedVisibility);
 
         expect(service.rightResizer.style.left).toEqual(xMax);
         expect(service.rightResizer.style.top).toEqual(yMean);
+        expect(service.rightResizer.style.visibility).toEqual(expectedVisibility);
 
         expect(service.bottomRightResizer.style.left).toEqual(xMax);
         expect(service.bottomRightResizer.style.top).toEqual(yMax);
+        expect(service.bottomRightResizer.style.visibility).toEqual(expectedVisibility);
 
         expect(service.bottomResizer.style.left).toEqual(xMean);
         expect(service.bottomResizer.style.top).toEqual(yMax);
+        expect(service.bottomResizer.style.visibility).toEqual(expectedVisibility);
 
         expect(service.bottomLeftResizer.style.left).toEqual(xOrigin);
         expect(service.bottomLeftResizer.style.top).toEqual(yMax);
+        expect(service.bottomLeftResizer.style.visibility).toEqual(expectedVisibility);
 
         expect(service.leftResizer.style.left).toEqual(xOrigin);
         expect(service.leftResizer.style.top).toEqual(yMean);
-    });
-
-    it('translateLeft should translate all resizers by 3px to the left', () => {
-        const resizers = service.getAllResizers();
-        resizers.forEach((resizer) => {
-            resizer.style.left = '50px';
-        });
-        service.translateLeft(NUM_PIXELS);
-        resizers.forEach((resizer) => {
-            expect(resizer.style.left).toEqual('47px');
-        });
-    });
-
-    it('translateLeft should translate all resizers by 3px to the left', () => {
-        const resizers = service.getAllResizers();
-        resizers.forEach((resizer) => {
-            resizer.style.left = '1px';
-        });
-        service.translateLeft(NUM_PIXELS);
-        resizers.forEach((resizer) => {
-            expect(resizer.style.left).toEqual('0px');
-        });
-    });
-
-    it('translateRight should translate all resizers by 3px to the right', () => {
-        const resizers = service.getAllResizers();
-        resizers.forEach((resizer) => {
-            resizer.style.left = '1px';
-        });
-        service.translateRight(NUM_PIXELS);
-        resizers.forEach((resizer) => {
-            expect(resizer.style.left).toEqual('4px');
-        });
-    });
-
-    it('translateUp should translate all resizers by 3px to the top', () => {
-        const resizers = service.getAllResizers();
-        resizers.forEach((resizer) => {
-            resizer.style.top = '50px';
-        });
-        service.translateUp(NUM_PIXELS);
-        resizers.forEach((resizer) => {
-            expect(resizer.style.left).toEqual('47px');
-        });
-    });
-
-    it('translateUp should translate all resizers by 3px to the top', () => {
-        const resizers = service.getAllResizers();
-        resizers.forEach((resizer) => {
-            resizer.style.top = '1px';
-        });
-        service.translateUp(NUM_PIXELS);
-        resizers.forEach((resizer) => {
-            expect(resizer.style.left).toEqual('0px');
-        });
-    });
-
-    it('translateDown should translate all resizers by 3px to the down', () => {
-        const resizers = service.getAllResizers();
-        resizers.forEach((resizer) => {
-            resizer.style.top = '1px';
-        });
-        service.translateDown(NUM_PIXELS);
-        resizers.forEach((resizer) => {
-            expect(resizer.style.left).toEqual('4px');
-        });
+        expect(service.leftResizer.style.visibility).toEqual(expectedVisibility);
     });
 
     it('getAllResizers should return all resizers', () => {

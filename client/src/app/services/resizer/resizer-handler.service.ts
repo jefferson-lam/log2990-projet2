@@ -20,71 +20,42 @@ export class ResizerHandlerService {
         resizers.forEach((resizer) => {
             resizer.style.top = '0px';
             resizer.style.left = '0px';
+            resizer.style.visibility = 'hidden';
         });
     }
 
     setResizerPosition(canvasPosition: Vec2, canvasWidth: number, canvasHeight: number): void {
+        this.topLeftResizer.style.visibility = 'visible';
         this.topLeftResizer.style.left = canvasPosition.x + 'px';
         this.topLeftResizer.style.top = canvasPosition.y + 'px';
 
+        this.topResizer.style.visibility = 'visible';
         this.topResizer.style.left = canvasPosition.x + canvasWidth / 2 + 'px';
         this.topResizer.style.top = canvasPosition.y + 'px';
 
+        this.topRightResizer.style.visibility = 'visible';
         this.topRightResizer.style.left = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
         this.topRightResizer.style.top = canvasPosition.y + 'px';
 
+        this.rightResizer.style.visibility = 'visible';
         this.rightResizer.style.left = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
         this.rightResizer.style.top = canvasPosition.y + canvasHeight / 2 + 'px';
 
+        this.bottomRightResizer.style.visibility = 'visible';
         this.bottomRightResizer.style.left = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
         this.bottomRightResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
 
+        this.bottomResizer.style.visibility = 'visible';
         this.bottomResizer.style.left = canvasPosition.x + canvasWidth / 2 + 'px';
         this.bottomResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
 
+        this.bottomLeftResizer.style.visibility = 'visible';
         this.bottomLeftResizer.style.left = canvasPosition.x + 'px';
         this.bottomLeftResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
 
+        this.leftResizer.style.visibility = 'visible';
         this.leftResizer.style.left = canvasPosition.x + 'px';
         this.leftResizer.style.top = canvasPosition.y + canvasHeight / 2 + 'px';
-    }
-
-    translateLeft(numPixels: number): void {
-        const resizers = this.getAllResizers();
-        resizers.forEach((resizer) => {
-            let newLeftValue = parseInt(resizer.style.left, 10) - numPixels;
-            if (newLeftValue < 0) {
-                newLeftValue = 0;
-            }
-            resizer.style.left = newLeftValue + 'px';
-        });
-    }
-
-    translateUp(numPixels: number): void {
-        const resizers = this.getAllResizers();
-        resizers.forEach((resizer) => {
-            let newLeftValue = parseInt(resizer.style.top, 10) - numPixels;
-            if (newLeftValue < 0) {
-                newLeftValue = 0;
-            }
-            resizer.style.left = newLeftValue + 'px';
-        });
-    }
-
-    translateDown(numPixels: number): void {
-        const resizers = this.getAllResizers();
-        resizers.forEach((resizer) => {
-            const newLeftValue = parseInt(resizer.style.top, 10) + numPixels;
-            resizer.style.left = newLeftValue + 'px';
-        });
-    }
-
-    translateRight(numPixels: number): void {
-        const resizers = this.getAllResizers();
-        resizers.forEach((resizer) => {
-            const newLeftValue = parseInt(resizer.style.left, 10) + numPixels;
-            resizer.style.left = newLeftValue + 'px';
-        });
     }
 
     getAllResizers(): HTMLElement[] {
