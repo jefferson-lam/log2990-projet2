@@ -75,17 +75,15 @@ describe('SaveDrawingComponent', () => {
         expect(toDataUrlSpy).toHaveBeenCalled();
     });
 
-    it('verifyTitleValid should set isSavePossible to true if areTagsValid is already true', () => {
+    it('verifyTitleValid should set isSavePossible to true if title to save is valid', () => {
         const TITLE_IS_VALID = true;
-        component.areTagsValid = true;
         component.verifyTitleValid(TITLE_IS_VALID);
         expect(component.isSavePossible).toBeTrue();
     });
 
-    it('verifyTitleValid should set isSavePossible to false if areTagsValid is already false', () => {
-        const TITLE_IS_VALID = true;
-        component.areTagsValid = false;
-        component.verifyTitleValid(TITLE_IS_VALID);
+    it('verifyTitleValid should set isSavePossible to false if title to save is invalid', () => {
+        const TITLE_IS_INVALID = false;
+        component.verifyTitleValid(TITLE_IS_INVALID);
         expect(component.isSavePossible).toBeFalse();
     });
 
