@@ -71,8 +71,15 @@ describe('MainPageComponent', () => {
     it('should open Carousel on control+g', () => {
         const carouselSpy = spyOn(component, 'openCarousel');
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyG', key: '' });
-        component.onCtrlShiftGKeyDown(eventSpy);
+        component.onCtrlGKeyDown(eventSpy);
 
         expect(carouselSpy).toHaveBeenCalled();
+    });
+
+    it('ngOnInit should call subscribe', () => {
+        const subscribeSpy = spyOn(component.dialog.afterAllClosed, 'subscribe').and.callThrough();
+        component.ngOnInit();
+
+        expect(subscribeSpy).toHaveBeenCalled();
     });
 });

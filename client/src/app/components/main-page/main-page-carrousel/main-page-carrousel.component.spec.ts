@@ -128,7 +128,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showCasedDrawings = [
             { image: '', name: '', id: '3' },
-            { image: '', ame: '', id: '4' },
+            { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
         ];
         const EXPECTED_DRAWING_COUNTER = 1;
