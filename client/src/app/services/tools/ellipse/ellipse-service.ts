@@ -19,6 +19,7 @@ export class EllipseService extends Tool {
     fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = '#B5CF60';
     secondaryColor: string = '#2F2A36';
+    mousePosition: Vec2;
 
     previewCommand: EllipseCommand;
 
@@ -40,8 +41,7 @@ export class EllipseService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
+            this.cornerCoords[EllipseConstants.END_INDEX] = this.mousePosition;
             const command: Command = new EllipseCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
@@ -52,8 +52,8 @@ export class EllipseService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[EllipseConstants.END_INDEX] = mousePosition;
+            this.mousePosition = this.getPositionFromMouse(event);
+            this.cornerCoords[EllipseConstants.END_INDEX] = this.mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
@@ -94,7 +94,6 @@ export class EllipseService extends Tool {
 
                 this.previewCommand.setValues(this.drawingService.previewCtx, this);
                 this.previewCommand.execute();
-
                 this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
             }
         }
@@ -173,5 +172,9 @@ export class EllipseService extends Tool {
 
     private clearCornerCoords(): void {
         this.cornerCoords.fill({ x: 0, y: 0 });
+    }
+
+    onToolChange(): void {
+        this.onMouseUp({} as MouseEvent);
     }
 }

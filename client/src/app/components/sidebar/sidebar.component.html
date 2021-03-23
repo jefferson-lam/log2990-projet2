@@ -18,11 +18,13 @@
             <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
                 <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
             </li>
-
             <li id="exportButton">
                 <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
                     >open_in_new</mat-icon
                 >
+            </li>
+            <li id="selectAllButton">
+                <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
             </li>
         </ul>
         <ul class="tools-sidebar">
@@ -51,6 +53,8 @@
                 <app-sidebar-polygone class="sidebar-tool-options" *ngSwitchCase="'3'"></app-sidebar-polygone>
                 <app-sidebar-aerosol class="sidebar-tool-options" *ngSwitchCase="'a'"></app-sidebar-aerosol>
                 <app-sidebar-pipette class="sidebar-tool-options" *ngSwitchCase="'i'"></app-sidebar-pipette>
+                <app-sidebar-rectangle-selection class="sidebar-tool-options" *ngSwitchCase="'r'"> </app-sidebar-rectangle-selection>
+                <app-sidebar-ellipse-selection class="sidebar-tool-options" *ngSwitchCase="'s'"> </app-sidebar-ellipse-selection>
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

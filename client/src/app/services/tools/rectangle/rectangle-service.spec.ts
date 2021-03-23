@@ -306,4 +306,12 @@ describe('RectangleService', () => {
         service.setSecondaryColor(EXPECTED_RANDOM_COLOR);
         expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
     });
+
+    it('onToolChange should call onMouseUp', () => {
+        const onMouseUpSpy = spyOn(service, 'onMouseUp');
+
+        service.onToolChange();
+
+        expect(onMouseUpSpy).toHaveBeenCalled();
+    });
 });

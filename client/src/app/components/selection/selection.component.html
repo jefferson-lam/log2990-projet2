@@ -1,0 +1,23 @@
+<div id="selectionContainer">
+    <canvas
+        tabindex="0"
+        appDirectionalMovement
+        appKeyboardListener
+        cdkDrag
+        id="selectionLayer"
+        #selectionCanvas
+        (canvasMovement)="this.onCanvasMove($event)"
+        (cdkDragMoved)="this.repositionResizers($event)"
+        (cdkDragEnded)="this.setCanvasPosition($event)"
+        [attr.width]="0"
+        [attr.height]="0"
+    ></canvas>
+</div>
+<div #leftResizer id="leftSlider" class="resizer"></div>
+<div #rightResizer id="rightSlider" class="resizer"></div>
+<div #topResizer id="topSlider" class="resizer"></div>
+<div #bottomResizer id="bottomSlider" class="resizer"></div>
+<div #bottomLeftResizer id="bottomLeftSlider" class="resizer"></div>
+<div #bottomRightResizer id="bottomRightSlider" class="resizer"></div>
+<div #topLeftResizer id="topLeftSlider" class="resizer"></div>
+<div #topRightResizer id="topRightSlider" class="resizer"></div>

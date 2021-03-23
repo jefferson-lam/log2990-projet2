@@ -93,4 +93,8 @@ export class PencilService extends Tool {
     private clearPath(): void {
         this.pathData = [];
     }
+
+    onToolChange(): void {
+        this.onMouseUp({} as MouseEvent);
+    }
 }

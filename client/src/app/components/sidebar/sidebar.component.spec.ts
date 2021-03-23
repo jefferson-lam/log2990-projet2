@@ -4,12 +4,14 @@ import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SidebarComponent } from './sidebar.component';
 
@@ -289,5 +291,41 @@ describe('SidebarComponent', () => {
 
         expect(commandExecuteSpy).toHaveBeenCalled();
         expect(redoServiceSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on selectAll should change the currentTool to rectangleSelectionService and call its selectAll method', () => {
+        const rectangleSelectionService = new RectangleSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new RectangleService({} as DrawingService, {} as UndoRedoService),
+        );
+        toolManagerServiceSpy.getTool.and.callFake(() => {
+            return rectangleSelectionService;
+        });
+        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+            return;
+        });
+        component.selectAll();
+        expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleSelectionService);
+        expect(selectAllSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on selectAll should not call selectAll if the tool is not rectangleSelectionService', () => {
+        const rectangleSelectionService = new RectangleSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new RectangleService({} as DrawingService, {} as UndoRedoService),
+        );
+        toolManagerServiceSpy.getTool.and.callFake(() => {
+            return ellipseStub;
+        });
+        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+            return;
+        });
+        component.selectAll();
+        expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
+        expect(selectAllSpy).not.toHaveBeenCalled();
     });
 });
