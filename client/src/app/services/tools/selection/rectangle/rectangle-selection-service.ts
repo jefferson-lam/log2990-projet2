@@ -82,7 +82,7 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.setSelectionCanvasPosition();
+            this.setSelectionCanvasPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
             this.inUse = false;
             this.isManipulating = true;
         }
@@ -179,8 +179,11 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.selectionWidth,
             this.selectionHeight,
         );
-        this.drawingService.selectionCanvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
-        this.drawingService.selectionCanvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
+        this.setSelectionCanvasPosition(
+            { x: SelectionConstants.DEFAULT_LEFT_POSITION, y: SelectionConstants.DEFAULT_TOP_POSITION },
+            this.selectionWidth,
+            this.selectionHeight,
+        );
 
         this.inUse = false;
         this.isManipulating = true;
@@ -200,10 +203,10 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    private setSelectionCanvasPosition(): void {
-        this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
-        this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
-        this.resizerHandlerService.setResizerPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
+    private setSelectionCanvasPosition(topLeft: Vec2, selectionWidth: number, selectionHeight: number): void {
+        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.resizerHandlerService.setResizerPosition(topLeft, selectionWidth, selectionHeight);
     }
 
     private validateSelectionHeightAndWidth(): boolean {
