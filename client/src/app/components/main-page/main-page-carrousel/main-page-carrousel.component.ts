@@ -1,6 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { ImageFormat } from '@app/classes/image-format';
 import * as CarouselConstants from '@app/constants/carousel-constants';
@@ -12,8 +11,6 @@ import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import * as DatabaseConstants from '@common/validation/database-constants';
 import * as ServerConstants from '@common/validation/server-constants';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 
 @Component({
     selector: 'app-main-page-carrousel',
@@ -25,10 +22,10 @@ export class MainPageCarrouselComponent {
     @Input() newTagAdded: boolean;
     @Input() deleteDrawingTrue: boolean;
 
-    tagCtrl: FormControl = new FormControl();
-    filteredTags: Observable<string[]>;
+    // tagCtrl: FormControl = new FormControl();
+    // filteredTags: Observable<string[]>;
 
-    existingTag: boolean = true;
+    tagErrorPresent: boolean = false;
     deleted: boolean = false;
     noValidDrawing: boolean = false;
     visible: boolean = true;
@@ -50,35 +47,35 @@ export class MainPageCarrouselComponent {
     previewDrawings: ImageFormat[] = [];
 
     constructor(private database: DatabaseService, private localServerService: LocalServerService, private drawingService: DrawingService) {
-        this.filteredTags = this.tagCtrl.valueChanges.pipe(
-            startWith(null),
-            map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
-        );
+        // this.filteredTags = this.tagCtrl.valueChanges.pipe(
+        //     startWith(null),
+        //     map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
+        // );
         this.resetShowcasedDrawings();
     }
 
     addTag(event: MatChipInputEvent): void {
         const input = event.input;
-        const value = event.value;
-        if (this.existingTag) {
-            input.value = '';
-        } else {
-            if ((value || '').trim()) {
-                this.tagsInSearch.push(value.trim());
-            }
-            if (input) {
-                input.value = '';
-            }
+        const tag = event.value.trim();
+        input.value = '';
 
-            this.tagCtrl.setValue(null);
+        if (tag === '') {
+            this.tagErrorPresent = false;
+        } else if (this.checkIfTagExists(tag)) {
+            this.tagErrorPresent = false;
+            this.tagsInSearch.push(tag);
+
+            // this.tagCtrl.setValue(null);
+
+            this.resetShowcasedDrawings();
+        } else {
+            this.tagErrorPresent = true;
         }
-        console.log(this.tagsInSearch);
-        this.resetShowcasedDrawings();
     }
 
     removeTag(tag: string): void {
         const index = this.tagsInSearch.indexOf(tag);
-
+        this.tagErrorPresent = false;
         if (index >= 0) {
             this.tagsInSearch.splice(index, 1);
         }
@@ -116,16 +113,28 @@ export class MainPageCarrouselComponent {
         const idDrawingToDelete = this.showCasedDrawings[indexToDelete].id;
         this.database.dropDrawing(idDrawingToDelete).subscribe({
             next: (result) => {
-                console.log('@Hee-Min, Delete method in carrousel in progress: ' + result);
+                console.log(result);
             },
         });
-        this.showCasedDrawings.splice(1, 1);
+        if (this.showCasedDrawings.length > 1) {
+            this.showCasedDrawings.splice(1, 1);
+        } else {
+            this.showCasedDrawings.splice(0, 1);
+        }
         this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
-        this.resetShowcasedDrawings();
     }
 
     openEditorWithDrawing(dataUrl: string): void {
-        this.drawingService.drawSavedImage(dataUrl);
+        this.drawingService.setInitialImage(dataUrl);
+    }
+
+    private checkIfTagExists(tag: string): boolean {
+        for (const drawing of this.previewDrawings) {
+            if (drawing.tags?.includes(tag)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private resetShowcasedDrawings(): void {
@@ -140,9 +149,9 @@ export class MainPageCarrouselComponent {
             this.database.getDrawingsByTags(this.tagsInSearch).subscribe({
                 next: (result: Message) => {
                     if (result.title === DatabaseConstants.ERROR_MESSAGE || result.body === JSON.stringify([])) {
-                        this.existingTag = true;
+                        this.tagErrorPresent = true;
                     } else {
-                        this.existingTag = false;
+                        this.tagErrorPresent = false;
                     }
                     drawingsWithMatchingTags = JSON.parse(result.body);
                 },
@@ -151,13 +160,6 @@ export class MainPageCarrouselComponent {
                     this.noValidDrawing = drawingsWithMatchingTags.length === 0;
                     for (const drawing of drawingsWithMatchingTags) {
                         this.addDrawingToDisplay(drawing._id, drawing);
-                    }
-
-                    console.log(this.showCasedDrawings.length);
-                    let currentCarrouselSize = this.showCasedDrawings.length;
-                    while (currentCarrouselSize < CarouselConstants.MAX_CAROUSEL_SIZE) {
-                        this.showCasedDrawings.push(this.placeHolderDrawing);
-                        currentCarrouselSize++;
                     }
                 },
             });
@@ -192,8 +194,8 @@ export class MainPageCarrouselComponent {
         });
     }
 
-    private _filter(value: string): string[] {
-        const filterValue = value.toLowerCase();
-        return this.allTags.filter((tag) => tag.toLowerCase().indexOf(filterValue) === 0);
-    }
+    // private _filter(value: string): string[] {
+    //     const filterValue = value.toLowerCase();
+    //     return this.allTags.filter((tag) => tag.toLowerCase().indexOf(filterValue) === 0);
+    // }
 }

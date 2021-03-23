@@ -43,7 +43,12 @@ describe('MainPageCarrouselComponent', () => {
         );
 
         localServerServiceSpy = jasmine.createSpyObj('localServerService', ['getDrawingById']);
-        localServerServiceSpy.getDrawingById.and.returnValue(of({ id: '123', image: 'testpng' }));
+        localServerServiceSpy.getDrawingById.and.returnValue(
+            of({
+                title: 'Success',
+                body: '{"_id":"000000000000000000000000","title":"TEST","tags":["test1", "test2"]}',
+            }),
+        );
         TestBed.configureTestingModule({
             declarations: [MainPageCarrouselComponent],
             imports: [RouterTestingModule, HttpClientModule, BrowserModule, FormsModule, ReactiveFormsModule, MatChipsModule],

@@ -1,7 +1,7 @@
 <div class="modal-dialog" (keydown)="$event.stopPropagation()">
     <div id="topBar">
         <h1 mat-dialog-title id="titleTopBar">Carrousel</h1>
-        <div *ngIf="!existingTag" id="tagValidation">Ajoutez une étiquette existante</div>
+        <div *ngIf="tagErrorPresent" id="tagValidation">Ajoutez une étiquette existante</div>
         <mat-form-field class="tagsList">
             <mat-label id="filterTag"> Filtrage par étiquette </mat-label>
             <mat-chip-list #chipList aria-label="Tag selection">
@@ -11,7 +11,6 @@
                 <input
                     placeholder="Chercher une étiquette..."
                     #tagInput
-                    [formControl]="tagCtrl"
                     [matChipInputFor]="chipList"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                     (matChipInputTokenEnd)="addTag($event)"
@@ -28,7 +27,7 @@
                     <div id="spinnerAnimation"><mat-spinner color="warn" [diameter]="250"></mat-spinner></div>
                 </div>
                 <div id="drawingValidation" *ngIf="noValidDrawing">Image non-trouvée</div>
-                <div class="gridContainer">
+                <div class="gridContainer" *ngIf="!drawingLoading">
                     <div class="gridItems" *ngFor="let drawing of showCasedDrawings; let i = index">
                         <div class="drawingTitle">
                             <div>{{ drawing.name }}</div>
@@ -43,7 +42,7 @@
                                 (click)="openEditorWithDrawing(drawing.image)"
                             />
                         </div>
-                        <div>
+                        <div class="tagsContainer">
                             <mat-chip *ngFor="let tag of drawing.tags">{{ tag }}</mat-chip>
                         </div>
                     </div>
