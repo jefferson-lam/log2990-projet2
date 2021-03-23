@@ -104,7 +104,6 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            //
             this.drawingService.selectionCanvas.style.left = this.cornerCoords[SelectionConstants.START_INDEX].x + 'px';
             this.drawingService.selectionCanvas.style.top = this.cornerCoords[SelectionConstants.START_INDEX].y + 'px';
             this.resizerHandlerService.setResizerPosition(
