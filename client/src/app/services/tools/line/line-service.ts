@@ -85,23 +85,24 @@ export class LineService extends Tool {
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
-        if (this.inUse) {
-            switch (event.key) {
-                case 'Shift':
-                    this.shiftDown = false;
-                    this.linePathData[this.linePathData.length - 1] = this.mousePosition;
-                    this.drawPreview();
-                    break;
-                case 'Escape':
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.clearPath();
-                    this.inUse = false;
-                    break;
-                case 'Backspace':
-                    this.linePathData.pop();
-                    this.finishLine();
-                    break;
-            }
+        if (!this.inUse) {
+            return;
+        }
+        switch (event.key) {
+            case 'Shift':
+                this.shiftDown = false;
+                this.linePathData[this.linePathData.length - 1] = this.mousePosition;
+                this.drawPreview();
+                break;
+            case 'Escape':
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.clearPath();
+                this.inUse = false;
+                break;
+            case 'Backspace':
+                this.linePathData.pop();
+                this.finishLine();
+                break;
         }
     }
 
