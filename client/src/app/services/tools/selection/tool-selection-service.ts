@@ -106,10 +106,6 @@ export class ToolSelectionService extends Tool {
         return cornerCoords;
     }
 
-    clearCorners(cornerCoords: Vec2[]): Vec2[] {
-        return cornerCoords.fill({ x: 0, y: 0 });
-    }
-
     /**
      * Saves the selectionTool's past settings so we can reset to them later.
      */
@@ -151,5 +147,9 @@ export class ToolSelectionService extends Tool {
             x: point.x + scalar,
             y: point.y + scalar,
         };
+    }
+
+    clearCorners(cornerCoords: Vec2[]): Vec2[] {
+        return cornerCoords.fill({ x: 0, y: 0 });
     }
 }
