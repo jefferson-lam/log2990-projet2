@@ -29,11 +29,11 @@
                 </div>
                 <div id="drawingValidation" *ngIf="noValidDrawing">Image non-trouvée</div>
                 <div class="gridContainer">
-                    <div id="previewGalleryImage" class="gridItems" *ngFor="let drawing of showCasedDrawings; let i = index">
+                    <div class="gridItems" *ngFor="let drawing of showCasedDrawings; let i = index">
                         <div class="drawingTitle">
                             <div>{{ drawing.name }}</div>
                         </div>
-                        <div>
+                        <div class="imageContainer">
                             <img
                                 mat-dialog-close
                                 alt="Image non-trouvée"

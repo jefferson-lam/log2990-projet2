@@ -11,6 +11,7 @@ import { Drawing } from '@common/communication/database';
 import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import * as DatabaseConstants from '@common/validation/database-constants';
+import * as ServerConstants from '@common/validation/server-constants';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
@@ -71,7 +72,7 @@ export class MainPageCarrouselComponent {
 
             this.tagCtrl.setValue(null);
         }
-
+        console.log(this.tagsInSearch);
         this.resetShowcasedDrawings();
     }
 
@@ -82,6 +83,49 @@ export class MainPageCarrouselComponent {
             this.tagsInSearch.splice(index, 1);
         }
         this.resetShowcasedDrawings();
+    }
+
+    showcasePreviousDrawing(): void {
+        // Determine new drawingCounter value
+        if (this.drawingCounter === 0) {
+            this.drawingCounter = this.previewDrawings.length - 1;
+        } else {
+            this.drawingCounter--;
+        }
+        this.showCasedDrawings.pop();
+        this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
+    }
+
+    showcaseNextDrawing(): void {
+        let newDrawingIndex: number;
+        if (this.drawingCounter + this.showCasedDrawings.length >= this.previewDrawings.length) {
+            newDrawingIndex = (this.drawingCounter + this.showCasedDrawings.length) % this.previewDrawings.length;
+        } else {
+            newDrawingIndex = this.drawingCounter + this.showCasedDrawings.length;
+        }
+        this.showCasedDrawings.shift();
+        this.showCasedDrawings.push(this.previewDrawings[newDrawingIndex]);
+        this.drawingCounter++;
+        if (this.drawingCounter > this.previewDrawings.length - 1) {
+            this.drawingCounter = 0;
+        }
+    }
+
+    deleteDrawing(): void {
+        const indexToDelete = this.previewDrawings.length > 1 ? 1 : 0;
+        const idDrawingToDelete = this.showCasedDrawings[indexToDelete].id;
+        this.database.dropDrawing(idDrawingToDelete).subscribe({
+            next: (result) => {
+                console.log('@Hee-Min, Delete method in carrousel in progress: ' + result);
+            },
+        });
+        this.showCasedDrawings.splice(1, 1);
+        this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
+        this.resetShowcasedDrawings();
+    }
+
+    openEditorWithDrawing(dataUrl: string): void {
+        this.drawingService.drawSavedImage(dataUrl);
     }
 
     private resetShowcasedDrawings(): void {
@@ -128,12 +172,6 @@ export class MainPageCarrouselComponent {
                 for (const drawing of drawingsWithMatchingTags) {
                     this.addDrawingToDisplay(drawing._id, drawing);
                 }
-                let currentCarrouselSize = drawingsWithMatchingTags.length;
-                while (currentCarrouselSize < CarouselConstants.MAX_CAROUSEL_SIZE) {
-                    this.showCasedDrawings.push(this.placeHolderDrawing);
-                    currentCarrouselSize++;
-                }
-
                 this.drawingLoading = false;
             },
         });
@@ -141,8 +179,9 @@ export class MainPageCarrouselComponent {
 
     private addDrawingToDisplay(id: string, drawing: Drawing): void {
         this.localServerService.getDrawingById(id).subscribe({
-            next: (serverDrawing: ServerDrawing) => {
-                if (serverDrawing !== null) {
+            next: (result: Message) => {
+                if (result.title !== ServerConstants.ERROR_MESSAGE) {
+                    const serverDrawing: ServerDrawing = JSON.parse(result.body);
                     const newPreviewDrawing: ImageFormat = { image: serverDrawing.image, name: drawing.title, tags: drawing.tags, id };
                     this.previewDrawings.push(newPreviewDrawing);
                     if (this.showCasedDrawings.length < CarouselConstants.MAX_CAROUSEL_SIZE) {
@@ -151,49 +190,6 @@ export class MainPageCarrouselComponent {
                 }
             },
         });
-    }
-
-    showcasePreviousDrawing(): void {
-        // Determine new drawingCounter value
-        if (this.drawingCounter === 0) {
-            this.drawingCounter = this.previewDrawings.length - 1;
-        } else {
-            this.drawingCounter--;
-        }
-        this.showCasedDrawings.pop();
-        this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
-    }
-
-    showcaseNextDrawing(): void {
-        let newDrawingIndex: number;
-        if (this.drawingCounter + this.showCasedDrawings.length >= this.previewDrawings.length) {
-            newDrawingIndex = (this.drawingCounter + this.showCasedDrawings.length) % this.previewDrawings.length;
-        } else {
-            newDrawingIndex = this.drawingCounter + this.showCasedDrawings.length;
-        }
-        this.showCasedDrawings.shift();
-        this.showCasedDrawings.push(this.previewDrawings[newDrawingIndex]);
-        this.drawingCounter++;
-        if (this.drawingCounter > this.previewDrawings.length - 1) {
-            this.drawingCounter = 0;
-        }
-    }
-
-    deleteDrawing(): void {
-        const indexToDelete = this.previewDrawings.length > 1 ? 1 : 0;
-        const idDrawingToDelete = this.showCasedDrawings[indexToDelete].id;
-        this.database.dropDrawing(idDrawingToDelete).subscribe({
-            next: (result) => {
-                console.log('@Hee-Min, Delete method in carrousel in progress: ' + result);
-            },
-        });
-        this.showCasedDrawings.splice(1, 1);
-        this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
-        this.resetShowcasedDrawings();
-    }
-
-    openEditorWithDrawing(dataUrl: string): void {
-        this.drawingService.drawSavedImage(dataUrl);
     }
 
     private _filter(value: string): string[] {
