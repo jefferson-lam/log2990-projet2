@@ -21,10 +21,8 @@ export class MainPageCarrouselComponent {
     @Input() newTagAdded: boolean;
     @Input() deleteDrawingTrue: boolean;
 
-    // tagCtrl: FormControl = new FormControl();
-    // filteredTags: Observable<string[]>;
-
     tagErrorPresent: boolean = false;
+    tagErrorMessage: string = '';
     deleted: boolean = false;
     noValidDrawing: boolean = false;
     visible: boolean = true;
@@ -46,10 +44,6 @@ export class MainPageCarrouselComponent {
     previewDrawings: ImageFormat[] = [];
 
     constructor(private database: DatabaseService, private localServerService: LocalServerService, private drawingService: DrawingService) {
-        // this.filteredTags = this.tagCtrl.valueChanges.pipe(
-        //     startWith(null),
-        //     map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
-        // );
         this.resetShowcasedDrawings();
     }
 
@@ -58,17 +52,20 @@ export class MainPageCarrouselComponent {
         const tag = event.value.trim();
         input.value = '';
 
+        if (this.tagsInSearch.includes(tag)) {
+            this.setErrorInTag('Étiquette déjà incluse. Veuillez mettre une étiquette différente.');
+            return;
+        }
+
         if (tag === '') {
             this.tagErrorPresent = false;
         } else if (this.checkIfTagExists(tag)) {
             this.tagErrorPresent = false;
             this.tagsInSearch.push(tag);
 
-            // this.tagCtrl.setValue(null);
-
             this.resetShowcasedDrawings();
         } else {
-            this.tagErrorPresent = true;
+            this.setErrorInTag('Étiquette non trouvée parmi les dessins. Veuillez ajouter une étiquette existante.');
         }
     }
 
@@ -112,15 +109,23 @@ export class MainPageCarrouselComponent {
         const idDrawingToDelete = this.showCasedDrawings[indexToDelete].id;
         this.database.dropDrawing(idDrawingToDelete).subscribe({
             next: (result) => {
-                console.log(result);
+                if (result === undefined || result.title === ServerConstants.ERROR_MESSAGE) {
+                    this.imageNotInServer = true;
+                    return;
+                }
+                this.imageNotInServer = false;
+                if (result.title === ServerConstants.SUCCESS_MESSAGE) {
+                    if (this.showCasedDrawings.length > 1) {
+                        this.showCasedDrawings.splice(1, 1);
+                    } else {
+                        this.showCasedDrawings.splice(0, 1);
+                    }
+                    this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
+                } else {
+                    console.log('UH OH');
+                }
             },
         });
-        if (this.showCasedDrawings.length > 1) {
-            this.showCasedDrawings.splice(1, 1);
-        } else {
-            this.showCasedDrawings.splice(0, 1);
-        }
-        this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
     }
 
     openEditorWithDrawing(dataUrl: string): void {
@@ -136,7 +141,12 @@ export class MainPageCarrouselComponent {
         return false;
     }
 
-    private resetShowcasedDrawings(): void {
+    private setErrorInTag(errorMessage: string): void {
+        this.tagErrorPresent = true;
+        this.tagErrorMessage = errorMessage;
+    }
+
+    private async resetShowcasedDrawings(): Promise<void> {
         // Clean drawings currently in carousel
         this.previewDrawings = [];
         this.showCasedDrawings = [];
@@ -159,37 +169,43 @@ export class MainPageCarrouselComponent {
             });
             return;
         }
-
+        // let resultMessage: Message;
+        // try {
+        //     console.log(await this.database.getDrawings().toPromise());
+        //     console.log('END');
+        // } catch (error) {
+        //     console.log('ERROR', error);
+        // }
+        let resultMessage: Message;
         this.database.getDrawings().subscribe({
             next: (result: Message) => {
-                drawingsWithMatchingTags = JSON.parse(result.body);
+                console.log(result);
+                resultMessage = result;
+                console.log(resultMessage);
             },
             complete: () => {
+                drawingsWithMatchingTags = JSON.parse(resultMessage.body);
                 for (const drawing of drawingsWithMatchingTags) {
                     this.addDrawingToDisplay(drawing._id, drawing);
                 }
                 this.drawingLoading = false;
             },
-        });
-    }
-
-    private addDrawingToDisplay(id: string, drawing: Drawing): void {
-        this.localServerService.getDrawingById(id).subscribe({
-            next: (result: Message) => {
-                if (result.title !== ServerConstants.ERROR_MESSAGE) {
-                    const serverDrawing: ServerDrawing = JSON.parse(result.body);
-                    const newPreviewDrawing: ImageFormat = { image: serverDrawing.image, name: drawing.title, tags: drawing.tags, id };
-                    this.previewDrawings.push(newPreviewDrawing);
-                    if (this.showCasedDrawings.length < CarouselConstants.MAX_CAROUSEL_SIZE) {
-                        this.showCasedDrawings.push(newPreviewDrawing);
-                    }
-                }
+            error: (error) => {
+                console.log(error);
             },
         });
     }
 
-    // private _filter(value: string): string[] {
-    //     const filterValue = value.toLowerCase();
-    //     return this.allTags.filter((tag) => tag.toLowerCase().indexOf(filterValue) === 0);
-    // }
+    private async addDrawingToDisplay(id: string, drawing: Drawing): Promise<void> {
+        const getDrawingsByIdPromise = await this.localServerService.getDrawingById(id).toPromise();
+        const result: Message = getDrawingsByIdPromise;
+        if (result.title !== ServerConstants.ERROR_MESSAGE) {
+            const serverDrawing: ServerDrawing = JSON.parse(result.body);
+            const newPreviewDrawing: ImageFormat = { image: serverDrawing.image, name: drawing.title, tags: drawing.tags, id };
+            this.previewDrawings.push(newPreviewDrawing);
+            if (this.showCasedDrawings.length < CarouselConstants.MAX_CAROUSEL_SIZE) {
+                this.showCasedDrawings.push(newPreviewDrawing);
+            }
+        }
+    }
 }

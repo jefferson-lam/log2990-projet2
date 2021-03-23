@@ -1,7 +1,7 @@
 <div class="modal-dialog" (keydown)="$event.stopPropagation()">
     <div id="topBar">
         <h1 mat-dialog-title id="titleTopBar">Carrousel</h1>
-        <div *ngIf="tagErrorPresent" id="tagValidation">Ajoutez une étiquette existante</div>
+        <div *ngIf="tagErrorPresent" id="tagValidation">{{ tagErrorMessage }}</div>
         <mat-form-field class="tagsList">
             <mat-label id="filterTag"> Filtrage par étiquette </mat-label>
             <mat-chip-list #chipList aria-label="Tag selection">
