@@ -193,7 +193,7 @@ describe('EditorComponent', () => {
         expect(undoSelectionSpy).toHaveBeenCalled();
     });
 
-    it('ctrl+z should call undoSelection from SelectionService if isManipulating is true', () => {
+    it('ctrl+z should not call undoSelection from SelectionService if isManipulating is true', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: 'z' });
         rectangleSelectionService.isManipulating = false;
         component.currentTool = rectangleSelectionService;

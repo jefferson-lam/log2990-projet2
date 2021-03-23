@@ -49,13 +49,10 @@ export class RectangleSelectionCommand extends Command {
 
     cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {
         const newCanvas = document.createElement('canvas');
-        const context = newCanvas.getContext('2d');
+        const context = newCanvas.getContext('2d') as CanvasRenderingContext2D;
         newCanvas.width = selectionCanvas.width;
         newCanvas.height = selectionCanvas.height;
-        // apply the old canvas to the new one
-        // tslint:disable:no-non-null-assertion
-        context!.drawImage(selectionCanvas, 0, 0);
-        // return the new canvas
+        context.drawImage(selectionCanvas, 0, 0);
         return newCanvas;
     }
 }

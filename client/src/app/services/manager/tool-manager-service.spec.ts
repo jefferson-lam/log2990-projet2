@@ -58,13 +58,23 @@ describe('ToolManagerService', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
-    it('select tool on c keypress should not select pencil', () => {
+    it('select tool on c keypress should not call clearCanvas if already selected', () => {
         const keyboardEvent = {
             key: 'c',
         } as KeyboardEvent;
 
         expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+    });
+
+    it('select tool on c keypress should select pencil if not already selected', () => {
+        service.currentTool = eraserServiceSpy;
+        const keyboardEvent = {
+            key: 'c',
+        } as KeyboardEvent;
+
+        expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('select tool should return pencil as a default value', () => {

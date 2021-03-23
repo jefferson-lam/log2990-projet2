@@ -21,7 +21,6 @@ export class DirectionalMovementDirective {
     async onKeyboardDown(event: KeyboardEvent): Promise<void> {
         event.preventDefault();
         if (!this.keyPressed.get(event.key)) {
-            // First press
             this.keyPressed.set(event.key, event.timeStamp);
             this.translateSelection();
             await this.delay(FIRST_PRESS_DELAY_MS);
