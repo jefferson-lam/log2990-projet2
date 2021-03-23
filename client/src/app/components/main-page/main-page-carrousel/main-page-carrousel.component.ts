@@ -123,7 +123,7 @@ export class MainPageCarrouselComponent {
                 this.showCasedDrawings.splice(0, 1);
             }
             this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
-        } catch (error: unknown) {
+        } catch (error) {
             console.log(error);
             switch ((error as Message).body) {
                 case 'Timeout has occurred':
