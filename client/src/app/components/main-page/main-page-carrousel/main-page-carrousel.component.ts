@@ -9,7 +9,6 @@ import { LocalServerService } from '@app/services/local-server/local-server.serv
 import { Drawing } from '@common/communication/database';
 import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
-import * as DatabaseConstants from '@common/validation/database-constants';
 import * as ServerConstants from '@common/validation/server-constants';
 
 @Component({
@@ -148,11 +147,6 @@ export class MainPageCarrouselComponent {
         if (this.tagsInSearch.length > 0) {
             this.database.getDrawingsByTags(this.tagsInSearch).subscribe({
                 next: (result: Message) => {
-                    if (result.title === DatabaseConstants.ERROR_MESSAGE || result.body === JSON.stringify([])) {
-                        this.tagErrorPresent = true;
-                    } else {
-                        this.tagErrorPresent = false;
-                    }
                     drawingsWithMatchingTags = JSON.parse(result.body);
                 },
                 complete: () => {
