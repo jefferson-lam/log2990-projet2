@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
     selector: '[appKeyboardListener]',
 })
 export class KeyboardListenerDirective {
-    currentTool: ToolSelectionService; 
+    currentTool: ToolSelectionService;
     currentToolSubscriber: Subscription;
 
     constructor(public toolManager: ToolManagerService) {
