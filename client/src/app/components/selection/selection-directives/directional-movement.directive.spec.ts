@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import { SelectionComponent } from '@app/components/selection/selection.component';
 import { DirectionalMovementDirective } from './directional-movement.directive';
 
-fdescribe('DirectionalMovementDirective', () => {
+describe('DirectionalMovementDirective', () => {
     let fixture: ComponentFixture<SelectionComponent>;
     let directive: DirectionalMovementDirective;
     let selectionCanvas: DebugElement;
