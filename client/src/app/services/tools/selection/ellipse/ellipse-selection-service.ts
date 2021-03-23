@@ -163,6 +163,20 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
+    onToolChange(): void {
+        if (this.isManipulating) {
+            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
+            this.onMouseDown(emptyMouseEvent);
+        } else if (this.inUse) {
+            const resetKeyboardEvent: KeyboardEvent = {
+                key: 'Escape',
+            } as KeyboardEvent;
+            this.isEscapeDown = true;
+            this.onKeyboardUp(resetKeyboardEvent);
+            this.ellipseService.inUse = false;
+        }
+    }
+
     fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean, fillColor: string): void {
         const ellipseCenter = this.getEllipseCenter(
             cornerCoords[SelectionConstants.START_INDEX],
@@ -203,20 +217,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
         ctx.ellipse(startX, startY, radiusX + offset, radiusY + offset, ROTATION, START_ANGLE, END_ANGLE);
         ctx.stroke();
-    }
-
-    onToolChange(): void {
-        if (this.isManipulating) {
-            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
-            this.onMouseDown(emptyMouseEvent);
-        } else if (this.inUse) {
-            const resetKeyboardEvent: KeyboardEvent = {
-                key: 'Escape',
-            } as KeyboardEvent;
-            this.isEscapeDown = true;
-            this.onKeyboardUp(resetKeyboardEvent);
-            this.ellipseService.inUse = false;
-        }
     }
 
     private validateSelectionHeightAndWidth(): boolean {
