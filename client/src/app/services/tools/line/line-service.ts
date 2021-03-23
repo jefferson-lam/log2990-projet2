@@ -24,8 +24,6 @@ export class LineService extends Tool {
     lineWidth: number;
     primaryColor: string;
 
-    isShiftDown = false;
-
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
