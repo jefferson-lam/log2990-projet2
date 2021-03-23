@@ -58,6 +58,10 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
+    /**
+     * onMouseUp is called when the user has finished defining the selection. All pixels defined inside the rectangle
+     * are drawn onto a third canvas, and we will the afromentioned rectangle with white pixels.
+     */
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
             this.cornerCoords[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
@@ -71,11 +75,13 @@ export class RectangleSelectionService extends ToolSelectionService {
                 return;
             }
             this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
+            if (this.isSquare) {
+                const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
+                this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight, shortestSide);
+                this.selectionHeight = this.selectionWidth = shortestSide;
+            }
             this.selectionWidth = Math.abs(this.selectionWidth);
             this.selectionHeight = Math.abs(this.selectionHeight);
-            if (this.isSquare) {
-                this.computeSquareCoords();
-            }
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
             // Draw selection onto selectionCanvas
@@ -212,12 +218,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         ];
         this.inUse = false;
         this.isManipulating = true;
-    }
-
-    computeSquareCoords(): void {
-        const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
-        this.selectionWidth = Math.sign(this.selectionWidth) * shortestSide;
-        this.selectionHeight = Math.sign(this.selectionHeight) * shortestSide;
     }
 
     onToolChange(): void {

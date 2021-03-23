@@ -15,12 +15,10 @@ describe('ToolSelectionService', () => {
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let selectedToolSpy: jasmine.SpyObj<Tool>;
     let setLineDashSpy: jasmine.Spy;
-    // let baseCtxDrawImageSpy: jasmine.Spy<any>;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    // let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'selectionCanvas', 'canvas']);
@@ -255,6 +253,172 @@ describe('ToolSelectionService', () => {
         ];
         const result = service.validateCornerCoords([startPoint, endPoint], selWidth, selHeight);
         expect(result).toEqual(expectedResult);
+    });
+
+    it('computeSquareCoords should properly set values (+w, +h)', () => {
+        const startPoint: Vec2 = {
+            x: 100,
+            y: 350,
+        };
+        const endPoint: Vec2 = {
+            x: 150,
+            y: 500,
+        };
+        const selWidth = 50;
+        const selHeight = 150;
+        const shortestSide = 50;
+        const expectedResult = [
+            { x: 100, y: 350 },
+            { x: 150, y: 500 },
+        ];
+        const result = service.computeSquareCoords([startPoint, endPoint], selWidth, selHeight, shortestSide);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('computeSquareCoords should properly set values (-w, -h)', () => {
+        const startPoint: Vec2 = {
+            x: 100,
+            y: 350,
+        };
+        const endPoint: Vec2 = {
+            x: 50,
+            y: 300,
+        };
+        const selWidth = -50;
+        const selHeight = -50;
+        const shortestSide = 50;
+        const expectedResult = [
+            { x: 0, y: 250 },
+            { x: 50, y: 300 },
+        ];
+        const result = service.computeSquareCoords([startPoint, endPoint], selWidth, selHeight, shortestSide);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('computeSquareCoords should properly set values (-w, +h)', () => {
+        const startPoint: Vec2 = {
+            x: 100,
+            y: 350,
+        };
+        const endPoint: Vec2 = {
+            x: 50,
+            y: 500,
+        };
+        const selWidth = -50;
+        const selHeight = 150;
+        const shortestSide = 50;
+        const expectedResult = [
+            { x: 100, y: 350 },
+            { x: 50, y: 500 },
+        ];
+        const result = service.computeSquareCoords([startPoint, endPoint], selWidth, selHeight, shortestSide);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('computeSquareCoords should properly set values with shortestSide equal to selHeight (-w, +h)', () => {
+        const startPoint: Vec2 = {
+            x: 500,
+            y: 350,
+        };
+        const endPoint: Vec2 = {
+            x: 450,
+            y: 500,
+        };
+        const selWidth = -50;
+        const selHeight = 150;
+        const shortestSide = 150;
+        const expectedResult = [
+            { x: 300, y: 350 },
+            { x: 450, y: 500 },
+        ];
+        const result = service.computeSquareCoords([startPoint, endPoint], selWidth, selHeight, shortestSide);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('computeSquareCoords should properly set values with shortestSide equal to selHeight (+w, -h)', () => {
+        const startPoint: Vec2 = {
+            x: 500,
+            y: 800,
+        };
+        const endPoint: Vec2 = {
+            x: 750,
+            y: 500,
+        };
+        const selWidth = 250;
+        const selHeight = -300;
+        const shortestSide = -300;
+        const expectedResult = [
+            { x: 500, y: 800 },
+            { x: 200, y: 500 },
+        ];
+        const result = service.computeSquareCoords([startPoint, endPoint], selWidth, selHeight, shortestSide);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('computeSquareCoords should properly set values with shortestSide equal to selWidth (+w, -h)', () => {
+        const startPoint: Vec2 = {
+            x: 500,
+            y: 800,
+        };
+        const endPoint: Vec2 = {
+            x: 750,
+            y: 500,
+        };
+        const selWidth = 250;
+        const selHeight = -300;
+        const shortestSide = 250;
+        const expectedResult = [
+            { x: 500, y: 250 },
+            { x: 750, y: 500 },
+        ];
+        const result = service.computeSquareCoords([startPoint, endPoint], selWidth, selHeight, shortestSide);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('computeSquareCoords should properly set values with shortestSide equal to selWidth (+w, -h)', () => {
+        const startPoint: Vec2 = {
+            x: 500,
+            y: 800,
+        };
+        const endPoint: Vec2 = {
+            x: 750,
+            y: 500,
+        };
+        const selWidth = 250;
+        const selHeight = -300;
+        const shortestSide = 450;
+        const expectedResult = [
+            { x: 500, y: 800 },
+            { x: 750, y: 500 },
+        ];
+        const result = service.computeSquareCoords([startPoint, endPoint], selWidth, selHeight, shortestSide);
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('addScalarToVec2 should correctly return sum', () => {
+        const start = {
+            x: 50,
+            y: 75,
+        };
+        const expectedPoint = {
+            x: 100,
+            y: 125,
+        };
+        const scalar = 50;
+        expect(service.addScalarToVec2(start, scalar)).toEqual(expectedPoint);
+    });
+
+    it('addScalarToVec2 should correctly return sum', () => {
+        const start = {
+            x: 50,
+            y: 75,
+        };
+        const expectedPoint = {
+            x: 0,
+            y: 25,
+        };
+        const scalar = -50;
+        expect(service.addScalarToVec2(start, scalar)).toEqual(expectedPoint);
     });
 
     it('clearCorners should clear service.cornerCoords', () => {

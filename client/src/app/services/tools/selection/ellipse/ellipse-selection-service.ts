@@ -76,6 +76,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.selectionHeight = Math.abs(this.selectionHeight);
             if (this.isCircle) {
                 const shortestSide = Math.min(this.selectionWidth, this.selectionHeight);
+                this.cornerCoords = this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight, shortestSide);
                 this.selectionHeight = this.selectionWidth = shortestSide;
             }
             this.drawingService.selectionCanvas.width = this.selectionWidth;
