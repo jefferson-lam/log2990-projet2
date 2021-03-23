@@ -159,10 +159,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         } else if (this.isManipulating) {
             if (event.key === 'Escape' && this.isEscapeDown) {
                 this.onMouseDown({} as MouseEvent);
-                this.resetSelectedToolSettings();
-                this.resetCanvasState(this.drawingService.selectionCanvas);
-                this.resizerHandlerService.resetResizers();
-                this.isManipulating = false;
                 this.isEscapeDown = false;
             }
         }

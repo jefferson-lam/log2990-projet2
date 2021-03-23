@@ -48,9 +48,9 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.isShiftDown = false;
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resizerHandlerService.resetResizers();
             this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
+            this.resizerHandlerService.resetResizers();
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
@@ -147,10 +147,6 @@ export class EllipseSelectionService extends ToolSelectionService {
                 // Case where user has defined the selection area
                 // Draw the image on baseCtx.
                 this.onMouseDown({} as MouseEvent);
-                this.resetCanvasState(this.drawingService.selectionCanvas);
-                this.resetSelectedToolSettings();
-                this.resizerHandlerService.resetResizers();
-                this.isManipulating = false;
                 this.isEscapeDown = false;
             }
         }
@@ -186,7 +182,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         let radiusY: number;
         startX = radiusX = this.selectionWidth / 2;
         startY = radiusY = this.selectionHeight / 2;
-        this.clipEllipse(this.drawingService.selectionCtx, { x: 0, y: 0 }, this.selectionHeight, this.selectionWidth, 1);
+        this.clipEllipse(this.drawingService.selectionCtx, { x: 0, y: 0 }, this.selectionHeight, this.selectionWidth, 2);
         this.drawingService.selectionCtx.drawImage(
             this.drawingService.canvas,
             this.cornerCoords[SelectionConstants.START_INDEX].x,
@@ -202,7 +198,15 @@ export class EllipseSelectionService extends ToolSelectionService {
         // Draw outline on selectionCanvas, this outline will be on selectionCanvas but not part of the clipped zone.
         this.drawingService.selectionCtx.beginPath();
         this.drawingService.selectionCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
-        this.drawingService.selectionCtx.ellipse(startX, startY, radiusX + 2, radiusY + 2, ROTATION, START_ANGLE, END_ANGLE);
+        this.drawingService.selectionCtx.ellipse(
+            startX,
+            startY,
+            radiusX + SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET,
+            radiusY + SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET,
+            ROTATION,
+            START_ANGLE,
+            END_ANGLE,
+        );
         this.drawingService.selectionCtx.stroke();
     }
 

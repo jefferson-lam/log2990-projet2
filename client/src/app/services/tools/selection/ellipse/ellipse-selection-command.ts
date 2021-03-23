@@ -1,7 +1,6 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import { END_ANGLE, END_INDEX, ROTATION, START_ANGLE, START_INDEX } from '@app/constants/ellipse-constants';
-import { OFFSET_RADIUS } from '@app/constants/selection-constants';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 
 export class EllipseSelectionCommand extends Command {
@@ -39,7 +38,7 @@ export class EllipseSelectionCommand extends Command {
         this.ctx.fill();
 
         // Clip the ctx to only fit the what is inside the outline that is offset by 1
-        this.clipEllipse(this.ctx, this.transformValues, this.selectionHeight, this.selectionWidth, OFFSET_RADIUS);
+        this.clipEllipse(this.ctx, this.transformValues, this.selectionHeight, this.selectionWidth, 1);
         this.ctx.drawImage(
             this.selectionCanvas,
             0,
