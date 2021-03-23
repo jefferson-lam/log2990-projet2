@@ -1,6 +1,7 @@
 import { SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
+import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
@@ -47,6 +48,13 @@ describe('DrawingComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('should initialize baseCanvas with a white background', () => {
+        const baseCtx: CanvasRenderingContext2D = component.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, component.baseWidth, component.baseHeight).data.buffer);
+        const isWhite = !pixelBuffer.some((color) => color !== WHITE_RGBA_DECIMAL);
+        expect(isWhite).toBeTrue();
     });
 
     it('should have a default WIDTH and HEIGHT', () => {
