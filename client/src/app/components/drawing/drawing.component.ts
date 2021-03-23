@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ResizerCommand } from '../resizer/resizer-command';
 
 @Component({
     selector: 'app-drawing',
@@ -34,6 +35,8 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (this.drawingService.imageURL !== '') {
             const image = new Image();
             image.src = this.drawingService.imageURL;
+            const resizer = new ResizerCommand(image.width, image.height);
+            resizer.execute();
             this.baseCtx.drawImage(image, 0, 0, image.width, image.height);
         } else {
             this.drawingService.canvas.width = CanvasConstants.DEFAULT_WIDTH;
