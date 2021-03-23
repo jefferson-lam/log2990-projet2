@@ -126,9 +126,18 @@ h3 {
 }
 
 #tagValidation,
-#deleteValidation,
-#drawingValidation {
+#deleteValidation {
     color: red;
+    font-family: 'Rubik', serif;
+}
+
+#drawingValidation,
+#serverValidation {
+    color: red;
+    font-family: 'Rubik', serif;
+    font-size: 30px;
+    height: 50%;
+    margin-left: 20%;
 }
 
 .drawingImage {
@@ -157,7 +166,9 @@ h3 {
     width: 100%;
 }
 
-.gridContainerSpinner {
+.gridContainerSpinner,
+.gridContainerDrawingValidation,
+.gridServerValidation {
     width: 100%;
     display: flex;
     justify-content: center;

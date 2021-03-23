@@ -1,4 +1,4 @@
-<div class="modal-dialog" (keydown)="$event.stopPropagation()">
+<div class="modal-dialog">
     <div id="topBar">
         <h1 mat-dialog-title id="titleTopBar">Carrousel</h1>
         <div *ngIf="tagErrorPresent" id="tagValidation">{{ tagErrorMessage }}</div>
@@ -22,11 +22,16 @@
     <div mat-dialog-content id="galleryPreview">
         <div id="galleryContainer" *ngIf="!this.deleted">
             <div id="galleryShowcase" (keydown.arrowRight)="showcaseNextDrawing()" (keydown.arrowLeft)="showcasePreviousDrawing()">
-                <mat-icon class="slideLeft" (click)="showcasePreviousDrawing()">navigate_before</mat-icon>
+                <mat-icon class="slideLeft" *ngIf="!imageNotInServer" (click)="showcasePreviousDrawing()">navigate_before</mat-icon>
                 <div class="gridContainerSpinner" *ngIf="drawingLoading">
                     <div id="spinnerAnimation"><mat-spinner color="warn" [diameter]="250"></mat-spinner></div>
                 </div>
-                <div id="drawingValidation" *ngIf="noValidDrawing">Image non-trouvée</div>
+                <div class="gridContainerDrawingValidation" *ngIf="noValidDrawing">
+                    <div id="drawingValidation">Image non-trouvée</div>
+                </div>
+                <div class="gridServerValidation" *ngIf="imageNotInServer">
+                    <div id="serverValidation">{{ serverErrorMessage }}</div>
+                </div>
                 <div class="gridContainer" *ngIf="!drawingLoading">
                     <div class="gridItems" *ngFor="let drawing of showCasedDrawings; let i = index">
                         <div class="drawingTitle">
@@ -47,14 +52,12 @@
                         </div>
                     </div>
                 </div>
-                <mat-icon class="slideRight" (click)="showcaseNextDrawing()">navigate_next</mat-icon>
+                <mat-icon class="slideRight" *ngIf="!imageNotInServer" (click)="showcaseNextDrawing()">navigate_next</mat-icon>
             </div>
         </div>
     </div>
     <div mat-dialog-actions>
         <button mat-button id="deleteButton" (click)="deleteDrawing()">Supprimer</button>
-        <div id="openValidation" *ngIf="imageCannotOpen">L'image n'est pas disponible. Sélectionnez une autre image.</div>
-        <div id="deleteValidation" *ngIf="imageNotInServer">Supression impossible. Le dessin n'existe plus.</div>
         <button mat-button mat-dialog-close id="exitButton">Retour</button>
     </div>
 </div>

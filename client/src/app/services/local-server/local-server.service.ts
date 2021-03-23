@@ -4,7 +4,7 @@ import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
 import * as ServerConstants from '@common/validation/server-constants';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',
@@ -15,25 +15,29 @@ export class LocalServerService {
     constructor(private http: HttpClient) {}
 
     sendDrawing(drawing: ServerDrawing): Observable<Message> {
-        return this.http.post<Message>(this.DRAWINGS_URL + '/send', drawing).pipe(catchError(this.handleError<Message>('sendDrawing')));
+        return this.http
+            .post<Message>(this.DRAWINGS_URL + '/send', drawing)
+            .pipe(timeout(ServerConstants.TIMEOUT_MAX_TIME), catchError(this.handleError<Message>('sendDrawing')));
     }
 
     getAllDrawings(): Observable<Message> {
-        return this.http.get<Message>(this.DRAWINGS_URL + '/all').pipe(catchError(this.handleError<Message>('getAllDrawings')));
+        return this.http
+            .get<Message>(this.DRAWINGS_URL + '/all')
+            .pipe(timeout(ServerConstants.TIMEOUT_MAX_TIME), catchError(this.handleError<Message>('getAllDrawings')));
     }
 
     getDrawingById(drawingId: string): Observable<Message> {
         const testParams = new HttpParams().set('id', drawingId);
         return this.http
             .get<Message>(this.DRAWINGS_URL + '/get', { params: testParams })
-            .pipe(catchError(this.handleError<Message>('getDrawingById')));
+            .pipe(timeout(ServerConstants.TIMEOUT_MAX_TIME), catchError(this.handleError<Message>('getDrawingById')));
     }
 
     deleteDrawing(drawingId: string): Observable<Message> {
         const testParams = new HttpParams().set('id', drawingId);
         return this.http
             .delete<Message>(this.DRAWINGS_URL + '/delete', { params: testParams })
-            .pipe(catchError(this.handleError<Message>('deleteDrawing')));
+            .pipe(timeout(ServerConstants.TIMEOUT_MAX_TIME), catchError(this.handleError<Message>('deleteDrawing')));
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

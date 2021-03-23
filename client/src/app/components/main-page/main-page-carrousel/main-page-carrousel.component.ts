@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { ImageFormat } from '@app/classes/image-format';
 import * as CarouselConstants from '@app/constants/carousel-constants';
@@ -9,6 +9,7 @@ import { LocalServerService } from '@app/services/local-server/local-server.serv
 import { Drawing } from '@common/communication/database';
 import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
+import * as DatabaseConstants from '@common/validation/database-constants';
 import * as ServerConstants from '@common/validation/server-constants';
 
 @Component({
@@ -23,6 +24,7 @@ export class MainPageCarrouselComponent {
 
     tagErrorPresent: boolean = false;
     tagErrorMessage: string = '';
+    serverErrorMessage: string = '';
     deleted: boolean = false;
     noValidDrawing: boolean = false;
     visible: boolean = true;
@@ -31,7 +33,6 @@ export class MainPageCarrouselComponent {
     deleteClick: boolean;
     drawingLoading: boolean;
     imageNotInServer: boolean;
-    imageCannotOpen: boolean;
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
     allTags: string[] = [''];
@@ -78,7 +79,13 @@ export class MainPageCarrouselComponent {
         this.resetShowcasedDrawings();
     }
 
+    @HostListener('keydown.ArrowLeft', ['$event'])
     showcasePreviousDrawing(): void {
+        this.noValidDrawing = false;
+        if (this.showCasedDrawings.length === 0) {
+            this.noValidDrawing = true;
+            return;
+        }
         // Determine new drawingCounter value
         if (this.drawingCounter === 0) {
             this.drawingCounter = this.previewDrawings.length - 1;
@@ -88,9 +95,14 @@ export class MainPageCarrouselComponent {
         this.showCasedDrawings.pop();
         this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
     }
-
+    @HostListener('keydown.ArrowRight', ['$event'])
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;
+        this.noValidDrawing = false;
+        if (this.showCasedDrawings.length === 0) {
+            this.noValidDrawing = true;
+            return;
+        }
         if (this.drawingCounter + this.showCasedDrawings.length >= this.previewDrawings.length) {
             newDrawingIndex = (this.drawingCounter + this.showCasedDrawings.length) % this.previewDrawings.length;
         } else {
@@ -108,7 +120,15 @@ export class MainPageCarrouselComponent {
         const indexToDelete = this.previewDrawings.length > 1 ? 1 : 0;
         const idDrawingToDelete = this.showCasedDrawings[indexToDelete].id;
         try {
-            const result: Message = await this.database.dropDrawing(idDrawingToDelete).toPromise();
+            let result: Message = await this.database.dropDrawing(idDrawingToDelete).toPromise();
+            if (result === undefined || result.title === DatabaseConstants.ERROR_MESSAGE) {
+                const errorMessage: Message = {
+                    title: DatabaseConstants.ERROR_MESSAGE,
+                    body: 'Image not in server',
+                };
+                throw errorMessage;
+            }
+            result = await this.localServerService.deleteDrawing(idDrawingToDelete).toPromise();
             if (result === undefined || result.title === ServerConstants.ERROR_MESSAGE) {
                 const errorMessage: Message = {
                     title: ServerConstants.ERROR_MESSAGE,
@@ -127,10 +147,10 @@ export class MainPageCarrouselComponent {
             console.log(error);
             switch ((error as Message).body) {
                 case 'Timeout has occurred':
-                    console.log('TIMEOUT!!!');
+                    this.setErrorInServer("Le serveur n'est pas disponible.");
                     break;
                 case 'Image not in server':
-                    this.imageNotInServer = true;
+                    this.setErrorInServer("L'image n'est pas disponible. Sélectionnez une autre image.");
                     break;
             }
         }
@@ -154,6 +174,11 @@ export class MainPageCarrouselComponent {
         this.tagErrorMessage = errorMessage;
     }
 
+    private setErrorInServer(errorMessage: string): void {
+        this.imageNotInServer = true;
+        this.serverErrorMessage = errorMessage;
+    }
+
     private async resetShowcasedDrawings(): Promise<void> {
         // Clean drawings currently in carousel
         this.previewDrawings = [];
@@ -166,14 +191,15 @@ export class MainPageCarrouselComponent {
             try {
                 const resultMessage: Message = await this.database.getDrawingsByTags(this.tagsInSearch).toPromise();
                 drawingsWithMatchingTags = JSON.parse(resultMessage.body);
-                this.drawingLoading = false;
-                this.noValidDrawing = drawingsWithMatchingTags.length === 0;
+
                 for (const drawing of drawingsWithMatchingTags) {
-                    this.addDrawingToDisplay(drawing._id, drawing);
+                    await this.addDrawingToDisplay(drawing._id, drawing);
                 }
+                this.noValidDrawing = this.showCasedDrawings.length === 0;
             } catch (error) {
-                // handle error
-                console.log(error);
+                this.setErrorInServer("Le serveur n'est pas disponible.");
+            } finally {
+                this.drawingLoading = false;
             }
             return;
         }
@@ -181,13 +207,15 @@ export class MainPageCarrouselComponent {
         try {
             const resultMessage: Message = await this.database.getDrawings().toPromise();
             drawingsWithMatchingTags = JSON.parse(resultMessage.body);
+
             for (const drawing of drawingsWithMatchingTags) {
-                this.addDrawingToDisplay(drawing._id, drawing);
+                await this.addDrawingToDisplay(drawing._id, drawing);
             }
-            this.drawingLoading = false;
+            this.noValidDrawing = this.showCasedDrawings.length === 0;
         } catch (error) {
-            // handle error
-            console.log(error);
+            this.setErrorInServer("Le serveur n'est pas disponible.");
+        } finally {
+            this.drawingLoading = false;
         }
     }
 
