@@ -28,6 +28,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
 import { KeyboardListenerDirective } from './components/selection/selection-directives/keyboard-listener.directive';
 import { SelectionComponent } from './components/selection/selection.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
@@ -74,6 +75,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         TitleInputComponent,
         KeyboardListenerDirective,
         SidebarPipetteComponent,
+        DirectionalMovementDirective,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

@@ -1,12 +1,10 @@
 import { Directive, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 
 const NUM_PIXELS = 3;
 const FIRST_PRESS_DELAY_MS = 500;
 const CONTINUOUS_PRESS_DELAY_MS = 100;
 @Directive({
     selector: '[appDirectionalMovement]',
-    providers: [ResizerHandlerService],
 })
 export class DirectionalMovementDirective {
     keyPressed: Map<string, number> = new Map();
