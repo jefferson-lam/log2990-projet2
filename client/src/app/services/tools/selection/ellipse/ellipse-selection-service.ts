@@ -72,13 +72,13 @@ export class EllipseSelectionService extends ToolSelectionService {
                 return;
             }
             this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
-            this.selectionWidth = Math.abs(this.selectionWidth);
-            this.selectionHeight = Math.abs(this.selectionHeight);
             if (this.isCircle) {
-                const shortestSide = Math.min(this.selectionWidth, this.selectionHeight);
+                const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
                 this.cornerCoords = this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight, shortestSide);
                 this.selectionHeight = this.selectionWidth = shortestSide;
             }
+            this.selectionWidth = Math.abs(this.selectionWidth);
+            this.selectionHeight = Math.abs(this.selectionHeight);
             this.drawingService.selectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.selectionHeight;
             // We clip the part of the selectionCanvas that we want to select, in this case an ellipse
