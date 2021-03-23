@@ -1,36 +1,35 @@
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IndexService } from '@app/services/index/index.service';
-import { of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { MainPageComponent } from './main-page.component';
 import SpyObj = jasmine.SpyObj;
-
-TestBed.configureTestingModule({
-    declarations: [MainPageComponent],
-    imports: [MatTooltipModule, MatIconModule],
-    providers: [],
-});
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let indexServiceSpy: SpyObj<IndexService>;
-    const dialogStub = jasmine.createSpyObj('MatDialog', ['open']);
+    let dialogSpy: SpyObj<MatDialog>;
 
     beforeEach(async(() => {
         indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicGet', 'basicPost']);
         indexServiceSpy.basicGet.and.returnValue(of({ title: '', body: '' }));
         indexServiceSpy.basicPost.and.returnValue(of());
+        dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
+        (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
+            new Subject<any>(),
+        );
+        (Object.getOwnPropertyDescriptor(dialogSpy, 'afterAllClosed')?.get as jasmine.Spy<() => Observable<void>>).and.returnValue(
+            dialogSpy['_afterAllClosedAtThisLevel'].asObservable(),
+        );
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
             declarations: [MainPageComponent],
             providers: [
                 { provide: IndexService, useValue: indexServiceSpy },
-                { provide: MatDialog, useValue: dialogStub },
+                { provide: MatDialog, useValue: dialogSpy },
             ],
         }).compileComponents();
     }));
@@ -77,7 +76,7 @@ describe('MainPageComponent', () => {
     });
 
     it('ngOnInit should call subscribe', () => {
-        const subscribeSpy = spyOn(component.dialog.afterAllClosed, 'subscribe').and.callThrough();
+        const subscribeSpy = spyOn(dialogSpy.afterAllClosed, 'subscribe').and.callThrough();
         component.ngOnInit();
 
         expect(subscribeSpy).toHaveBeenCalled();

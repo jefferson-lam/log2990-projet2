@@ -18,7 +18,7 @@ export class MainPageComponent implements OnInit {
     oldDrawingTrue: boolean = true;
     drawingExists: boolean;
 
-    isPopUpOpen: boolean;
+    isPopUpOpen: boolean = false;
 
     constructor(private basicService: IndexService, public dialog: MatDialog) {}
 
