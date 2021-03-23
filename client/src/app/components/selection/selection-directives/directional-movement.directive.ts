@@ -14,12 +14,12 @@ export class DirectionalMovementDirective {
 
     constructor(private element: ElementRef) {}
 
-    @HostListener('keydown', ['$event'])
+    @HostListener('keydown.ArrowLeft', ['$event'])
+    @HostListener('keydown.ArrowDown', ['$event'])
+    @HostListener('keydown.ArrowRight', ['$event'])
+    @HostListener('keydown.ArrowUp', ['$event'])
     async onKeyboardDown(event: KeyboardEvent): Promise<void> {
         event.preventDefault();
-        if (event.key === 'Escape') {
-            return;
-        }
         if (!this.keyPressed.get(event.key)) {
             // First press
             this.keyPressed.set(event.key, event.timeStamp);
