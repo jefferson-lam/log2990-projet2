@@ -4,9 +4,20 @@
 }
 
 #doneCheckMark {
-    width: 200px;
     height: 200px;
-    font-size: 100px;
+    width: 200px;
+    font-size: 200px;
     color: green;
     justify-content: center;
+}
+#saveCompleteHeader,
+#buttonDiv {
+    display: flex;
+    justify-content: center;
+}
+
+button {
+    font-size: large;
+    background-color: coral;
+    width: 125px;
 }
