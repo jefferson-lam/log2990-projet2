@@ -7,6 +7,7 @@ import { FillMode } from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolSelectionService } from './tool-selection-service';
 
+// tslint:disable:max-file-line-count
 describe('ToolSelectionService', () => {
     let service: ToolSelectionService;
     let mouseEvent: MouseEvent;

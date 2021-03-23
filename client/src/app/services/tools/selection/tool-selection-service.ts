@@ -68,11 +68,6 @@ export class ToolSelectionService extends Tool {
     /**
      * Simple swap functions that will always place the top-left corner as the START_INDEX
      * and the bottom-right corner as the END_INDEX, no matter the orientation of the selection
-     *
-     * @param cornerCoords
-     * @param selectionWidth
-     * @param selectionHeight
-     * @returns
      */
     validateCornerCoords(cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): Vec2[] {
         const tempCoord = Object.assign({}, cornerCoords[SelectionConstants.START_INDEX]);
@@ -93,14 +88,8 @@ export class ToolSelectionService extends Tool {
      * This function is called uniquely when the user has shift down.
      * Ensures that no matter how the user starts his selection, that the
      * cornerCoords will match the ones displayed on screen.
-     *
-     * @param cornerCoords
-     * @param selectionWidth
-     * @param selectionHeight
-     * @param shortestSide
-     * @returns
      */
-    computeSquareCoords(cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number, shortestSide: number) {
+    computeSquareCoords(cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number, shortestSide: number): Vec2[] {
         if (selectionWidth < 0 && selectionHeight < 0) {
             cornerCoords[0] = this.addScalarToVec2(cornerCoords[1], -shortestSide);
         } else if (selectionWidth < 0) {
