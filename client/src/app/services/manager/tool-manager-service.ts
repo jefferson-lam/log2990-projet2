@@ -10,6 +10,9 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -17,6 +20,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle-servic
 export class ToolManagerService {
     keyBindings: Map<string, Tool> = new Map();
     currentTool: Tool;
+    currentToolSubject: Subject<Tool> = new Subject<Tool>();
     constructor(
         public pencilService: PencilService,
         public eraserService: EraserService,
@@ -24,9 +28,11 @@ export class ToolManagerService {
         public rectangleService: RectangleService,
         public ellipseService: EllipseService,
         public drawingService: DrawingService,
-        public pipetteService: PipetteService,
+        public rectangleSelectionService: RectangleSelectionService,
+        public ellipseSelectionService: EllipseSelectionService,
         public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
+        public pipetteService: PipetteService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -39,24 +45,34 @@ export class ToolManagerService {
             .set(ToolManagerConstants.LINE_KEY, this.lineService)
             .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
             .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
-            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
+            .set(ToolManagerConstants.RECTANGLE_SELECTION_KEY, this.rectangleSelectionService)
+            .set(ToolManagerConstants.ELLIPSE_SELECTION_KEY, this.ellipseSelectionService)
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
-            .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService);
+            .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
+            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService);
     }
 
     selectTool(event: KeyboardEvent): Tool {
-        return this.getTool(event.key);
+        const tool = this.getTool(event.key);
+        this.currentToolSubject.next(tool);
+        return tool;
     }
 
     getTool(keyShortcut: string): Tool {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.currentTool.onMouseUp({} as MouseEvent);
         if (this.keyBindings.has(keyShortcut)) {
-            this.currentTool = this.keyBindings.get(keyShortcut) as Tool;
+            this.currentTool = this.onToolChange(this.keyBindings.get(keyShortcut) as Tool);
             return this.currentTool;
         } else {
             return this.currentTool;
         }
+    }
+
+    onToolChange(newTool: Tool): Tool {
+        if (this.currentTool !== newTool) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.currentTool.onToolChange();
+        }
+        return newTool;
     }
 
     setPrimaryColorTools(color: string): void {

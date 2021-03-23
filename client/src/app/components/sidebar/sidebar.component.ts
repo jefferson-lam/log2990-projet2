@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { Tool } from '@app/classes/tool';
+import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -32,8 +34,8 @@ export class SidebarComponent implements OnChanges {
         { service: 'StampService', name: 'Étampe', icon: 'how_to_vote', keyShortcut: 'd', helpShortcut: '(Touche D)' },
         { service: 'AerosolService', name: 'Aérosol', icon: 'blur_on', keyShortcut: 'a', helpShortcut: '(Touche A)' },
         { service: 'PipetteService', name: 'Pipette', icon: 'invert_colors', keyShortcut: 'i', helpShortcut: '(Touche I)' },
-        { service: 'SelectRectangleService', name: 'Rectangle de Selection', icon: 'blur_linear', keyShortcut: 'r', helpShortcut: '(Touche R)' },
-        { service: 'SelectEllipseService', name: 'Ellipse de selection', icon: 'blur_circular', keyShortcut: 's', helpShortcut: '(Touche S)' },
+        { service: 'RectangleSelectionService', name: 'Rectangle de Selection', icon: 'blur_linear', keyShortcut: 'r', helpShortcut: '(Touche R)' },
+        { service: 'EllipseSelectionService', name: 'Ellipse de selection', icon: 'blur_circular', keyShortcut: 's', helpShortcut: '(Touche S)' },
         { service: 'SelectLassoService', name: 'Lasso polygonal', icon: 'gesture', keyShortcut: 'v', helpShortcut: '(Touche V)' },
         { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' },
     ];
@@ -84,6 +86,14 @@ export class SidebarComponent implements OnChanges {
     redo(): void {
         if (!this.currentTool.inUse) {
             this.undoRedoService.redo();
+        }
+    }
+
+    selectAll(): void {
+        this.currentTool = this.toolManagerService.getTool(RECTANGLE_SELECTION_KEY);
+        this.notifyOnToolSelect.emit(this.currentTool);
+        if (this.currentTool instanceof RectangleSelectionService) {
+            this.currentTool.selectAll();
         }
     }
 }

@@ -20,6 +20,7 @@ export class RectangleService extends Tool {
     fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
     primaryColor: string = 'red';
     secondaryColor: string = 'grey';
+    mousePosition: Vec2;
 
     previewCommand: RectangleCommand;
 
@@ -39,8 +40,7 @@ export class RectangleService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[RectangleConstants.END_INDEX] = mousePosition;
+            this.cornerCoords[RectangleConstants.END_INDEX] = this.mousePosition;
             const command: Command = new RectangleCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
@@ -71,8 +71,8 @@ export class RectangleService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[RectangleConstants.END_INDEX] = mousePosition;
+            this.mousePosition = this.getPositionFromMouse(event);
+            this.cornerCoords[RectangleConstants.END_INDEX] = this.mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();
@@ -122,16 +122,18 @@ export class RectangleService extends Tool {
     }
 
     setPrimaryColor(newColor: string): void {
-        // TODO: add color check
         this.primaryColor = newColor;
     }
 
     setSecondaryColor(newColor: string): void {
-        // TODO: add color check
         this.secondaryColor = newColor;
     }
 
     private clearCorners(): void {
         this.cornerCoords.fill({ x: 0, y: 0 });
+    }
+
+    onToolChange(): void {
+        this.onMouseUp({} as MouseEvent);
     }
 }

@@ -112,7 +112,7 @@ describe('PipetteServiceService', () => {
         service.inBound = true;
 
         let setPrimaryColorSpy: jasmine.Spy;
-        setPrimaryColorSpy = spyOn(service, 'setPrimaryColor');
+        setPrimaryColorSpy = spyOn(service, 'setPrimaryColorAsRgba');
 
         service.onMouseDown(leftMouseButton);
         expect(setPrimaryColorSpy).toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe('PipetteServiceService', () => {
         service.inBound = true;
 
         let setSecondaryColorSpy: jasmine.Spy;
-        setSecondaryColorSpy = spyOn(service, 'setSecondaryColor');
+        setSecondaryColorSpy = spyOn(service, 'setSecondaryColorAsRgba');
 
         service.onMouseDown(rightMouseButton);
         expect(setSecondaryColorSpy).toHaveBeenCalled();
@@ -168,7 +168,7 @@ describe('PipetteServiceService', () => {
         const setPrimaryColorSpy = spyOn(colorService, 'setPrimaryColor');
         const saveColorSpy = spyOn(colorService, 'saveColor');
 
-        service.setPrimaryColor(colorPlaceholderBlack);
+        service.setPrimaryColorAsRgba(colorPlaceholderBlack);
         expect(setPrimaryColorSpy).toHaveBeenCalled();
         expect(saveColorSpy).toHaveBeenCalled();
     });
@@ -178,7 +178,7 @@ describe('PipetteServiceService', () => {
         const setPrimaryColorSpy = spyOn(colorService, 'setPrimaryColor');
         const saveColorSpy = spyOn(colorService, 'saveColor');
 
-        service.setPrimaryColor(colorPlaceholderTransparent);
+        service.setPrimaryColorAsRgba(colorPlaceholderTransparent);
         expect(setPrimaryColorSpy).not.toHaveBeenCalled();
         expect(saveColorSpy).not.toHaveBeenCalled();
     });
@@ -187,7 +187,7 @@ describe('PipetteServiceService', () => {
         service.inUse = true;
         colorService.primaryColor = colorPlaceholderBlack;
 
-        service.setPrimaryColor(newColor);
+        service.setPrimaryColorAsRgba(newColor);
         expect(colorService.primaryColor).toEqual(newColor);
     });
 
@@ -195,7 +195,7 @@ describe('PipetteServiceService', () => {
         service.inUse = true;
         colorService.primaryColor = colorPlaceholderBlack;
 
-        service.setPrimaryColor(colorPlaceholderTransparent);
+        service.setPrimaryColorAsRgba(colorPlaceholderTransparent);
         expect(colorService.primaryColor).toEqual(colorPlaceholderBlack);
     });
 
@@ -204,7 +204,7 @@ describe('PipetteServiceService', () => {
         const setSecondaryColorSpy = spyOn(colorService, 'setSecondaryColor');
         const saveColorSpy = spyOn(colorService, 'saveColor');
 
-        service.setSecondaryColor(colorPlaceholderBlack);
+        service.setSecondaryColorAsRgba(colorPlaceholderBlack);
         expect(setSecondaryColorSpy).toHaveBeenCalled();
         expect(saveColorSpy).toHaveBeenCalled();
     });
@@ -214,7 +214,7 @@ describe('PipetteServiceService', () => {
         const setSecondaryColorSpy = spyOn(colorService, 'setSecondaryColor');
         const saveColorSpy = spyOn(colorService, 'saveColor');
 
-        service.setSecondaryColor(colorPlaceholderTransparent);
+        service.setSecondaryColorAsRgba(colorPlaceholderTransparent);
         expect(setSecondaryColorSpy).not.toHaveBeenCalled();
         expect(saveColorSpy).not.toHaveBeenCalled();
     });
@@ -223,7 +223,7 @@ describe('PipetteServiceService', () => {
         service.inUse = true;
         colorService.secondaryColor = colorPlaceholderBlack;
 
-        service.setSecondaryColor(newColor);
+        service.setSecondaryColorAsRgba(newColor);
         expect(colorService.secondaryColor).toEqual(newColor);
     });
 
@@ -231,7 +231,7 @@ describe('PipetteServiceService', () => {
         service.inUse = true;
         colorService.secondaryColor = colorPlaceholderBlack;
 
-        service.setSecondaryColor(colorPlaceholderTransparent);
+        service.setSecondaryColorAsRgba(colorPlaceholderTransparent);
         expect(colorService.secondaryColor).toEqual(colorPlaceholderBlack);
     });
 
