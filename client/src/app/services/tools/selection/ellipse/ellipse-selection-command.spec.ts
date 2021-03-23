@@ -22,7 +22,6 @@ describe('EllipseSelectionCommandService', () => {
     let ellipseCtxSpy: jasmine.Spy;
     let clipCtxSpy: jasmine.Spy;
 
-    // Constants
     const TEST_X_OFFSET = 3;
     const TEST_Y_OFFSET = 3;
     const TEST_SELECTION_WIDTH = 3;

@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
     selector: '[appKeyboardListener]',
 })
 export class KeyboardListenerDirective {
-    currentTool: ToolSelectionService; // Have this as an observable to editor's current tool to keep track of currentTool?
+    currentTool: ToolSelectionService; 
     currentToolSubscriber: Subscription;
 
     constructor(public toolManager: ToolManagerService) {
