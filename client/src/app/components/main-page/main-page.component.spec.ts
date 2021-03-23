@@ -67,4 +67,12 @@ describe('MainPageComponent', () => {
         fixture.detectChanges();
         expect(backSpy).toHaveBeenCalledWith();
     });
+
+    it('should open Carousel on control+g', () => {
+        const carouselSpy = spyOn(component, 'openCarousel');
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyG', key: '' });
+        component.onCtrlShiftGKeyDown(eventSpy);
+
+        expect(carouselSpy).toHaveBeenCalled();
+    });
 });
