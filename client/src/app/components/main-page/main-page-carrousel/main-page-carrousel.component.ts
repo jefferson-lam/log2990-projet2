@@ -104,28 +104,36 @@ export class MainPageCarrouselComponent {
         }
     }
 
-    deleteDrawing(): void {
+    async deleteDrawing(): Promise<void> {
         const indexToDelete = this.previewDrawings.length > 1 ? 1 : 0;
         const idDrawingToDelete = this.showCasedDrawings[indexToDelete].id;
-        this.database.dropDrawing(idDrawingToDelete).subscribe({
-            next: (result) => {
-                if (result === undefined || result.title === ServerConstants.ERROR_MESSAGE) {
+        try {
+            const result: Message = await this.database.dropDrawing(idDrawingToDelete).toPromise();
+            if (result === undefined || result.title === ServerConstants.ERROR_MESSAGE) {
+                const errorMessage: Message = {
+                    title: ServerConstants.ERROR_MESSAGE,
+                    body: 'Image not in server',
+                };
+                throw errorMessage;
+            }
+            this.imageNotInServer = false;
+            if (this.showCasedDrawings.length > 1) {
+                this.showCasedDrawings.splice(1, 1);
+            } else {
+                this.showCasedDrawings.splice(0, 1);
+            }
+            this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
+        } catch (error: unknown) {
+            console.log(error);
+            switch ((error as Message).body) {
+                case 'Timeout has occurred':
+                    console.log('TIMEOUT!!!');
+                    break;
+                case 'Image not in server':
                     this.imageNotInServer = true;
-                    return;
-                }
-                this.imageNotInServer = false;
-                if (result.title === ServerConstants.SUCCESS_MESSAGE) {
-                    if (this.showCasedDrawings.length > 1) {
-                        this.showCasedDrawings.splice(1, 1);
-                    } else {
-                        this.showCasedDrawings.splice(0, 1);
-                    }
-                    this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
-                } else {
-                    console.log('UH OH');
-                }
-            },
-        });
+                    break;
+            }
+        }
     }
 
     openEditorWithDrawing(dataUrl: string): void {
@@ -155,57 +163,48 @@ export class MainPageCarrouselComponent {
         let drawingsWithMatchingTags: Drawing[];
 
         if (this.tagsInSearch.length > 0) {
-            this.database.getDrawingsByTags(this.tagsInSearch).subscribe({
-                next: (result: Message) => {
-                    drawingsWithMatchingTags = JSON.parse(result.body);
-                },
-                complete: () => {
-                    this.drawingLoading = false;
-                    this.noValidDrawing = drawingsWithMatchingTags.length === 0;
-                    for (const drawing of drawingsWithMatchingTags) {
-                        this.addDrawingToDisplay(drawing._id, drawing);
-                    }
-                },
-            });
-            return;
-        }
-        // let resultMessage: Message;
-        // try {
-        //     console.log(await this.database.getDrawings().toPromise());
-        //     console.log('END');
-        // } catch (error) {
-        //     console.log('ERROR', error);
-        // }
-        let resultMessage: Message;
-        this.database.getDrawings().subscribe({
-            next: (result: Message) => {
-                console.log(result);
-                resultMessage = result;
-                console.log(resultMessage);
-            },
-            complete: () => {
+            try {
+                const resultMessage: Message = await this.database.getDrawingsByTags(this.tagsInSearch).toPromise();
                 drawingsWithMatchingTags = JSON.parse(resultMessage.body);
+                this.drawingLoading = false;
+                this.noValidDrawing = drawingsWithMatchingTags.length === 0;
                 for (const drawing of drawingsWithMatchingTags) {
                     this.addDrawingToDisplay(drawing._id, drawing);
                 }
-                this.drawingLoading = false;
-            },
-            error: (error) => {
+            } catch (error) {
+                // handle error
                 console.log(error);
-            },
-        });
+            }
+            return;
+        }
+
+        try {
+            const resultMessage: Message = await this.database.getDrawings().toPromise();
+            drawingsWithMatchingTags = JSON.parse(resultMessage.body);
+            for (const drawing of drawingsWithMatchingTags) {
+                this.addDrawingToDisplay(drawing._id, drawing);
+            }
+            this.drawingLoading = false;
+        } catch (error) {
+            // handle error
+            console.log(error);
+        }
     }
 
     private async addDrawingToDisplay(id: string, drawing: Drawing): Promise<void> {
-        const getDrawingsByIdPromise = await this.localServerService.getDrawingById(id).toPromise();
-        const result: Message = getDrawingsByIdPromise;
-        if (result.title !== ServerConstants.ERROR_MESSAGE) {
-            const serverDrawing: ServerDrawing = JSON.parse(result.body);
-            const newPreviewDrawing: ImageFormat = { image: serverDrawing.image, name: drawing.title, tags: drawing.tags, id };
-            this.previewDrawings.push(newPreviewDrawing);
-            if (this.showCasedDrawings.length < CarouselConstants.MAX_CAROUSEL_SIZE) {
-                this.showCasedDrawings.push(newPreviewDrawing);
+        try {
+            const getDrawingsByIdPromise = await this.localServerService.getDrawingById(id).toPromise();
+            const result: Message = getDrawingsByIdPromise;
+            if (result.title !== ServerConstants.ERROR_MESSAGE) {
+                const serverDrawing: ServerDrawing = JSON.parse(result.body);
+                const newPreviewDrawing: ImageFormat = { image: serverDrawing.image, name: drawing.title, tags: drawing.tags, id };
+                this.previewDrawings.push(newPreviewDrawing);
+                if (this.showCasedDrawings.length < CarouselConstants.MAX_CAROUSEL_SIZE) {
+                    this.showCasedDrawings.push(newPreviewDrawing);
+                }
             }
+        } catch (error) {
+            console.log(error);
         }
     }
 }
