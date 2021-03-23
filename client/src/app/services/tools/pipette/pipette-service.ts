@@ -18,7 +18,7 @@ export class PipetteService extends Tool {
     ctx: CanvasRenderingContext2D;
     toolManager: ToolManagerService;
 
-    inBound: boolean = false;
+    inBound: boolean = true;
     inBoundSource: Subject<boolean> = new BehaviorSubject<boolean>(this.inBound);
     inBoundObservable: Observable<boolean> = this.inBoundSource.asObservable();
 
