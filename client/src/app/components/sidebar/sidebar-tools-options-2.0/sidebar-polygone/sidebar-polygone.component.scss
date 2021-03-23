@@ -1,38 +1,39 @@
-*{
-  font-family: 'Rubik', serif;
-
+* {
+    font-family: 'Rubik', serif;
 }
 
-#settingsContainer{
-  color: #EEE;
-  margin-left: 10px;
+#settingsContainer {
+    color: #eee;
+    margin-left: 10px;
 }
 
-#title{
-  font-weight: bolder;
-  font-size: x-large;
+#title {
+    font-weight: bolder;
+    font-size: x-large;
 }
 
-#widthSetting{
-  display: block;
+#widthSetting {
+    display: block;
 }
 
-#widthLine, #countSides{
-  margin-top: -5px;
+#widthLine,
+#countSides {
+    margin-top: -5px;
 }
 
-#drawingStyleOptions{
-  margin-top: -11px;
+#drawingStyleOptions {
+    flex-direction: column-reverse;
+    margin-top: 10px;
 }
 
-#colorPicker{
-  margin-top: 5px;
+#color-picker {
+    margin-top: 25px;
 }
 
-.mat-radio-button{
-  margin:5px;
+.mat-radio-button {
+    margin: 5px;
 }
 
-#colorPicker{
-  margin-left: -20px;
+#colorPicker {
+    margin-left: -20px;
 }

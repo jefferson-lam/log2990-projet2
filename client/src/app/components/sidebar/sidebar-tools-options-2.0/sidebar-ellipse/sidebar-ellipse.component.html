@@ -1,29 +1,34 @@
 <div id="settings-container">
-  <h2 id="title"> Options de l'ellipse </h2>
-  <div>
+    <h2 id="title">Options de l'ellipse</h2>
     <div>
-      <div id="width-setting">
-        <p> Épaisseur : {{toolSize}} </p>
-        <mat-slider id="width" color="warn"
+        <div>
+            <div id="width-setting">
+                <p>Épaisseur : {{ toolSize }}</p>
+                <mat-slider
+                    id="width"
+                    color="warn"
                     thumbLabel
-                    [tickInterval]='tickInterval'
+                    [tickInterval]="tickInterval"
                     [min]="min"
                     [max]="max"
                     [(value)]="toolSize"
-                    (change)="emitToolSize()">
-        </mat-slider>
-      </div>
-      <div id="trace-type-rect">
-        <mat-radio-group>
-          <mat-radio-button id="border" value="border" color="warn" (change)="emitFillMode(0)" > Contour </mat-radio-button> <br>
-          <mat-radio-button id="filled" value="filled" color="warn" (change)="emitFillMode(1)"> Plein </mat-radio-button> <br>
-          <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="emitFillMode(2)" checked> Plein avec contour </mat-radio-button>
-        </mat-radio-group>
-      </div>
-      <br>
-      <div id="colorPicker">
-        <app-color-picker></app-color-picker>
-      </div>
+                    (change)="emitToolSize()"
+                >
+                </mat-slider>
+            </div>
+            <div id="trace-type">
+                <mat-radio-group>
+                    <mat-radio-button id="border" value="border" color="warn" (change)="emitFillMode(0)"> Contour </mat-radio-button> <br />
+                    <mat-radio-button id="filled" value="filled" color="warn" (change)="emitFillMode(1)"> Plein </mat-radio-button> <br />
+                    <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="emitFillMode(2)" checked>
+                        Plein avec contour
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <br />
+            <div id="colorPicker">
+                <app-color-picker></app-color-picker>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
