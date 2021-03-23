@@ -36,9 +36,6 @@ describe('EllipseToolSelectionService', () => {
     let selectionCtxEllipseSpy: jasmine.Spy;
     let selectionCtxStrokeSpy: jasmine.Spy;
 
-    // let selectionCtxDrawImageSpy: jasmine.Spy<any>;
-    // let selectionCtxFillRectSpy: jasmine.Spy<any>;
-
     let executeSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
 
