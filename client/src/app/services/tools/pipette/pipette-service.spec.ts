@@ -12,6 +12,7 @@ describe('PipetteServiceService', () => {
     let colorService: ColorService;
     let leftMouseButton: MouseEvent;
     let rightMouseButton: MouseEvent;
+    let mouseMove: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let newColor: Rgba;
@@ -47,16 +48,52 @@ describe('PipetteServiceService', () => {
             offsetY: PipetteConstants.OFFSET_TESTS_Y,
             button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
+
+        mouseMove = {
+            offsetX: 1,
+            offsetY: 1,
+            button: MouseConstants.MouseButton.Left,
+        } as MouseEvent;
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    it('onMouseMove should call getPositionFromMouse if mouse is in bound', () => {
-        service.inUse = true;
-        service.inBound = true;
+    it('onMouseMove should set inBound to true if centerPixel is not transparent or inBound is false', () => {
+        service.inBound = false;
+        const arrayData = new Uint8ClampedArray(PipetteConstants.RAWDATA_SIZE * PipetteConstants.RAWDATA_SIZE * PipetteConstants.RGBA_SIZE);
+        for (let i = 0; i < arrayData.length; i++) {
+            arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
+        }
+        const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
 
+        const ctx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
+        ctx.putImageData(pixelData, 0, 0);
+        drawServiceSpy.baseCtx.drawImage(ctx.canvas, 0, 0);
+
+        const setInBoundSpy = spyOn(service, 'setInBound').and.callThrough();
+
+        service.onMouseMove(mouseMove);
+        expect(setInBoundSpy).toHaveBeenCalled();
+        expect(service.inBound).toEqual(true);
+    });
+
+    it('onMouseMove should set inBound to false if centerPixel is transparent', () => {
+        const pixelData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
+
+        const ctx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
+        ctx.putImageData(pixelData, 0, 0);
+        drawServiceSpy.baseCtx = ctx;
+
+        const setInBoundSpy = spyOn(service, 'setInBound').and.callThrough();
+
+        service.onMouseMove(mouseMove);
+        expect(setInBoundSpy).toHaveBeenCalled();
+        expect(service.inBound).toEqual(false);
+    });
+
+    it('onMouseMove should call getPositionFromMouse', () => {
         let getPositionFromMouseSpy: jasmine.Spy;
         getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.callThrough();
 
@@ -64,42 +101,16 @@ describe('PipetteServiceService', () => {
         expect(getPositionFromMouseSpy).toHaveBeenCalled();
     });
 
-    it('onMouseMove should not call getPositionFromMouse if mouse is not in bound', () => {
-        service.inUse = true;
-        service.inBound = false;
-
-        let getPositionFromMouseSpy: jasmine.Spy;
-        getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse');
-
-        service.onMouseMove(leftMouseButton);
-        expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseMove should call setPreviewData if mouse is in bound', () => {
-        service.inUse = true;
-        service.inBound = true;
-
+    it('onMouseMove should call setPreviewData', () => {
         let setPreviewDataSpy: jasmine.Spy;
-        setPreviewDataSpy = spyOn(service, 'setPreviewData');
+        // tslint:disable:no-any
+        setPreviewDataSpy = spyOn<any>(service, 'setPreviewData');
 
         service.onMouseMove(leftMouseButton);
         expect(setPreviewDataSpy).toHaveBeenCalled();
     });
 
-    it('onMouseMove should not call setPreviewData if mouse is not in bound', () => {
-        service.inUse = true;
-        service.inBound = false;
-
-        let setPreviewDataSpy: jasmine.Spy;
-        setPreviewDataSpy = spyOn(service, 'setPreviewData');
-
-        service.onMouseMove(leftMouseButton);
-        expect(setPreviewDataSpy).not.toHaveBeenCalled();
-    });
-
     it('onMouseDown should call getPositionFromMouse', () => {
-        service.inUse = true;
-
         let getPositionFromMouseSpy: jasmine.Spy;
         getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.callThrough();
 
@@ -108,7 +119,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('onMouseDown should call setPrimaryColor if left click', () => {
-        service.inUse = true;
         service.inBound = true;
 
         let setPrimaryColorSpy: jasmine.Spy;
@@ -119,7 +129,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('onMouseDown should call setSecondaryColor if right click', () => {
-        service.inUse = true;
         service.inBound = true;
 
         let setSecondaryColorSpy: jasmine.Spy;
@@ -130,7 +139,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('onMouseLeave should set inBound to false', () => {
-        service.inUse = true;
         service.inBound = true;
 
         service.onMouseLeave();
@@ -138,7 +146,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('onMouseEnter should set inBound to true', () => {
-        service.inUse = true;
         service.inBound = false;
 
         service.onMouseEnter();
@@ -146,7 +153,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('pixelDataToRgba should pick the right color', () => {
-        service.inUse = true;
         const arrayData = new Uint8ClampedArray([
             PipetteConstants.NON_TRANSPARENT_FF,
             PipetteConstants.NON_TRANSPARENT_FF,
@@ -164,7 +170,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('setPrimaryColor should call colorService functions if color is not transparent', () => {
-        service.inUse = true;
         const setPrimaryColorSpy = spyOn(colorService, 'setPrimaryColor');
         const saveColorSpy = spyOn(colorService, 'saveColor');
 
@@ -174,7 +179,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('setPrimaryColor should not call colorService functions if color is transparent', () => {
-        service.inUse = true;
         const setPrimaryColorSpy = spyOn(colorService, 'setPrimaryColor');
         const saveColorSpy = spyOn(colorService, 'saveColor');
 
@@ -184,7 +188,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('setPrimaryColor should set primary color if color is not transparent', () => {
-        service.inUse = true;
         colorService.primaryColor = colorPlaceholderBlack;
 
         service.setPrimaryColorAsRgba(newColor);
@@ -192,7 +195,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('setPrimaryColor should not set primary color if color is transparent', () => {
-        service.inUse = true;
         colorService.primaryColor = colorPlaceholderBlack;
 
         service.setPrimaryColorAsRgba(colorPlaceholderTransparent);
@@ -200,7 +202,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('setSecondaryColor should call colorService.setSecondaryColor if color is not transparent', () => {
-        service.inUse = true;
         const setSecondaryColorSpy = spyOn(colorService, 'setSecondaryColor');
         const saveColorSpy = spyOn(colorService, 'saveColor');
 
@@ -210,7 +211,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('setSecondaryColor should not call colorService.setSecondaryColor if color is transparent', () => {
-        service.inUse = true;
         const setSecondaryColorSpy = spyOn(colorService, 'setSecondaryColor');
         const saveColorSpy = spyOn(colorService, 'saveColor');
 
@@ -220,7 +220,6 @@ describe('PipetteServiceService', () => {
     });
 
     it('setSecondaryColor should set secondary color if color is not transparent', () => {
-        service.inUse = true;
         colorService.secondaryColor = colorPlaceholderBlack;
 
         service.setSecondaryColorAsRgba(newColor);
@@ -228,24 +227,16 @@ describe('PipetteServiceService', () => {
     });
 
     it('setSecondaryColor should set secondary color if color is not transparent', () => {
-        service.inUse = true;
         colorService.secondaryColor = colorPlaceholderBlack;
 
         service.setSecondaryColorAsRgba(colorPlaceholderTransparent);
         expect(colorService.secondaryColor).toEqual(colorPlaceholderBlack);
     });
 
-    it('setPreviewData should set preview data', () => {
-        service.inUse = true;
-        const arrayData = new Uint8ClampedArray([
-            PipetteConstants.NON_TRANSPARENT_FF,
-            PipetteConstants.NON_TRANSPARENT_FF,
-            PipetteConstants.NON_TRANSPARENT_FF,
-            1,
-        ]);
-        const pixelData = new ImageData(arrayData, 1, 1);
+    it('onToolChange should call setInBound', () => {
+        const setInBoundSpy = spyOn(service, 'setInBound');
 
-        service.setPreviewData(pixelData);
-        expect(service.previewData).toEqual(pixelData);
+        service.onToolChange();
+        expect(setInBoundSpy).toHaveBeenCalled();
     });
 });

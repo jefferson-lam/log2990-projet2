@@ -21,6 +21,7 @@ export class ToolManagerService {
     keyBindings: Map<string, Tool> = new Map();
     currentTool: Tool;
     currentToolSubject: Subject<Tool> = new Subject<Tool>();
+
     constructor(
         public pencilService: PencilService,
         public eraserService: EraserService,

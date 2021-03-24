@@ -4,8 +4,15 @@
         <div id="colorPicker">
             <app-color-picker></app-color-picker>
         </div>
-        <div id="pipettePreview" [style.display]="this.inBound == false ? 'none' : 'block'">
-            <canvas #canvas id="cv" class="color-preview" height="220" width="220"></canvas>
+        <div>
+            <canvas
+                #canvas
+                id="cv"
+                class="color-preview"
+                height="220"
+                width="220"
+                [style.display]="this.inBound === false ? 'none' : 'block'"
+            ></canvas>
         </div>
     </div>
 </div>
