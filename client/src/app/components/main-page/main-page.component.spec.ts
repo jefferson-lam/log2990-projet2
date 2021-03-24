@@ -86,8 +86,4 @@ describe('MainPageComponent', () => {
 
         expect(component.isPopUpOpen).toBeFalse();
     });
-
-    afterAll(() => {
-        TestBed.resetTestingModule();
-    });
 });

@@ -1,6 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { BrowserModule } from '@angular/platform-browser';
@@ -330,6 +330,7 @@ describe('MainPageCarrouselComponent', () => {
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
+        flush();
     }));
 
     it('deleteDrawing should throw error when timeout has occured', fakeAsync(() => {
@@ -357,6 +358,7 @@ describe('MainPageCarrouselComponent', () => {
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
+        flush();
     }));
 
     it('deleteDrawing should throw error when calling deleteDrawing from local-server', fakeAsync(() => {
@@ -384,6 +386,7 @@ describe('MainPageCarrouselComponent', () => {
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
+        flush();
     }));
 
     it('deleteDrawing should delete selected drawing', fakeAsync(() => {
@@ -404,6 +407,7 @@ describe('MainPageCarrouselComponent', () => {
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
         expect(component.imageNotInServer).toBeFalse();
+        flush();
     }));
 
     it('deleteDrawing should delete drawing when there is only one', fakeAsync(() => {
@@ -416,6 +420,7 @@ describe('MainPageCarrouselComponent', () => {
         expect(spySplice).toHaveBeenCalled();
         tick(TICK_TIME);
         expect(component.imageNotInServer).toBeFalse();
+        flush();
     }));
 
     it('removeTag should catch error getDrawingsByTags in resetShowcasedDrawings', fakeAsync(() => {
@@ -431,6 +436,7 @@ describe('MainPageCarrouselComponent', () => {
         component.removeTag('test3');
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
+        flush();
     }));
 
     it('removeTag should catch error getDrawings in resetShowcasedDrawings', fakeAsync(() => {
@@ -447,9 +453,6 @@ describe('MainPageCarrouselComponent', () => {
         component.removeTag('test');
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
+        flush();
     }));
-
-    afterAll(() => {
-        TestBed.resetTestingModule();
-    });
 });
