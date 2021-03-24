@@ -27,6 +27,7 @@ export class SidebarPipetteComponent implements OnInit {
         });
         this.pipetteService.inBoundObservable.subscribe((inBound: boolean) => {
             this.inBound = inBound;
+            this.drawPreview();
         });
     }
 
@@ -37,16 +38,14 @@ export class SidebarPipetteComponent implements OnInit {
         this.ctx.imageSmoothingEnabled = false;
         this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
 
-        const centerPixel = new Uint32Array(this.rawData.data.buffer)[PipetteConstants.CENTER_VALUE];
-        if (centerPixel !== 0) {
-            (document.getElementById('pipettePreview') as HTMLCanvasElement).style.display = 'block';
+        if (this.inBound) {
             this.clipPreview(this.ctx);
             this.ctx.putImageData(this.rawData, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION);
             this.zoomPreview(this.ctx);
             this.centerPixelStroke(this.ctx);
             this.previewStroke(this.ctx);
         } else {
-            (document.getElementById('pipettePreview') as HTMLCanvasElement).style.display = 'none';
+            this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
         }
     }
 

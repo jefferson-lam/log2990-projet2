@@ -4,7 +4,7 @@ import * as PipetteConstants from '@app/constants/pipette-constants';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { SidebarPipetteComponent } from './sidebar-pipette.component';
 
-describe('SidebarPipetteComponent', () => {
+fdescribe('SidebarPipetteComponent', () => {
     let component: SidebarPipetteComponent;
     let fixture: ComponentFixture<SidebarPipetteComponent>;
     let pipetteService: PipetteService;
@@ -45,13 +45,14 @@ describe('SidebarPipetteComponent', () => {
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
-    it('drawPreview should call canvas functions if centerPixel is not transparent', () => {
+    it('drawPreview should call canvas functions if inBound is true', () => {
+        component.inBound = true;
         const arrayData = new Uint8ClampedArray(PipetteConstants.RAWDATA_SIZE * PipetteConstants.RAWDATA_SIZE * PipetteConstants.RGBA_SIZE);
         for (let i = 0; i < arrayData.length; i++) {
             arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
         }
         const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-        component.rawData = pixelData;
+        component.ctx.putImageData(pixelData, 0, 0);
 
         const clipSpy = spyOn(component, 'clipPreview');
         const zoomSpy = spyOn(component, 'zoomPreview');
@@ -62,12 +63,12 @@ describe('SidebarPipetteComponent', () => {
         expect(zoomSpy).toHaveBeenCalled();
         expect(centerPixelStrokeSpy).toHaveBeenCalled();
         expect(previewStrokeSpy).toHaveBeenCalled();
-        expect((document.getElementById('pipettePreview') as HTMLCanvasElement).style.display).toEqual('block');
     });
 
-    it('drawPreview should not call canvas functions if centerPixel is transparent', () => {
+    it('drawPreview should not call canvas functions if inBound is false', () => {
+        component.inBound = false;
         const pixelData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-        pipetteService.previewData = pixelData;
+        component.ctx.putImageData(pixelData, 0, 0);
 
         const clipSpy = spyOn(component, 'clipPreview');
         const zoomSpy = spyOn(component, 'zoomPreview');
@@ -78,10 +79,10 @@ describe('SidebarPipetteComponent', () => {
         expect(zoomSpy).not.toHaveBeenCalled();
         expect(centerPixelStrokeSpy).not.toHaveBeenCalled();
         expect(previewStrokeSpy).not.toHaveBeenCalled();
-        expect((document.getElementById('pipettePreview') as HTMLCanvasElement).style.display).toEqual('none');
     });
 
-    it('drawPreview should call putImageData() if centerPixel is not transparent', () => {
+    it('drawPreview should call putImageData() if inBound is true', () => {
+        component.inBound = true;
         const arrayData = new Uint8ClampedArray(PipetteConstants.RAWDATA_SIZE * PipetteConstants.RAWDATA_SIZE * PipetteConstants.RGBA_SIZE);
         for (let i = 0; i < arrayData.length; i++) {
             arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
@@ -94,7 +95,8 @@ describe('SidebarPipetteComponent', () => {
         expect(putImageDataSpy).toHaveBeenCalled();
     });
 
-    it('drawPreview should not call putImageData() if centerPixel is transparent', () => {
+    it('drawPreview should not call putImageData() if inBound is false', () => {
+        component.inBound = false;
         const arrayData = new Uint8ClampedArray([0, 0, 0, 0]);
         const pixelData = new ImageData(arrayData, 1, 1);
         pipetteService.previewData = pixelData;

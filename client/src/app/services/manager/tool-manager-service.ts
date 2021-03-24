@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { Vec2 } from '@app/classes/vec2';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
@@ -21,6 +22,8 @@ export class ToolManagerService {
     keyBindings: Map<string, Tool> = new Map();
     currentTool: Tool;
     currentToolSubject: Subject<Tool> = new Subject<Tool>();
+    mousePosition: Vec2;
+
     constructor(
         public pencilService: PencilService,
         public eraserService: EraserService,

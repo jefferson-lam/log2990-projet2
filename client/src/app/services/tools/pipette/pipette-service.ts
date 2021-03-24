@@ -18,7 +18,7 @@ export class PipetteService extends Tool {
     ctx: CanvasRenderingContext2D;
     toolManager: ToolManagerService;
 
-    inBound: boolean = true;
+    inBound: boolean = false;
     inBoundSource: Subject<boolean> = new BehaviorSubject<boolean>(this.inBound);
     inBoundObservable: Observable<boolean> = this.inBoundSource.asObservable();
 
@@ -31,16 +31,19 @@ export class PipetteService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.inBound) {
-            this.mousePosition = this.getPositionFromMouse(event);
-            const contextData = this.drawingService.baseCtx.getImageData(
-                this.mousePosition.x - PipetteConstants.OFFSET,
-                this.mousePosition.y - PipetteConstants.OFFSET,
-                PipetteConstants.RAWDATA_SIZE,
-                PipetteConstants.RAWDATA_SIZE,
-            );
-            this.setPreviewData(contextData);
+        if (!this.inBound) {
+            this.setInBound(true);
         }
+
+        this.ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
+        this.mousePosition = this.getPositionFromMouse(event);
+        const pixelData = new Uint32Array(this.ctx.getImageData(this.mousePosition.x, this.mousePosition.y, 1, 1).data.buffer)[0];
+
+        if (pixelData !== 0) this.setInBound(true);
+        else this.setInBound(false);
+
+        this.mousePosition = this.getPositionFromMouse(event);
+        this.setPreviewData();
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -88,13 +91,22 @@ export class PipetteService extends Tool {
         }
     }
 
-    setPreviewData(data: ImageData): void {
-        this.previewData = data;
+    private setPreviewData(): void {
+        this.previewData = this.drawingService.baseCtx.getImageData(
+            this.mousePosition.x - PipetteConstants.OFFSET,
+            this.mousePosition.y - PipetteConstants.OFFSET,
+            PipetteConstants.RAWDATA_SIZE,
+            PipetteConstants.RAWDATA_SIZE,
+        );
         this.previewDataSource.next(this.previewData);
     }
 
     setInBound(bool: boolean): void {
         this.inBound = bool;
         this.inBoundSource.next(this.inBound);
+    }
+
+    onToolChange(): void {
+        this.setInBound(false);
     }
 }
