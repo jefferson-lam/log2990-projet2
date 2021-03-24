@@ -15,6 +15,7 @@ export class DiscardChangesPopupComponent {
         public undoRedoService: UndoRedoService,
         public drawingService: DrawingService,
         public router: Router,
+        // tslint:disable-next-line:no-any
         @Inject(MAT_DIALOG_DATA) data: any,
     ) {
         this.dataUrl = data.dataUrl;
