@@ -114,4 +114,8 @@ export class AerosolService extends Tool {
     setPrimaryColor(newColor: string): void {
         this.primaryColor = newColor;
     }
+
+    onToolChange(): void {
+        this.onMouseUp({} as MouseEvent);
+    }
 }

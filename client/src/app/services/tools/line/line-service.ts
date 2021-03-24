@@ -77,7 +77,7 @@ export class LineService extends Tool {
      * event does not work for these modifiers.
      */
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.inUse && event.key === 'Shift') {
+        if (this.inUse && event.key === 'Shift' && !this.shiftDown) {
             this.stickToClosest45Angle();
             this.drawPreview();
             this.shiftDown = true;
@@ -85,23 +85,24 @@ export class LineService extends Tool {
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
-        if (this.inUse) {
-            switch (event.key) {
-                case 'Shift':
-                    this.shiftDown = false;
-                    this.linePathData[this.linePathData.length - 1] = this.mousePosition;
-                    this.drawPreview();
-                    break;
-                case 'Escape':
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.clearPath();
-                    this.inUse = false;
-                    break;
-                case 'Backspace':
-                    this.linePathData.pop();
-                    this.finishLine();
-                    break;
-            }
+        if (!this.inUse) {
+            return;
+        }
+        switch (event.key) {
+            case 'Shift':
+                this.shiftDown = false;
+                this.linePathData[this.linePathData.length - 1] = this.mousePosition;
+                this.drawPreview();
+                break;
+            case 'Escape':
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.clearPath();
+                this.inUse = false;
+                break;
+            case 'Backspace':
+                this.linePathData.pop();
+                this.finishLine();
+                break;
         }
     }
 
@@ -126,21 +127,19 @@ export class LineService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.inUse) {
-            this.mousePosition = this.getPositionFromMouse(event);
-            if (this.shiftDown) {
-                this.stickToClosest45Angle();
-                this.drawPreview();
-            } else {
-                const distanceToInitialPoint = this.calculateDistance(this.mousePosition, this.initialPoint);
-                if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
-                    this.linePathData[this.linePathData.length - 1] = this.initialPoint;
-                } else {
-                    this.linePathData[this.linePathData.length - 1] = this.mousePosition;
-                }
-                this.drawPreview();
-            }
+        if (!this.inUse) {
+            return;
         }
+        this.mousePosition = this.getPositionFromMouse(event);
+        const distanceToInitialPoint = this.calculateDistance(this.mousePosition, this.initialPoint);
+        if (distanceToInitialPoint < LineConstants.PIXEL_PROXIMITY_LIMIT) {
+            this.linePathData[this.linePathData.length - 1] = this.initialPoint;
+        } else if (this.shiftDown) {
+            this.stickToClosest45Angle();
+        } else {
+            this.linePathData[this.linePathData.length - 1] = this.mousePosition;
+        }
+        this.drawPreview();
     }
 
     finishLine(): void {
@@ -240,5 +239,12 @@ export class LineService extends Tool {
         // the nearest multiple can always be obtained by rounding down. We floor the result in order to
         // eliminate floating point numbers, and the include the edge case: 0 as an final angle.
         return Math.floor((angleBetweenTwoPoints + multiple / 2) / multiple) * multiple;
+    }
+
+    onToolChange(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.inUse = false;
+        this.shiftDown = false;
+        this.clearPath();
     }
 }

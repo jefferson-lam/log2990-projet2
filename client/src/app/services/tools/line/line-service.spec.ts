@@ -847,4 +847,11 @@ describe('LineService', () => {
 
         expect(service.rotateLine(initialPoint, currentPoint, LineConstants.DEGREES_315)).toEqual(expectedPoint);
     });
+
+    it('onToolChange should call onMouseDoubleClick', () => {
+        service.onToolChange();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(service.inUse).toBeFalsy();
+        expect(service.shiftDown).toBeFalsy();
+    });
 });

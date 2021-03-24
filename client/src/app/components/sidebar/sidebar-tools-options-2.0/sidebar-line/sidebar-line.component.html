@@ -1,38 +1,40 @@
 <div id="settings-container">
-  <h2 id="title"> Options de la ligne </h2>
-  <div>
+    <h2 id="title">Options de la ligne</h2>
     <div>
-      <div id="width-setting">
-        <p> Épaisseur : {{toolSize}} </p>
-        <mat-slider id="width" color="warn"
+        <div id="width-setting">
+            <p>Épaisseur : {{ toolSize }}</p>
+            <mat-slider
+                id="width"
+                color="warn"
+                thumbLabel
+                [tickInterval]="tickInterval"
+                [min]="minLineWidth"
+                [max]="maxLineWidth"
+                [(value)]="toolSize"
+                (change)="emitToolSize()"
+            >
+            </mat-slider>
+        </div>
+        <div id="junction-settings">
+            <div id="junction-type">
+                <p>Points de jonction :</p>
+                <mat-checkbox id="dot-bool" color="warn" [checked]="withJunction" (change)="emitWithJunction()"></mat-checkbox>
+            </div>
+            <div id="dot-size">
+                <p>Taille des points : {{ junctionRadius }}</p>
+                <mat-slider
+                    color="warn"
                     thumbLabel
-                    [tickInterval]='tickInterval'
-                    [min]="minLineWidth"
-                    [max]="maxLineWidth"
-                    [(value)]="toolSize"
-                    (change)="emitToolSize()">
-        </mat-slider>
-      </div>
-      <div id="junction-settings">
-        <div id="junction-type">
-          <p> Points de jonction : </p>
-          <mat-checkbox id="dot-bool" color="warn"
-                        [checked]="withJunction"
-                        (change)="emitWithJunction()"
-          ></mat-checkbox>
+                    [tickInterval]="1"
+                    [min]="minJunctionRadius"
+                    [max]="maxJunctionRadius"
+                    [(value)]="junctionRadius"
+                    (change)="emitJunctionRadius()"
+                ></mat-slider>
+            </div>
+            <div id="colorPicker">
+                <app-color-picker></app-color-picker>
+            </div>
         </div>
-        <div id="dot-size">
-          <p> Taille des points : {{junctionRadius}} </p>
-          <mat-slider  color="warn"
-                       thumbLabel
-                       [tickInterval]="1"
-                       [min]="minJunctionRadius"
-                       [max]="maxJunctionRadius"
-                       [(value)]="junctionRadius"
-                       (change)="emitJunctionRadius()"></mat-slider>
-        </div>
-        <div id="colorPicker">
-          <app-color-picker></app-color-picker>
-        </div>
-      </div>
     </div>
+</div>

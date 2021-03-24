@@ -50,7 +50,7 @@ export class SaveDrawingComponent implements AfterViewInit {
     }
 
     private verifySavePossible(): void {
-        this.isSavePossible = this.isTitleValid && this.areTagsValid;
+        this.isSavePossible = this.isTitleValid;
     }
 
     saveDrawing(): void {

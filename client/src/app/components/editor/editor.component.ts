@@ -6,8 +6,11 @@ import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
+import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -18,6 +21,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class EditorComponent implements OnInit {
     currentTool: Tool;
     isPopUpOpen: boolean;
+    isUndoSelection: boolean;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -28,6 +32,7 @@ export class EditorComponent implements OnInit {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
         this.isPopUpOpen = false;
+        this.isUndoSelection = false;
     }
 
     ngOnInit(): void {
@@ -65,24 +70,43 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.control.z', ['$event'])
     onCtrlZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (!this.isPopUpOpen && !this.currentTool.inUse) {
+        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+            if (this.currentTool.isManipulating) {
+                this.currentTool.undoSelection();
+                this.isUndoSelection = true;
+            }
+        }
+        if (!this.isPopUpOpen && !this.currentTool.inUse && !this.isUndoSelection) {
             this.undoRedoService.undo();
         }
+        this.isUndoSelection = false;
     }
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isPopUpOpen && event.key.match(/^(1|2|3|a|c|l|e|i)$/)) {
-            this.currentTool = this.toolManager.selectTool(event);
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i)$/)) {
+            this.setTool(this.toolManager.selectTool(event));
         }
     }
 
-    updateToolFromSidebarClick(newTool: Tool): void {
+    @HostListener('window:keydown.control.a', ['$event'])
+    onCtrlAKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.setTool(this.toolManager.getTool(RECTANGLE_SELECTION_KEY));
+        if (this.currentTool instanceof RectangleSelectionService) {
+            this.currentTool.selectAll();
+        }
+    }
+
+    setTool(newTool: Tool): void {
         this.currentTool = newTool;
     }
 
     openExportPopUp(): void {
         if (!this.isPopUpOpen) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                this.currentTool.onToolChange();
+            }
             this.newDialog.open(ExportDrawingComponent, {
                 maxWidth: MAX_WIDTH_FORM + 'px',
                 maxHeight: MAX_HEIGHT_FORM + 'px',
@@ -93,6 +117,9 @@ export class EditorComponent implements OnInit {
 
     openNewDrawingPopUp(): void {
         if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                this.currentTool.onToolChange();
+            }
             this.newDialog.open(NewDrawingBoxComponent);
             this.isPopUpOpen = true;
         }
@@ -100,6 +127,9 @@ export class EditorComponent implements OnInit {
 
     openSavePopUp(): void {
         if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                this.currentTool.onToolChange();
+            }
             this.newDialog.open(SaveDrawingComponent);
             this.isPopUpOpen = true;
         }

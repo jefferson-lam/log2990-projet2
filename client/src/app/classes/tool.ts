@@ -9,6 +9,8 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     lineWidth?: number;
     fillMode?: ToolConstants.FillMode;
+    primaryColor?: string;
+    secondaryColor?: string;
     junctionRadius?: number;
     withJunction?: boolean;
     mouseDownCoord: Vec2;
@@ -38,6 +40,8 @@ export abstract class Tool {
 
     onMouseEnter(event: MouseEvent): void {}
 
+    onToolChange(): void {}
+
     setLineWidth(width: number): void {}
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {}
@@ -45,6 +49,10 @@ export abstract class Tool {
     setJunctionRadius(newJunctionRadius: number): void {}
 
     setWithJunction(hasJunction: boolean): void {}
+
+    setPrimaryColor(primaryColor: string): void {}
+
+    setSecondaryColor(secondaryColor: string): void {}
 
     setSidesCount(newSidesCount: number): void {}
 

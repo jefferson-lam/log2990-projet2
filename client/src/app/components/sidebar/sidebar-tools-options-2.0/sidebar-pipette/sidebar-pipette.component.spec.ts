@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as PipetteConstants from '@app/constants/pipette-constants';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
@@ -11,6 +12,7 @@ describe('SidebarPipetteComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [SidebarPipetteComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 

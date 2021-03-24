@@ -196,4 +196,12 @@ describe('PencilService', () => {
         service.onKeyboardUp(keyEvent);
         expect(executeSpy).not.toHaveBeenCalled();
     });
+
+    it('onToolChange should call onMouseUp', () => {
+        const onMouseUpSpy = spyOn(service, 'onMouseUp');
+
+        service.onToolChange();
+
+        expect(onMouseUpSpy).toHaveBeenCalled();
+    });
 });

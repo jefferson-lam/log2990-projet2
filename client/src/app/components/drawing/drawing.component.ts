@@ -12,7 +12,6 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 })
 export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
     private baseCtx: CanvasRenderingContext2D;

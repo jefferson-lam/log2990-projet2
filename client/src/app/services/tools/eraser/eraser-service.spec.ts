@@ -165,4 +165,12 @@ describe('EraserService', () => {
         service.setLineWidth(size);
         expect(service.lineWidth).toEqual(EraserConstants.MAX_SIZE_ERASER);
     });
+
+    it('onToolChange should call onMouseUp', () => {
+        const onMouseUpSpy = spyOn(service, 'onMouseUp');
+
+        service.onToolChange();
+
+        expect(onMouseUpSpy).toHaveBeenCalled();
+    });
 });

@@ -4,12 +4,14 @@ import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SidebarComponent } from './sidebar.component';
 
@@ -22,6 +24,7 @@ describe('SidebarComponent', () => {
     let lineStub: ToolStub;
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
+    let rectangleSelectionServiceStub: RectangleSelectionService;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let undoRedoService: UndoRedoService;
@@ -34,11 +37,13 @@ describe('SidebarComponent', () => {
     let openSavePopUpSpy: jasmine.Spy;
     let undoServiceSpy: jasmine.Spy;
     let redoServiceSpy: jasmine.Spy;
+    let selectionUndoSelectionSpy: jasmine.Spy;
     let refreshSpy: jasmine.Spy;
     let redoButton: HTMLElement;
     let undoButton: HTMLElement;
 
     // tslint:disable:no-any
+    // tslint:disable:max-file-line-count
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool']);
         pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService);
@@ -46,6 +51,12 @@ describe('SidebarComponent', () => {
         lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
         rectangleStub = new RectangleService({} as DrawingService, {} as UndoRedoService);
         ellipseStub = new EllipseService({} as DrawingService, {} as UndoRedoService);
+        rectangleSelectionServiceStub = new RectangleSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new RectangleService({} as DrawingService, {} as UndoRedoService),
+        );
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -79,6 +90,9 @@ describe('SidebarComponent', () => {
         refreshSpy = spyOn(undoRedoService, 'refresh');
         redoButton = fixture.debugElement.nativeElement.querySelector('#redoButton');
         undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
+        selectionUndoSelectionSpy = spyOn(rectangleSelectionServiceStub, 'undoSelection').and.callFake(() => {
+            return;
+        });
     });
 
     it('should create', () => {
@@ -251,6 +265,22 @@ describe('SidebarComponent', () => {
         expect(undoServiceSpy).not.toHaveBeenCalled();
     });
 
+    it('clicking on undo button if currentTool is of SelectionService while is manipulating is false should call the undo pile', () => {
+        rectangleSelectionServiceStub.isManipulating = false;
+        component.currentTool = rectangleSelectionServiceStub;
+        component.undo();
+        expect(undoServiceSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on undo button if currentTool is of SelectionService while is manipulating is true should call the undo pile', () => {
+        rectangleSelectionServiceStub.isManipulating = true;
+        component.currentTool = rectangleSelectionServiceStub;
+        component.undo();
+        expect(selectionUndoSelectionSpy).toHaveBeenCalled();
+        expect(component.isUndoSelection).toBeFalsy();
+        expect(undoServiceSpy).not.toHaveBeenCalled();
+    });
+
     it('clicking on redo button when redo pile is not empty and tool is not used should call undoRedoService.redo', () => {
         refreshSpy.and.callFake(() => {
             component.isRedoPossible = undoRedoService.redoPile.length !== 0;
@@ -289,5 +319,41 @@ describe('SidebarComponent', () => {
 
         expect(commandExecuteSpy).toHaveBeenCalled();
         expect(redoServiceSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on selectAll should change the currentTool to rectangleSelectionService and call its selectAll method', () => {
+        const rectangleSelectionService = new RectangleSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new RectangleService({} as DrawingService, {} as UndoRedoService),
+        );
+        toolManagerServiceSpy.getTool.and.callFake(() => {
+            return rectangleSelectionService;
+        });
+        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+            return;
+        });
+        component.selectAll();
+        expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleSelectionService);
+        expect(selectAllSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on selectAll should not call selectAll if the tool is not rectangleSelectionService', () => {
+        const rectangleSelectionService = new RectangleSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new RectangleService({} as DrawingService, {} as UndoRedoService),
+        );
+        toolManagerServiceSpy.getTool.and.callFake(() => {
+            return ellipseStub;
+        });
+        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+            return;
+        });
+        component.selectAll();
+        expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
+        expect(selectAllSpy).not.toHaveBeenCalled();
     });
 });
