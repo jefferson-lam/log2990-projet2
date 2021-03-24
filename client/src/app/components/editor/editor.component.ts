@@ -104,6 +104,9 @@ export class EditorComponent implements OnInit {
 
     openExportPopUp(): void {
         if (!this.isPopUpOpen) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                this.currentTool.onToolChange();
+            }
             this.newDialog.open(ExportDrawingComponent, {
                 maxWidth: MAX_WIDTH_FORM + 'px',
                 maxHeight: MAX_HEIGHT_FORM + 'px',
@@ -114,6 +117,9 @@ export class EditorComponent implements OnInit {
 
     openNewDrawingPopUp(): void {
         if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                this.currentTool.onToolChange();
+            }
             this.newDialog.open(NewDrawingBoxComponent);
             this.isPopUpOpen = true;
         }
@@ -121,6 +127,9 @@ export class EditorComponent implements OnInit {
 
     openSavePopUp(): void {
         if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                this.currentTool.onToolChange();
+            }
             this.newDialog.open(SaveDrawingComponent);
             this.isPopUpOpen = true;
         }

@@ -300,13 +300,31 @@ describe('EditorComponent', () => {
         expect(selectAllSpy).toHaveBeenCalled();
     });
 
+    it("openNewDrawingPopUp should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open and if tool is selection", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return false;
+        });
+        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
+        component.currentTool = rectangleSelectionService;
+        component.isPopUpOpen = false;
+        component.openNewDrawingPopUp();
+
+        expect(onToolChangeSpy).toHaveBeenCalled();
+        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
+        expect(component.isPopUpOpen).toBeTrue();
+    });
+
     it("openNewDrawingPopUp should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open", () => {
         const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
             return false;
         });
+        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
         component.isPopUpOpen = false;
         component.openNewDrawingPopUp();
 
+        expect(onToolChangeSpy).not.toHaveBeenCalled();
         expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
@@ -345,11 +363,36 @@ describe('EditorComponent', () => {
         expect(eventSpy['preventDefault']).toHaveBeenCalled();
     });
 
-    it("openExportPopUp should open export pop up if pop up isn't open", () => {
+    it('ctrl+e should call selectionServices onToolChange if current tool is selection before export', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
+        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
+        component.currentTool = rectangleSelectionService;
+        component.onCtrlEKeyDown(eventSpy);
+        expect(onToolChangeSpy).toHaveBeenCalled();
+        expect(exportPopUpSpy).toHaveBeenCalled();
+        expect(eventSpy['preventDefault']).toHaveBeenCalled();
+    });
+
+    it("openExportPopUp should open export pop up if pop up isn't open and selection tool", () => {
         const mockConfig = { maxWidth: MAX_WIDTH_FORM + 'px', maxHeight: MAX_HEIGHT_FORM + 'px' };
+        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
+        component.currentTool = rectangleSelectionService;
         component.isPopUpOpen = false;
         component.openExportPopUp();
 
+        expect(onToolChangeSpy).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
+        expect(component.isPopUpOpen).toBeTrue();
+    });
+
+    it("openExportPopUp should open export pop up if pop up isn't open", () => {
+        const mockConfig = { maxWidth: MAX_WIDTH_FORM + 'px', maxHeight: MAX_HEIGHT_FORM + 'px' };
+        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
+        component.isPopUpOpen = false;
+        component.openExportPopUp();
+
+        expect(onToolChangeSpy).not.toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
         expect(component.isPopUpOpen).toBeTrue();
@@ -375,10 +418,28 @@ describe('EditorComponent', () => {
         const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
             return false;
         });
-
+        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
+        component.currentTool = rectangleSelectionService;
         component.isPopUpOpen = false;
         component.openSavePopUp();
 
+        expect(onToolChangeSpy).toHaveBeenCalled();
+        expect(savePopUpSpy).toHaveBeenCalled();
+        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(SaveDrawingComponent);
+        expect(component.isPopUpOpen).toBeTrue();
+    });
+
+    it("openSavePopUp should open SaveDrawingComponent if canvas isn't empty and pop up isn't open and tool is not selection", () => {
+        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+            return false;
+        });
+        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
+        component.isPopUpOpen = false;
+        component.openSavePopUp();
+
+        expect(onToolChangeSpy).not.toHaveBeenCalled();
         expect(savePopUpSpy).toHaveBeenCalled();
         expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
@@ -390,6 +451,7 @@ describe('EditorComponent', () => {
         const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
             return true;
         });
+
         component.openSavePopUp();
 
         expect(emptyCanvasSpy).toHaveBeenCalled();
