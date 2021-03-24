@@ -277,7 +277,7 @@ describe('SidebarComponent', () => {
         component.currentTool = rectangleSelectionServiceStub;
         component.undo();
         expect(selectionUndoSelectionSpy).toHaveBeenCalled();
-        expect(component.isUndoSelection).toBeTruthy();
+        expect(component.isUndoSelection).toBeFalsy();
         expect(undoServiceSpy).not.toHaveBeenCalled();
     });
 
