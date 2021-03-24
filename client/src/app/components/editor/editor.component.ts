@@ -84,7 +84,7 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i)$/)) {
+        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i|v)$/)) {
             this.setTool(this.toolManager.selectTool(event));
         }
     }

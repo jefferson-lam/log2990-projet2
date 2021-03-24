@@ -11,6 +11,7 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { Subject } from 'rxjs';
 
@@ -34,6 +35,7 @@ export class ToolManagerService {
         public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
         public pipetteService: PipetteService,
+        public lassoSelectionService: LassoSelectionService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -50,7 +52,8 @@ export class ToolManagerService {
             .set(ToolManagerConstants.ELLIPSE_SELECTION_KEY, this.ellipseSelectionService)
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
             .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
-            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService);
+            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
+            .set(ToolManagerConstants.LASSO_SELECTION_KEY, this.lassoSelectionService);
     }
 
     selectTool(event: KeyboardEvent): Tool {
