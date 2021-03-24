@@ -24,6 +24,7 @@ describe('SidebarComponent', () => {
     let lineStub: ToolStub;
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
+    let rectangleSelectionServiceStub: RectangleSelectionService;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let undoRedoService: UndoRedoService;
@@ -36,11 +37,13 @@ describe('SidebarComponent', () => {
     let openSavePopUpSpy: jasmine.Spy;
     let undoServiceSpy: jasmine.Spy;
     let redoServiceSpy: jasmine.Spy;
+    let selectionUndoSelectionSpy: jasmine.Spy;
     let refreshSpy: jasmine.Spy;
     let redoButton: HTMLElement;
     let undoButton: HTMLElement;
 
     // tslint:disable:no-any
+    // tslint:disable:max-file-line-count
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool']);
         pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService);
@@ -48,6 +51,12 @@ describe('SidebarComponent', () => {
         lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
         rectangleStub = new RectangleService({} as DrawingService, {} as UndoRedoService);
         ellipseStub = new EllipseService({} as DrawingService, {} as UndoRedoService);
+        rectangleSelectionServiceStub = new RectangleSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new RectangleService({} as DrawingService, {} as UndoRedoService),
+        );
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -81,6 +90,9 @@ describe('SidebarComponent', () => {
         refreshSpy = spyOn(undoRedoService, 'refresh');
         redoButton = fixture.debugElement.nativeElement.querySelector('#redoButton');
         undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
+        selectionUndoSelectionSpy = spyOn(rectangleSelectionServiceStub, 'undoSelection').and.callFake(() => {
+            return;
+        });
     });
 
     it('should create', () => {
@@ -250,6 +262,22 @@ describe('SidebarComponent', () => {
         fixture.detectChanges();
 
         expect(commandExecuteSpy).toHaveBeenCalled();
+        expect(undoServiceSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on undo button if currentTool is of SelectionService while is manipulating is false should call the undo pile', () => {
+        rectangleSelectionServiceStub.isManipulating = false;
+        component.currentTool = rectangleSelectionServiceStub;
+        component.undo();
+        expect(undoServiceSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on undo button if currentTool is of SelectionService while is manipulating is true should call the undo pile', () => {
+        rectangleSelectionServiceStub.isManipulating = true;
+        component.currentTool = rectangleSelectionServiceStub;
+        component.undo();
+        expect(selectionUndoSelectionSpy).toHaveBeenCalled();
+        expect(component.isUndoSelection).toBeFalsy();
         expect(undoServiceSpy).not.toHaveBeenCalled();
     });
 

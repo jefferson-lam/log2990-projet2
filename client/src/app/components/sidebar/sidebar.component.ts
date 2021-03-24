@@ -3,6 +3,7 @@ import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { Tool } from '@app/classes/tool';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -22,6 +23,7 @@ export class SidebarComponent implements OnChanges {
     @Input() selectedTool: SidebarToolButton;
     @Input() isCanvasEmpty: boolean;
     shouldRun: boolean;
+    isUndoSelection: boolean;
 
     sidebarToolButtons: SidebarToolButton[] = [
         { service: 'PencilService', name: 'Crayon', icon: 'create', keyShortcut: 'c', helpShortcut: '(Touche C)' },
@@ -42,6 +44,7 @@ export class SidebarComponent implements OnChanges {
 
     constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService) {
         this.shouldRun = false;
+        this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
         this.undoRedoService.pileSizeObservable.subscribe((sizes: number[]) => {
             this.isUndoPossible = sizes[0] > 0;
@@ -78,9 +81,16 @@ export class SidebarComponent implements OnChanges {
     }
 
     undo(): void {
-        if (!this.currentTool.inUse) {
+        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+            if (this.currentTool.isManipulating) {
+                this.currentTool.undoSelection();
+                this.isUndoSelection = true;
+            }
+        }
+        if (!this.currentTool.inUse && !this.isUndoSelection) {
             this.undoRedoService.undo();
         }
+        this.isUndoSelection = false;
     }
 
     redo(): void {
