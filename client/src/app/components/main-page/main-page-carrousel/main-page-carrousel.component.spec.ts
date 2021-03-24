@@ -1,6 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { BrowserModule } from '@angular/platform-browser';
@@ -51,13 +51,16 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
 
-        localServerServiceSpy = jasmine.createSpyObj('localServerService', ['getDrawingById']);
+        localServerServiceSpy = jasmine.createSpyObj('localServerService', ['getDrawingById', 'deleteDrawing']);
         localServerServiceSpy.getDrawingById.and.returnValue(
             of({
                 title: 'Success',
-                body: '{"_id":"000000000000000000000000","title":"TEST","tags":["test1", "test2"]}',
+                body:
+                    '{"image":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC","name":"TEST","tags":["test1","test2"],"id":"0"}',
             }),
         );
+
+        localServerServiceSpy.deleteDrawing.and.returnValue(of({ title: 'Success', body: 'Drawing successfully deleted' }));
         TestBed.configureTestingModule({
             declarations: [MainPageCarrouselComponent],
             imports: [RouterTestingModule, HttpClientModule, BrowserModule, FormsModule, ReactiveFormsModule, MatChipsModule],
@@ -276,97 +279,171 @@ describe('MainPageCarrouselComponent', () => {
         expect(spySplice).not.toHaveBeenCalled();
     });
 
-    it('deleteDrawing should throw error when server is down', () => {
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
-        component.tagsInSearch = ['test', 'test2', 'test3', 'test4'];
-        component.removeTag('test3');
-        expect(spySplice).not.toHaveBeenCalled();
+    it('showcasePreviousDrawing should not fire when there are no showcasedDrawings', () => {
+        const popSpy = spyOn(component.showCasedDrawings, 'pop');
+        component.showCasedDrawings = [];
+        component.showcasePreviousDrawing();
+        expect(component.noValidDrawing).toBeTrue();
+        expect(popSpy).not.toHaveBeenCalled();
     });
-
-    // it('deleteDrawing should not delete if image is not in server', () => {
-    //     databaseServiceSpy.dropDrawing.and.returnValue(
-    //         of({
-    //             title: 'Error during local save',
-    //             body: '1',
-    //         }),
-    //     );
-
-    //     component.previewDrawings = [
-    //         { image: '', name: '', id: '1' },
-    //         { image: '', name: '', id: '2' },
-    //         { image: '', name: '', id: '3' },
-    //         { image: '', name: '', id: '4' },
-    //     ];
-    //     component.showCasedDrawings = [
-    //         { image: '', name: '', id: '1' },
-    //         { image: '', name: '', id: '2' },
-    //         { image: '', name: '', id: '3' },
-    //     ];
-    //     component.deleteDrawing();
-    //     const spySplice = spyOn(component.showCasedDrawings, 'splice');
-    //     expect(spySplice).not.toHaveBeenCalled();
-    // });
-
-    // it('deleteDrawing should delete first index of showcasedDrawings if its length is higher than 1', () => {
-    //     databaseServiceSpy.dropDrawing.and.returnValue(
-    //         of({
-    //             title: 'Success',
-    //             body: '1',
-    //         }),
-    //     );
-
-    //     component.previewDrawings = [
-    //         { image: '', name: '', id: '1' },
-    //         { image: '', name: '', id: '2' },
-    //         { image: '', name: '', id: '3' },
-    //         { image: '', name: '', id: '4' },
-    //     ];
-    //     component.showCasedDrawings = [
-    //         { image: '', name: '', id: '1' },
-    //         { image: '', name: '', id: '2' },
-    //         { image: '', name: '', id: '3' },
-    //     ];
-    //     component.deleteDrawing();
-    //     const spySplice = spyOn(component.previewDrawings, 'splice');
-    //     expect(spySplice).not.toHaveBeenCalled();
-    //     expect(component.imageNotInServer).toEqual(false);
-    // });
-
-    // it('deleteDrawing should delete index 0 of showCasedDrawings if its length is lower than 1', () => {
-    //     databaseServiceSpy.dropDrawing.and.returnValue(
-    //         of({
-    //             title: 'Success',
-    //             body: '1',
-    //         }),
-    //     );
-
-    //     component.previewDrawings = [{ image: '', name: '', id: '1' }];
-    //     component.showCasedDrawings = [{ image: '', name: '', id: '1' }];
-    //     component.deleteDrawing();
-    //     const spySplice = spyOn(component.previewDrawings, 'splice');
-    //     expect(spySplice).not.toHaveBeenCalled();
-    //     expect(component.imageNotInServer).toEqual(false);
-    // });
-
-    // it('deleteDrawing should not do anything if not success or error', () => {
-    //     databaseServiceSpy.dropDrawing.and.returnValue(
-    //         of({
-    //             title: 'BrokenButSuccess',
-    //             body: '1',
-    //         }),
-    //     );
-
-    //     component.previewDrawings = [{ image: '', name: '', id: '1' }];
-    //     component.showCasedDrawings = [{ image: '', name: '', id: '1' }];
-    //     component.deleteDrawing();
-    //     const spySplice = spyOn(component.previewDrawings, 'splice');
-    //     expect(spySplice).not.toHaveBeenCalled();
-    //     expect(component.imageNotInServer).toEqual(false);
-    // });
 
     it('openEditorWithDrawing should call drawing service setInitialImage function', () => {
         const spySetImage = spyOn(drawingService, 'setInitialImage');
         component.openEditorWithDrawing('testingstring');
         expect(spySetImage).toHaveBeenCalled();
     });
+
+    it('showCaseNextDrawing should not move to any drawing whatsoever if number of drawings in showcase is 0.', () => {
+        component.showCasedDrawings = [];
+        component.noValidDrawing = false;
+
+        component.showcaseNextDrawing();
+
+        expect(component.noValidDrawing).toBeTrue();
+        expect(component.showCasedDrawings.length).toEqual(0);
+    });
+
+    it('deleteDrawing should throw error when calling dropDrawing from database', fakeAsync(() => {
+        component.previewDrawings = [
+            { image: '', name: '', id: '1' },
+            { image: '', name: '', id: '2' },
+            { image: '', name: '', id: '3' },
+            { image: '', name: '', id: '4' },
+        ];
+
+        component.showCasedDrawings = [
+            { image: '', name: '', id: '1' },
+            { image: '', name: '', id: '2' },
+            { image: '', name: '', id: '3' },
+        ];
+
+        databaseServiceSpy.dropDrawing.and.returnValue(
+            of({
+                title: 'Error',
+                body: 'Image not in server',
+            }),
+        );
+
+        const spySplice = spyOn(component.previewDrawings, 'splice');
+        component.deleteDrawing();
+        tick(50);
+        expect(spySplice).not.toHaveBeenCalled();
+    }));
+
+    it('deleteDrawing should throw error when timeout has occured', fakeAsync(() => {
+        component.previewDrawings = [
+            { image: '', name: '', id: '1' },
+            { image: '', name: '', id: '2' },
+            { image: '', name: '', id: '3' },
+            { image: '', name: '', id: '4' },
+        ];
+
+        component.showCasedDrawings = [
+            { image: '', name: '', id: '1' },
+            { image: '', name: '', id: '2' },
+            { image: '', name: '', id: '3' },
+        ];
+
+        databaseServiceSpy.dropDrawing.and.returnValue(
+            of({
+                title: 'Error',
+                body: 'Timeout has occured',
+            }),
+        );
+
+        const spySplice = spyOn(component.previewDrawings, 'splice');
+        component.deleteDrawing();
+        tick(50);
+        expect(spySplice).not.toHaveBeenCalled();
+    }));
+
+    it('deleteDrawing should throw error when calling deleteDrawing from local-server', fakeAsync(() => {
+        component.previewDrawings = [
+            { image: '', name: '', id: '1' },
+            { image: '', name: '', id: '2' },
+            { image: '', name: '', id: '3' },
+            { image: '', name: '', id: '4' },
+        ];
+
+        component.showCasedDrawings = [
+            { image: '', name: '', id: '1' },
+            { image: '', name: '', id: '2' },
+            { image: '', name: '', id: '3' },
+        ];
+
+        localServerServiceSpy.deleteDrawing.and.returnValue(
+            of({
+                title: 'Error during local save',
+                body: 'Image',
+            }),
+        );
+
+        const spySplice = spyOn(component.previewDrawings, 'splice');
+        component.deleteDrawing();
+        tick(50);
+        expect(spySplice).not.toHaveBeenCalled();
+    }));
+
+    it('deleteDrawing should delete selected drawing', fakeAsync(() => {
+        component.previewDrawings = [
+            { image: '', name: '', id: '1' },
+            { image: '', name: '', id: '2' },
+            { image: '', name: '', id: '3' },
+            { image: '', name: '', id: '4' },
+        ];
+
+        component.showCasedDrawings = [
+            { image: '', name: '', id: '1' },
+            { image: '', name: '', id: '2' },
+            { image: '', name: '', id: '3' },
+        ];
+        const spySplice = spyOn(component.previewDrawings, 'splice');
+        component.deleteDrawing();
+        tick(50);
+        expect(spySplice).toHaveBeenCalled();
+        expect(component.imageNotInServer).toBeFalse();
+    }));
+
+    it('deleteDrawing should delete drawing when there is only one', fakeAsync(() => {
+        component.previewDrawings = [{ image: '', name: '', id: '1' }];
+        component.showCasedDrawings = [{ image: '', name: '', id: '1' }];
+        const spySplice = spyOn(component.showCasedDrawings, 'splice');
+
+        component.deleteDrawing();
+        tick(50);
+        expect(spySplice).toHaveBeenCalled();
+        tick(50);
+        expect(component.imageNotInServer).toBeFalse();
+    }));
+
+    it('removeTag should catch error getDrawingsByTags in resetShowcasedDrawings', fakeAsync(() => {
+        databaseServiceSpy.getDrawingsByTags.and.returnValue(
+            of({
+                title: 'Error',
+                body: '',
+            }),
+        );
+        tick(50);
+        component.tagsInSearch = ['test1', 'test2', 'test3', 'test4'];
+        const spySplice = spyOn(component.tagsInSearch, 'splice');
+        component.removeTag('test3');
+        tick(50);
+        expect(spySplice).toHaveBeenCalled();
+    }));
+
+    it('removeTag should catch error getDrawings in resetShowcasedDrawings', fakeAsync(() => {
+        component.previewDrawings = [{ image: '', name: '', id: '1' }];
+        component.showCasedDrawings = [{ image: '', name: '', id: '1' }];
+        databaseServiceSpy.getDrawings.and.returnValue(
+            of({
+                title: 'Error',
+                body: '',
+            }),
+        );
+        component.tagsInSearch = [];
+        const spySplice = spyOn(component.tagsInSearch, 'splice');
+        component.removeTag('test');
+        tick(50);
+        expect(spySplice).not.toHaveBeenCalled();
+    }));
 });

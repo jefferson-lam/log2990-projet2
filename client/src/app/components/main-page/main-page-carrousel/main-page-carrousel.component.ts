@@ -143,16 +143,9 @@ export class MainPageCarrouselComponent {
                 this.showCasedDrawings.splice(0, 1);
             }
             this.previewDrawings.splice((this.drawingCounter + 1) % this.previewDrawings.length, 1);
+            this.resetShowcasedDrawings();
         } catch (error) {
-            console.log(error);
-            switch ((error as Message).body) {
-                case 'Timeout has occurred':
-                    this.setErrorInServer("Le serveur n'est pas disponible.");
-                    break;
-                case 'Image not in server':
-                    this.setErrorInServer("L'image n'est pas disponible. Sélectionnez une autre image.");
-                    break;
-            }
+            this.setErrorInServer("L'image n'est pas disponible. Sélectionnez une autre image.");
         }
     }
 
@@ -220,19 +213,15 @@ export class MainPageCarrouselComponent {
     }
 
     private async addDrawingToDisplay(id: string, drawing: Drawing): Promise<void> {
-        try {
-            const getDrawingsByIdPromise = await this.localServerService.getDrawingById(id).toPromise();
-            const result: Message = getDrawingsByIdPromise;
-            if (result.title !== ServerConstants.ERROR_MESSAGE) {
-                const serverDrawing: ServerDrawing = JSON.parse(result.body);
-                const newPreviewDrawing: ImageFormat = { image: serverDrawing.image, name: drawing.title, tags: drawing.tags, id };
-                this.previewDrawings.push(newPreviewDrawing);
-                if (this.showCasedDrawings.length < CarouselConstants.MAX_CAROUSEL_SIZE) {
-                    this.showCasedDrawings.push(newPreviewDrawing);
-                }
+        const getDrawingsByIdPromise = await this.localServerService.getDrawingById(id).toPromise();
+        const result: Message = getDrawingsByIdPromise;
+        if (result.title !== ServerConstants.ERROR_MESSAGE) {
+            const serverDrawing: ServerDrawing = JSON.parse(result.body);
+            const newPreviewDrawing: ImageFormat = { image: serverDrawing.image, name: drawing.title, tags: drawing.tags, id };
+            this.previewDrawings.push(newPreviewDrawing);
+            if (this.showCasedDrawings.length < CarouselConstants.MAX_CAROUSEL_SIZE) {
+                this.showCasedDrawings.push(newPreviewDrawing);
             }
-        } catch (error) {
-            console.log(error);
         }
     }
 }
