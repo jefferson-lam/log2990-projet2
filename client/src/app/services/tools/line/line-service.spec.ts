@@ -849,8 +849,9 @@ describe('LineService', () => {
     });
 
     it('onToolChange should call onMouseDoubleClick', () => {
-        const onMouseDoubleClickSpy = spyOn(service, 'onMouseDoubleClick');
         service.onToolChange();
-        expect(onMouseDoubleClickSpy).toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(service.inUse).toBeFalsy();
+        expect(service.shiftDown).toBeFalsy();
     });
 });

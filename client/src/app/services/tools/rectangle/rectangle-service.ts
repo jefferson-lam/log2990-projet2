@@ -40,7 +40,7 @@ export class RectangleService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[RectangleConstants.END_INDEX] = this.mousePosition;
+            this.cornerCoords[RectangleConstants.END_INDEX] = this.getPositionFromMouse(event);
             const command: Command = new RectangleCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }

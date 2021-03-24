@@ -242,6 +242,9 @@ export class LineService extends Tool {
     }
 
     onToolChange(): void {
-        this.onMouseDoubleClick({} as MouseEvent);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.inUse = false;
+        this.shiftDown = false;
+        this.clearPath();
     }
 }
