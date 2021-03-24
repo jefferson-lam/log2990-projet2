@@ -64,6 +64,7 @@ describe('EllipseToolSelectionService', () => {
         service['drawingService'].selectionCtx = selectionCtxStub;
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
+        service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
 
         service['resizerHandlerService'].topLeftResizer = document.createElement('div');
         service['resizerHandlerService'].topResizer = document.createElement('div');

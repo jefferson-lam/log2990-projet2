@@ -48,6 +48,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.isShiftDown = false;
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
             this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
             this.resizerHandlerService.resetResizers();
@@ -69,8 +70,8 @@ export class EllipseSelectionService extends ToolSelectionService {
             if (!this.validateSelectionHeightAndWidth()) {
                 return;
             }
-            this.drawingService.selectionCanvas.width = this.selectionWidth;
-            this.drawingService.selectionCanvas.height = this.selectionHeight;
+            this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+            this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
             this.selectEllipse(
                 this.drawingService.selectionCtx,
                 this.drawingService.baseCtx,
@@ -124,6 +125,7 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.isShiftDown = false;
             } else if (event.key === 'Escape' && this.isEscapeDown) {
                 this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.resetCanvasState(this.drawingService.previewSelectionCanvas);
                 this.resetSelectedToolSettings();
                 // Erase the rectangle drawn as a preview of selection
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -157,6 +159,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.drawingService.baseCtx.restore();
             this.resetSelectedToolSettings();
             this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
             this.resizerHandlerService.resetResizers();
             this.isManipulating = false;
             this.isEscapeDown = false;
@@ -239,6 +242,8 @@ export class EllipseSelectionService extends ToolSelectionService {
     private setSelectionCanvasPosition(topLeft: Vec2, selectionWidth: number, selectionHeight: number): void {
         this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
         this.resizerHandlerService.setResizerPosition(topLeft, selectionWidth, selectionHeight);
     }
 

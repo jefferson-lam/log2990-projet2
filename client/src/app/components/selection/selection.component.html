@@ -1,4 +1,4 @@
-<div id="selectionContainer">
+<div #selectionBox id="selectionContainer">
     <canvas
         tabindex="0"
         appDirectionalMovement
@@ -8,11 +8,22 @@
         #selectionCanvas
         (canvasMovement)="this.onCanvasMove($event)"
         (cdkDragMoved)="this.repositionResizers($event)"
-        (cdkDragEnded)="this.setCanvasPosition($event)"
+        (cdkDragEnded)="this.setSelectionCanvasPosition($event)"
         [attr.width]="0"
         [attr.height]="0"
     ></canvas>
 </div>
+<canvas
+    tabindex="0"
+    #previewSelectionCanvas
+    id="previewSelectionLayer"
+    cdkDrag
+    (canvasMovement)="this.onCanvasMove($event)"
+    (cdkDragMoved)="this.repositionPreviewResizers($event)"
+    (cdkDragEnded)="this.setPreviewSelectionCanvasPosition($event)"
+    [attr.width]="0"
+    [attr.height]="0"
+></canvas>
 <div #leftResizer id="leftSlider" class="resizer"></div>
 <div #rightResizer id="rightSlider" class="resizer"></div>
 <div #topResizer id="topSlider" class="resizer"></div>
