@@ -48,6 +48,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.rectangleService.isShiftDown = false;
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
             this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
             this.resizerHandlerService.resetResizers();
@@ -73,8 +74,8 @@ export class RectangleSelectionService extends ToolSelectionService {
             if (!this.validateSelectionHeightAndWidth()) {
                 return;
             }
-            this.drawingService.selectionCanvas.width = this.selectionWidth;
-            this.drawingService.selectionCanvas.height = this.selectionHeight;
+            this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+            this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
             this.selectRectangle(
                 this.drawingService.selectionCtx,
                 this.drawingService.baseCtx,
@@ -128,6 +129,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             } else if (event.key === 'Escape' && this.isEscapeDown) {
                 // Case where the user is still selecting.
                 this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.resetCanvasState(this.drawingService.previewSelectionCanvas);
                 this.resetSelectedToolSettings();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.inUse = false;
@@ -156,6 +158,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             );
             this.resetSelectedToolSettings();
             this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
             this.resizerHandlerService.resetResizers();
             this.isManipulating = false;
             this.isEscapeDown = false;
@@ -165,8 +168,8 @@ export class RectangleSelectionService extends ToolSelectionService {
     selectAll(): void {
         this.selectionWidth = this.drawingService.canvas.width;
         this.selectionHeight = this.drawingService.canvas.height;
-        this.drawingService.selectionCanvas.width = this.selectionWidth;
-        this.drawingService.selectionCanvas.height = this.selectionHeight;
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
         this.cornerCoords = [
             { x: 0, y: 0 },
             { x: this.selectionWidth, y: this.selectionHeight },
@@ -206,6 +209,8 @@ export class RectangleSelectionService extends ToolSelectionService {
     private setSelectionCanvasPosition(topLeft: Vec2, selectionWidth: number, selectionHeight: number): void {
         this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
         this.resizerHandlerService.setResizerPosition(topLeft, selectionWidth, selectionHeight);
     }
 
