@@ -1,17 +1,192 @@
-* {
-    font-family: 'Rubik', serif;
-}
-
 .modal-dialog {
-    width: 400px;
-    height: 400px;
     justify-content: space-between;
     flex-direction: column;
     display: flex;
+    height: 100%;
+}
+
+#galleryPreview {
+    height: 100%;
+    overflow: hidden;
+}
+
+#deleteButton {
+    background-color: #6c5b7b;
+    color: white;
+    text-align: center;
+    font-family: 'Rubik', serif;
+    z-index: 100;
 }
 
 #exitButton {
-    background-color: #ffbf00;
+    background-color: #f88b86;
     margin-left: auto;
     text-align: center;
+    bottom: 0;
+    color: white;
+    font-family: 'Rubik', serif;
+}
+
+#exitButton:hover,
+#deleteButton:hover {
+    color: black;
+    background-color: slategrey;
+}
+
+#acceptTag {
+    background-color: #f88b86;
+    margin-left: auto;
+    text-align: center;
+    right: 10px;
+    top: 10px;
+    color: white;
+    font-family: 'Rubik', serif;
+    height: 50%;
+}
+
+#topBar {
+    justify-content: space-between;
+    flex-direction: row;
+    display: flex;
+}
+
+#titleTopBar {
+    font-family: 'Rubik', serif;
+    font-size: 50px;
+    margin-top: 9px;
+}
+
+#tagGallery {
+    margin-left: 20px;
+}
+
+#tagButton {
+    color: white;
+    background-color: #355c7d;
+    height: auto;
+    text-align: center;
+    top: 10px;
+}
+
+.tagsList {
+    width: 70%;
+}
+
+.slideRight,
+.slideLeft {
+    color: #e8e8e8;
+    margin-top: 200px;
+    font-size: 50px;
+    width: 50px;
+    height: 50px;
+    z-index: 3;
+    user-select: none;
+}
+
+.slideRight:hover,
+.slideLeft:hover {
+    cursor: pointer;
+}
+
+.slideRight:active,
+.slideLeft:active {
+    color: #000220;
+}
+
+#galleryContainer {
+    background-color: #355c7d;
+    border: 1px solid lightgrey;
+    height: 100%;
+}
+
+#galleryShowcase {
+    display: flex;
+}
+
+h3 {
+    font-family: 'Rubik', serif;
+}
+
+#tagGallery {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    color: white;
+    bottom: 0;
+    margin-top: 5px;
+}
+
+#tagButton {
+    background-color: #f88b86;
+    text-align: center;
+    bottom: 0;
+    color: white;
+    font-family: 'Rubik', serif;
+    height: 27px;
+}
+
+#tagValidation,
+#deleteValidation {
+    color: red;
+    font-family: 'Rubik', serif;
+}
+
+#drawingValidation,
+#serverValidation {
+    color: red;
+    font-family: 'Rubik', serif;
+    font-size: 30px;
+    height: 50%;
+    margin-left: 20%;
+}
+
+.drawingImage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50%;
+    max-height: 50%;
+}
+
+.drawingTitle {
+    margin-top: 5%;
+    align-content: center;
+    text-align: center;
+    color: white;
+    font-family: 'Rubik', serif;
+    font-size: large;
+    margin-bottom: 10px;
+}
+
+.gridContainer {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    border: 5px black;
+    width: 100%;
+}
+
+.gridContainerSpinner,
+.gridContainerDrawingValidation,
+.gridServerValidation {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.gridItems:only-child {
+    border: 2px dashed red;
+}
+
+.gridItems:nth-child(2) {
+    border: 2px dashed red;
+}
+
+#spinnerAnimation {
+    margin-top: 75px;
+}
+
+.tagsContainer {
+    display: flex;
+    justify-content: center;
 }

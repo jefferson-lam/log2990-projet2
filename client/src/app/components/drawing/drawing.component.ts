@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
@@ -10,7 +10,7 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnChanges {
+export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
@@ -30,11 +30,13 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.drawingService.canvas.width = CanvasConstants.DEFAULT_WIDTH;
+        this.drawingService.canvas.height = CanvasConstants.DEFAULT_HEIGHT;
+        this.drawingService.previewCtx.canvas.width = CanvasConstants.DEFAULT_WIDTH;
+        this.drawingService.previewCtx.canvas.height = CanvasConstants.DEFAULT_HEIGHT;
 
         this.baseCtx.fillStyle = 'white';
         this.baseCtx.fillRect(0, 0, this.baseCtx.canvas.width, this.baseCtx.canvas.height);
-        // Restore to default value
-        this.baseCtx.fillStyle = 'black';
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -47,6 +49,10 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         } else {
             canvasStyle.cursor = 'crosshair';
         }
+    }
+
+    ngOnDestroy(): void {
+        this.drawingService.imageURL = '';
     }
 
     @HostListener('keydown', ['$event'])

@@ -5,6 +5,7 @@ import { DrawingService } from './drawing.service';
 describe('DrawingService', () => {
     let service: DrawingService;
     let canvasTestHelper: CanvasTestHelper;
+
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(DrawingService);
@@ -23,5 +24,11 @@ describe('DrawingService', () => {
         const pixelBuffer = new Uint32Array(service.baseCtx.getImageData(0, 0, service.canvas.width, service.canvas.height).data.buffer);
         const hasColoredPixels = pixelBuffer.some((color) => color !== 0);
         expect(hasColoredPixels).toEqual(false);
+    });
+
+    it('setInitialImage should set imageURL to specified url', () => {
+        const EXPECTED_URL = 'EXPECTED_URL';
+        service.setInitialImage(EXPECTED_URL);
+        expect(service.imageURL).toEqual(EXPECTED_URL);
     });
 });

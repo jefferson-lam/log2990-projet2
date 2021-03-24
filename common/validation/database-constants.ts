@@ -11,3 +11,5 @@ export const MAX_TAGS_COUNT = 30;
 export const SUCCESS_MESSAGE = 'Success';
 
 export const ERROR_MESSAGE = 'Error';
+
+export const TIMEOUT_MAX_TIME = 3000;

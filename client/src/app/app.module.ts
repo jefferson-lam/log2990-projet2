@@ -1,13 +1,16 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -26,6 +29,7 @@ import { AppComponent } from './components/app/app.component';
 import { ColorPickerModule } from './components/color-picker/color-picker.module';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { DiscardChangesPopupComponent } from './components/main-page/main-page-carrousel/discard-changes-popup/discard-changes-popup.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
@@ -53,6 +57,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 @NgModule({
     declarations: [
         AppComponent,
+        DiscardChangesPopupComponent,
         DrawingComponent,
         EditorComponent,
         ExportDrawingComponent,
@@ -104,11 +109,11 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatSliderModule,
         MatToolbarModule,
         MatTooltipModule,
-        MatSliderModule,
+        ReactiveFormsModule,
+        MatGridListModule,
+        MatAutocompleteModule,
+        MatChipsModule,
         MatRadioModule,
-        MatCheckboxModule,
-        DragDropModule,
-        FormsModule,
         MatProgressSpinnerModule,
     ],
     providers: [],

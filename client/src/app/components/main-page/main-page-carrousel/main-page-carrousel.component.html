@@ -1,12 +1,62 @@
 <div class="modal-dialog">
-    <h1 mat-dialog-title>Options du carrousel</h1>
-    <div mat-dialog-content>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-        anim id est laborum.
+    <div id="topBar">
+        <h1 mat-dialog-title id="titleTopBar">Carrousel</h1>
+        <div *ngIf="tagErrorPresent" id="tagValidation">{{ tagErrorMessage }}</div>
+        <mat-form-field class="tagsList">
+            <mat-label id="filterTag"> Filtrage par étiquette </mat-label>
+            <mat-chip-list #chipList aria-label="Tag selection">
+                <mat-chip *ngFor="let tag of tagsInSearch" [selectable]="selectable" [removable]="removable" (removed)="removeTag(tag)">
+                    {{ tag }} <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
+                <input
+                    placeholder="Chercher une étiquette..."
+                    #tagInput
+                    [matChipInputFor]="chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="addTag($event)"
+                />
+            </mat-chip-list>
+        </mat-form-field>
+    </div>
+
+    <div mat-dialog-content id="galleryPreview">
+        <div id="galleryContainer" *ngIf="!this.deleted">
+            <div id="galleryShowcase" (keydown.arrowRight)="showcaseNextDrawing()" (keydown.arrowLeft)="showcasePreviousDrawing()">
+                <mat-icon class="slideLeft" *ngIf="!imageNotInServer" (click)="showcasePreviousDrawing()">navigate_before</mat-icon>
+                <div class="gridContainerSpinner" *ngIf="drawingLoading">
+                    <div id="spinnerAnimation"><mat-spinner color="warn" [diameter]="250"></mat-spinner></div>
+                </div>
+                <div class="gridContainerDrawingValidation" *ngIf="noValidDrawing">
+                    <div id="drawingValidation">Image non-trouvée</div>
+                </div>
+                <div class="gridServerValidation" *ngIf="imageNotInServer">
+                    <div id="serverValidation">{{ serverErrorMessage }}</div>
+                </div>
+                <div class="gridContainer" *ngIf="!drawingLoading">
+                    <div class="gridItems" *ngFor="let drawing of showCasedDrawings; let i = index">
+                        <div class="drawingTitle">
+                            <div>{{ drawing.name }}</div>
+                        </div>
+                        <div class="imageContainer">
+                            <img
+                                mat-dialog-close
+                                alt="Image non-trouvée"
+                                class="drawingImage"
+                                [src]="drawing.image"
+                                (click)="openEditorWithDrawing(drawing.image)"
+                            />
+                        </div>
+                        <div class="tagsContainer">
+                            <mat-chip *ngFor="let tag of drawing.tags">{{ tag }}</mat-chip>
+                        </div>
+                    </div>
+                </div>
+                <mat-icon class="slideRight" *ngIf="!imageNotInServer" (click)="showcaseNextDrawing()">navigate_next</mat-icon>
+            </div>
+        </div>
     </div>
     <div mat-dialog-actions>
+        <button mat-button id="deleteButton" (click)="deleteDrawing()">Supprimer</button>
         <button mat-button mat-dialog-close id="exitButton">Retour</button>
     </div>
 </div>

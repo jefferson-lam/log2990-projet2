@@ -69,6 +69,7 @@ describe('EditorComponent', () => {
         fixture = TestBed.createComponent(EditorComponent);
         component = fixture.componentInstance;
         component.newDialog = dialogSpy;
+        drawServiceSpy.imageURL = '';
         fixture.detectChanges();
         keyboardEventSpy = spyOn(component, 'onKeyboardDown').and.callThrough();
         component.currentTool = toolStub;

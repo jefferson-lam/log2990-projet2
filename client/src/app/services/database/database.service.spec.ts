@@ -1,6 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Message } from '@common/communication/message';
+import * as DatabaseConstants from '@common/validation/database-constants';
 import { DatabaseService } from './database.service';
 
 describe('DatabaseService', () => {
@@ -98,10 +99,14 @@ describe('DatabaseService', () => {
     });
 
     it('should handle http error safely', () => {
-        service.getDrawings().subscribe((response: Message) => {
-            expect(response).toBeUndefined();
-        }, fail);
-
+        service
+            .getDrawings()
+            .toPromise()
+            .then((result: Message) => {
+                expect(result.title).toContain(DatabaseConstants.ERROR_MESSAGE);
+            })
+            // tslint:disable-next-line: no-empty
+            .catch((error) => {});
         const req = httpMock.expectOne(baseUrl);
         expect(req.request.method).toBe('GET');
         req.error(new ErrorEvent('Random error occured'));
