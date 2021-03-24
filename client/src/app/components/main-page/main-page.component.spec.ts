@@ -6,6 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { MainPageComponent } from './main-page.component';
 import SpyObj = jasmine.SpyObj;
 
+// tslint:disable: no-string-literal
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
@@ -52,9 +53,19 @@ describe('MainPageComponent', () => {
     it('should open Carousel on control+g', () => {
         const carouselSpy = spyOn(component, 'openCarousel');
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyG', key: '' });
+        component.isPopUpOpen = false;
         component.onCtrlGKeyDown(eventSpy);
 
         expect(carouselSpy).toHaveBeenCalled();
+    });
+
+    it('should not open Carousel on control+g if pop up is open', () => {
+        const carouselSpy = spyOn(component, 'openCarousel');
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyG', key: '' });
+        component.isPopUpOpen = true;
+        component.onCtrlGKeyDown(eventSpy);
+
+        expect(carouselSpy).not.toHaveBeenCalled();
     });
 
     it('ngOnInit should call subscribe', () => {
@@ -62,5 +73,16 @@ describe('MainPageComponent', () => {
         component.ngOnInit();
         fixture.detectChanges();
         expect(subscribeSpy).toHaveBeenCalled();
+    });
+
+    it('when all popups are closed, isPopUpOpen is set to false', () => {
+        dialogSpy._getAfterAllClosed.and.callFake(() => {
+            return component.dialog['_afterAllClosedAtThisLevel'];
+        });
+        component.isPopUpOpen = true;
+
+        component.dialog._getAfterAllClosed().next();
+
+        expect(component.isPopUpOpen).toBeFalse();
     });
 });
