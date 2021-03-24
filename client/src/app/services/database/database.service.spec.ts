@@ -105,6 +105,7 @@ describe('DatabaseService', () => {
             .then((result: Message) => {
                 expect(result.title).toContain(DatabaseConstants.ERROR_MESSAGE);
             })
+            // tslint:disable-next-line: no-empty
             .catch((error) => {});
         const req = httpMock.expectOne(baseUrl);
         expect(req.request.method).toBe('GET');

@@ -12,7 +12,7 @@ import { of } from 'rxjs';
 import { MainPageCarrouselComponent } from './main-page-carrousel.component';
 
 import SpyObj = jasmine.SpyObj;
-
+// tslint:disable: max-file-line-count
 // tslint:disable: no-string-literal
 describe('MainPageCarrouselComponent', () => {
     let component: MainPageCarrouselComponent;
@@ -20,6 +20,7 @@ describe('MainPageCarrouselComponent', () => {
     let databaseServiceSpy: SpyObj<DatabaseService>;
     let localServerServiceSpy: SpyObj<LocalServerService>;
     let drawingService: DrawingService;
+    const TICK_TIME = 50;
 
     beforeEach(async(() => {
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawingsByTags', 'getDrawings', 'dropDrawing']);
@@ -326,7 +327,7 @@ describe('MainPageCarrouselComponent', () => {
 
         const spySplice = spyOn(component.previewDrawings, 'splice');
         component.deleteDrawing();
-        tick(50);
+        tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
     }));
 
@@ -353,7 +354,7 @@ describe('MainPageCarrouselComponent', () => {
 
         const spySplice = spyOn(component.previewDrawings, 'splice');
         component.deleteDrawing();
-        tick(50);
+        tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
     }));
 
@@ -380,7 +381,7 @@ describe('MainPageCarrouselComponent', () => {
 
         const spySplice = spyOn(component.previewDrawings, 'splice');
         component.deleteDrawing();
-        tick(50);
+        tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
     }));
 
@@ -399,7 +400,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         const spySplice = spyOn(component.previewDrawings, 'splice');
         component.deleteDrawing();
-        tick(50);
+        tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
         expect(component.imageNotInServer).toBeFalse();
     }));
@@ -410,9 +411,9 @@ describe('MainPageCarrouselComponent', () => {
         const spySplice = spyOn(component.showCasedDrawings, 'splice');
 
         component.deleteDrawing();
-        tick(50);
+        tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
-        tick(50);
+        tick(TICK_TIME);
         expect(component.imageNotInServer).toBeFalse();
     }));
 
@@ -423,11 +424,11 @@ describe('MainPageCarrouselComponent', () => {
                 body: '',
             }),
         );
-        tick(50);
+        tick(TICK_TIME);
         component.tagsInSearch = ['test1', 'test2', 'test3', 'test4'];
         const spySplice = spyOn(component.tagsInSearch, 'splice');
         component.removeTag('test3');
-        tick(50);
+        tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
     }));
 
@@ -443,7 +444,11 @@ describe('MainPageCarrouselComponent', () => {
         component.tagsInSearch = [];
         const spySplice = spyOn(component.tagsInSearch, 'splice');
         component.removeTag('test');
-        tick(50);
+        tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
     }));
+
+    afterAll(() => {
+        TestBed.resetTestingModule();
+    });
 });

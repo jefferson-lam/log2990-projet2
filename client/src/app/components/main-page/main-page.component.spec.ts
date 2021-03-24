@@ -7,6 +7,7 @@ import { MainPageComponent } from './main-page.component';
 import SpyObj = jasmine.SpyObj;
 
 // tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
@@ -84,5 +85,9 @@ describe('MainPageComponent', () => {
         component.dialog._getAfterAllClosed().next();
 
         expect(component.isPopUpOpen).toBeFalse();
+    });
+
+    afterAll(() => {
+        TestBed.resetTestingModule();
     });
 });
