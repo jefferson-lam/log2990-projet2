@@ -4,7 +4,7 @@ import * as PipetteConstants from '@app/constants/pipette-constants';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { SidebarPipetteComponent } from './sidebar-pipette.component';
 
-fdescribe('SidebarPipetteComponent', () => {
+describe('SidebarPipetteComponent', () => {
     let component: SidebarPipetteComponent;
     let fixture: ComponentFixture<SidebarPipetteComponent>;
     let pipetteService: PipetteService;

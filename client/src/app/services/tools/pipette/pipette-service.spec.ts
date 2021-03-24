@@ -7,7 +7,7 @@ import { ColorService } from '@app/services/color/color.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PipetteService } from './pipette-service';
 
-fdescribe('PipetteServiceService', () => {
+describe('PipetteServiceService', () => {
     let service: PipetteService;
     let colorService: ColorService;
     let leftMouseButton: MouseEvent;
