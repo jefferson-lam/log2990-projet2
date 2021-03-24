@@ -1,36 +1,38 @@
 import { SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
+import * as CanvasConstants from '@app/constants/canvas-constants';
+import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { EraserService } from '@app/services/tools/eraser-service';
-import { LineService } from '@app/services/tools/line-service';
-import { PencilService } from '@app/services/tools/pencil-service';
+import { EraserService } from '@app/services/tools/eraser/eraser-service';
+import { LineService } from '@app/services/tools/line/line-service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingComponent } from './drawing.component';
 
 class ToolStub extends Tool {}
-
-// TODO : Déplacer dans un fichier accessible à tous
-const DEFAULT_WIDTH = 1000;
-const DEFAULT_HEIGHT = 800;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;
+    let undoRedoStub: UndoRedoService;
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
     let lineStub: ToolStub;
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
-        pencilStub = new ToolStub({} as DrawingService);
-        eraserStub = new ToolStub({} as DrawingService);
-        lineStub = new ToolStub({} as DrawingService);
+        undoRedoStub = new UndoRedoService(drawingStub);
+        pencilStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
+        eraserStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
+        lineStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
             providers: [
                 { provide: DrawingService, useValue: drawingStub },
+                { provide: UndoRedoService, useValue: undoRedoStub },
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
                 { provide: LineService, useValue: lineStub },
@@ -48,18 +50,25 @@ describe('DrawingComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('should initialize baseCanvas with a white background', () => {
+        const baseCtx: CanvasRenderingContext2D = component.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, component.baseWidth, component.baseHeight).data.buffer);
+        const isWhite = !pixelBuffer.some((color) => color !== WHITE_RGBA_DECIMAL);
+        expect(isWhite).toBeTrue();
+    });
+
     it('should have a default WIDTH and HEIGHT', () => {
         const height = component.baseHeight;
         const width = component.baseWidth;
-        expect(height).toEqual(DEFAULT_HEIGHT);
-        expect(width).toEqual(DEFAULT_WIDTH);
+        expect(height).toEqual(CanvasConstants.DEFAULT_HEIGHT);
+        expect(width).toEqual(CanvasConstants.DEFAULT_WIDTH);
     });
 
     it('previewCanvas should have a default WIDTH and HEIGHT', () => {
         const height = component.previewHeight;
         const width = component.previewWidth;
-        expect(height).toEqual(DEFAULT_HEIGHT);
-        expect(width).toEqual(DEFAULT_WIDTH);
+        expect(height).toEqual(CanvasConstants.DEFAULT_HEIGHT);
+        expect(width).toEqual(CanvasConstants.DEFAULT_WIDTH);
     });
 
     it('should get pencilStub', () => {
@@ -152,6 +161,13 @@ describe('DrawingComponent', () => {
 
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('should call onContextmenu when receiving a contextmenu event', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault']);
+        component.onContextMenu(eventSpy);
+
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
     });
 
     it('ngOnChanges should set cursor to none if eraserService selected', () => {

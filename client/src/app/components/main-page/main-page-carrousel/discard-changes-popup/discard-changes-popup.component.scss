@@ -1,0 +1,25 @@
+* {
+  font-family: 'Rubik', serif;
+}
+
+#discardButton, #cancelButton {
+  align-content: center;
+  font-size: large;
+  background-color: coral;
+  margin-left: 76px;
+  margin-bottom: 30px;
+  width: 125px;
+}
+
+.modal-dialog {
+  width: 500px;
+  height: 155px;
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
+}
+
+.mat-dialog-title {
+  text-align: center;
+  font-family: 'Rubik', serif;
+}

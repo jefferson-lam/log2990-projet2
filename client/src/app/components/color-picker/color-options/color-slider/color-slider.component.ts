@@ -81,16 +81,9 @@ export class ColorSliderComponent implements AfterViewInit {
         this.emitHue(evt.offsetY);
     }
 
-    @HostListener('window:mousemove', ['$event'])
     onMouseMove(evt: MouseEvent): void {
         if (this.mousedown) {
-            if (evt.offsetY < 0) {
-                this.selectedHeight = 0;
-            } else if (evt.offsetY > this.canvas.nativeElement.height) {
-                this.selectedHeight = this.canvas.nativeElement.height;
-            } else {
-                this.selectedHeight = evt.offsetY;
-            }
+            this.selectedHeight = evt.offsetY;
             this.drawSelection();
             this.emitHue(this.selectedHeight);
         }

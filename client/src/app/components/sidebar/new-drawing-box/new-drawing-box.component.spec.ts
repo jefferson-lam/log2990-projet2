@@ -26,7 +26,7 @@ describe('NewDrawingBoxComponent', () => {
     });
 
     it("should call clear canvas of base and preview layer of component's drawing service", () => {
-        component.clearCanvas();
+        component.newDrawing();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 });

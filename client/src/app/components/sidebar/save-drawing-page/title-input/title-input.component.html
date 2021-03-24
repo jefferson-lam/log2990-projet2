@@ -1,0 +1,7 @@
+<mat-form-field appearance="fill">
+    <mat-label>Titre</mat-label>
+    <input #titleInput matInput (input)="validateTitle(titleInput.value)" />
+</mat-form-field>
+<div [className]="minLengthDivClass">{{ minLengthRequirement }}</div>
+<div [className]="maxLengthDivClass">{{ maxLengthRequirement }}</div>
+<div [className]="noSpecialCharacterDivClass">{{ noSpecialCharacterRequirement }}</div>

@@ -1,4 +1,8 @@
 <div class="colorpicker-wrapper">
+    <div class="container flex">
+        <div>Primaire</div>
+        <div id="secondaryText">Secondaire</div>
+    </div>
     <div class="color-display">
         <div
             class="color-preview"
@@ -15,7 +19,7 @@
         ></div>
     </div>
     <div class="colorhistory-wrapper">
-        <app-color-history [savedColors]="savedColors"></app-color-history>
+        <app-color-history></app-color-history>
     </div>
     <ng-container *ngIf="showPrimaryOptions">
         <app-color-options

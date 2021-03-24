@@ -1,5 +1,6 @@
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Vec2 } from './vec2';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
@@ -8,13 +9,16 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     lineWidth?: number;
     fillMode?: ToolConstants.FillMode;
+    primaryColor?: string;
+    secondaryColor?: string;
     junctionRadius?: number;
     withJunction?: boolean;
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
+    inUse: boolean = false;
     name: string;
 
-    constructor(protected drawingService: DrawingService) {}
+    constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {}
 
     onKeyboardDown(event: KeyboardEvent): void {}
 
@@ -36,6 +40,10 @@ export abstract class Tool {
 
     onMouseEnter(event: MouseEvent): void {}
 
+    onToolEnter(mousePosition: Vec2): void {}
+
+    onToolChange(): void {}
+
     setLineWidth(width: number): void {}
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {}
@@ -43,6 +51,16 @@ export abstract class Tool {
     setJunctionRadius(newJunctionRadius: number): void {}
 
     setWithJunction(hasJunction: boolean): void {}
+
+    setPrimaryColor(primaryColor: string): void {}
+
+    setSecondaryColor(secondaryColor: string): void {}
+
+    setSidesCount(newSidesCount: number): void {}
+
+    setWaterDropWidth(newSize: number): void {}
+
+    setEmissionCount(newEmissionCount: number): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
