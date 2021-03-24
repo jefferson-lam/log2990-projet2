@@ -6,12 +6,12 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DatabaseService } from '@app/services/database/database.service';
-import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
 import { of } from 'rxjs';
 import { MainPageCarrouselComponent } from './main-page-carrousel.component';
 
 import SpyObj = jasmine.SpyObj;
+import { MatDialog } from '@angular/material/dialog';
 // tslint:disable: max-file-line-count
 // tslint:disable: no-string-literal
 describe('MainPageCarrouselComponent', () => {
@@ -19,10 +19,11 @@ describe('MainPageCarrouselComponent', () => {
     let fixture: ComponentFixture<MainPageCarrouselComponent>;
     let databaseServiceSpy: SpyObj<DatabaseService>;
     let localServerServiceSpy: SpyObj<LocalServerService>;
-    let drawingService: DrawingService;
+    let dialogSpy: SpyObj<MatDialog>;
     const TICK_TIME = 50;
 
     beforeEach(async(() => {
+        dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawingsByTags', 'getDrawings', 'dropDrawing']);
         databaseServiceSpy.getDrawingsByTags.and.returnValue(
             of({
@@ -68,6 +69,7 @@ describe('MainPageCarrouselComponent', () => {
             providers: [
                 { provide: DatabaseService, useValue: databaseServiceSpy },
                 { provide: LocalServerService, useValue: localServerServiceSpy },
+                { provide: MatDialog, useValue: dialogSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -77,7 +79,6 @@ describe('MainPageCarrouselComponent', () => {
         fixture = TestBed.createComponent(MainPageCarrouselComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        drawingService = TestBed.inject(DrawingService);
     });
 
     it('should create', () => {
@@ -288,10 +289,10 @@ describe('MainPageCarrouselComponent', () => {
         expect(popSpy).not.toHaveBeenCalled();
     });
 
-    it('openEditorWithDrawing should call drawing service setInitialImage function', () => {
-        const spySetImage = spyOn(drawingService, 'setInitialImage');
+    it('openEditorWithDrawing should call dialog.open', () => {
         component.openEditorWithDrawing('testingstring');
-        expect(spySetImage).toHaveBeenCalled();
+
+        expect(dialogSpy.open).toHaveBeenCalled();
     });
 
     it('showCaseNextDrawing should not move to any drawing whatsoever if number of drawings in showcase is 0.', () => {
