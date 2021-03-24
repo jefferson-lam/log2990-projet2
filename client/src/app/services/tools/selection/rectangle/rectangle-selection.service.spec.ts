@@ -18,6 +18,7 @@ describe('RectangleSelectionService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
+    // let previewSelectionCtxStub: CanvasRenderingContext2D;
     let parentMouseDownSpy: jasmine.Spy;
     let parentMouseUpSpy: jasmine.Spy;
     let parentKeyboardDownSpy: jasmine.Spy;
@@ -49,6 +50,7 @@ describe('RectangleSelectionService', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         selectionCtxStub = canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+        // previewSelectionCtxStub = canvasTestHelper.previewSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(RectangleSelectionService);
         undoRedoService = TestBed.inject(UndoRedoService);
@@ -62,6 +64,7 @@ describe('RectangleSelectionService', () => {
         service['drawingService'].selectionCtx = selectionCtxStub;
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
+        service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
 
         service['resizerHandlerService'].topLeftResizer = document.createElement('div');
         service['resizerHandlerService'].topResizer = document.createElement('div');

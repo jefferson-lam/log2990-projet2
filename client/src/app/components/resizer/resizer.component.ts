@@ -80,6 +80,8 @@ export class ResizerComponent implements AfterViewInit {
 
     expandCanvas(event: CdkDragEnd): void {
         this.lockMinCanvasValue();
+        this.drawingService.canvasHeightObservable.next(this.previewCtx.canvas.height);
+        this.drawingService.canvasWidthObservable.next(this.previewCtx.canvas.width);
         const command: Command = new ResizerCommand();
         this.undoRedoService.executeCommand(command);
         this.isSideResizerDown = false;

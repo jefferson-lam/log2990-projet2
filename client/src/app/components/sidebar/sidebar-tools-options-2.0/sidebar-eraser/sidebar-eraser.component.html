@@ -1,22 +1,25 @@
 <div id="settings-container">
-  <h2 id="title"> Options de l'efface </h2>
-  <div>
+    <h2 id="title">Options de l'efface</h2>
     <div>
-      <div id="width-setting">
-        <p> Épaisseur : {{toolSize}}</p>
-        <mat-slider id="width" color="warn"
+        <div>
+            <div id="width-setting">
+                <p>Épaisseur : {{ toolSize }}</p>
+                <mat-slider
+                    id="width"
+                    color="warn"
                     thumbLabel
-                    [tickInterval]='tickInterval'
+                    [tickInterval]="tickInterval"
                     [min]="min"
                     [max]="max"
                     [(value)]="toolSize"
-                    (change)="emitToolSize()">
-        </mat-slider>
-      </div>
-      <br>
-      <div id="colorPicker">
-        <app-color-picker></app-color-picker>
-      </div>
+                    (change)="emitToolSize()"
+                >
+                </mat-slider>
+            </div>
+            <br />
+            <div id="colorPicker">
+                <app-color-picker></app-color-picker>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
