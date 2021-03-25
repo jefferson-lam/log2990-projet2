@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MAX_RGB_VALUE } from '@app/constants/color-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
@@ -24,8 +25,10 @@ export class ExportDrawingComponent implements AfterViewInit {
     type: string;
     name: string;
     filter: string;
+    private readonly IMGUR_URL: string = 'https://api.imgur.com/3/image/';
+    private readonly CLIENT_ID: string = 'Client-ID 7cb69a96d40be21';
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private http: HttpClient) {
         this.baseCanvas = drawingService.canvas;
         this.baseCtx = this.baseCanvas.getContext('2d') as CanvasRenderingContext2D;
         this.setPopupSizes();
@@ -89,5 +92,29 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.link.download = this.name + '.' + this.type;
         this.link.href = this.exportCanvas.toDataURL('image/' + this.type);
         this.link.click();
+    }
+
+    // exportImgur(): void {
+    //     this.link.download = this.name + '.' + this.type;
+    //     this.link.href = this.exportCanvas.toDataURL('image/' + this.type);
+    //     this.link.click();
+    //     const formdata = new FormData();
+    //     formdata.append('image', img);
+
+
+    //     fetch(this.IMGUR_URL, {
+    //         method: 'post',
+    //         headers: {
+    //             Authorization: this.CLIENT_ID,
+    //         },
+    //         body: formdata,
+    //     }).then((data) => data.json());
+    // }
+
+    sendDrawing(img: ) {
+        const headers = { 'Authorization': this.CLIENT_ID };
+        const body = new FormData();
+        body.append("image", img);
+        return this.http.post<any>(this.IMGUR_URL, body, { headers });
     }
 }
