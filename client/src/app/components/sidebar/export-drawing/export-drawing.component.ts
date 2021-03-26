@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MAX_RGB_VALUE } from '@app/constants/color-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ImgurService } from '@app/services/imgur/imgur.service';
 
 @Component({
     selector: 'app-export-drawing',
@@ -16,6 +16,7 @@ export class ExportDrawingComponent implements AfterViewInit {
     exportCtx: CanvasRenderingContext2D;
     canvasStyleWidth: string;
     canvasStyleHeight: string;
+    imgurService: ImgurService;
 
     link: HTMLAnchorElement;
 
@@ -25,10 +26,10 @@ export class ExportDrawingComponent implements AfterViewInit {
     type: string;
     name: string;
     filter: string;
-    private readonly IMGUR_URL: string = 'https://api.imgur.com/3/image/';
-    private readonly CLIENT_ID: string = 'Client-ID 7cb69a96d40be21';
+    url: string;
 
-    constructor(drawingService: DrawingService, private http: HttpClient) {
+    constructor(drawingService: DrawingService, imgurService: ImgurService) {
+        this.imgurService = imgurService;
         this.baseCanvas = drawingService.canvas;
         this.baseCtx = this.baseCanvas.getContext('2d') as CanvasRenderingContext2D;
         this.setPopupSizes();
@@ -36,6 +37,12 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.name = 'Image';
         this.filter = 'none';
         this.link = document.createElement('a');
+    }
+
+    ngOnInit(): void {
+        this.imgurService.urlObservable.subscribe((url: string) => {
+            this.url = url;
+        });
     }
 
     ngAfterViewInit(): void {
@@ -94,27 +101,8 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.link.click();
     }
 
-    // exportImgur(): void {
-    //     this.link.download = this.name + '.' + this.type;
-    //     this.link.href = this.exportCanvas.toDataURL('image/' + this.type);
-    //     this.link.click();
-    //     const formdata = new FormData();
-    //     formdata.append('image', img);
-
-
-    //     fetch(this.IMGUR_URL, {
-    //         method: 'post',
-    //         headers: {
-    //             Authorization: this.CLIENT_ID,
-    //         },
-    //         body: formdata,
-    //     }).then((data) => data.json());
-    // }
-
-    sendDrawing(img: ) {
-        const headers = { 'Authorization': this.CLIENT_ID };
-        const body = new FormData();
-        body.append("image", img);
-        return this.http.post<any>(this.IMGUR_URL, body, { headers });
+    exportImgur(): void {
+        this.link.href = this.exportCanvas.toDataURL('image/' + this.type);
+        this.imgurService.sendDrawing(this.link);
     }
 }
