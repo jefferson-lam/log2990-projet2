@@ -7,6 +7,7 @@ import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
 import { DatabaseService } from '@app/services/database/database.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
+import { Message } from '@common/communication/message';
 import { of, throwError } from 'rxjs';
 import { SaveCompletePageComponent } from './save-complete-page/save-complete-page.component';
 import { SaveDrawingComponent } from './save-drawing.component';
@@ -123,7 +124,11 @@ describe('SaveDrawingComponent', () => {
     }));
 
     it('should handle setTimeoutError on saveDrawing', fakeAsync(() => {
-        databaseServiceSpy.saveDrawing.and.returnValue(throwError(new Error('Timeout')));
+        const errorMessage: Message = {
+            title: 'Error',
+            body: 'Timeout',
+        };
+        databaseServiceSpy.saveDrawing.and.returnValue(throwError(errorMessage));
         component.saveDrawing();
         tick(SaveDrawingConstants.TIMEOUT_MAX_TIME);
         expect(component.saveProgress).toEqual(SaveDrawingConstants.SaveProgress.ERROR);
@@ -131,7 +136,11 @@ describe('SaveDrawingComponent', () => {
     }));
 
     it('should handle errors on saveDrawing', fakeAsync(() => {
-        databaseServiceSpy.saveDrawing.and.returnValue(throwError(new Error('Random')));
+        const errorMessage: Message = {
+            title: 'Error',
+            body: 'Random',
+        };
+        databaseServiceSpy.saveDrawing.and.returnValue(throwError(errorMessage));
         component.saveDrawing();
         tick(SaveDrawingConstants.TIMEOUT_MAX_TIME);
         expect(component.saveProgress).toEqual(SaveDrawingConstants.SaveProgress.ERROR);
