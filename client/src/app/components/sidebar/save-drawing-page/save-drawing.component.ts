@@ -71,7 +71,6 @@ export class SaveDrawingComponent implements AfterViewInit {
                 this.request = result;
             },
             error: (error: Message) => {
-                console.log(error);
                 this.saveProgress = SaveDrawingConstants.SaveProgress.ERROR;
                 if (error.body.includes('Timeout')) {
                     this.resultMessage = 'Temps de connection au serveur a expiré.';
