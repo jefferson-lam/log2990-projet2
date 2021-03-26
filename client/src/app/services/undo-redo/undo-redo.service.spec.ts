@@ -175,7 +175,8 @@ describe('UndoRedoService', () => {
     it('refresh should call drawingService.baseCtx.drawImage if drawingService.imageUrl is not null', () => {
         // tslint:disable:no-string-literal
         const drawImageSpy = spyOn(service['drawingService'].baseCtx, 'drawImage');
-        service['drawingService'].imageURL = 'notempty';
+        service['drawingService'].imageURL =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
         // tslint:enable:no-string-literal
 
         service.refresh();
