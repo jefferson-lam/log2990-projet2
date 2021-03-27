@@ -1,5 +1,6 @@
 <meta name="referrer" content="no-referrer" />
 <div class="modal-dialog">
+    <!-- <div *ngIf="exportProgress === exportProgressEnum.CHOOSING_SETTING"> -->
     <h1 mat-dialog-title>Exporter le dessin</h1>
 
     <div id="exportCanvasContainer">
@@ -39,13 +40,20 @@
         </mat-select>
     </mat-form-field>
 
-    <h1>{{ url }}</h1>
+    <a mat-dialog-title id="urlLink" href="{{ url }}" target="_blank">{{ url }}</a>
 
     <br />
 
     <div mat-dialog-actions>
-        <button mat-button mat-dialog-close id="cancelButton">Annuler</button>
-        <button mat-button mat-dialog-close id="saveButton" (click)="saveImage()">Télécharger</button>
-        <button mat-button mat-dialog-close id="imgurButton" (click)="exportImgur()">Exporter</button>
+        <button mat-button mat-dialog-close id="cancelButton">Fermer</button>
+        <button mat-button id="saveButton" (click)="saveImage()">Télécharger</button>
+        <button mat-button id="imgurButton" (click)="exportToImgur()">Exporter</button>
     </div>
+    <!-- </div> -->
+    <app-export-complete-page
+        [imageUrl]="url"
+        [reason]="resultMessage"
+        *ngIf="exportProgress === exportProgressEnum.COMPLETE"
+    ></app-export-complete-page>
+    <app-export-error-page [reason]="resultMessage" *ngIf="exportProgress === exportProgressEnum.ERROR"></app-export-error-page>
 </div>

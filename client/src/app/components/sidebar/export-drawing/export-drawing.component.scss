@@ -1,32 +1,34 @@
 * {
-  font-family: 'Rubik', serif;
+    font-family: 'Rubik', serif;
 }
 
 #exportCanvasContainer {
-  max-width: 830px;
-  max-height: 560px;
+    max-width: 830px;
+    max-height: 560px;
 }
 
 #exportCanvas {
-  position: relative;
-  display: none;
+    position: relative;
+    display: none;
 }
 
-#saveButton, #cancelButton {
-  align-content: center;
-  font-size: large;
-  background-color: coral;
-  margin: auto;
-  width: 125px;
+#saveButton,
+#cancelButton,
+#imgurButton {
+    align-content: center;
+    font-size: large;
+    background-color: coral;
+    margin: auto;
+    width: 125px;
 }
 
 .modal-dialog {
-  justify-content: space-between;
-  flex-direction: column;
-  display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
 }
 
 .mat-dialog-title {
-  text-align: center;
-  font-family: 'Rubik', serif;
+    text-align: center;
+    font-family: 'Rubik', serif;
 }

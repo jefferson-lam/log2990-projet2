@@ -53,6 +53,8 @@ import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-opt
 import { SidebarRectangleSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle-selection/sidebar-rectangle-selection/sidebar-rectangle-selection.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { ExportCompletePageComponent } from './components/sidebar/export-drawing/export-complete-page/export-complete-page.component';
+import { ExportErrorPageComponent } from './components/sidebar/export-drawing/export-error-page/export-error-page.component';
 
 @NgModule({
     declarations: [
@@ -85,6 +87,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         DirectionalMovementDirective,
         SidebarRectangleSelectionComponent,
         SidebarEllipseSelectionComponent,
+        ExportCompletePageComponent,
+        ExportErrorPageComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

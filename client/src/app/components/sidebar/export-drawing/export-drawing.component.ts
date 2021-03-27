@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MAX_RGB_VALUE } from '@app/constants/color-constants';
+import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ImgurService } from '@app/services/imgur/imgur.service';
+import { Message } from '@common/communication/message';
 
 @Component({
     selector: 'app-export-drawing',
@@ -26,7 +28,13 @@ export class ExportDrawingComponent implements AfterViewInit {
     type: string;
     name: string;
     filter: string;
+
+    exportProgressEnum: typeof ExportDrawingConstants.ExportProgress = ExportDrawingConstants.ExportProgress;
+    exportProgress: ExportDrawingConstants.ExportProgress = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
+    request: Message = { title: 'Error', body: '' };
+
     url: string;
+    resultMessage: string = '';
 
     constructor(drawingService: DrawingService, imgurService: ImgurService) {
         this.imgurService = imgurService;
@@ -42,6 +50,10 @@ export class ExportDrawingComponent implements AfterViewInit {
     ngOnInit(): void {
         this.imgurService.urlObservable.subscribe((url: string) => {
             this.url = url;
+            this.setUrlText();
+        });
+        this.imgurService.exportProgressObservable.subscribe((exportProgress: number) => {
+            this.exportProgress = exportProgress;
         });
     }
 
@@ -101,8 +113,20 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.link.click();
     }
 
-    exportImgur(): void {
-        this.link.href = this.exportCanvas.toDataURL('image/' + this.type);
-        this.imgurService.sendDrawing(this.link);
+    exportToImgur(): void {
+        this.exportProgress;
+        this.link.href = this.exportCanvas.toDataURL();
+        let img: string = this.imageStringSplit();
+        this.imgurService.exportDrawing(img);
+    }
+
+    imageStringSplit(): string {
+        let stringArray = this.link.href.split(',');
+        return stringArray[1];
+    }
+
+    setUrlText() {
+        let urlHeader = document.getElementById('urlLink') as HTMLElement;
+        urlHeader.innerText = this.url;
     }
 }
