@@ -1,0 +1,4 @@
+<div class="modal-dialog">
+    <app-export-complete-page [imageUrl]="url" *ngIf="popUpToggle === PopUpToggleEnum.COMPLETE"></app-export-complete-page>
+    <app-export-error-page [reason]="resultMessage" *ngIf="popUpToggle === PopUpToggleEnum.ERROR"></app-export-error-page>
+</div>

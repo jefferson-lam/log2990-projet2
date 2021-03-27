@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MAX_RGB_VALUE } from '@app/constants/color-constants';
-import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ImgurService } from '@app/services/imgur/imgur.service';
@@ -29,8 +28,6 @@ export class ExportDrawingComponent implements AfterViewInit {
     name: string;
     filter: string;
 
-    exportProgressEnum: typeof ExportDrawingConstants.ExportProgress = ExportDrawingConstants.ExportProgress;
-    exportProgress: ExportDrawingConstants.ExportProgress = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
     request: Message = { title: 'Error', body: '' };
 
     url: string;
@@ -47,15 +44,7 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.link = document.createElement('a');
     }
 
-    ngOnInit(): void {
-        this.imgurService.urlObservable.subscribe((url: string) => {
-            this.url = url;
-            this.setUrlText();
-        });
-        this.imgurService.exportProgressObservable.subscribe((exportProgress: number) => {
-            this.exportProgress = exportProgress;
-        });
-    }
+    ngOnInit(): void {}
 
     ngAfterViewInit(): void {
         this.exportCanvas = this.exportCanvasRef.nativeElement;
@@ -114,19 +103,6 @@ export class ExportDrawingComponent implements AfterViewInit {
     }
 
     exportToImgur(): void {
-        this.exportProgress;
-        this.link.href = this.exportCanvas.toDataURL();
-        let img: string = this.imageStringSplit();
-        this.imgurService.exportDrawing(img);
-    }
-
-    imageStringSplit(): string {
-        let stringArray = this.link.href.split(',');
-        return stringArray[1];
-    }
-
-    setUrlText() {
-        let urlHeader = document.getElementById('urlLink') as HTMLElement;
-        urlHeader.innerText = this.url;
+        this.imgurService.exportDrawing(this.exportCanvas.toDataURL('image/' + this.type), this.name);
     }
 }

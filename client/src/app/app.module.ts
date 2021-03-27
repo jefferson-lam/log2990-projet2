@@ -35,6 +35,8 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
 import { KeyboardListenerDirective } from './components/selection/selection-directives/keyboard-listener.directive';
 import { SelectionComponent } from './components/selection/selection.component';
+import { ExportCompletePageComponent } from './components/sidebar/export-drawing/export-complete-page/export-complete-page.component';
+import { ExportErrorPageComponent } from './components/sidebar/export-drawing/export-error-page/export-error-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveCompletePageComponent } from './components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
 import { SaveDrawingComponent } from './components/sidebar/save-drawing-page/save-drawing.component';
@@ -53,8 +55,7 @@ import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-opt
 import { SidebarRectangleSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle-selection/sidebar-rectangle-selection/sidebar-rectangle-selection.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { ExportCompletePageComponent } from './components/sidebar/export-drawing/export-complete-page/export-complete-page.component';
-import { ExportErrorPageComponent } from './components/sidebar/export-drawing/export-error-page/export-error-page.component';
+import { ExportPopupPageComponent } from './components/sidebar/export-drawing/export-popup-page/export-popup-page.component';
 
 @NgModule({
     declarations: [
@@ -89,6 +90,7 @@ import { ExportErrorPageComponent } from './components/sidebar/export-drawing/ex
         SidebarEllipseSelectionComponent,
         ExportCompletePageComponent,
         ExportErrorPageComponent,
+        ExportPopupPageComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [

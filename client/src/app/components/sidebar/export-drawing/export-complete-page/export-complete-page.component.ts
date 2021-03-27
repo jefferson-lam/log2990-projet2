@@ -6,10 +6,17 @@ import { Component, Input, OnInit } from '@angular/core';
     styleUrls: ['./export-complete-page.component.scss'],
 })
 export class ExportCompletePageComponent implements OnInit {
-    @Input() reason: string;
     @Input() imageUrl: string;
 
     constructor() {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.setUrlText();
+    }
+
+    setUrlText() {
+        let urlHeader = document.getElementById('urlLink') as HTMLElement;
+        urlHeader.innerText = this.imageUrl;
+        console.log(this.imageUrl);
+    }
 }

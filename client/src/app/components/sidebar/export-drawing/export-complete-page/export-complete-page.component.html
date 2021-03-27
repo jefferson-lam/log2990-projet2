@@ -5,7 +5,7 @@
     <mat-icon id="doneCheckMark">done</mat-icon>
 </div>
 <div>
-    <h1>Votre image est accessible à cette adresse: {{ imageUrl }}</h1>
+    <a mat-dialog-title id="urlLink" href="{{ imageUrl }}" target="_blank">{{ imageUrl }}</a>
 </div>
 <div id="buttonDiv">
     <button mat-button mat-dialog-close>Confirmer</button>

@@ -3,3 +3,9 @@ export enum ExportProgress {
     COMPLETE,
     ERROR,
 }
+
+export enum PopUpToggle {
+    NONE,
+    COMPLETE,
+    ERROR,
+}

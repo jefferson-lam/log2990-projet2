@@ -10,7 +10,7 @@ export class ImgurService {
     private readonly CLIENT_ID: string = 'Client-ID 7cb69a96d40be21';
 
     responseStatus: number = 0;
-    response: string = '';
+    data: string = '';
     url: string = '';
     urlSource: Subject<string> = new BehaviorSubject<string>(this.url);
     urlObservable: Observable<string> = this.urlSource.asObservable();
@@ -22,11 +22,14 @@ export class ImgurService {
 
     constructor() {}
 
-    exportDrawing(img: string): void {
+    exportDrawing(imageString: string, name: string): void {
+        let img = this.imageStringSplit(imageString);
+        console.log(img);
         const headers = new Headers();
         headers.append('Authorization', this.CLIENT_ID);
         const formData = new FormData();
         formData.append('image', img);
+        //formData.append('name', name);
 
         let requestOptions = {
             method: 'POST',
@@ -35,19 +38,42 @@ export class ImgurService {
         };
 
         fetch(this.IMGUR_URL, requestOptions)
-            .then((response) => response.text())
-            .then((response) => {
-                // if (this.isSuccess(response)) {
-                this.response = response;
-                console.log(response);
-                this.getUrlFromResponse(response);
-                // }
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                if (data.status === 200) {
+                    console.log('SUCCESS');
+                    this.exportProgress = ExportDrawingConstants.ExportProgress.COMPLETE;
+                    this.exportProgressSource.next(this.exportProgress);
+                    console.log('Succeded with code: ' + this.exportProgress);
+                    this.getUrlFromResponse(data);
+                } else {
+                    console.log('ERROR');
+                    this.exportProgress = ExportDrawingConstants.ExportProgress.ERROR;
+                    this.exportProgressSource.next(this.exportProgress);
+                }
+            })
+            .catch((error) => {
+                this.exportProgress = ExportDrawingConstants.ExportProgress.ERROR;
+                this.exportProgressSource.next(this.exportProgress);
             });
         // .catch((error) => {
         //     this.exportProgress = ExportDrawingConstants.ExportProgress.ERROR;
         //     this.exportProgressSource.next();
         //     this.handleError<Message>('exportDrawing');
         // });
+    }
+
+    getUrlFromResponse(data: any): void {
+        this.url = data.data.link;
+        this.urlSource.next(this.url);
+    }
+
+    imageStringSplit(img: string): string {
+        console.log(img);
+
+        let stringArray = img.split(',');
+        return stringArray[1];
     }
 
     // private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
@@ -59,13 +85,6 @@ export class ImgurService {
     //         return throwError(errorMessage);
     //     };
     // }
-
-    getUrlFromResponse(response: string): void {
-        let responseObj = JSON.parse(response);
-        this.url = responseObj.data.link;
-        console.log(this.url);
-        this.urlSource.next(this.url);
-    }
 
     // isSuccess(response: string): boolean {
     //     let responseObj = JSON.parse(response);
