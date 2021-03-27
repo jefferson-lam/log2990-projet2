@@ -6,6 +6,7 @@ import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
+import { PaintBucketService } from '@app/services/tools/paint-bucket/paint-bucket-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
@@ -34,6 +35,7 @@ export class ToolManagerService {
         public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
         public pipetteService: PipetteService,
+        public paintBucketService: PaintBucketService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -50,7 +52,8 @@ export class ToolManagerService {
             .set(ToolManagerConstants.ELLIPSE_SELECTION_KEY, this.ellipseSelectionService)
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
             .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
-            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService);
+            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
+            .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService);
     }
 
     selectTool(event: KeyboardEvent): Tool {
@@ -83,6 +86,7 @@ export class ToolManagerService {
         this.pencilService.setPrimaryColor(color);
         this.lineService.setPrimaryColor(color);
         this.aerosolService.setPrimaryColor(color);
+        this.paintBucketService.setPrimaryColor(color);
     }
 
     setSecondaryColorTools(color: string): void {
