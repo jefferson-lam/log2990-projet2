@@ -289,8 +289,8 @@ describe('MainPageCarrouselComponent', () => {
         expect(popSpy).not.toHaveBeenCalled();
     });
 
-    it('openEditorWithDrawing should call dialog.open', () => {
-        component.openEditorWithDrawing('testingstring');
+    it('openDrawing should call dialog.open', () => {
+        component.openDrawing('testingstring');
 
         expect(dialogSpy.open).toHaveBeenCalled();
     });
