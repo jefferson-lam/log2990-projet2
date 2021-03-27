@@ -226,7 +226,8 @@ describe('ResizerComponent', () => {
     });
 
     it('ngAfterViewInit should set resetCanvasSize if drawingService.imageURL is not null', () => {
-        drawingService.imageURL = 'notempty';
+        drawingService.imageURL =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
         const previousCommand = new ResizerCommand(2, 2);
         undoRedoService.resetCanvasSize = previousCommand;
 
@@ -236,7 +237,8 @@ describe('ResizerComponent', () => {
     });
 
     it('ngAfterViewInit should reset UndoRedoService and execute resetCanvasSize if drawingService.imageURL is not null', () => {
-        drawingService.imageURL = 'notempty';
+        drawingService.imageURL =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
         const resetSpy = spyOn(undoRedoService, 'reset');
 
@@ -246,7 +248,8 @@ describe('ResizerComponent', () => {
     });
 
     it('ngAfterViewInit should drawImage on canvas if drawingService.imageURL is not null', () => {
-        drawingService.imageURL = 'notempty';
+        drawingService.imageURL =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
         const drawImageSpy = spyOn(component.baseCtx, 'drawImage');
 
