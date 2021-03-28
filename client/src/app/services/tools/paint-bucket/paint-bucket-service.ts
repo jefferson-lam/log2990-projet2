@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PixelData } from '@app/classes/pixel-data';
 import { Tool } from '@app/classes/tool';
+import { MouseButton } from '@app/constants/mouse-constants';
 import { DEFAULT_TOLERANCE_VALUE } from '@app/constants/paint-bucket-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -25,9 +26,12 @@ export class PaintBucketService extends Tool {
     }
 
     onMouseDown(event: MouseEvent) {
-        const fillColor = 4290107125;
-        // this.floodFill(this.drawingService.baseCtx, event.offsetX, event.offsetY, fillColor);
-        this.fill(this.drawingService.baseCtx, event.offsetX, event.offsetY, fillColor);
+        const fillColor = 4278190080;
+        if (event.button === MouseButton.Left) {
+            this.floodFill(this.drawingService.baseCtx, event.offsetX, event.offsetY, fillColor);
+        } else if (event.button === MouseButton.Right) {
+            this.fill(this.drawingService.baseCtx, event.offsetX, event.offsetY, fillColor);
+        }
     }
 
     getPixel(pixelData: PixelData, x: number, y: number): number {
@@ -62,7 +66,10 @@ export class PaintBucketService extends Tool {
                 }
             }
         }
+        ctx.save();
+        ctx.imageSmoothingEnabled = true;
         ctx.putImageData(imageData, 0, 0);
+        ctx.restore();
     }
 
     fill(ctx: CanvasRenderingContext2D, x: number, y: number, fillColor: number) {
@@ -73,6 +80,7 @@ export class PaintBucketService extends Tool {
             data: new Uint32Array(imageData.data.buffer),
         };
         const targetColor = this.getPixel(pixelData, x, y);
+        console.log(targetColor);
         for (let y = 0; y < pixelData.height; y++) {
             for (let x = 0; x < pixelData.width; x++) {
                 const currentPixelColor = this.getPixel(pixelData, x, y);
@@ -82,6 +90,12 @@ export class PaintBucketService extends Tool {
             }
         }
 
+        ctx.save();
+        ctx.imageSmoothingEnabled = true;
         ctx.putImageData(imageData, 0, 0);
+        ctx.restore();
     }
+
+    //Convert color value tothe CIE Lab color space: https://stackoverflow.com/questions/1678457/best-algorithm-for-matching-colours
+    matchColor(currentPixelColor: number, targetColor: number) {}
 }
