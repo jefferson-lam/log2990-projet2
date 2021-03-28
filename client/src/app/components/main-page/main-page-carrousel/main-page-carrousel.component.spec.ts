@@ -22,6 +22,7 @@ describe('MainPageCarrouselComponent', () => {
     let localServerServiceSpy: SpyObj<LocalServerService>;
     let dialogSpy: SpyObj<MatDialog>;
     let routerSpy: SpyObj<Router>;
+    const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
     const TICK_TIME = 50;
 
     beforeEach(async(() => {
@@ -294,29 +295,29 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('openDrawing should set drawing if autosavedrawing and pop up returns true', () => {
-        localStorage.setItem('autosave', 'teststring');
+        localStorage.setItem('autosave', mockImageURL);
         const setSpy = spyOn(localStorage, 'setItem');
         const discardSubject = new Subject();
         dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
 
-        component.openDrawing('teststring');
+        component.openDrawing(mockImageURL);
         discardSubject.next(true);
         localStorage.clear();
 
         expect(setSpy).toHaveBeenCalled();
-        expect(setSpy).toHaveBeenCalledWith('autosave', 'teststring');
-        expect(setSpy).toHaveBeenCalledWith('initialDrawing', 'teststring');
+        expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
+        expect(setSpy).toHaveBeenCalledWith('initialDrawing', mockImageURL);
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
 
     it('openDrawing should do nothing if autosavedrawing and pop up returns false', () => {
-        localStorage.setItem('autosave', 'teststring');
+        localStorage.setItem('autosave', mockImageURL);
         const setSpy = spyOn(localStorage, 'setItem');
         const discardSubject = new Subject();
         dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
 
-        component.openDrawing('teststring');
+        component.openDrawing(mockImageURL);
         discardSubject.next(false);
         localStorage.clear();
 
@@ -326,10 +327,10 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('openDrawing should open pop up if autosave drawing exists', () => {
-        localStorage.setItem('autosave', 'teststring');
+        localStorage.setItem('autosave', mockImageURL);
         dialogSpy.open.and.returnValue({ afterClosed: () => EMPTY } as any);
 
-        component.openDrawing('teststring');
+        component.openDrawing(mockImageURL);
 
         localStorage.clear();
 
@@ -340,11 +341,11 @@ describe('MainPageCarrouselComponent', () => {
         localStorage.clear();
         const setSpy = spyOn(localStorage, 'setItem');
 
-        component.openDrawing('teststring');
+        component.openDrawing(mockImageURL);
 
         expect(setSpy).toHaveBeenCalled();
-        expect(setSpy).toHaveBeenCalledWith('initialDrawing', 'teststring');
-        expect(setSpy).toHaveBeenCalledWith('autosave', 'teststring');
+        expect(setSpy).toHaveBeenCalledWith('initialDrawing', mockImageURL);
+        expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });

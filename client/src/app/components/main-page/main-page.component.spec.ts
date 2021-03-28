@@ -15,6 +15,7 @@ describe('MainPageComponent', () => {
     let fixture: ComponentFixture<MainPageComponent>;
     let dialogSpy: SpyObj<MatDialog>;
     let routerSpy: Router;
+    const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
     beforeEach(async(() => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -58,7 +59,7 @@ describe('MainPageComponent', () => {
     });
 
     it('ngOnInit should set ongoingDrawing to true if localStorage has item autosave', () => {
-        localStorage.setItem('autosave', 'teststring');
+        localStorage.setItem('autosave', mockImageURL);
 
         component.ngOnInit();
         localStorage.clear();
@@ -85,7 +86,7 @@ describe('MainPageComponent', () => {
     it('newDrawing should start new drawing if autosavedrawing and pop up returns true', () => {
         const resetSpy = spyOn(component.undoRedoService, 'reset');
         const removeSpy = spyOn(localStorage, 'removeItem');
-        localStorage.setItem('autosave', 'teststring');
+        localStorage.setItem('autosave', mockImageURL);
         const discardSubject = new Subject();
         dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
 
@@ -104,7 +105,7 @@ describe('MainPageComponent', () => {
     it('newDrawing should do nothing if autosavedrawing and pop up returns false', () => {
         const resetSpy = spyOn(component.undoRedoService, 'reset');
         const removeSpy = spyOn(localStorage, 'removeItem');
-        localStorage.setItem('autosave', 'teststring');
+        localStorage.setItem('autosave', mockImageURL);
         const discardSubject = new Subject();
         dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
 
@@ -119,7 +120,7 @@ describe('MainPageComponent', () => {
     });
 
     it('newDrawing should open pop up if autosave drawing exists', () => {
-        localStorage.setItem('autosave', 'teststring');
+        localStorage.setItem('autosave', mockImageURL);
         dialogSpy.open.and.returnValue({ afterClosed: () => EMPTY } as any);
 
         component.newDrawing();
@@ -172,7 +173,7 @@ describe('MainPageComponent', () => {
     });
 
     it('continueDrawing should navigate to editor', () => {
-        localStorage.setItem('autosave', 'teststring');
+        localStorage.setItem('autosave', mockImageURL);
         const setSpy = spyOn(localStorage, 'setItem');
 
         component.continueDrawing();
@@ -181,7 +182,7 @@ describe('MainPageComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
         expect(setSpy).toHaveBeenCalled();
-        expect(setSpy).toHaveBeenCalledWith('initialDrawing', 'teststring');
+        expect(setSpy).toHaveBeenCalledWith('initialDrawing', mockImageURL);
     });
 
     it('should open Carousel on control+g', () => {
