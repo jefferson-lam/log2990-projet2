@@ -7,15 +7,15 @@ import { MatDialogRef } from '@angular/material/dialog';
     styleUrls: ['./discard-changes-popup.component.scss'],
 })
 export class DiscardChangesPopupComponent {
-    discard: boolean;
     constructor(public matDialogRef: MatDialogRef<DiscardChangesPopupComponent>) {
-        this.discard = false;
-        matDialogRef.beforeClosed().subscribe(() => {
-            matDialogRef.close(this.discard);
-        });
+        this.matDialogRef.disableClose = true;
+    }
+
+    cancel(): void {
+        this.matDialogRef.close(false);
     }
 
     discardChanges(): void {
-        this.discard = true;
+        this.matDialogRef.close(true);
     }
 }

@@ -58,8 +58,8 @@ export class MainPageComponent implements OnInit {
     }
 
     continueDrawing(): void {
-        this.router.navigate(['/', 'editor']);
         localStorage.setItem('initialDrawing', localStorage.getItem('autosave') as string);
+        this.router.navigate(['/', 'editor']);
     }
 
     @HostListener('window:keydown.control.g', ['$event'])

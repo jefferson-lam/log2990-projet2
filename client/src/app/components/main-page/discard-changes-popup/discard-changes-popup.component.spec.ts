@@ -1,28 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { MatDialogRef } from '@angular/material/dialog';
 import { DiscardChangesPopupComponent } from './discard-changes-popup.component';
 
 describe('DiscardChangesPopupComponent', () => {
     let component: DiscardChangesPopupComponent;
     let fixture: ComponentFixture<DiscardChangesPopupComponent>;
-    let router: jasmine.SpyObj<Router>;
-    const drawingStub = new DrawingService();
-    const undoRedoStub = new UndoRedoService(drawingStub);
+    let matDialogRefSpy: jasmine.SpyObj<MatDialogRef<DiscardChangesPopupComponent>>;
 
     beforeEach(async(() => {
-        router = jasmine.createSpyObj(Router, ['navigate']);
+        matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
         TestBed.configureTestingModule({
             declarations: [DiscardChangesPopupComponent],
-            providers: [
-                { provide: Router, useValue: router },
-                { provide: MAT_DIALOG_DATA, useValue: {} },
-                { provide: UndoRedoService, useValue: undoRedoStub },
-                { provide: DrawingService, useValue: drawingStub },
-            ],
+            providers: [{ provide: MatDialogRef, useValue: matDialogRefSpy }],
         }).compileComponents();
     }));
 
@@ -36,28 +25,17 @@ describe('DiscardChangesPopupComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('discardChanges should call undoRedoService.reset', () => {
-        const resetSpy = spyOn(component.undoRedoService, 'reset');
+    it('cancel should pass false when closing', () => {
+        component.cancel();
 
-        component.discardChanges();
-
-        expect(resetSpy).toHaveBeenCalled();
+        expect(matDialogRefSpy.close).toHaveBeenCalled();
+        expect(matDialogRefSpy.close).toHaveBeenCalledWith(false);
     });
 
-    it('discardChanges should call drawingService.setInitialImage', () => {
-        component.dataUrl = 'teststring';
-        const setInitialImageSpy = spyOn(component.drawingService, 'setInitialImage');
-
+    it('discardChanges should pass true when closing', () => {
         component.discardChanges();
 
-        expect(setInitialImageSpy).toHaveBeenCalled();
-        expect(setInitialImageSpy).toHaveBeenCalledWith('teststring');
-    });
-
-    it('discardChanges should call route.navigate', () => {
-        component.discardChanges();
-
-        expect(router.navigate).toHaveBeenCalled();
-        expect(router.navigate).toHaveBeenCalledWith(['/', 'editor']);
+        expect(matDialogRefSpy.close).toHaveBeenCalled();
+        expect(matDialogRefSpy.close).toHaveBeenCalledWith(true);
     });
 });

@@ -24,7 +24,7 @@ export class ResizerComponent implements AfterViewInit {
     @ViewChild('cornerResizer', { static: false }) cornerResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
 
-    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, private autoSaveService: AutoSaveService) {}
+    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, public autoSaveService: AutoSaveService) {}
 
     ngAfterViewInit(): void {
         this.previewCtx = this.drawingService.previewCtx;
