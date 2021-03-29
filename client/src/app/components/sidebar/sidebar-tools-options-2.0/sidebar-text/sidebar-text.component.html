@@ -1,0 +1,99 @@
+<div id="settingsContainer">
+  <h2 id="title">Options du texte</h2>
+  <div>
+    <div id="numberOfSidesSettings">
+      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
+      <mat-slider
+        id="countSides"
+        color="warn"
+        thumbLabel
+        [tickInterval]="tickInterval"
+        [min]="minPolygone"
+        [max]="maxPolygone"
+        [(value)]="polygoneSidesCount"
+        (change)="emitPolygoneSideNumber()"
+      >
+      </mat-slider>
+    </div>
+    <div id="widthSetting">
+      <p>Épaisseur : {{ toolSize }}</p>
+      <mat-slider
+        id="widthLine"
+        color="warn"
+        thumbLabel
+        [tickInterval]="tickInterval"
+        [min]="min"
+        [max]="max"
+        [(value)]="toolSize"
+        (change)="emitToolSize()"
+      >
+      </mat-slider>
+    </div>
+    <div id="numberOfSidesSettings">
+      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
+      <mat-slider
+        id="countSides"
+        color="warn"
+        thumbLabel
+        [tickInterval]="tickInterval"
+        [min]="minPolygone"
+        [max]="maxPolygone"
+        [(value)]="polygoneSidesCount"
+        (change)="emitPolygoneSideNumber()"
+      >
+      </mat-slider>
+    </div>
+    <div id="numberOfSidesSettings">
+      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
+      <mat-slider
+        id="countSides"
+        color="warn"
+        thumbLabel
+        [tickInterval]="tickInterval"
+        [min]="minPolygone"
+        [max]="maxPolygone"
+        [(value)]="polygoneSidesCount"
+        (change)="emitPolygoneSideNumber()"
+      >
+      </mat-slider>
+    </div>
+    <div id="numberOfSidesSettings">
+      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
+      <mat-slider
+        id="countSides"
+        color="warn"
+        thumbLabel
+        [tickInterval]="tickInterval"
+        [min]="minPolygone"
+        [max]="maxPolygone"
+        [(value)]="polygoneSidesCount"
+        (change)="emitPolygoneSideNumber()"
+      >
+      </mat-slider>
+    </div>
+    <div id="numberOfSidesSettings">
+      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
+      <mat-slider
+        id="countSides"
+        color="warn"
+        thumbLabel
+        [tickInterval]="tickInterval"
+        [min]="minPolygone"
+        [max]="maxPolygone"
+        [(value)]="polygoneSidesCount"
+        (change)="emitPolygoneSideNumber()"
+      >
+      </mat-slider>
+    </div>
+    <div id="drawingStyleOptions">
+      <mat-radio-group>
+        <mat-radio-button id="border" value="border" color="warn" checked> Normal </mat-radio-button> <br />
+        <mat-radio-button id="filled" value="filled" color="warn" (change)="emitTextItalic()"> Italic </mat-radio-button> <br />
+        <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="emitTextBold()"> Gras </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div id="colorPicker">
+      <app-color-picker></app-color-picker>
+    </div>
+  </div>
+</div>

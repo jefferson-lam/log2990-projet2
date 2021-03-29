@@ -62,6 +62,18 @@ export abstract class Tool {
 
     setEmissionCount(newEmissionCount: number): void {}
 
+    setFontStyle(fontStyle: string): void {}
+
+    setFontSize(fontSize: number): void {}
+
+    setTextAlignment(textAlignment: string): void {}
+
+    setTextBold(textBold: boolean): void {}
+
+    setTextItalic(textItalic: boolean): void {}
+
+    setInputFromKeyboard(inputFromKeyboard: string): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }

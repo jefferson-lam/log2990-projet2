@@ -48,6 +48,30 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setEmissionCount(newEmissionCount);
     }
 
+    setFontStyle(fontStyle: string): void {
+        this.editorComponent.currentTool.setFontStyle(fontStyle);
+    }
+
+    setFontSize(fontSize: number): void {
+        this.editorComponent.currentTool.setFontSize(fontSize);
+    }
+
+    setTextAlignment(textAlignment: string): void {
+        this.editorComponent.currentTool.setTextAlignment(textAlignment);
+    }
+
+    setTextBold(textBold: boolean): void {
+        this.editorComponent.currentTool.setTextBold(textBold);
+    }
+
+    setTextItalic(textItalic: boolean): void {
+        this.editorComponent.currentTool.setTextItalic(textItalic);
+    }
+
+    setInputFromKeyboard(inputFromKeyboard: string): void {
+        this.editorComponent.currentTool.setInputFromKeyboard(inputFromKeyboard);
+    }
+
     setPrimaryColorTools(color: string): void {
         this.toolManagerService.setPrimaryColorTools(color);
     }
