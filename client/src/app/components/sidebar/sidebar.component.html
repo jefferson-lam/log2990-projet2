@@ -26,6 +26,9 @@
             <li id="selectAllButton">
                 <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
             </li>
+          <li id="gridButton">
+            <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridSettings()"> grid_on </mat-icon>
+          </li>
         </ul>
         <ul class="tools-sidebar">
             <li id="toolId" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons" class="listToolsClass">
@@ -55,6 +58,7 @@
                 <app-sidebar-pipette class="sidebar-tool-options" *ngSwitchCase="'i'"></app-sidebar-pipette>
                 <app-sidebar-rectangle-selection class="sidebar-tool-options" *ngSwitchCase="'r'"> </app-sidebar-rectangle-selection>
                 <app-sidebar-ellipse-selection class="sidebar-tool-options" *ngSwitchCase="'s'"> </app-sidebar-ellipse-selection>
+                <app-sidebar-grid class="sidebar-tool-options" *ngSwitchCase="'g'"> </app-sidebar-grid>
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

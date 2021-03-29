@@ -68,6 +68,11 @@ export class SidebarComponent implements OnChanges {
         this.selectedTool = tool;
     }
 
+    openGridSettings(): void {
+        this.selectedTool.keyShortcut = 'g';
+        console.log(this.selectedTool.keyShortcut);
+    }
+
     openNewDrawing(): void {
         this.openNewDrawingPopUp.emit();
     }
