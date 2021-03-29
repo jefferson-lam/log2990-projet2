@@ -113,7 +113,8 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     @HostListener('keydown.g', ['$event'])
     showGridOnCanvas(): void {
-        this.canvasGridService.drawGridOnCanvas(this.previewCtx);
+        this.canvasGridService.toggleGrid(this.previewCtx);
+        console.log(this.previewCtx);
     }
 
     get baseWidth(): number {
