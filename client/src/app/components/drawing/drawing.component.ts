@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, O
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 
@@ -20,7 +21,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
     private previewCanvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
 
     @Input() currentTool: Tool;
-    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService) {
+    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService, public canvasGridService: CanvasGridService) {
         this.currentTool = toolManager.pencilService; // default value
     }
 
@@ -108,6 +109,11 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
     @HostListener('contextmenu', ['$event'])
     onContextMenu(event: MouseEvent): void {
         event.preventDefault();
+    }
+
+    @HostListener('keydown.g', ['$event'])
+    showGridOnCanvas(): void {
+        this.canvasGridService.drawGridOnCanvas(this.previewCtx);
     }
 
     get baseWidth(): number {

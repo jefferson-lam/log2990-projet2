@@ -7,25 +7,18 @@ import * as GridConstants from '@app/constants/canvas-grid-constants';
 export class CanvasGridService {
     opacityValue: number;
     squareWidth: number;
-    inUse: boolean;
     gridVisibility: boolean;
     previewCtx: CanvasRenderingContext2D;
 
     constructor() {
-        this.inUse = true;
-        this.previewCtx = (document.getElementById('previewLayer') as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
+        // this.previewCtx = (document.getElementById('previewLayer') as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
         this.setValues();
+        // this.drawGridOnCanvas(this.previewCtx);
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
         if (event.key === 'g') {
-            if (!this.inUse) {
-                this.clearGridOnCanvas(this.previewCtx);
-                this.inUse = true;
-            } else {
-                this.drawGridOnCanvas(this.previewCtx);
-                this.inUse = false;
-            }
+            this.drawGridOnCanvas(this.previewCtx);
         }
         if (event.key === '+' || event.key === '+') {
             this.squareWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) + GridConstants.SQUARE_WIDTH_INTERVAL;
@@ -50,11 +43,14 @@ export class CanvasGridService {
 
     setVisibility(gridVisibility: boolean): void {
         this.gridVisibility = gridVisibility;
+        console.log(this.gridVisibility);
     }
 
-    drawGridOnCanvas(ctx: CanvasRenderingContext2D): void {
+    createGrid(ctx: CanvasRenderingContext2D): void {
         const canvasWidth = this.previewCtx.canvas.width;
         const canvasHeight = this.previewCtx.canvas.height;
+        console.log(canvasWidth);
+        console.log(canvasHeight);
 
         for (let i = 0; i < canvasWidth; i++) {
             ctx.moveTo(i * this.squareWidth, 0);
@@ -69,12 +65,12 @@ export class CanvasGridService {
         ctx.stroke();
     }
 
-    clearGridOnCanvas(ctx: CanvasRenderingContext2D): void {
-        if (this.gridVisibility) {
+    drawGridOnCanvas(ctx: CanvasRenderingContext2D): void {
+        if (!this.gridVisibility) {
             ctx.strokeStyle = 'white';
             ctx.stroke();
         } else {
-            return;
+            this.createGrid(ctx);
         }
     }
 }
