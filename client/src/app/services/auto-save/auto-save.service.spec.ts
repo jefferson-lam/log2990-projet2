@@ -19,6 +19,8 @@ describe('AutoSaveService', () => {
     let canvasTestHelper: CanvasTestHelper;
     let undoRedoServiceSpy: SpyObj<UndoRedoService>;
     let executeSpy: jasmine.Spy;
+    let autoSaveSpy: jasmine.Spy;
+
     const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
     beforeEach(() => {
@@ -66,6 +68,11 @@ describe('AutoSaveService', () => {
         });
         service = TestBed.inject(AutoSaveService);
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
+        (Object.getOwnPropertyDescriptor(drawServiceSpy, 'baseCtx')?.get as jasmine.Spy<() => CanvasRenderingContext2D>).and.returnValue(
+            canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D,
+        );
+
+        autoSaveSpy = spyOn(service, 'autoSaveDrawing');
         executeSpy = spyOn(undoRedoServiceSpy.resetCanvasSize, 'execute');
     });
 
@@ -74,26 +81,26 @@ describe('AutoSaveService', () => {
     });
 
     it('should call autoSaveDrawing if pile size changes and both are not empty', () => {
-        const autoSaveSpy = spyOn(service, 'autoSaveDrawing');
         service.undoRedoService.pileSizeSource.next([1, 1]);
 
         expect(autoSaveSpy).toHaveBeenCalled();
     });
 
     it('should not call autoSaveDrawing if pile size changes and both are empty', () => {
-        const autoSaveSpy = spyOn(service, 'autoSaveDrawing');
         service.undoRedoService.pileSizeSource.next([0, 0]);
 
         expect(autoSaveSpy).not.toHaveBeenCalled();
     });
 
     it('autoSaveDrawing should do nothing if canvas is not declared', () => {
+        autoSaveSpy.and.callThrough();
         const setSpy = spyOn(localStorage, 'setItem');
         service.autoSaveDrawing();
         expect(setSpy).not.toHaveBeenCalled();
     });
 
     it('autoSaveDrawing should set autosave drawing if canvas is declared', () => {
+        autoSaveSpy.and.callThrough();
         (Object.getOwnPropertyDescriptor(drawServiceSpy, 'canvas')?.get as jasmine.Spy<() => HTMLCanvasElement>).and.returnValue(
             document.createElement('canvas'),
         );
@@ -107,38 +114,42 @@ describe('AutoSaveService', () => {
         expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
     });
 
-    it('loadDrawing should execute resetCanvasSize if autosaved drawing', () => {
-        service.drawingService.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+    it('loadDrawing should execute resetCanvasSize if autosaved drawing', async () => {
         localStorage.setItem('autosave', mockImageURL);
-        service.loadDrawing();
+        await service.loadDrawing();
         localStorage.clear();
 
         expect(executeSpy).toHaveBeenCalled();
     });
 
-    // it('loadDrawing should drawImage and reset undoRedoService on initialImage.onload event if autosaved drawing', fakeAsync(() => {
-    //     const autoSaveSpy = spyOn(service, 'autoSaveDrawing');
-    //     service.drawingService.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-    //     localStorage.setItem('autosave', mockImageURL);
-    //     const drawSpy = spyOn(canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D, 'drawImage');
-    //     service.loadDrawing();
-    //     localStorage.clear();
-    //
-    //     const onloadSpy = spyOn<any>(undoRedoServiceSpy.initialImage, 'onload').and.callThrough();
-    //     // undoRedoServiceSpy.initialImage.onload({} as Event);
-    //
-    //     tick();
-    //     flush();
-    //     expect(onloadSpy).toHaveBeenCalled();
-    //     expect(service.undoRedoService.initialImage).not.toBeNull();
-    //     expect(drawSpy).toHaveBeenCalled();
-    //     expect(undoRedoServiceSpy.reset).toHaveBeenCalled();
-    //     expect(autoSaveSpy).toHaveBeenCalled();
-    // }));
+    it('loadDrawing should drawImage after initialImage.onload event if autosaved drawing', async () => {
+        localStorage.setItem('autosave', mockImageURL);
+        const drawSpy = spyOn(canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D, 'drawImage');
+        await service.loadDrawing();
+        localStorage.clear();
+
+        expect(service.undoRedoService.initialImage).not.toBeNull();
+        expect(drawSpy).toHaveBeenCalled();
+    });
+
+    it('loadDrawing should reset undoRedoService after initialImage.onload event if autosaved drawing', async () => {
+        localStorage.setItem('autosave', mockImageURL);
+        await service.loadDrawing();
+        localStorage.clear();
+
+        expect(undoRedoServiceSpy.reset).toHaveBeenCalled();
+    });
+
+    it('loadDrawing should autoSaveDrawing after initialImage.onload event if autosaved drawing', async () => {
+        localStorage.setItem('autosave', mockImageURL);
+        await service.loadDrawing();
+        localStorage.clear();
+
+        expect(autoSaveSpy).toHaveBeenCalled();
+    });
 
     it('loadDrawing should call autoSaveDrawing and execute resetCanvasSize if not autosaved drawing', () => {
         localStorage.clear();
-        const autoSaveSpy = spyOn(service, 'autoSaveDrawing');
         service.loadDrawing();
 
         expect(executeSpy).toHaveBeenCalled();

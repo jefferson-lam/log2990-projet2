@@ -22,26 +22,28 @@ export class AutoSaveService {
         }
     }
 
-    loadDrawing(): void {
+    async loadDrawing(): Promise<void> {
         if (localStorage.getItem('autosave')) {
             this.undoRedoService.initialImage = new Image();
-            this.undoRedoService.initialImage.src = localStorage.getItem('autosave') as string;
+            await new Promise((r) => {
+                this.undoRedoService.initialImage.onload = r;
+                this.undoRedoService.initialImage.src = localStorage.getItem('autosave') as string;
+            });
+
             this.undoRedoService.resetCanvasSize = new ResizerCommand(
                 this.undoRedoService.initialImage.width,
                 this.undoRedoService.initialImage.height,
             );
             this.undoRedoService.resetCanvasSize.execute();
-            this.undoRedoService.initialImage.onload = () => {
-                this.drawingService.baseCtx.drawImage(
-                    this.undoRedoService.initialImage,
-                    0,
-                    0,
-                    this.undoRedoService.initialImage.width,
-                    this.undoRedoService.initialImage.height,
-                );
-                this.undoRedoService.reset();
-                this.autoSaveDrawing();
-            };
+            this.drawingService.baseCtx.drawImage(
+                this.undoRedoService.initialImage,
+                0,
+                0,
+                this.undoRedoService.initialImage.width,
+                this.undoRedoService.initialImage.height,
+            );
+            this.undoRedoService.reset();
+            this.autoSaveDrawing();
         } else {
             this.undoRedoService.resetCanvasSize = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
             this.undoRedoService.resetCanvasSize.execute();
