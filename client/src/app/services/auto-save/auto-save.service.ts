@@ -25,6 +25,7 @@ export class AutoSaveService {
     async loadDrawing(): Promise<void> {
         if (localStorage.getItem('autosave')) {
             this.undoRedoService.initialImage = new Image();
+
             await new Promise((r) => {
                 this.undoRedoService.initialImage.onload = r;
                 this.undoRedoService.initialImage.src = localStorage.getItem('autosave') as string;

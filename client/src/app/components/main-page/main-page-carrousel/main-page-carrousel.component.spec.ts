@@ -11,8 +11,9 @@ import { EMPTY, of, Subject } from 'rxjs';
 import { MainPageCarrouselComponent } from './main-page-carrousel.component';
 
 import SpyObj = jasmine.SpyObj;
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 // tslint:disable: max-file-line-count
 // tslint:disable: no-string-literal
 describe('MainPageCarrouselComponent', () => {
@@ -298,7 +299,7 @@ describe('MainPageCarrouselComponent', () => {
         localStorage.setItem('autosave', mockImageURL);
         const setSpy = spyOn(localStorage, 'setItem');
         const discardSubject = new Subject();
-        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
+        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as MatDialogRef<DiscardChangesPopupComponent>);
 
         component.openDrawing(mockImageURL);
         discardSubject.next(true);
@@ -315,7 +316,7 @@ describe('MainPageCarrouselComponent', () => {
         localStorage.setItem('autosave', mockImageURL);
         const setSpy = spyOn(localStorage, 'setItem');
         const discardSubject = new Subject();
-        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
+        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as MatDialogRef<DiscardChangesPopupComponent>);
 
         component.openDrawing(mockImageURL);
         discardSubject.next(false);
@@ -328,7 +329,8 @@ describe('MainPageCarrouselComponent', () => {
 
     it('openDrawing should open pop up if autosave drawing exists', () => {
         localStorage.setItem('autosave', mockImageURL);
-        dialogSpy.open.and.returnValue({ afterClosed: () => EMPTY } as any);
+        const discardSubject = new Subject();
+        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as MatDialogRef<DiscardChangesPopupComponent>);
 
         component.openDrawing(mockImageURL);
 
