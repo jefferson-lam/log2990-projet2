@@ -1,5 +1,6 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
+import * as EllipseConstants from '@app/constants/ellipse-constants';
 import { TextService } from '@app/services/tools/text/text-service';
 
 export class TextCommand extends Command {
@@ -18,7 +19,7 @@ export class TextCommand extends Command {
     }
 
     execute(): void {
-        this.writeText(this.ctx);
+        this.writeText(this.ctx, this.cornerCoords);
     }
 
     setValues(canvasContext: CanvasRenderingContext2D, textService: TextService): void {
@@ -33,10 +34,15 @@ export class TextCommand extends Command {
         Object.assign(this.cornerCoords, textService.cornerCoords);
     }
 
-    writeText(ctx: CanvasRenderingContext2D): void {
-        ctx.font = this.fontSize + 'px' + this.fontStyle;
+    writeText(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        const textLength = ctx.measureText(this.inputFromKeyboard);
+        const start = path[EllipseConstants.START_INDEX];
+        ctx.beginPath();
+        ctx.rect(start.x, start.y, textLength.width, this.fontSize);
+        ctx.font = this.fontSize + 'px ' + this.fontStyle;
+        console.log(ctx.font);
         ctx.fillStyle = this.primaryColor;
         // ctx.textAlign = this.textAlignment;
-        ctx.fillText(this.inputFromKeyboard, 20, 30);
+        ctx.fillText(this.inputFromKeyboard, textLength.width, this.fontSize);
     }
 }

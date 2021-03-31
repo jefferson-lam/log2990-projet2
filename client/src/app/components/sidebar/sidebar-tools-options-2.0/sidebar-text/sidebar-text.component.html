@@ -1,97 +1,52 @@
 <div id="settingsContainer">
-  <h2 id="title">Options du texte</h2>
+  <h2 id="title"> Options du texte </h2>
   <div>
-    <div id="numberOfSidesSettings">
-      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
-      <mat-slider
-        id="countSides"
-        color="warn"
-        thumbLabel
-        [tickInterval]="tickInterval"
-        [min]="minPolygone"
-        [max]="maxPolygone"
-        [(value)]="polygoneSidesCount"
-        (change)="emitPolygoneSideNumber()"
-      >
-      </mat-slider>
-    </div>
     <div id="widthSetting">
-      <p>Épaisseur : {{ toolSize }}</p>
+      <p> Taille du texte : {{ fontSize }}</p>
       <mat-slider
-        id="widthLine"
+        id="widthText"
         color="warn"
         thumbLabel
         [tickInterval]="tickInterval"
         [min]="min"
         [max]="max"
-        [(value)]="toolSize"
-        (change)="emitToolSize()"
+        [(value)]="fontSize"
+        (change)="emitFontSize()"
       >
       </mat-slider>
     </div>
-    <div id="numberOfSidesSettings">
-      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
-      <mat-slider
-        id="countSides"
-        color="warn"
-        thumbLabel
-        [tickInterval]="tickInterval"
-        [min]="minPolygone"
-        [max]="maxPolygone"
-        [(value)]="polygoneSidesCount"
-        (change)="emitPolygoneSideNumber()"
-      >
-      </mat-slider>
+
+    <div id ="styleSettings">
+      <p> Style du texte </p>
+      <mat-form-field appearance="fill" id='styleText'>
+      <select matNativeControl required [value]='fontStyle' (selectionchange)='emitFontStyle()'>
+        <option value="Sans Comic" id='style0'> Arial </option>
+        <option value="Arial" id='style1'> Comic Sans MS </option>
+        <option value="Roboto" id='style2'> Roboto </option>
+        <option value="Rubik" id='style3'> Rubik </option>
+        <option value="Bauhaus 93" id='style4'> Bauhaus 93 </option>
+      </select>
+    </mat-form-field>
     </div>
-    <div id="numberOfSidesSettings">
-      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
-      <mat-slider
-        id="countSides"
-        color="warn"
-        thumbLabel
-        [tickInterval]="tickInterval"
-        [min]="minPolygone"
-        [max]="maxPolygone"
-        [(value)]="polygoneSidesCount"
-        (change)="emitPolygoneSideNumber()"
-      >
-      </mat-slider>
-    </div>
-    <div id="numberOfSidesSettings">
-      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
-      <mat-slider
-        id="countSides"
-        color="warn"
-        thumbLabel
-        [tickInterval]="tickInterval"
-        [min]="minPolygone"
-        [max]="maxPolygone"
-        [(value)]="polygoneSidesCount"
-        (change)="emitPolygoneSideNumber()"
-      >
-      </mat-slider>
-    </div>
-    <div id="numberOfSidesSettings">
-      <p>Nombre de côtés : {{ polygoneSidesCount }}</p>
-      <mat-slider
-        id="countSides"
-        color="warn"
-        thumbLabel
-        [tickInterval]="tickInterval"
-        [min]="minPolygone"
-        [max]="maxPolygone"
-        [(value)]="polygoneSidesCount"
-        (change)="emitPolygoneSideNumber()"
-      >
-      </mat-slider>
-    </div>
-    <div id="drawingStyleOptions">
-      <mat-radio-group>
-        <mat-radio-button id="border" value="border" color="warn" checked> Normal </mat-radio-button> <br />
-        <mat-radio-button id="filled" value="filled" color="warn" (change)="emitTextItalic()"> Italic </mat-radio-button> <br />
-        <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="emitTextBold()"> Gras </mat-radio-button>
+
+    <div id="alignmentSettings">
+      <p> Alignement du texte </p>
+      <mat-radio-group id='alignmentText'>
+        <mat-radio-button id="leftValue" [value]='textAlignment' value='left' color="warn" checked (change)='emitTexAlignement()'> Gauche </mat-radio-button>
+        <mat-radio-button id="center" [value]='textAlignment' value='center' color="warn" (change)="emitTexAlignement()"> Centre </mat-radio-button>
+        <mat-radio-button id="right" [value]='textAlignment' value='right' color="warn" (change)="emitTexAlignement()"> Droite </mat-radio-button>
       </mat-radio-group>
     </div>
+
+    <div id="textFormatSettings">
+      <p> Format du texte </p>
+      <mat-radio-group id='formatText'>
+        <mat-radio-button id="normal" value="Normal" color="warn" checked> Normal </mat-radio-button>
+        <mat-radio-button id="italic" value="Italic" color="warn" (change)="emitTextItalic()"> Italic </mat-radio-button>
+        <mat-radio-button id="bold" value="Gras" color="warn" (change)="emitTextBold()"> Gras </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
     <div id="colorPicker">
       <app-color-picker></app-color-picker>
     </div>

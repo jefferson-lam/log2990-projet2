@@ -1,16 +1,19 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
+import { Vec2 } from '@app/classes/vec2';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
+import * as TextConstants from '@app/constants/text-constants';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -19,9 +22,20 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent implements OnInit {
+    cornerCoords: Vec2[] = [];
+
     currentTool: Tool;
     isPopUpOpen: boolean;
     isUndoSelection: boolean;
+    fontStyle: string = 'Arial';
+    fontFamily: string;
+    fontSize: number = TextConstants.INIT_FONT_SIZE;
+    textAlignment: string = 'center';
+    textBold: boolean = false;
+    textItalic: boolean = false;
+    visibility: string = 'hidden';
+
+    @ViewChild('canvasTextBox', { static: false }) canvasTextBox: ElementRef<HTMLElement>;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -95,6 +109,22 @@ export class EditorComponent implements OnInit {
         this.setTool(this.toolManager.getTool(RECTANGLE_SELECTION_KEY));
         if (this.currentTool instanceof RectangleSelectionService) {
             this.currentTool.selectAll();
+        }
+    }
+
+    @HostListener('mousedown', ['$event'])
+    onMouseDown(event: MouseEvent): void {
+        if (this.currentTool instanceof TextService) {
+            this.cornerCoords[TextConstants.START_INDEX] = this.currentTool.getPositionFromMouse(event);
+        }
+    }
+
+    @HostListener('mouseup', ['$event'])
+    setInitialPositionTextBox(): void {
+        if (this.currentTool instanceof TextService) {
+            this.canvasTextBox.nativeElement.style.visibility = 'visible';
+            this.canvasTextBox.nativeElement.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
+            this.canvasTextBox.nativeElement.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
         }
     }
 
