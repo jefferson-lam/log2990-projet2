@@ -4,7 +4,7 @@ export const MIN_OPACITY_VALUE = 70;
 
 export const MAX_OPACITY_VALUE = 255;
 
-export const DEFAULT_SQUARE_WIDTH = 10;
+export const DEFAULT_SQUARE_WIDTH = 50;
 
 export const MIN_SQUARE_WIDTH = 10;
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import * as GridConstants from '@app/constants/canvas-grid-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 
@@ -17,6 +17,8 @@ export class SidebarGridComponent implements OnInit {
     opacityValue: number = GridConstants.DEFAULT_OPACITY;
     visibilityValue: boolean = false;
 
+    @ViewChild('toggleGrid', { static: false }) toggleGrid: ElementRef<HTMLElement>;
+
     @Output() squareWidthChanged: EventEmitter<number> = new EventEmitter();
     @Output() opacityValueChanged: EventEmitter<number> = new EventEmitter();
     @Output() visibilityValueChanged: EventEmitter<boolean> = new EventEmitter();
@@ -27,6 +29,11 @@ export class SidebarGridComponent implements OnInit {
         this.squareWidthChanged.subscribe((newWidth: number) => this.canvasGridService.setSquareWidth(newWidth));
         this.opacityValueChanged.subscribe((newOpacityValue: number) => this.canvasGridService.setOpacityValue(newOpacityValue));
         this.visibilityValueChanged.subscribe((newVisibilityValue: boolean) => this.canvasGridService.setVisibility(newVisibilityValue));
+    }
+
+    changeSliderVisibilityInput(): void {
+        this.visibilityValue = this.canvasGridService.gridVisibility;
+        console.log('this is ok ' + this.visibilityValue);
     }
 
     emitSquareWidth(): void {

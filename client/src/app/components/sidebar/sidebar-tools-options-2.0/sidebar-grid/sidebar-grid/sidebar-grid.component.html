@@ -29,6 +29,8 @@
       >
       </mat-slider>
     </div>
-    <div id='toggleVisibility'><mat-slide-toggle [(ngModel)]="visibilityValue" (change)='emitVisibilityValue()'> Visibilité </mat-slide-toggle></div>
+    <div id='toggleVisibility'>
+      <mat-slide-toggle #toggleGrid [(ngModel)]="visibilityValue" (change)='emitVisibilityValue()'> Visibilité </mat-slide-toggle>
+    </div>
   </div>
 </div>
