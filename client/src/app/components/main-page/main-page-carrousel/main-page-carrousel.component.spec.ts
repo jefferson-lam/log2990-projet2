@@ -7,7 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DatabaseService } from '@app/services/database/database.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
-import { EMPTY, of, Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { MainPageCarrouselComponent } from './main-page-carrousel.component';
 
 import SpyObj = jasmine.SpyObj;
