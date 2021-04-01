@@ -42,10 +42,7 @@ export class ImgurService {
                 if (data.status === 200) {
                     this.setUrlFromResponse(data);
                     this.setExportProgress(ExportDrawingConstants.ExportProgress.COMPLETE);
-                    console.log('SUCCESS');
-                    console.log('Succeded with code: ' + this.exportProgress);
                 } else {
-                    console.log('ERROR');
                     this.url = 'none';
                     this.urlSource.next(this.url);
                     this.setExportProgress(ExportDrawingConstants.ExportProgress.ERROR);
@@ -60,7 +57,6 @@ export class ImgurService {
     setUrlFromResponse(data: any): void {
         this.url = data.data.link;
         this.urlSource.next(this.url);
-        console.log('imgur-service:' + this.url);
     }
 
     setExportProgress(progress: number): void {

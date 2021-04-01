@@ -22,6 +22,5 @@ export class ExportCompletePageComponent implements OnInit {
     setUrlText() {
         let urlHeader = document.getElementById('urlLink') as HTMLElement;
         urlHeader.innerText = this.imageUrl;
-        console.log(this.imageUrl);
     }
 }

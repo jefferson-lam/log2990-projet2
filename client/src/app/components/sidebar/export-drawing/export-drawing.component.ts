@@ -6,7 +6,6 @@ import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constant
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ImgurService } from '@app/services/imgur/imgur.service';
 import { Message } from '@common/communication/message';
-import { combineLatest } from 'rxjs';
 import { ExportCompletePageComponent } from './export-complete-page/export-complete-page.component';
 import { ExportErrorPageComponent } from './export-error-page/export-error-page.component';
 
@@ -35,7 +34,6 @@ export class ExportDrawingComponent implements AfterViewInit {
     request: Message = { title: 'Error', body: '' };
 
     url: string;
-    resultMessage: string = '';
 
     PopUpToggleEnum: typeof ExportDrawingConstants.PopUpToggle = ExportDrawingConstants.PopUpToggle;
     popUpToggle: ExportDrawingConstants.PopUpToggle = ExportDrawingConstants.PopUpToggle.NONE;
@@ -52,21 +50,14 @@ export class ExportDrawingComponent implements AfterViewInit {
     }
 
     ngOnInit(): void {
-        combineLatest(this.imgurService.exportProgressObservable, this.imgurService.urlObservable).subscribe(([exportProgress, url]: any) => {
+        this.imgurService.exportProgressObservable.subscribe((exportProgress: number) => {
             this.popUpToggle = exportProgress;
+            this.openPopUp();
+        });
+        this.imgurService.urlObservable.subscribe((url: string) => {
             this.url = url;
             this.openPopUp();
         });
-        // this.imgurService.exportProgressObservable.subscribe((exportProgress: number) => {
-        //     this.popUpToggle = exportProgress;
-        //     console.log(this.popUpToggle);
-        //     this.openErrorPopUp();
-        // });
-        // this.imgurService.urlObservable.subscribe((url: string) => {
-        //     this.url = url;
-        //     console.log(this.url);
-        //     this.openCompletePopUp();
-        // });
     }
 
     ngAfterViewInit(): void {
@@ -140,14 +131,12 @@ export class ExportDrawingComponent implements AfterViewInit {
     openErrorPopUp(): void {
         if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.ERROR) {
             this.newDialog.open(ExportErrorPageComponent);
-            console.log("Should've opened Error Pop up");
         }
     }
 
     openCompletePopUp() {
         if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.COMPLETE) {
             this.newDialog.open(ExportCompletePageComponent);
-            console.log("Should've opened Complete Pop up");
         }
     }
 }
