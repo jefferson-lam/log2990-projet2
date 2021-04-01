@@ -12,16 +12,24 @@ export class ImgurService {
     responseStatus: number = 0;
     data: string;
 
-    url: string = '';
-    urlSource: Subject<string> = new BehaviorSubject<string>(this.url);
-    urlObservable: Observable<string> = this.urlSource.asObservable();
+    url: string;
+    urlSource: Subject<string>;
+    urlObservable: Observable<string>;
 
     exportProgressEnum: typeof ExportDrawingConstants.ExportProgress = ExportDrawingConstants.ExportProgress;
-    exportProgress: ExportDrawingConstants.ExportProgress = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
-    exportProgressSource: Subject<number> = new BehaviorSubject<number>(this.exportProgress);
-    exportProgressObservable: Observable<number> = this.exportProgressSource.asObservable();
+    exportProgress: ExportDrawingConstants.ExportProgress;
+    exportProgressSource: Subject<number>;
+    exportProgressObservable: Observable<number>;
 
-    constructor() {}
+    constructor() {
+        this.url = '';
+        this.urlSource = new BehaviorSubject<string>(this.url);
+        this.urlObservable = this.urlSource.asObservable();
+
+        this.exportProgress = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
+        this.exportProgressSource = new BehaviorSubject<number>(this.exportProgress);
+        this.exportProgressObservable = this.exportProgressSource.asObservable();
+    }
 
     exportDrawing(imageString: string, name: string): void {
         let img = this.imageStringSplit(imageString);

@@ -1,17 +1,24 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MIN_HEIGHT_CANVAS } from '@app/constants/canvas-constants';
+import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ImgurService } from '@app/services/imgur/imgur.service';
+import { Observable, Subject } from 'rxjs';
+import { ExportCompletePageComponent } from './export-complete-page/export-complete-page.component';
 import { ExportDrawingComponent } from './export-drawing.component';
+import { ExportErrorPageComponent } from './export-error-page/export-error-page.component';
 
 describe('ExportDrawingComponent', () => {
     let component: ExportDrawingComponent;
     let fixture: ComponentFixture<ExportDrawingComponent>;
     let drawingStub: DrawingService;
-    //let imgurService: ImgurService;
+    let dialogSpy: jasmine.SpyObj<MatDialog>;
+    let imgurStub: ImgurService;
 
     let testCanvas: HTMLCanvasElement;
     let testCtx: CanvasRenderingContext2D;
@@ -20,15 +27,26 @@ describe('ExportDrawingComponent', () => {
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
+        imgurStub = new ImgurService();
+        dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
+        (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
+            new Subject<any>(),
+        );
+        (Object.getOwnPropertyDescriptor(dialogSpy, 'afterAllClosed')?.get as jasmine.Spy<() => Observable<void>>).and.returnValue(
+            dialogSpy['_afterAllClosedAtThisLevel'].asObservable(),
+        );
 
         TestBed.configureTestingModule({
             imports: [FormsModule],
             declarations: [ExportDrawingComponent],
-            providers: [{ provide: DrawingService, useValue: drawingStub }],
+            providers: [
+                { provide: DrawingService, useValue: drawingStub },
+                { provide: MatDialog, useValue: dialogSpy },
+                { provide: ImgurService, useValue: imgurStub },
+            ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
 
-        //imgurService = TestBed.inject(ImgurService);
         drawingStub.canvas = TestBed.inject(CanvasTestHelper).canvas;
 
         testCanvas = document.createElement('canvas');
@@ -38,6 +56,7 @@ describe('ExportDrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ExportDrawingComponent);
         component = fixture.componentInstance;
+        component.newDialog = dialogSpy;
         fixture.detectChanges();
 
         clickSpy = spyOn(component.link, 'click');
@@ -162,66 +181,62 @@ describe('ExportDrawingComponent', () => {
         expect(clickSpy).toHaveBeenCalled();
     });
 
-    // it('exportToImgur should set link href with image data and call imgurService.exportDrawing', () => {
-    //     const imgDataSpy = spyOn(component.exportCanvas, 'toDataURL').and.callThrough();
-    //     const exportDrawingSpy = spyOn(imgurService, 'exportDrawing');
+    it('exportToImgur should set link href with image data and call imgurService.exportDrawing', () => {
+        const imgDataSpy = spyOn(component.exportCanvas, 'toDataURL').and.callThrough();
+        const exportDrawingSpy = spyOn(imgurStub, 'exportDrawing');
 
-    //     component.exportToImgur();
+        component.exportToImgur();
 
-    //     expect(imgDataSpy).toHaveBeenCalled();
-    //     expect(imgDataSpy).toHaveBeenCalledWith('image/' + component.type, component.name);
-    //     expect(exportDrawingSpy).toHaveBeenCalledWith(component.exportCanvas.toDataURL('image/' + component.type), component.name);
-    // });
+        expect(imgDataSpy).toHaveBeenCalled();
+        expect(imgDataSpy).toHaveBeenCalledWith('image/' + component.type);
+        expect(exportDrawingSpy).toHaveBeenCalledWith(component.exportCanvas.toDataURL('image/' + component.type), component.name);
+    });
 
-    // it('openPopUp should call openErrorPopUp if url is none', () => {
-    //     const openErrorPopUpSpy = spyOn(component, 'openErrorPopUp');
-    //     component.url = 'none';
+    it('openPopUp should call openErrorPopUp if url is none', () => {
+        const openErrorPopUpSpy = spyOn(component, 'openErrorPopUp');
+        component.url = 'none';
 
-    //     component.openPopUp();
-    //     expect(openErrorPopUpSpy).toHaveBeenCalled();
-    // });
+        component.openPopUp();
+        expect(openErrorPopUpSpy).toHaveBeenCalled();
+    });
 
-    // it('openPopUp should call openCompletePopUp if url is not none', () => {
-    //     const openCompletePopUpSpy = spyOn(component, 'openCompletePopUp');
-    //     component.url = 'notnone';
+    it('openPopUp should call openCompletePopUp if url is not none', () => {
+        const openCompletePopUpSpy = spyOn(component, 'openCompletePopUp');
+        component.url = 'notnone';
 
-    //     component.openPopUp();
-    //     expect(openCompletePopUpSpy).toHaveBeenCalled();
-    // });
+        component.openPopUp();
+        expect(openCompletePopUpSpy).toHaveBeenCalled();
+    });
 
-    // it('openErrorPopUp should open ExportErrorPageComponent dialog if popUpToggle = ExportDrawingConstants.PopUpToggle.ERROR', () => {
-    //     const openSpy = spyOn(component.newDialog, 'open');
-    //     component.popUpToggle = ExportDrawingConstants.PopUpToggle.ERROR;
+    it('openErrorPopUp should open ExportErrorPageComponent dialog if popUpToggle = ExportDrawingConstants.PopUpToggle.ERROR', () => {
+        component.popUpToggle = ExportDrawingConstants.PopUpToggle.ERROR;
 
-    //     component.openErrorPopUp();
-    //     expect(openSpy).toHaveBeenCalled();
-    //     expect(openSpy).toHaveBeenCalledWith(ExportErrorPageComponent);
-    // });
+        component.openErrorPopUp();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(ExportErrorPageComponent);
+    });
 
-    // it('openErrorPopUp should not open ExportErrorPageComponent dialog if popUpToggle != ExportDrawingConstants.PopUpToggle.ERROR', () => {
-    //     const openSpy = spyOn(component.newDialog, 'open');
-    //     component.popUpToggle = 0;
+    it('openErrorPopUp should not open ExportErrorPageComponent dialog if popUpToggle != ExportDrawingConstants.PopUpToggle.ERROR', () => {
+        component.popUpToggle = 0;
 
-    //     component.openErrorPopUp();
-    //     expect(openSpy).not.toHaveBeenCalled();
-    //     expect(openSpy).not.toHaveBeenCalledWith(ExportErrorPageComponent);
-    // });
+        component.openErrorPopUp();
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(dialogSpy.open).not.toHaveBeenCalledWith(ExportErrorPageComponent);
+    });
 
-    // it('openCompletePopUp should open ExportCompletePageComponent dialog if popUpToggle = ExportDrawingConstants.PopUpToggle.COMPLETE', () => {
-    //     const openSpy = spyOn(component.newDialog, 'open');
-    //     component.popUpToggle = ExportDrawingConstants.PopUpToggle.COMPLETE;
+    it('openCompletePopUp should open ExportCompletePageComponent dialog if popUpToggle = ExportDrawingConstants.PopUpToggle.COMPLETE', () => {
+        component.popUpToggle = ExportDrawingConstants.PopUpToggle.COMPLETE;
 
-    //     component.openErrorPopUp();
-    //     expect(openSpy).toHaveBeenCalled();
-    //     expect(openSpy).toHaveBeenCalledWith(ExportCompletePageComponent);
-    // });
+        component.openCompletePopUp();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(ExportCompletePageComponent);
+    });
 
-    // it('openCompletePopUp should not open ExportCompletePageComponent dialog if popUpToggle != ExportDrawingConstants.PopUpToggle.COMPLETE', () => {
-    //     const openSpy = spyOn(component.newDialog, 'open');
-    //     component.popUpToggle = 0;
+    it('openCompletePopUp should not open ExportCompletePageComponent dialog if popUpToggle != ExportDrawingConstants.PopUpToggle.COMPLETE', () => {
+        component.popUpToggle = 0;
 
-    //     component.openErrorPopUp();
-    //     expect(openSpy).not.toHaveBeenCalled();
-    //     expect(openSpy).not.toHaveBeenCalledWith(ExportCompletePageComponent);
-    // });
+        component.openCompletePopUp();
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(dialogSpy.open).not.toHaveBeenCalledWith(ExportCompletePageComponent);
+    });
 });

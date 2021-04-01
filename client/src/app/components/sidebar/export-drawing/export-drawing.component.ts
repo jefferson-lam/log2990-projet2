@@ -34,9 +34,8 @@ export class ExportDrawingComponent implements AfterViewInit {
     request: Message = { title: 'Error', body: '' };
 
     url: string;
-
     PopUpToggleEnum: typeof ExportDrawingConstants.PopUpToggle = ExportDrawingConstants.PopUpToggle;
-    popUpToggle: ExportDrawingConstants.PopUpToggle = ExportDrawingConstants.PopUpToggle.NONE;
+    popUpToggle: ExportDrawingConstants.PopUpToggle;
 
     constructor(drawingService: DrawingService, private imgurService: ImgurService, public newDialog: MatDialog) {
         this.imgurService = imgurService;
@@ -134,7 +133,7 @@ export class ExportDrawingComponent implements AfterViewInit {
         }
     }
 
-    openCompletePopUp() {
+    openCompletePopUp(): void {
         if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.COMPLETE) {
             this.newDialog.open(ExportCompletePageComponent);
         }
