@@ -79,7 +79,7 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.setSelectionCanvasPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
+            this.setSelectionCanvasPosition(this.cornerCoords[SelectionConstants.START_INDEX]);
             this.inUse = false;
             this.isManipulating = true;
         }
@@ -239,12 +239,12 @@ export class EllipseSelectionService extends ToolSelectionService {
         return true;
     }
 
-    private setSelectionCanvasPosition(topLeft: Vec2, selectionWidth: number, selectionHeight: number): void {
+    private setSelectionCanvasPosition(topLeft: Vec2): void {
         this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
         this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPosition(topLeft, selectionWidth, selectionHeight);
+        this.resizerHandlerService.setResizerPosition(this.drawingService.selectionCanvas);
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {

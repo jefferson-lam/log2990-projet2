@@ -66,37 +66,13 @@ export class SelectionComponent implements AfterViewInit {
 
     onCanvasMove(didCanvasMove: boolean): void {
         if (didCanvasMove) {
-            this.repositionResizers({} as CdkDragMove);
+            this.setSelectionCanvasPosition();
         }
     }
 
-    repositionResizers(event: CdkDragMove): void {
-        const transformValues: Vec2 = this.getTransformValues(this.selectionCanvas);
-        this.setResizerPosition(transformValues, this.selectionCanvas, this.previewSelectionCanvas);
-    }
-
-    repositionPreviewResizers(event: CdkDragMove): void {
-        const transformValues: Vec2 = this.getTransformValues(this.previewSelectionCanvas);
-        this.setResizerPosition(transformValues, this.previewSelectionCanvas, this.selectionCanvas);
-    }
-
-    setSelectionCanvasPosition(event: CdkDragEnd): void {
-        const newTopPosition = parseInt(this.selectionCanvas.style.top, 10) + event.distance.y;
-        const newLeftPosition = parseInt(this.selectionCanvas.style.left, 10) + event.distance.x;
-        this.selectionCanvas.style.top = newTopPosition + 'px';
-        this.selectionCanvas.style.left = newLeftPosition + 'px';
-        this.previewSelectionCanvas.style.top = newTopPosition + 'px';
-        this.previewSelectionCanvas.style.left = newLeftPosition + 'px';
-        event.source._dragRef.reset();
-    }
-
-    setPreviewSelectionCanvasPosition(event: CdkDragEnd): void {
-        const newTopPosition = parseInt(this.previewSelectionCanvas.style.top, 10) + event.distance.y;
-        const newLeftPosition = parseInt(this.previewSelectionCanvas.style.left, 10) + event.distance.x;
-        this.selectionCanvas.style.top = newTopPosition + 'px';
-        this.selectionCanvas.style.left = newLeftPosition + 'px';
-        this.previewSelectionCanvas.style.top = newTopPosition + 'px';
-        this.previewSelectionCanvas.style.left = newLeftPosition + 'px';
+    resetPreviewSelectionCanvas(event: CdkDragEnd): void {
+        this.previewSelectionCanvas.style.left = this.selectionCanvas.style.left;
+        this.previewSelectionCanvas.style.top = this.selectionCanvas.style.top;
         event.source._dragRef.reset();
     }
 
@@ -109,16 +85,24 @@ export class SelectionComponent implements AfterViewInit {
         };
     }
 
-    setResizerPosition(transformValues: Vec2, movedCanvas: HTMLCanvasElement, backgroundCanvas: HTMLCanvasElement): void {
-        const canvasWidth = movedCanvas.width;
-        const canvasHeight = movedCanvas.height;
-        const newCanvasPosition = {
-            x: parseInt(movedCanvas.style.left, 10) + transformValues.x,
-            y: parseInt(movedCanvas.style.top, 10) + transformValues.y,
-        };
-        backgroundCanvas.style.left = newCanvasPosition.x + 'px';
-        backgroundCanvas.style.top = newCanvasPosition.y + 'px';
-        this.resizerHandlerService.setResizerPosition(newCanvasPosition, canvasWidth, canvasHeight);
+    setSelectionCanvasPosition(): void {
+        const transformValues = this.getTransformValues(this.previewSelectionCanvas);
+        this.selectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) + transformValues.x + 'px';
+        this.selectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + transformValues.y + 'px';
+        this.resizerHandlerService.setResizerPosition(this.selectionCanvas);
+    }
+
+    setResizerPositions(): void {
+        this.resizerHandlerService.setResizerPosition(this.previewSelectionCanvas);
+
+        this.resizerHandlerService.topLeftResizer.style.transform = '';
+        this.resizerHandlerService.leftResizer.style.transform = '';
+        this.resizerHandlerService.bottomLeftResizer.style.transform = '';
+        this.resizerHandlerService.bottomResizer.style.transform = '';
+        this.resizerHandlerService.bottomRightResizer.style.transform = '';
+        this.resizerHandlerService.rightResizer.style.transform = '';
+        this.resizerHandlerService.topRightResizer.style.transform = '';
+        this.resizerHandlerService.topResizer.style.transform = '';
     }
 
     // TODO : find elegant way to get rid of switch case??
@@ -153,7 +137,7 @@ export class SelectionComponent implements AfterViewInit {
             default:
                 break;
         }
-        this.resizePreviewSelection();
+        this.setResizerPositions();
     }
 
     // TODO for all the setResizeX functions : find elegant way to get rid of ifs??
@@ -295,25 +279,6 @@ export class SelectionComponent implements AfterViewInit {
         }
     }
 
-    // TODO : rename to something like setResizerPosition
-    // Another function already called this, should rename both for ambiguity reasons
-    resizePreviewSelection(): void {
-        const newCanvasPosition = {
-            x: parseInt(this.previewSelectionCanvas.style.left, 10),
-            y: parseInt(this.previewSelectionCanvas.style.top, 10),
-        };
-        this.resizerHandlerService.setResizerPosition(newCanvasPosition, this.previewSelectionCanvas.width, this.previewSelectionCanvas.height);
-
-        this.resizerHandlerService.topLeftResizer.style.transform = '';
-        this.resizerHandlerService.leftResizer.style.transform = '';
-        this.resizerHandlerService.bottomLeftResizer.style.transform = '';
-        this.resizerHandlerService.bottomResizer.style.transform = '';
-        this.resizerHandlerService.bottomRightResizer.style.transform = '';
-        this.resizerHandlerService.rightResizer.style.transform = '';
-        this.resizerHandlerService.topRightResizer.style.transform = '';
-        this.resizerHandlerService.topResizer.style.transform = '';
-    }
-
     resizeSelectionCanvas(): void {
         // Save drawing to preview canvas before drawing is wiped due to resizing
         this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
@@ -330,7 +295,6 @@ export class SelectionComponent implements AfterViewInit {
         this.selectionCtx.fillRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
 
         // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
-        // this.drawWithScalingFactors(scalingFactors,this.previewSelectionCtx,this.selectionCanvas);
         this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);
     }
 
@@ -340,67 +304,45 @@ export class SelectionComponent implements AfterViewInit {
         targetContext.drawImage(sourceCanvas, 0, 0, scalingFactors[0] * targetContext.canvas.width, scalingFactors[1] * targetContext.canvas.height);
     }
 
-    // TODO : find elegant way to get rid of ifs??
     getScalingFactors(): number[] {
         const scalingFactors = [1, 1];
-        // Resizing on the left but started right
-        if (this.resizerDown >= 0 && this.resizerDown <= 2) {
-            if (this.initialResizer >= 4 && this.initialResizer <= 6) {
-                scalingFactors[0] = -1;
-            }
-            // Resizing on the right but started left
-        } else if (this.resizerDown >= 4 && this.resizerDown <= 6) {
-            if (this.initialResizer >= 0 && this.initialResizer <= 2) {
-                scalingFactors[0] = -1;
-            }
-        }
-        // Resizing on the top but started bottom
-        if (this.resizerDown === 0 || (this.resizerDown >= 6 && this.resizerDown <= 7)) {
-            if (this.initialResizer >= 2 && this.initialResizer <= 4) {
-                scalingFactors[1] = -1;
-            }
-            // Resizing on the bottom but started top
-        } else if (this.resizerDown >= 2 && this.resizerDown <= 4) {
-            if (this.initialResizer === 0 || (this.initialResizer >= 6 && this.initialResizer <= 7)) {
-                scalingFactors[1] = -1;
-            }
-        }
+        scalingFactors[0] = this.getWidthScalingFactor();
+        scalingFactors[1] = this.getHeightScalingFactor();
         return scalingFactors;
     }
 
-    setResizerUsed(order: number): void {
-        this.initialResizer = order;
+    getWidthScalingFactor(): number {
+        const leftResizers = [ResizerDown.Left, ResizerDown.TopLeft, ResizerDown.BottomLeft];
+        const rightResizers = [ResizerDown.Right, ResizerDown.TopRight, ResizerDown.BottomRight];
+        // Resizing on the left but started right
+        if (leftResizers.includes(this.resizerDown) && rightResizers.includes(this.initialResizer)) {
+            // tslint:disable-next-line:no-magic-numbers
+            return -1;
+            // Resizing on the right but started left
+        } else if (rightResizers.includes(this.resizerDown) && leftResizers.includes(this.initialResizer)) {
+            // tslint:disable-next-line:no-magic-numbers
+            return -1;
+        }
+        return 1;
     }
 
-    onTopLeftResizerDown(): void {
-        this.resizerDown = ResizerDown.TopLeft;
+    getHeightScalingFactor(): number {
+        const topResizers = [ResizerDown.Top, ResizerDown.TopLeft, ResizerDown.TopRight];
+        const bottomResizers = [ResizerDown.Bottom, ResizerDown.BottomLeft, ResizerDown.BottomRight];
+        // Resizing on the top but started bottom
+        if (topResizers.includes(this.resizerDown) && bottomResizers.includes(this.initialResizer)) {
+            // tslint:disable-next-line:no-magic-numbers
+            return -1;
+            // Resizing on the bottom but started top
+        } else if (bottomResizers.includes(this.resizerDown) && topResizers.includes(this.initialResizer)) {
+            // tslint:disable-next-line:no-magic-numbers
+            return -1;
+        }
+        return 1;
     }
 
-    onLeftResizerDown(): void {
-        this.resizerDown = ResizerDown.Left;
-    }
-
-    onBottomLeftResizerDown(): void {
-        this.resizerDown = ResizerDown.BottomLeft;
-    }
-
-    onBottomResizerDown(): void {
-        this.resizerDown = ResizerDown.Bottom;
-    }
-
-    onBottomRightResizerDown(): void {
-        this.resizerDown = ResizerDown.BottomRight;
-    }
-
-    onRightResizerDown(): void {
-        this.resizerDown = ResizerDown.Right;
-    }
-
-    onTopRightResizerDown(): void {
-        this.resizerDown = ResizerDown.TopRight;
-    }
-
-    onTopResizerDown(): void {
-        this.resizerDown = ResizerDown.Top;
+    setResizerUsed(resizer: number): void {
+        this.resizerDown = resizer;
+        this.initialResizer = resizer;
     }
 }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Vec2 } from '@app/classes/vec2';
 import { BUTTON_OFFSET } from '@app/constants/selection-constants';
 
 @Injectable({
@@ -24,38 +23,40 @@ export class ResizerHandlerService {
         });
     }
 
-    setResizerPosition(canvasPosition: Vec2, canvasWidth: number, canvasHeight: number): void {
+    setResizerPosition(canvas: HTMLCanvasElement): void {
+        const canvasPosition = { x: parseInt(canvas.style.left, 10), y: parseInt(canvas.style.top, 10) };
+
         this.topLeftResizer.style.visibility = 'visible';
         this.topLeftResizer.style.left = canvasPosition.x + 'px';
         this.topLeftResizer.style.top = canvasPosition.y + 'px';
 
         this.topResizer.style.visibility = 'visible';
-        this.topResizer.style.left = canvasPosition.x + canvasWidth / 2 - BUTTON_OFFSET / 2 + 'px';
+        this.topResizer.style.left = canvasPosition.x + canvas.width / 2 - BUTTON_OFFSET / 2 + 'px';
         this.topResizer.style.top = canvasPosition.y + 'px';
 
         this.topRightResizer.style.visibility = 'visible';
-        this.topRightResizer.style.left = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
+        this.topRightResizer.style.left = canvasPosition.x + canvas.width - BUTTON_OFFSET + 'px';
         this.topRightResizer.style.top = canvasPosition.y + 'px';
 
         this.rightResizer.style.visibility = 'visible';
-        this.rightResizer.style.left = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
-        this.rightResizer.style.top = canvasPosition.y + canvasHeight / 2 - BUTTON_OFFSET / 2 + 'px';
+        this.rightResizer.style.left = canvasPosition.x + canvas.width - BUTTON_OFFSET + 'px';
+        this.rightResizer.style.top = canvasPosition.y + canvas.height / 2 - BUTTON_OFFSET / 2 + 'px';
 
         this.bottomRightResizer.style.visibility = 'visible';
-        this.bottomRightResizer.style.left = canvasPosition.x + canvasWidth - BUTTON_OFFSET + 'px';
-        this.bottomRightResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
+        this.bottomRightResizer.style.left = canvasPosition.x + canvas.width - BUTTON_OFFSET + 'px';
+        this.bottomRightResizer.style.top = canvasPosition.y + canvas.height - BUTTON_OFFSET + 'px';
 
         this.bottomResizer.style.visibility = 'visible';
-        this.bottomResizer.style.left = canvasPosition.x + canvasWidth / 2 - BUTTON_OFFSET / 2 + 'px';
-        this.bottomResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
+        this.bottomResizer.style.left = canvasPosition.x + canvas.width / 2 - BUTTON_OFFSET / 2 + 'px';
+        this.bottomResizer.style.top = canvasPosition.y + canvas.height - BUTTON_OFFSET + 'px';
 
         this.bottomLeftResizer.style.visibility = 'visible';
         this.bottomLeftResizer.style.left = canvasPosition.x + 'px';
-        this.bottomLeftResizer.style.top = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
+        this.bottomLeftResizer.style.top = canvasPosition.y + canvas.height - BUTTON_OFFSET + 'px';
 
         this.leftResizer.style.visibility = 'visible';
         this.leftResizer.style.left = canvasPosition.x + 'px';
-        this.leftResizer.style.top = canvasPosition.y + canvasHeight / 2 - BUTTON_OFFSET / 2 + 'px';
+        this.leftResizer.style.top = canvasPosition.y + canvas.height / 2 - BUTTON_OFFSET / 2 + 'px';
     }
 
     getAllResizers(): HTMLElement[] {

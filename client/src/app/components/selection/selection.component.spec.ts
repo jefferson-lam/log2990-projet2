@@ -4,7 +4,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { SelectionComponent } from './selection.component';
 
-describe('SelectionComponent', () => {
+fdescribe('SelectionComponent', () => {
     let component: SelectionComponent;
     let fixture: ComponentFixture<SelectionComponent>;
 
@@ -86,11 +86,11 @@ describe('SelectionComponent', () => {
         } as CdkDragEnd;
         const expectedTop = '800px';
         const expectedLeft = '700px';
-        component.selectionCanvas.nativeElement.style.top = '500px';
-        component.selectionCanvas.nativeElement.style.left = '500px';
+        component.selectionCanvas.style.top = '500px';
+        component.selectionCanvas.style.left = '500px';
         component.setSelectionCanvasPosition(mouseEvent);
-        expect(component.selectionCanvas.nativeElement.style.top).toEqual(expectedTop);
-        expect(component.selectionCanvas.nativeElement.style.left).toEqual(expectedLeft);
+        expect(component.selectionCanvas.style.top).toEqual(expectedTop);
+        expect(component.selectionCanvas.style.left).toEqual(expectedLeft);
     });
 
     it('setPreviewCanvasPosition should correctly set selectionCanvas new position', () => {
@@ -109,11 +109,11 @@ describe('SelectionComponent', () => {
         } as CdkDragEnd;
         const expectedTop = '800px';
         const expectedLeft = '700px';
-        component.previewSelectionCanvas.nativeElement.style.top = '500px';
-        component.previewSelectionCanvas.nativeElement.style.left = '500px';
+        component.previewSelectionCanvas.style.top = '500px';
+        component.previewSelectionCanvas.style.left = '500px';
         component.setPreviewSelectionCanvasPosition(mouseEvent);
-        expect(component.selectionCanvas.nativeElement.style.top).toEqual(expectedTop);
-        expect(component.selectionCanvas.nativeElement.style.left).toEqual(expectedLeft);
+        expect(component.selectionCanvas.style.top).toEqual(expectedTop);
+        expect(component.selectionCanvas.style.left).toEqual(expectedLeft);
     });
 
     it('getTransformValues returns the correct transform values', () => {
@@ -121,7 +121,7 @@ describe('SelectionComponent', () => {
             x: 0,
             y: 0,
         };
-        const result = component.getTransformValues(component.selectionCanvas.nativeElement);
+        const result = component.getTransformValues(component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -130,8 +130,8 @@ describe('SelectionComponent', () => {
             x: 100,
             y: 50,
         };
-        component.selectionCanvas.nativeElement.style.transform = 'translate3d(100px, 50px, 0px)';
-        const result = component.getTransformValues(component.selectionCanvas.nativeElement);
+        component.selectionCanvas.style.transform = 'translate3d(100px, 50px, 0px)';
+        const result = component.getTransformValues(component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -140,8 +140,8 @@ describe('SelectionComponent', () => {
             x: -250,
             y: 50,
         };
-        component.selectionCanvas.nativeElement.style.transform = 'translate3d(-250px, 50px, 0px)';
-        const result = component.getTransformValues(component.selectionCanvas.nativeElement);
+        component.selectionCanvas.style.transform = 'translate3d(-250px, 50px, 0px)';
+        const result = component.getTransformValues(component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -150,8 +150,8 @@ describe('SelectionComponent', () => {
             x: -250,
             y: -50,
         };
-        component.selectionCanvas.nativeElement.style.transform = 'translate3d(-250px, -50px, 0px)';
-        const result = component.getTransformValues(component.selectionCanvas.nativeElement);
+        component.selectionCanvas.style.transform = 'translate3d(-250px, -50px, 0px)';
+        const result = component.getTransformValues(component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -160,21 +160,21 @@ describe('SelectionComponent', () => {
             x: 250,
             y: -50,
         };
-        component.selectionCanvas.nativeElement.style.transform = 'translate3d(250px, -50px, 0px)';
-        const result = component.getTransformValues(component.selectionCanvas.nativeElement);
+        component.selectionCanvas.style.transform = 'translate3d(250px, -50px, 0px)';
+        const result = component.getTransformValues(component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
     it('setResizersPosition should correctly calculate new canvas position, and call service function', () => {
         const selHeight = 250;
         const selWidth = 500;
-        component.selectionCanvas.nativeElement.height = selHeight;
-        component.selectionCanvas.nativeElement.width = selWidth;
-        component.selectionCanvas.nativeElement.style.top = '350px';
-        component.selectionCanvas.nativeElement.style.left = '650px';
-        component.selectionCanvas.nativeElement.style.transform = 'translate3d(100px, 50px, 0px)';
-        const transformValues = component.getTransformValues(component.selectionCanvas.nativeElement);
-        component.setResizerPosition(transformValues, component.selectionCanvas.nativeElement, component.previewSelectionCanvas.nativeElement);
+        component.selectionCanvas.height = selHeight;
+        component.selectionCanvas.width = selWidth;
+        component.selectionCanvas.style.top = '350px';
+        component.selectionCanvas.style.left = '650px';
+        component.selectionCanvas.style.transform = 'translate3d(100px, 50px, 0px)';
+        const transformValues = component.getTransformValues(component.selectionCanvas);
+        component.setResizerPosition(transformValues, component.selectionCanvas, component.previewSelectionCanvas);
         expect(setResizerPositionSpy).toHaveBeenCalledWith({ x: 750, y: 400 }, selWidth, selHeight);
     });
 });
