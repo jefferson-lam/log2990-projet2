@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ImgurService } from '@app/services/imgur/imgur.service';
 
 @Component({
     selector: 'app-export-complete-page',
@@ -6,12 +7,16 @@ import { Component, Input, OnInit } from '@angular/core';
     styleUrls: ['./export-complete-page.component.scss'],
 })
 export class ExportCompletePageComponent implements OnInit {
-    @Input() imageUrl: string;
+    imageUrl: string;
 
-    constructor() {}
+    constructor(private imgurService: ImgurService) {}
 
     ngOnInit(): void {
-        this.setUrlText();
+        this.imgurService.urlObservable.subscribe((url: string) => {
+            console.log('complete-page:' + url);
+            this.imageUrl = url;
+            this.setUrlText();
+        });
     }
 
     setUrlText() {
