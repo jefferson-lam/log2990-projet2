@@ -9,6 +9,7 @@ import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants'
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -28,6 +29,7 @@ export class EditorComponent implements OnInit {
         public newDialog: MatDialog,
         public settingsManager: SettingsManagerService,
         public undoRedoService: UndoRedoService,
+        public clipboardService: ClipboardService,
     ) {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
@@ -39,6 +41,25 @@ export class EditorComponent implements OnInit {
         this.newDialog.afterAllClosed.subscribe(() => {
             this.isPopUpOpen = false;
         });
+    }
+
+    // TODO: change back to control.c, this is for the purpose of the tests
+    @HostListener('window:keydown.control.f', ['$event'])
+    onCtrlCKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.clipboardService.copySelection();
+    }
+
+    @HostListener('window:keydown.control.v', ['$event'])
+    onCtrlVKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.clipboardService.pasteSelection();
+    }
+
+    @HostListener('window:keydown.control.x', ['$event'])
+    onCtrlXKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.clipboardService.cutSelection();
     }
 
     @HostListener('window:keydown.control.e', ['$event'])
