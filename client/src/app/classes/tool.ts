@@ -62,15 +62,15 @@ export abstract class Tool {
 
     setEmissionCount(newEmissionCount: number): void {}
 
-    setFontStyle(fontStyle: string): void {}
+    setFontFamily(fontFamily: string): void {}
 
     setFontSize(fontSize: number): void {}
 
-    setTextAlignment(textAlignment: string): void {}
+    setTextAlign(textAlign: string): void {}
 
-    setTextBold(textBold: boolean): void {}
+    setTextBold(fontWeight: string): void {}
 
-    setTextItalic(textItalic: boolean): void {}
+    setTextItalic(fontStyle: string): void {}
 
     setInputFromKeyboard(inputFromKeyboard: string): void {}
 

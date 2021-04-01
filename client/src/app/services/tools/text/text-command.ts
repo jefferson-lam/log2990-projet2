@@ -1,16 +1,21 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import * as EllipseConstants from '@app/constants/ellipse-constants';
 import { TextService } from '@app/services/tools/text/text-service';
 
 export class TextCommand extends Command {
     primaryColor: string;
     fontSize: number;
     fontStyle: string;
-    textAlignment: string;
-    textBold: boolean;
-    textItalic: boolean;
-    inputFromKeyboard: string;
+    textAlign: string;
+    fontWeight: string;
+    fontFamily: string;
+    text: string;
+    splitText: string[];
+    textWidth: number;
+    textHeight: number;
+    spanLeftPosition: number;
+    spanTopPosition: number;
+
     cornerCoords: Vec2[] = [];
 
     constructor(canvasContext: CanvasRenderingContext2D, textService: TextService) {
@@ -19,30 +24,44 @@ export class TextCommand extends Command {
     }
 
     execute(): void {
-        this.writeText(this.ctx, this.cornerCoords);
+        this.writeText(this.ctx);
     }
 
     setValues(canvasContext: CanvasRenderingContext2D, textService: TextService): void {
         this.ctx = canvasContext;
         this.primaryColor = textService.primaryColor;
         this.fontSize = textService.fontSize;
-        this.fontStyle = textService.fontStyle;
-        this.textAlignment = textService.textAlignment;
-        this.textBold = textService.textBold;
-        this.textItalic = textService.textItalic;
-        this.inputFromKeyboard = textService.inputFromKeyboard;
+        this.fontStyle = textService.placeHolderSpan.style.fontStyle;
+        this.textAlign = textService.placeHolderSpan.style.textAlign;
+        this.fontWeight = textService.placeHolderSpan.style.fontWeight;
+        this.fontFamily = textService.placeHolderSpan.style.fontFamily;
+        this.textWidth = textService.textWidth;
+        this.textHeight = textService.textHeight;
+        this.spanLeftPosition = textService.placeHolderSpan.clientWidth;
+        this.spanTopPosition = textService.placeHolderSpan.clientHeight;
+
+        this.text = textService.placeHolderSpan.innerText;
+
         Object.assign(this.cornerCoords, textService.cornerCoords);
     }
 
-    writeText(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const textLength = ctx.measureText(this.inputFromKeyboard);
-        const start = path[EllipseConstants.START_INDEX];
+    writeText(ctx: CanvasRenderingContext2D): void {
+        this.splitTextString();
         ctx.beginPath();
-        ctx.rect(start.x, start.y, textLength.width, this.fontSize);
-        ctx.font = this.fontSize + 'px ' + this.fontStyle;
-        console.log(ctx.font);
+        ctx.font = this.fontStyle + ' ' + this.fontWeight + ' ' + this.fontSize + 'px ' + this.fontFamily;
         ctx.fillStyle = this.primaryColor;
-        // ctx.textAlign = this.textAlignment;
-        ctx.fillText(this.inputFromKeyboard, textLength.width, this.fontSize);
+        ctx.textAlign = this.textAlign as CanvasTextAlign;
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < this.splitText.length; i++) {
+            ctx.fillText(
+                this.splitText[i],
+                this.textWidth + this.spanLeftPosition / 2,
+                this.textHeight + this.fontSize / 2 + (this.spanTopPosition / this.splitText.length) * i,
+            );
+        }
+    }
+
+    splitTextString(): void {
+        this.splitText = this.text.split('\n');
     }
 }

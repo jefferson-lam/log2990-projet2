@@ -19,31 +19,33 @@
     <div id ="styleSettings">
       <p> Style du texte </p>
       <mat-form-field appearance="fill" id='styleText'>
-      <select matNativeControl required [value]='fontStyle' (selectionchange)='emitFontStyle()'>
-        <option value="Sans Comic" id='style0'> Arial </option>
-        <option value="Arial" id='style1'> Comic Sans MS </option>
-        <option value="Roboto" id='style2'> Roboto </option>
-        <option value="Rubik" id='style3'> Rubik </option>
-        <option value="Bauhaus 93" id='style4'> Bauhaus 93 </option>
-      </select>
-    </mat-form-field>
+        <label>
+          <select matNativeControl required [(ngModel)]='fontFamily' (change)='emitFontFamily()'>
+            <option value="Arial" id='style0'> Arial </option>
+            <option value="Comic Sans MS" id='style1'> Comic Sans MS </option>
+            <option value="Roboto" id='style2'> Roboto </option>
+            <option value="Rubik" id='style3'> Rubik </option>
+            <option value="Century Gothic" id='style4'> Century Gothic </option>
+          </select>
+        </label>
+      </mat-form-field>
     </div>
 
     <div id="alignmentSettings">
       <p> Alignement du texte </p>
-      <mat-radio-group id='alignmentText'>
-        <mat-radio-button id="leftValue" [value]='textAlignment' value='left' color="warn" checked (change)='emitTexAlignement()'> Gauche </mat-radio-button>
-        <mat-radio-button id="center" [value]='textAlignment' value='center' color="warn" (change)="emitTexAlignement()"> Centre </mat-radio-button>
-        <mat-radio-button id="right" [value]='textAlignment' value='right' color="warn" (change)="emitTexAlignement()"> Droite </mat-radio-button>
+      <mat-radio-group id='alignmentText' [(ngModel)]='textAlign' (change)='emitTexAlign()'>
+        <mat-radio-button id="leftValue" value='left'  color="warn" checked > Gauche </mat-radio-button>
+        <mat-radio-button id="center" value='center' color="warn"> Centre </mat-radio-button>
+        <mat-radio-button id="right" value='right'  color="warn" > Droite </mat-radio-button>
       </mat-radio-group>
     </div>
 
     <div id="textFormatSettings">
       <p> Format du texte </p>
-      <mat-radio-group id='formatText'>
-        <mat-radio-button id="normal" value="Normal" color="warn" checked> Normal </mat-radio-button>
-        <mat-radio-button id="italic" value="Italic" color="warn" (change)="emitTextItalic()"> Italic </mat-radio-button>
-        <mat-radio-button id="bold" value="Gras" color="warn" (change)="emitTextBold()"> Gras </mat-radio-button>
+      <mat-radio-group id='formatText' [(ngModel)]='fontOptions' (change)='emitFontOptions()'>
+        <mat-radio-button id="normal" value='normal' color="warn" checked > Normal </mat-radio-button>
+        <mat-radio-button id="italic" value='italic' color="warn" > Italic </mat-radio-button>
+        <mat-radio-button id="bold" value='bold'  color="warn" > Gras </mat-radio-button>
       </mat-radio-group>
     </div>
 

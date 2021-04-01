@@ -48,24 +48,24 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setEmissionCount(newEmissionCount);
     }
 
-    setFontStyle(fontStyle: string): void {
-        this.editorComponent.currentTool.setFontStyle(fontStyle);
+    setFontFamily(fontFamily: string): void {
+        this.editorComponent.currentTool.setFontFamily(fontFamily);
     }
 
     setFontSize(fontSize: number): void {
         this.editorComponent.currentTool.setFontSize(fontSize);
     }
 
-    setTextAlignment(textAlignment: string): void {
-        this.editorComponent.currentTool.setTextAlignment(textAlignment);
+    setTextAlign(textAlign: string): void {
+        this.editorComponent.currentTool.setTextAlign(textAlign);
     }
 
-    setTextBold(textBold: boolean): void {
-        this.editorComponent.currentTool.setTextBold(textBold);
+    setTextBold(fontWeight: string): void {
+        this.editorComponent.currentTool.setTextBold(fontWeight);
     }
 
-    setTextItalic(textItalic: boolean): void {
-        this.editorComponent.currentTool.setTextItalic(textItalic);
+    setTextItalic(fontStyle: string): void {
+        this.editorComponent.currentTool.setTextItalic(fontStyle);
     }
 
     setInputFromKeyboard(inputFromKeyboard: string): void {

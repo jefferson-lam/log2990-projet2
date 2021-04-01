@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as TextConstants from '@app/constants/text-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -15,12 +14,12 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class TextService extends Tool {
     cornerCoords: Vec2[] = [];
     primaryColor: string = '#b5cf60';
-    fontStyle: string = 'Arial';
     fontSize: number = TextConstants.INIT_FONT_SIZE;
-    textAlignment: string = 'center';
-    textBold: boolean = false;
-    textItalic: boolean = false;
-    inputFromKeyboard: string = 'nothing to see here';
+    inputFromKeyboard: string;
+    textWidth: number;
+    textHeight: number;
+    finishedDrawing: boolean = false;
+    placeHolderSpan: HTMLSpanElement;
 
     previewCommand: TextCommand;
 
@@ -29,34 +28,40 @@ export class TextService extends Tool {
         const MAX_PATH_DATA_SIZE = 2;
         this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
-        this.previewCommand = new TextCommand(this.drawingService.previewCtx, this);
     }
 
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
-        if (this.inUse) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.cornerCoords[TextConstants.START_INDEX] = this.mouseDownCoord;
+        if (this.inUse && !this.finishedDrawing) {
+            this.cornerCoords[TextConstants.START_INDEX] = this.getPositionFromMouse(event);
+            this.textWidth = this.cornerCoords[TextConstants.START_INDEX].x;
+            this.textHeight = this.cornerCoords[TextConstants.START_INDEX].y;
+        }
+        if (this.finishedDrawing) {
+            const command: Command = new TextCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
+            this.inUse = false;
+            this.clearCornerCoords();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.placeHolderSpan.style.visibility = 'hidden';
+            this.finishedDrawing = false;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
+            this.placeHolderSpan.style.visibility = 'visible';
+            this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
+            this.placeHolderSpan.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
+            this.placeHolderSpan.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
             this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
-            this.drawTextBox(this.drawingService.previewCtx, this.cornerCoords);
+            this.finishedDrawing = true;
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
         if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
-            this.drawTextBox(this.drawingService.previewCtx, this.cornerCoords);
         }
     }
 
@@ -71,51 +76,34 @@ export class TextService extends Tool {
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (event.key === 'enter') {
-            if (this.inUse) {
-                const command: Command = new TextCommand(this.drawingService.baseCtx, this);
-                this.undoRedoService.executeCommand(command);
-            }
-            this.inUse = false;
-            this.clearCornerCoords();
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        }
         if (event.key === 'Escape') {
             this.inUse = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
+        if (event.key === 'Enter') {
+            console.log('something happened');
+        }
     }
 
-    drawTextBox(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const start = path[EllipseConstants.START_INDEX];
-        const textLength = ctx.measureText(this.inputFromKeyboard);
-        ctx.beginPath();
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = EllipseConstants.PREDICTION_RECTANGLE_WIDTH;
-        ctx.setLineDash([EllipseConstants.LINE_DISTANCE]);
-        ctx.rect(start.x, start.y, textLength.width, this.fontSize);
-        ctx.stroke();
-        ctx.setLineDash([]);
-    }
-
-    setFontStyle(fontStyle: string): void {
-        this.fontStyle = fontStyle;
+    setFontFamily(fontFamily: string): void {
+        this.placeHolderSpan.style.fontFamily = fontFamily;
     }
 
     setFontSize(fontSize: number): void {
         this.fontSize = fontSize;
+        this.placeHolderSpan.style.fontSize = fontSize + 'px';
     }
 
-    setTextAlignment(textAlignment: string): void {
-        this.textAlignment = textAlignment;
+    setTextAlign(textAlign: string): void {
+        this.placeHolderSpan.style.textAlign = textAlign;
     }
 
-    setTextBold(textBold: boolean): void {
-        this.textBold = textBold;
+    setTextBold(textBold: string): void {
+        this.placeHolderSpan.style.fontWeight = textBold;
     }
 
-    setTextItalic(textItalic: boolean): void {
-        this.textItalic = textItalic;
+    setTextItalic(textItalic: string): void {
+        this.placeHolderSpan.style.fontStyle = textItalic;
     }
 
     setInputFromKeyboard(inputFromKeyboard: string): void {
@@ -124,6 +112,10 @@ export class TextService extends Tool {
 
     setPrimaryColor(newColor: string): void {
         this.primaryColor = newColor;
+    }
+
+    setSpanTextColor(): void {
+        this.placeHolderSpan.style.color = this.primaryColor;
     }
 
     private clearCornerCoords(): void {

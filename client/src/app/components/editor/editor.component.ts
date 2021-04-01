@@ -7,13 +7,11 @@ import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
-import * as TextConstants from '@app/constants/text-constants';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -27,13 +25,13 @@ export class EditorComponent implements OnInit {
     currentTool: Tool;
     isPopUpOpen: boolean;
     isUndoSelection: boolean;
-    fontStyle: string = 'Arial';
-    fontFamily: string;
-    fontSize: number = TextConstants.INIT_FONT_SIZE;
-    textAlignment: string = 'center';
-    textBold: boolean = false;
-    textItalic: boolean = false;
-    visibility: string = 'hidden';
+    // fontStyle: string = 'Arial';
+    // fontFamily: string;
+    // fontSize: number = TextConstants.INIT_FONT_SIZE;
+    // textAlignment: string = 'center';
+    // textBold: boolean = false;
+    // textItalic: boolean = false;
+    // visibility: string = 'hidden';
 
     @ViewChild('canvasTextBox', { static: false }) canvasTextBox: ElementRef<HTMLElement>;
 
@@ -112,21 +110,14 @@ export class EditorComponent implements OnInit {
         }
     }
 
-    @HostListener('mousedown', ['$event'])
-    onMouseDown(event: MouseEvent): void {
-        if (this.currentTool instanceof TextService) {
-            this.cornerCoords[TextConstants.START_INDEX] = this.currentTool.getPositionFromMouse(event);
-        }
-    }
-
-    @HostListener('mouseup', ['$event'])
-    setInitialPositionTextBox(): void {
-        if (this.currentTool instanceof TextService) {
-            this.canvasTextBox.nativeElement.style.visibility = 'visible';
-            this.canvasTextBox.nativeElement.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
-            this.canvasTextBox.nativeElement.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
-        }
-    }
+    // @HostListener('mouseup', ['$event'])
+    // setInitialPositionTextBox(): void {
+    //     if (this.currentTool instanceof TextService) {
+    //         this.canvasTextBox.nativeElement.style.visibility = 'visible';
+    //         this.canvasTextBox.nativeElement.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
+    //         this.canvasTextBox.nativeElement.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
+    //     }
+    // }
 
     setTool(newTool: Tool): void {
         this.currentTool = newTool;
