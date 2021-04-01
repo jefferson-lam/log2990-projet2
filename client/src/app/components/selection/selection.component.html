@@ -19,16 +19,56 @@
     id="previewSelectionLayer"
     cdkDrag
     (canvasMovement)="this.onCanvasMove($event)"
-    (cdkDragMoved)="this.repositionPreviewResizers($event)"
+    (cdkDragMoved)="this.setResizePreviewSelection($event)"
     (cdkDragEnded)="this.setPreviewSelectionCanvasPosition($event)"
     [attr.width]="0"
     [attr.height]="0"
 ></canvas>
-<div #leftResizer id="leftSlider" class="resizer"></div>
-<div #rightResizer id="rightSlider" class="resizer"></div>
-<div #topResizer id="topSlider" class="resizer"></div>
-<div #bottomResizer id="bottomSlider" class="resizer"></div>
-<div #bottomLeftResizer id="bottomLeftSlider" class="resizer"></div>
-<div #bottomRightResizer id="bottomRightSlider" class="resizer"></div>
-<div #topLeftResizer id="topLeftSlider" class="resizer"></div>
-<div #topRightResizer id="topRightSlider" class="resizer"></div>
+<div #topLeftResizer id="topLeftSlider" class="resizer"
+     cdkDrag
+     (cdkDragStarted)="this.setResizerUsed(0)"
+     (cdkDragMoved)="this.setResizePreviewSelection($event)"
+     (cdkDragEnded)="this.resizeSelectionCanvas()"
+     (mousedown)="this.onTopLeftResizerDown()"></div>
+<div #leftResizer id="leftSlider" class="resizer"
+     cdkDrag
+     (cdkDragStarted)="this.setResizerUsed(1)"
+     (cdkDragMoved)="this.setResizePreviewSelection($event)"
+     (cdkDragEnded)="this.resizeSelectionCanvas()"
+     (mousedown)="this.onLeftResizerDown()"></div>
+<div #bottomLeftResizer id="bottomLeftSlider" class="resizer"
+     cdkDrag
+     (cdkDragStarted)="this.setResizerUsed(2)"
+     (cdkDragMoved)="this.setResizePreviewSelection($event)"
+     (cdkDragEnded)="this.resizeSelectionCanvas()"
+     (mousedown)="this.onBottomLeftResizerDown()"></div>
+<div #bottomResizer id="bottomSlider" class="resizer"
+     cdkDrag
+     (cdkDragStarted)="this.setResizerUsed(3)"
+     (cdkDragMoved)="this.setResizePreviewSelection($event)"
+     (cdkDragEnded)="this.resizeSelectionCanvas()"
+     (mousedown)="this.onBottomResizerDown()"></div>
+<div #bottomRightResizer id="bottomRightSlider" class="resizer"
+     cdkDrag
+     (cdkDragStarted)="this.setResizerUsed(4)"
+     (cdkDragMoved)="this.setResizePreviewSelection($event)"
+     (cdkDragEnded)="this.resizeSelectionCanvas()"
+     (mousedown)="this.onBottomRightResizerDown()"></div>
+<div #rightResizer id="rightSlider" class="resizer"
+     cdkDrag
+     (cdkDragStarted)="this.setResizerUsed(5)"
+     (cdkDragMoved)="this.setResizePreviewSelection($event)"
+     (cdkDragEnded)="this.resizeSelectionCanvas()"
+     (mousedown)="this.onRightResizerDown()"></div>
+<div #topRightResizer id="topRightSlider" class="resizer"
+     cdkDrag
+     (cdkDragStarted)="this.setResizerUsed(6)"
+     (cdkDragMoved)="this.setResizePreviewSelection($event)"
+     (cdkDragEnded)="this.resizeSelectionCanvas()"
+     (mousedown)="this.onTopRightResizerDown()"></div>
+<div #topResizer id="topSlider" class="resizer"
+     cdkDrag
+     (cdkDragStarted)="this.setResizerUsed(7)"
+     (cdkDragMoved)="this.setResizePreviewSelection($event)"
+     (cdkDragEnded)="this.resizeSelectionCanvas()"
+     (mousedown)="this.onTopResizerDown()"></div>

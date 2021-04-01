@@ -28,5 +28,17 @@
     width: 7px;
     z-index: 13;
     visibility: hidden;
-    cursor: n-resize;
+}
+
+#leftSlider, #rightSlider {
+  cursor: w-resize;
+}
+#topSlider, #bottomSlider{
+  cursor: n-resize;
+}
+#bottomLeftSlider, #topRightSlider {
+  cursor: sw-resize;
+}
+#bottomRightSlider, #topLeftSlider {
+  cursor: se-resize;
 }
