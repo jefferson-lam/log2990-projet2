@@ -86,6 +86,11 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
+        // TODO find a way to simply call increaseGridsize with hostListener event
+        if (event.key === '+') {
+            this.increaseGridSize();
+            return;
+        }
         if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i)$/)) {
             this.setTool(this.toolManager.selectTool(event));
         }
