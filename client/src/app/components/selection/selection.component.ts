@@ -134,10 +134,10 @@ export class SelectionComponent implements AfterViewInit {
         this.resizeStrategy = this.resizerStrategies.get(resizer) as ResizeStrategy;
     }
 
-    // TODO : find elegant way to get rid of switch case??
-    setResizePreviewSelection(event: CdkDragMove): void {
+    drawPreview(event: CdkDragMove): void {
         this.resizeStrategy.resize(this, event);
         this.setResizerPositions();
+        this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
     }
 
     resizeSelectionCanvas(): void {
@@ -169,7 +169,6 @@ export class SelectionComponent implements AfterViewInit {
         const scalingFactors = [1, 1];
         scalingFactors[0] = this.getWidthScalingFactor();
         scalingFactors[1] = this.getHeightScalingFactor();
-        console.log(scalingFactors);
         return scalingFactors;
     }
 
