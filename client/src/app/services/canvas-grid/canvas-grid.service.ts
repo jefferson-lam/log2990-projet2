@@ -9,23 +9,35 @@ export class CanvasGridService {
     opacityValue: number;
     squareWidth: number;
     gridVisibility: boolean = false;
-    previewCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
 
-    constructor(drawingService: DrawingService) {
-        this.previewCtx = drawingService.previewCtx;
+    constructor(private drawingService: DrawingService) {
+        this.drawingService.canvasHeightObservable.asObservable().subscribe((height) => {
+            this.resize(this.gridCtx.canvas.width, height);
+        });
+        this.drawingService.canvasWidthObservable.asObservable().subscribe((width) => {
+            this.resize(width, this.gridCtx.canvas.height);
+        });
         this.setValues();
     }
 
-    onKeyboardDown(event: KeyboardEvent): void {
-        if (event.key === 'g') {
-            this.toggleGrid(this.previewCtx);
-        }
-        if (event.key === '+' || event.key === '=') {
-            this.squareWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) + GridConstants.SQUARE_WIDTH_INTERVAL;
-        }
-        if (event.key === '-') {
-            this.squareWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL;
-        }
+    onKeyboardGKeyDown(): void {
+        this.toggleGrid();
+    }
+
+    onKeyboardPlusOrEqualDown(): void {
+        this.squareWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) + GridConstants.SQUARE_WIDTH_INTERVAL;
+        this.removeGrid();
+        this.createGrid();
+    }
+
+    onKeyboardMinusDown(): void {
+        this.squareWidth =
+            this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL < 5
+                ? 5
+                : this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL;
+        this.removeGrid();
+        this.createGrid();
     }
 
     setValues(): void {
@@ -46,30 +58,45 @@ export class CanvasGridService {
         console.log(this.gridVisibility);
     }
 
-    createGrid(ctx: CanvasRenderingContext2D): void {
-        const canvasWidth = ctx.canvas.width;
-        const canvasHeight = ctx.canvas.height;
-        ctx.beginPath();
+    createGrid(): void {
+        const canvasWidth = this.gridCtx.canvas.width;
+        const canvasHeight = this.gridCtx.canvas.height;
+        this.gridCtx.beginPath();
         for (let i = 0; i < canvasWidth; i++) {
-            ctx.moveTo(i * this.squareWidth, 0);
-            ctx.lineTo(i * this.squareWidth, canvasHeight);
+            this.gridCtx.moveTo(i * this.squareWidth, 0);
+            this.gridCtx.lineTo(i * this.squareWidth, canvasHeight);
         }
         for (let i = 0; i < canvasHeight; i++) {
-            ctx.moveTo(0, i * this.squareWidth);
-            ctx.lineTo(canvasWidth, i * this.squareWidth);
+            this.gridCtx.moveTo(0, i * this.squareWidth);
+            this.gridCtx.lineTo(canvasWidth, i * this.squareWidth);
         }
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
+        this.gridCtx.strokeStyle = 'rgba(0, 0, 0, 1)'; //'black';
+        this.gridCtx.stroke();
     }
 
-    toggleGrid(ctx: CanvasRenderingContext2D): void {
+    removeGrid(): void {
+        const canvasWidth = this.gridCtx.canvas.width;
+        const canvasHeight = this.gridCtx.canvas.height;
+        this.gridCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+    }
+
+    toggleGrid(): void {
         if (!this.gridVisibility) {
+            this.createGrid();
             this.gridVisibility = true;
-            ctx.strokeStyle = 'white';
-            ctx.stroke();
         } else {
-            this.createGrid(ctx);
+            this.removeGrid();
             this.gridVisibility = false;
+        }
+    }
+
+    resize(width: number, height: number): void {
+        this.gridCtx.canvas.width = width;
+        this.gridCtx.canvas.height = height;
+        if (this.gridVisibility) {
+            this.createGrid();
+        } else {
+            this.removeGrid();
         }
     }
 }

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +16,7 @@ export class ResizerCommand extends Command {
     previewWidth: number;
     previewHeight: number;
 
-    constructor(@Inject(Number) width?: number, @Inject(Number) height?: number) {
+    constructor(private canvasGridService: CanvasGridService, @Inject(Number) width?: number, @Inject(Number) height?: number) {
         super();
         this.baseCtx = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = (document.getElementById('previewLayer') as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
@@ -66,5 +67,8 @@ export class ResizerCommand extends Command {
         // Resize preview canvas ctx
         this.previewCtx.canvas.width = this.previewWidth;
         this.previewCtx.canvas.height = this.previewHeight;
+
+        // Resize grid canvas ctx
+        this.canvasGridService.resize(this.previewWidth, this.previewHeight);
     }
 }

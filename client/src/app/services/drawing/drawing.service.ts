@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
     selectionCtx: CanvasRenderingContext2D;
     previewSelectionCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;

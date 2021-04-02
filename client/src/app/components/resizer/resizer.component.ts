@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -23,7 +24,7 @@ export class ResizerComponent implements AfterViewInit {
     @ViewChild('cornerResizer', { static: false }) cornerResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
 
-    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService) {}
+    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, private canvasGridService: CanvasGridService) {}
 
     ngAfterViewInit(): void {
         this.previewCtx = this.drawingService.previewCtx;
@@ -38,11 +39,15 @@ export class ResizerComponent implements AfterViewInit {
             const image = new Image();
             image.src = this.drawingService.imageURL;
             this.undoRedoService.reset();
-            this.undoRedoService.resetCanvasSize = new ResizerCommand(image.width, image.height);
+            this.undoRedoService.resetCanvasSize = new ResizerCommand(this.canvasGridService, image.width, image.height);
             this.undoRedoService.resetCanvasSize.execute();
             this.baseCtx.drawImage(image, 0, 0, image.width, image.height);
         } else {
-            this.undoRedoService.resetCanvasSize = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
+            this.undoRedoService.resetCanvasSize = new ResizerCommand(
+                this.canvasGridService,
+                CanvasConstants.DEFAULT_WIDTH,
+                CanvasConstants.DEFAULT_HEIGHT,
+            );
         }
     }
 
@@ -82,7 +87,7 @@ export class ResizerComponent implements AfterViewInit {
         this.lockMinCanvasValue();
         this.drawingService.canvasHeightObservable.next(this.previewCtx.canvas.height);
         this.drawingService.canvasWidthObservable.next(this.previewCtx.canvas.width);
-        const command: Command = new ResizerCommand();
+        const command: Command = new ResizerCommand(this.canvasGridService);
         this.undoRedoService.executeCommand(command);
         this.isSideResizerDown = false;
         this.isCornerResizerDown = false;
