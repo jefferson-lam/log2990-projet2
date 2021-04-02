@@ -58,13 +58,13 @@ fdescribe('SelectionComponent', () => {
         expect(repositionResizersSpy).not.toHaveBeenCalled();
     });
 
-    it('repositionResizers should call transformValues and setResizerPosition', () => {
+    it('repositionResizers should call transformValues and setResizerPositions', () => {
         component.repositionResizers({} as CdkDragMove);
         expect(getTransformValuesSpy).toHaveBeenCalled();
         expect(componentSetResizerPositionSpy).toHaveBeenCalled();
     });
 
-    it('repositionResizers should call transformValues and setResizerPosition', () => {
+    it('repositionResizers should call transformValues and setResizerPositions', () => {
         component.repositionPreviewResizers({} as CdkDragMove);
         expect(getTransformValuesSpy).toHaveBeenCalled();
         expect(componentSetResizerPositionSpy).toHaveBeenCalled();

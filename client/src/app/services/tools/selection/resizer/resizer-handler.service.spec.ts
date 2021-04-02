@@ -33,7 +33,7 @@ describe('ResizerHandlerService', () => {
         });
     });
 
-    it('setResizerPosition should correct set all resizers to new canvas position', () => {
+    it('setResizerPositions should correct set all resizers to new canvas position', () => {
         const canvasPosition: Vec2 = {
             x: 750,
             y: 750,
@@ -50,7 +50,7 @@ describe('ResizerHandlerService', () => {
         const yMax = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
         const yMean = canvasPosition.y + canvasHeight / 2 - BUTTON_OFFSET / 2 + 'px';
 
-        service.setResizerPosition(canvasPosition, canvasWidth, canvasHeight);
+        service.setResizerPositions(canvasPosition, canvasWidth, canvasHeight);
         expect(service.topLeftResizer.style.left).toEqual(xOrigin);
         expect(service.topLeftResizer.style.top).toEqual(yOrigin);
         expect(service.topLeftResizer.style.visibility).toEqual(expectedVisibility);

@@ -1,5 +1,5 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -31,15 +31,15 @@ export class SelectionComponent implements AfterViewInit {
 
     resizerDown: ResizerDown;
     initialPosition: Vec2;
-    initialSize: {
-        width: number;
-        height: number;
-    };
+    bottomRight: Vec2;
 
     // canvasHeightSubscriber: Subscription;
     // canvasWidthSubscriber: Subscription;
 
-    constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {}
+    constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {
+        this.initialPosition = { x: 0, y: 0 };
+        this.bottomRight = { x: 0, y: 0 };
+    }
 
     ngAfterViewInit(): void {
         this.selectionCanvas = this.selectionCanvasRef.nativeElement;
@@ -57,14 +57,25 @@ export class SelectionComponent implements AfterViewInit {
         this.drawingService.selectionCanvas = this.selectionCanvas;
         this.drawingService.previewSelectionCanvas = this.previewSelectionCanvas;
 
-        this.resizerHandlerService.leftResizer = this.leftResizer.nativeElement;
-        this.resizerHandlerService.rightResizer = this.rightResizer.nativeElement;
-        this.resizerHandlerService.bottomResizer = this.bottomResizer.nativeElement;
-        this.resizerHandlerService.topResizer = this.topResizer.nativeElement;
-        this.resizerHandlerService.topLeftResizer = this.topLeftResizer.nativeElement;
-        this.resizerHandlerService.topRightResizer = this.topRightResizer.nativeElement;
-        this.resizerHandlerService.bottomLeftResizer = this.bottomLeftResizer.nativeElement;
-        this.resizerHandlerService.bottomRightResizer = this.bottomRightResizer.nativeElement;
+        this.resizerHandlerService.resizers
+            .set(ResizerDown.TopLeft, this.topLeftResizer.nativeElement)
+            .set(ResizerDown.Left, this.leftResizer.nativeElement)
+            .set(ResizerDown.BottomLeft, this.bottomLeftResizer.nativeElement)
+            .set(ResizerDown.Bottom, this.bottomResizer.nativeElement)
+            .set(ResizerDown.BottomRight, this.bottomRightResizer.nativeElement)
+            .set(ResizerDown.Right, this.rightResizer.nativeElement)
+            .set(ResizerDown.TopRight, this.topRightResizer.nativeElement)
+            .set(ResizerDown.Top, this.topResizer.nativeElement);
+        // this.resizerHandlerService.leftResizer = this.leftResizer.nativeElement;
+        // this.resizerHandlerService.rightResizer = this.rightResizer.nativeElement;
+        // this.resizerHandlerService.bottomResizer = this.bottomResizer.nativeElement;
+        // this.resizerHandlerService.topResizer = this.topResizer.nativeElement;
+        // this.resizerHandlerService.topLeftResizer = this.topLeftResizer.nativeElement;
+        // this.resizerHandlerService.topRightResizer = this.topRightResizer.nativeElement;
+        // this.resizerHandlerService.bottomLeftResizer = this.bottomLeftResizer.nativeElement;
+        // this.resizerHandlerService.bottomRightResizer = this.bottomRightResizer.nativeElement;
+
+        this.resizerHandlerService.assignComponent(this);
     }
 
     onCanvasMove(didCanvasMove: boolean): void {
@@ -92,30 +103,27 @@ export class SelectionComponent implements AfterViewInit {
         const transformValues = this.getTransformValues(this.previewSelectionCanvas);
         this.selectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) + transformValues.x + 'px';
         this.selectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + transformValues.y + 'px';
-        this.resizerHandlerService.setResizerPosition(this.selectionCanvas);
+        this.resizerHandlerService.setResizerPositions(this.selectionCanvas);
     }
 
     setResizerPositions(): void {
-        this.resizerHandlerService.setResizerPosition(this.previewSelectionCanvas);
+        this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
 
-        this.resizerHandlerService.topLeftResizer.style.transform = '';
-        this.resizerHandlerService.leftResizer.style.transform = '';
-        this.resizerHandlerService.bottomLeftResizer.style.transform = '';
-        this.resizerHandlerService.bottomResizer.style.transform = '';
-        this.resizerHandlerService.bottomRightResizer.style.transform = '';
-        this.resizerHandlerService.rightResizer.style.transform = '';
-        this.resizerHandlerService.topRightResizer.style.transform = '';
-        this.resizerHandlerService.topResizer.style.transform = '';
+        this.resizerHandlerService.resizers.forEach((resizer) => {
+            resizer.style.transform = '';
+        });
     }
 
     drawPreview(event: CdkDragMove): void {
-        this.resizerHandlerService.resize(this, event);
+        this.resizerHandlerService.resize(event);
         this.setResizerPositions();
         this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
         this.selectionCanvas.style.visibility = 'hidden';
     }
 
-    resizeSelectionCanvas(): void {
+    resizeSelectionCanvas(event: CdkDragEnd): void {
+        this.resizerHandlerService.inUse = false;
+        event.source._dragRef.reset();
         this.selectionCanvas.style.visibility = 'visible';
 
         // Save drawing to preview canvas before drawing is wiped due to resizing
@@ -155,10 +163,7 @@ export class SelectionComponent implements AfterViewInit {
         if (rightResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.left, 10) !== this.initialPosition.x) {
             // tslint:disable-next-line:no-magic-numbers
             return -1;
-        } else if (
-            leftResizers.includes(this.resizerDown) &&
-            parseInt(this.previewSelectionCanvas.style.left, 10) === this.initialPosition.x + this.initialSize.width
-        ) {
+        } else if (leftResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.left, 10) === this.bottomRight.x) {
             // tslint:disable-next-line:no-magic-numbers
             return -1;
         }
@@ -171,10 +176,7 @@ export class SelectionComponent implements AfterViewInit {
         if (bottomResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.top, 10) !== this.initialPosition.y) {
             // tslint:disable-next-line:no-magic-numbers
             return -1;
-        } else if (
-            topResizers.includes(this.resizerDown) &&
-            parseInt(this.previewSelectionCanvas.style.top, 10) === this.initialPosition.y + this.initialSize.height
-        ) {
+        } else if (topResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.top, 10) === this.bottomRight.y) {
             // tslint:disable-next-line:no-magic-numbers
             return -1;
         }
@@ -182,9 +184,33 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     setInitialValues(resizer: number): void {
+        this.resizerHandlerService.inUse = true;
         this.resizerDown = resizer;
         this.initialPosition = { x: parseInt(this.previewSelectionCanvas.style.left, 10), y: parseInt(this.previewSelectionCanvas.style.top, 10) };
-        this.initialSize = { width: this.previewSelectionCanvas.width, height: this.previewSelectionCanvas.height };
+        this.bottomRight = {
+            x: this.initialPosition.x + this.previewSelectionCanvas.width,
+            y: this.initialPosition.y + this.previewSelectionCanvas.height,
+        };
         this.resizerHandlerService.setResizeStrategy(this.resizerDown);
+    }
+
+    @HostListener('window:keydown.shift', ['$event'])
+    onShiftKeyDown(event: KeyboardEvent): void {
+        if (this.resizerHandlerService.inUse) {
+            this.resizerHandlerService.resizeSquare();
+            this.setResizerPositions();
+            this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+        }
+        this.resizerHandlerService.isShiftDown = true;
+    }
+
+    @HostListener('window:keyup.shift', ['$event'])
+    onShiftKeyUp(event: KeyboardEvent): void {
+        if (this.resizerHandlerService.inUse) {
+            this.resizerHandlerService.restoreLastDimensions();
+            this.setResizerPositions();
+            this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+        }
+        this.resizerHandlerService.isShiftDown = false;
     }
 }

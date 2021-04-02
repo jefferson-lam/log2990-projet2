@@ -244,7 +244,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
         this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPosition(this.drawingService.selectionCanvas);
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {

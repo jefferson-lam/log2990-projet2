@@ -7,5 +7,21 @@ import { SelectionComponent } from '@app/components/selection/selection.componen
     providedIn: 'root',
 })
 export class ResizeStrategy {
-    resize(selectionComponent: SelectionComponent, event: CdkDragMove): void {}
+    selectionComponent: SelectionComponent;
+    lastWidth: number;
+    lastHeight: number;
+
+    assignComponent(component: SelectionComponent): void {
+        this.selectionComponent = component;
+    }
+
+    resize(event: CdkDragMove, isShiftDown?: boolean): void {}
+
+    resizeSquare(): void {
+        const shortestSide = Math.min(this.selectionComponent.previewSelectionCanvas.width, this.selectionComponent.previewSelectionCanvas.height);
+        this.selectionComponent.previewSelectionCanvas.width = shortestSide;
+        this.selectionComponent.previewSelectionCanvas.height = shortestSide;
+    }
+
+    restoreLastDimensions(): void {}
 }

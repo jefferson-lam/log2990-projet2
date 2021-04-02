@@ -9,7 +9,6 @@ import { RectangleSelectionCommand } from '@app/services/tools/selection/rectang
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -25,8 +24,6 @@ export class RectangleSelectionService extends ToolSelectionService {
     selectionHeight: number = 0;
     selectionWidth: number = 0;
 
-    shiftSubject: BehaviorSubject<boolean>;
-
     constructor(
         drawingService: DrawingService,
         undoRedoService: UndoRedoService,
@@ -34,10 +31,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         public rectangleService: RectangleService,
     ) {
         super(drawingService, undoRedoService, resizerHandlerService, rectangleService);
-        this.shiftSubject = new BehaviorSubject<boolean>(this.isShiftDown);
-        this.shiftSubject.subscribe((isShiftDown) => {
-            this.resizerHandlerService.isShiftDown = isShiftDown;
-        });
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -214,7 +207,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
         this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPosition(this.drawingService.selectionCanvas);
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
     }
 
     private validateSelectionHeightAndWidth(): boolean {

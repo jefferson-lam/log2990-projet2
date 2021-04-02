@@ -23,39 +23,43 @@
      cdkDrag
      (cdkDragStarted)="this.setInitialValues(0)"
      (cdkDragMoved)="this.drawPreview($event)"
-     (cdkDragEnded)="this.resizeSelectionCanvas()"></div>
+     (cdkDragEnded)="this.resizeSelectionCanvas($event)"></div>
 <div #leftResizer id="leftSlider" class="resizer"
      cdkDrag
+     cdkDragLockAxis='x'
      (cdkDragStarted)="this.setInitialValues(1)"
      (cdkDragMoved)="this.drawPreview($event)"
-     (cdkDragEnded)="this.resizeSelectionCanvas()"></div>
+     (cdkDragEnded)="this.resizeSelectionCanvas($event)"></div>
 <div #bottomLeftResizer id="bottomLeftSlider" class="resizer"
      cdkDrag
      (cdkDragStarted)="this.setInitialValues(2)"
      (cdkDragMoved)="this.drawPreview($event)"
-     (cdkDragEnded)="this.resizeSelectionCanvas()"></div>
+     (cdkDragEnded)="this.resizeSelectionCanvas($event)"></div>
 <div #bottomResizer id="bottomSlider" class="resizer"
      cdkDrag
+     cdkDragLockAxis='y'
      (cdkDragStarted)="this.setInitialValues(3)"
      (cdkDragMoved)="this.drawPreview($event)"
-     (cdkDragEnded)="this.resizeSelectionCanvas()"></div>
+     (cdkDragEnded)="this.resizeSelectionCanvas($event)"></div>
 <div #bottomRightResizer id="bottomRightSlider" class="resizer"
      cdkDrag
      (cdkDragStarted)="this.setInitialValues(4)"
      (cdkDragMoved)="this.drawPreview($event)"
-     (cdkDragEnded)="this.resizeSelectionCanvas()"></div>
+     (cdkDragEnded)="this.resizeSelectionCanvas($event)"></div>
 <div #rightResizer id="rightSlider" class="resizer"
      cdkDrag
+     cdkDragLockAxis='x'
      (cdkDragStarted)="this.setInitialValues(5)"
      (cdkDragMoved)="this.drawPreview($event)"
-     (cdkDragEnded)="this.resizeSelectionCanvas()"></div>
+     (cdkDragEnded)="this.resizeSelectionCanvas($event)"></div>
 <div #topRightResizer id="topRightSlider" class="resizer"
      cdkDrag
      (cdkDragStarted)="this.setInitialValues(6)"
      (cdkDragMoved)="this.drawPreview($event)"
-     (cdkDragEnded)="this.resizeSelectionCanvas()"></div>
+     (cdkDragEnded)="this.resizeSelectionCanvas($event)"></div>
 <div #topResizer id="topSlider" class="resizer"
      cdkDrag
+     cdkDragLockAxis='y'
      (cdkDragStarted)="this.setInitialValues(7)"
      (cdkDragMoved)="this.drawPreview($event)"
-     (cdkDragEnded)="this.resizeSelectionCanvas()"></div>
+     (cdkDragEnded)="this.resizeSelectionCanvas($event)"></div>
