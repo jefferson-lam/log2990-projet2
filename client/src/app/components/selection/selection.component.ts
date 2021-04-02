@@ -1,9 +1,17 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { ResizeStrategy } from '@app/classes/resize-strategy';
 import { Vec2 } from '@app/classes/vec2';
-import * as CanvasConstants from '@app/constants/canvas-constants';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizeBottom } from '@app/services/resizer/resize-strategy/resize-bottom';
+import { ResizeBottomLeft } from '@app/services/resizer/resize-strategy/resize-bottom-left';
+import { ResizeBottomRight } from '@app/services/resizer/resize-strategy/resize-bottom-right';
+import { ResizeLeft } from '@app/services/resizer/resize-strategy/resize-left';
+import { ResizeRight } from '@app/services/resizer/resize-strategy/resize-right';
+import { ResizeTop } from '@app/services/resizer/resize-strategy/resize-top';
+import { ResizeTopLeft } from '@app/services/resizer/resize-strategy/resize-top-left';
+import { ResizeTopRight } from '@app/services/resizer/resize-strategy/resize-top-right';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 
 @Component({
@@ -31,12 +39,29 @@ export class SelectionComponent implements AfterViewInit {
     previewSelectionCtx: CanvasRenderingContext2D;
 
     resizerDown: ResizerDown;
-    initialResizer: ResizerDown;
+    resizeStrategy: ResizeStrategy;
+    resizerStrategies: Map<number, ResizeStrategy>;
+    initialPosition: Vec2;
+    initialSize: {
+        width: number;
+        height: number;
+    };
 
     // canvasHeightSubscriber: Subscription;
     // canvasWidthSubscriber: Subscription;
 
-    constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {}
+    constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {
+        this.resizerStrategies = new Map<number, ResizeStrategy>();
+        this.resizerStrategies
+            .set(ResizerDown.TopLeft, new ResizeTopLeft())
+            .set(ResizerDown.Left, new ResizeLeft())
+            .set(ResizerDown.BottomLeft, new ResizeBottomLeft())
+            .set(ResizerDown.Bottom, new ResizeBottom())
+            .set(ResizerDown.BottomRight, new ResizeBottomRight())
+            .set(ResizerDown.Right, new ResizeRight())
+            .set(ResizerDown.TopRight, new ResizeTopRight())
+            .set(ResizerDown.Top, new ResizeTop());
+    }
 
     ngAfterViewInit(): void {
         this.selectionCanvas = this.selectionCanvasRef.nativeElement;
@@ -105,178 +130,14 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.topResizer.style.transform = '';
     }
 
+    setResizeStrategy(resizer: ResizerDown): void {
+        this.resizeStrategy = this.resizerStrategies.get(resizer) as ResizeStrategy;
+    }
+
     // TODO : find elegant way to get rid of switch case??
     setResizePreviewSelection(event: CdkDragMove): void {
-        const relativeX = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN - parseInt(this.previewSelectionCanvas.style.left, 10);
-        const relativeY = event.pointerPosition.y - parseInt(this.previewSelectionCanvas.style.top, 10);
-        switch (this.resizerDown) {
-            case ResizerDown.TopLeft:
-                this.setResizeTopLeft(event, relativeX, relativeY);
-                break;
-            case ResizerDown.Left:
-                this.setResizeLeft(event, relativeX);
-                break;
-            case ResizerDown.BottomLeft:
-                this.setResizeBottomLeft(event, relativeX, relativeY);
-                break;
-            case ResizerDown.Bottom:
-                this.setResizeBottom(event, relativeY);
-                break;
-            case ResizerDown.BottomRight:
-                this.setResizeBottomRight(event, relativeX, relativeY);
-                break;
-            case ResizerDown.Right:
-                this.setResizeRight(event, relativeX);
-                break;
-            case ResizerDown.TopRight:
-                this.setResizeTopRight(event, relativeX, relativeY);
-                break;
-            case ResizerDown.Top:
-                this.setResizeTop(event, relativeY);
-                break;
-            default:
-                break;
-        }
+        this.resizeStrategy.resize(this, event);
         this.setResizerPositions();
-    }
-
-    // TODO for all the setResizeX functions : find elegant way to get rid of ifs??
-    setResizeTopLeft(event: CdkDragMove, relativeX: number, relativeY: number): void {
-        const newWidth = this.previewSelectionCanvas.width - relativeX;
-        const newHeight = this.previewSelectionCanvas.height - relativeY;
-        if (newWidth >= 0 && newHeight >= 0) {
-            this.previewSelectionCanvas.width = newWidth;
-            this.previewSelectionCanvas.height = newHeight;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
-            this.previewSelectionCanvas.style.left = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN + 'px';
-        } else if (newWidth < 0 && newHeight >= 0) {
-            this.resizerDown = ResizerDown.TopRight;
-            this.previewSelectionCanvas.width = -newWidth;
-            this.previewSelectionCanvas.style.left = event.pointerPosition.x - this.previewSelectionCanvas.width - CanvasConstants.LEFT_MARGIN + 'px';
-        } else if (newWidth >= 0 && newHeight < 0) {
-            this.resizerDown = ResizerDown.BottomLeft;
-            this.previewSelectionCanvas.height = relativeY - this.previewSelectionCanvas.height;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y - this.previewSelectionCanvas.height + 'px';
-        } else {
-            this.resizerDown = ResizerDown.BottomRight;
-            this.previewSelectionCanvas.width = -newWidth;
-            this.previewSelectionCanvas.style.left = event.pointerPosition.x - this.previewSelectionCanvas.width - CanvasConstants.LEFT_MARGIN + 'px';
-            this.previewSelectionCanvas.height = relativeY - this.previewSelectionCanvas.height;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y - this.previewSelectionCanvas.height + 'px';
-        }
-    }
-
-    setResizeBottomLeft(event: CdkDragMove, relativeX: number, relativeY: number): void {
-        const newWidth = this.previewSelectionCanvas.width - relativeX;
-        if (newWidth >= 0 && relativeY >= 0) {
-            this.previewSelectionCanvas.width = newWidth;
-            this.previewSelectionCanvas.height = relativeY;
-            this.previewSelectionCanvas.style.left = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN + 'px';
-        } else if (newWidth < 0 && relativeY >= 0) {
-            this.resizerDown = ResizerDown.BottomRight;
-            this.previewSelectionCanvas.width = -newWidth;
-            this.previewSelectionCanvas.style.left = event.pointerPosition.x - this.previewSelectionCanvas.width - CanvasConstants.LEFT_MARGIN + 'px';
-        } else if (newWidth >= 0 && relativeY < 0) {
-            this.resizerDown = ResizerDown.TopLeft;
-            this.previewSelectionCanvas.height = -relativeY;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
-        } else {
-            this.resizerDown = ResizerDown.TopRight;
-            this.previewSelectionCanvas.width = -newWidth;
-            this.previewSelectionCanvas.style.left = event.pointerPosition.x - this.previewSelectionCanvas.width - CanvasConstants.LEFT_MARGIN + 'px';
-            this.previewSelectionCanvas.height = -relativeY;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
-        }
-    }
-
-    setResizeTopRight(event: CdkDragMove, relativeX: number, relativeY: number): void {
-        const newWidth = relativeX;
-        const newHeight = this.previewSelectionCanvas.height - relativeY;
-        if (newWidth >= 0 && newHeight >= 0) {
-            this.previewSelectionCanvas.height = newHeight;
-            this.previewSelectionCanvas.width = newWidth;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
-        } else if (newWidth < 0 && newHeight >= 0) {
-            this.resizerDown = ResizerDown.TopLeft;
-            this.previewSelectionCanvas.width = -relativeX;
-            this.previewSelectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) - this.previewSelectionCanvas.width + 'px';
-        } else if (newWidth >= 0 && newHeight < 0) {
-            this.resizerDown = ResizerDown.BottomRight;
-            this.previewSelectionCanvas.height = relativeY - this.previewSelectionCanvas.height;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y - this.previewSelectionCanvas.height + 'px';
-        } else {
-            this.previewSelectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + this.previewSelectionCanvas.height + 'px';
-            this.resizerDown = ResizerDown.BottomLeft;
-            this.previewSelectionCanvas.width = -relativeX;
-            this.previewSelectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) - this.previewSelectionCanvas.width + 'px';
-            this.previewSelectionCanvas.height = relativeY - this.previewSelectionCanvas.height;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y - this.previewSelectionCanvas.height + 'px';
-        }
-    }
-
-    setResizeBottomRight(event: CdkDragMove, relativeX: number, relativeY: number): void {
-        if (relativeX >= 0 && relativeY >= 0) {
-            this.previewSelectionCanvas.width = relativeX;
-            this.previewSelectionCanvas.height = relativeY;
-        } else if (relativeX < 0 && relativeY >= 0) {
-            this.resizerDown = ResizerDown.BottomLeft;
-            this.previewSelectionCanvas.width = -relativeX;
-            this.previewSelectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) - this.previewSelectionCanvas.width + 'px';
-        } else if (relativeX >= 0 && relativeY < 0) {
-            this.resizerDown = ResizerDown.TopRight;
-            this.previewSelectionCanvas.height = -relativeY;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
-        } else {
-            this.resizerDown = ResizerDown.TopLeft;
-            this.previewSelectionCanvas.width = -relativeX;
-            this.previewSelectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) - this.previewSelectionCanvas.width + 'px';
-            this.previewSelectionCanvas.height = -relativeY;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
-        }
-    }
-
-    setResizeLeft(event: CdkDragMove, relativeX: number): void {
-        const newWidth = this.previewSelectionCanvas.width - relativeX;
-        if (newWidth >= 0) {
-            this.previewSelectionCanvas.width = newWidth;
-            this.previewSelectionCanvas.style.left = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN + 'px';
-        } else {
-            this.resizerDown = ResizerDown.Right;
-            this.previewSelectionCanvas.width = -newWidth;
-            this.previewSelectionCanvas.style.left = event.pointerPosition.x - this.previewSelectionCanvas.width - CanvasConstants.LEFT_MARGIN + 'px';
-        }
-    }
-
-    setResizeRight(event: CdkDragMove, relativeX: number): void {
-        if (relativeX >= 0) {
-            this.previewSelectionCanvas.width = relativeX;
-        } else {
-            this.resizerDown = ResizerDown.Left;
-            this.previewSelectionCanvas.width = -relativeX;
-            this.previewSelectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) - this.previewSelectionCanvas.width + 'px';
-        }
-    }
-
-    setResizeBottom(event: CdkDragMove, relativeY: number): void {
-        if (relativeY >= 0) {
-            this.previewSelectionCanvas.height = relativeY;
-        } else {
-            this.resizerDown = ResizerDown.Top;
-            this.previewSelectionCanvas.height = -relativeY;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
-        }
-    }
-
-    setResizeTop(event: CdkDragMove, relativeY: number): void {
-        const newHeight = this.previewSelectionCanvas.height - relativeY;
-        if (newHeight >= 0) {
-            this.previewSelectionCanvas.height = newHeight;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
-        } else {
-            this.resizerDown = ResizerDown.Bottom;
-            this.previewSelectionCanvas.height = relativeY - this.previewSelectionCanvas.height;
-            this.previewSelectionCanvas.style.top = event.pointerPosition.y - this.previewSelectionCanvas.height + 'px';
-        }
     }
 
     resizeSelectionCanvas(): void {
@@ -308,18 +169,20 @@ export class SelectionComponent implements AfterViewInit {
         const scalingFactors = [1, 1];
         scalingFactors[0] = this.getWidthScalingFactor();
         scalingFactors[1] = this.getHeightScalingFactor();
+        console.log(scalingFactors);
         return scalingFactors;
     }
 
     getWidthScalingFactor(): number {
         const leftResizers = [ResizerDown.Left, ResizerDown.TopLeft, ResizerDown.BottomLeft];
         const rightResizers = [ResizerDown.Right, ResizerDown.TopRight, ResizerDown.BottomRight];
-        // Resizing on the left but started right
-        if (leftResizers.includes(this.resizerDown) && rightResizers.includes(this.initialResizer)) {
+        if (rightResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.left, 10) !== this.initialPosition.x) {
             // tslint:disable-next-line:no-magic-numbers
             return -1;
-            // Resizing on the right but started left
-        } else if (rightResizers.includes(this.resizerDown) && leftResizers.includes(this.initialResizer)) {
+        } else if (
+            leftResizers.includes(this.resizerDown) &&
+            parseInt(this.previewSelectionCanvas.style.left, 10) === this.initialPosition.x + this.initialSize.width
+        ) {
             // tslint:disable-next-line:no-magic-numbers
             return -1;
         }
@@ -329,20 +192,23 @@ export class SelectionComponent implements AfterViewInit {
     getHeightScalingFactor(): number {
         const topResizers = [ResizerDown.Top, ResizerDown.TopLeft, ResizerDown.TopRight];
         const bottomResizers = [ResizerDown.Bottom, ResizerDown.BottomLeft, ResizerDown.BottomRight];
-        // Resizing on the top but started bottom
-        if (topResizers.includes(this.resizerDown) && bottomResizers.includes(this.initialResizer)) {
+        if (bottomResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.top, 10) !== this.initialPosition.y) {
             // tslint:disable-next-line:no-magic-numbers
             return -1;
-            // Resizing on the bottom but started top
-        } else if (bottomResizers.includes(this.resizerDown) && topResizers.includes(this.initialResizer)) {
+        } else if (
+            topResizers.includes(this.resizerDown) &&
+            parseInt(this.previewSelectionCanvas.style.top, 10) === this.initialPosition.y + this.initialSize.height
+        ) {
             // tslint:disable-next-line:no-magic-numbers
             return -1;
         }
         return 1;
     }
 
-    setResizerUsed(resizer: number): void {
+    setInitialValues(resizer: number): void {
         this.resizerDown = resizer;
-        this.initialResizer = resizer;
+        this.initialPosition = { x: parseInt(this.previewSelectionCanvas.style.left, 10), y: parseInt(this.previewSelectionCanvas.style.top, 10) };
+        this.initialSize = { width: this.previewSelectionCanvas.width, height: this.previewSelectionCanvas.height };
+        this.setResizeStrategy(this.resizerDown);
     }
 }
