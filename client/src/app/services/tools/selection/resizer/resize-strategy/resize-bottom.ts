@@ -1,7 +1,7 @@
 import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { Injectable } from '@angular/core';
 import { SelectionComponent } from '@app/components/selection/selection.component';
-import { ResizeStrategy } from '../../../classes/resize-strategy';
+import { ResizeStrategy } from '../../../../../classes/resize-strategy';
 
 @Injectable({
     providedIn: 'root',

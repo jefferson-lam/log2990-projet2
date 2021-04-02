@@ -1,18 +1,9 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { ResizeStrategy } from '@app/classes/resize-strategy';
 import { Vec2 } from '@app/classes/vec2';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizeBottom } from '@app/services/resizer/resize-strategy/resize-bottom';
-import { ResizeBottomLeft } from '@app/services/resizer/resize-strategy/resize-bottom-left';
-import { ResizeBottomRight } from '@app/services/resizer/resize-strategy/resize-bottom-right';
-import { ResizeLeft } from '@app/services/resizer/resize-strategy/resize-left';
-import { ResizeRight } from '@app/services/resizer/resize-strategy/resize-right';
-import { ResizeTop } from '@app/services/resizer/resize-strategy/resize-top';
-import { ResizeTopLeft } from '@app/services/resizer/resize-strategy/resize-top-left';
-import { ResizeTopRight } from '@app/services/resizer/resize-strategy/resize-top-right';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 
 @Component({
     selector: 'app-selection',
@@ -39,8 +30,6 @@ export class SelectionComponent implements AfterViewInit {
     previewSelectionCtx: CanvasRenderingContext2D;
 
     resizerDown: ResizerDown;
-    resizeStrategy: ResizeStrategy;
-    resizerStrategies: Map<number, ResizeStrategy>;
     initialPosition: Vec2;
     initialSize: {
         width: number;
@@ -50,18 +39,7 @@ export class SelectionComponent implements AfterViewInit {
     // canvasHeightSubscriber: Subscription;
     // canvasWidthSubscriber: Subscription;
 
-    constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {
-        this.resizerStrategies = new Map<number, ResizeStrategy>();
-        this.resizerStrategies
-            .set(ResizerDown.TopLeft, new ResizeTopLeft())
-            .set(ResizerDown.Left, new ResizeLeft())
-            .set(ResizerDown.BottomLeft, new ResizeBottomLeft())
-            .set(ResizerDown.Bottom, new ResizeBottom())
-            .set(ResizerDown.BottomRight, new ResizeBottomRight())
-            .set(ResizerDown.Right, new ResizeRight())
-            .set(ResizerDown.TopRight, new ResizeTopRight())
-            .set(ResizerDown.Top, new ResizeTop());
-    }
+    constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {}
 
     ngAfterViewInit(): void {
         this.selectionCanvas = this.selectionCanvasRef.nativeElement;
@@ -130,12 +108,8 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.topResizer.style.transform = '';
     }
 
-    setResizeStrategy(resizer: ResizerDown): void {
-        this.resizeStrategy = this.resizerStrategies.get(resizer) as ResizeStrategy;
-    }
-
     drawPreview(event: CdkDragMove): void {
-        this.resizeStrategy.resize(this, event);
+        this.resizerHandlerService.resize(this, event);
         this.setResizerPositions();
         this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
         this.selectionCanvas.style.visibility = 'hidden';
@@ -211,6 +185,6 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerDown = resizer;
         this.initialPosition = { x: parseInt(this.previewSelectionCanvas.style.left, 10), y: parseInt(this.previewSelectionCanvas.style.top, 10) };
         this.initialSize = { width: this.previewSelectionCanvas.width, height: this.previewSelectionCanvas.height };
-        this.setResizeStrategy(this.resizerDown);
+        this.resizerHandlerService.setResizeStrategy(this.resizerDown);
     }
 }

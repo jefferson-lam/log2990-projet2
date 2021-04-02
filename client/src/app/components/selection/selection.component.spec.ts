@@ -1,7 +1,7 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { SelectionComponent } from './selection.component';
 
 fdescribe('SelectionComponent', () => {

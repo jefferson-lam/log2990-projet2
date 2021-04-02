@@ -4,11 +4,12 @@ import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle/rectangle-selection-command';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -24,6 +25,8 @@ export class RectangleSelectionService extends ToolSelectionService {
     selectionHeight: number = 0;
     selectionWidth: number = 0;
 
+    shiftSubject: BehaviorSubject<boolean>;
+
     constructor(
         drawingService: DrawingService,
         undoRedoService: UndoRedoService,
@@ -31,6 +34,10 @@ export class RectangleSelectionService extends ToolSelectionService {
         public rectangleService: RectangleService,
     ) {
         super(drawingService, undoRedoService, resizerHandlerService, rectangleService);
+        this.shiftSubject = new BehaviorSubject<boolean>(this.isShiftDown);
+        this.shiftSubject.subscribe((isShiftDown) => {
+            this.resizerHandlerService.isShiftDown = isShiftDown;
+        });
     }
 
     onMouseDown(event: MouseEvent): void {

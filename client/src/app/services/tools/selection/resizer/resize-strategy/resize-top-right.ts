@@ -2,19 +2,19 @@ import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { Injectable } from '@angular/core';
 import { ResizeStrategy } from '@app/classes/resize-strategy';
 import { SelectionComponent } from '@app/components/selection/selection.component';
-import { ResizeLeft } from '@app/services/resizer/resize-strategy/resize-left';
-import { ResizeTop } from '@app/services/resizer/resize-strategy/resize-top';
+import { ResizeRight } from '@app/services/tools/selection/resizer/resize-strategy/resize-right';
+import { ResizeTop } from '@app/services/tools/selection/resizer/resize-strategy/resize-top';
 
 @Injectable({
     providedIn: 'root',
 })
-export class ResizeTopLeft extends ResizeStrategy {
-    resizeWidth: ResizeLeft;
+export class ResizeTopRight extends ResizeStrategy {
+    resizeWidth: ResizeRight;
     resizeHeight: ResizeTop;
 
     constructor() {
         super();
-        this.resizeWidth = new ResizeLeft();
+        this.resizeWidth = new ResizeRight();
         this.resizeHeight = new ResizeTop();
     }
 

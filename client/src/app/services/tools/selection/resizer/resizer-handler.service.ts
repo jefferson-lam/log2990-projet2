@@ -1,5 +1,17 @@
+import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { Injectable } from '@angular/core';
+import { ResizeStrategy } from '@app/classes/resize-strategy';
+import { SelectionComponent } from '@app/components/selection/selection.component';
+import { ResizerDown } from '@app/constants/resize-constants';
 import { BUTTON_OFFSET } from '@app/constants/selection-constants';
+import { ResizeBottom } from '@app/services/tools/selection/resizer/resize-strategy/resize-bottom';
+import { ResizeBottomLeft } from '@app/services/tools/selection/resizer/resize-strategy/resize-bottom-left';
+import { ResizeBottomRight } from '@app/services/tools/selection/resizer/resize-strategy/resize-bottom-right';
+import { ResizeLeft } from '@app/services/tools/selection/resizer/resize-strategy/resize-left';
+import { ResizeRight } from '@app/services/tools/selection/resizer/resize-strategy/resize-right';
+import { ResizeTop } from '@app/services/tools/selection/resizer/resize-strategy/resize-top';
+import { ResizeTopLeft } from '@app/services/tools/selection/resizer/resize-strategy/resize-top-left';
+import { ResizeTopRight } from '@app/services/tools/selection/resizer/resize-strategy/resize-top-right';
 
 @Injectable({
     providedIn: 'root',
@@ -13,6 +25,24 @@ export class ResizerHandlerService {
     topRightResizer: HTMLElement;
     bottomLeftResizer: HTMLElement;
     bottomRightResizer: HTMLElement;
+
+    resizeStrategy: ResizeStrategy;
+    resizerStrategies: Map<ResizerDown, ResizeStrategy>;
+
+    isShiftDown: boolean;
+
+    constructor() {
+        this.resizerStrategies = new Map<number, ResizeStrategy>();
+        this.resizerStrategies
+            .set(ResizerDown.TopLeft, new ResizeTopLeft())
+            .set(ResizerDown.Left, new ResizeLeft())
+            .set(ResizerDown.BottomLeft, new ResizeBottomLeft())
+            .set(ResizerDown.Bottom, new ResizeBottom())
+            .set(ResizerDown.BottomRight, new ResizeBottomRight())
+            .set(ResizerDown.Right, new ResizeRight())
+            .set(ResizerDown.TopRight, new ResizeTopRight())
+            .set(ResizerDown.Top, new ResizeTop());
+    }
 
     resetResizers(): void {
         const resizers = this.getAllResizers();
@@ -70,5 +100,13 @@ export class ResizerHandlerService {
             this.bottomLeftResizer,
             this.leftResizer,
         ];
+    }
+
+    setResizeStrategy(resizer: ResizerDown): void {
+        this.resizeStrategy = this.resizerStrategies.get(resizer) as ResizeStrategy;
+    }
+
+    resize(selectionComponent: SelectionComponent, event: CdkDragMove): void {
+        this.resizeStrategy.resize(selectionComponent, event);
     }
 }
