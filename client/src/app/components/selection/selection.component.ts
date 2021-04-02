@@ -138,9 +138,12 @@ export class SelectionComponent implements AfterViewInit {
         this.resizeStrategy.resize(this, event);
         this.setResizerPositions();
         this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+        this.selectionCanvas.style.visibility = 'hidden';
     }
 
     resizeSelectionCanvas(): void {
+        this.selectionCanvas.style.visibility = 'visible';
+
         // Save drawing to preview canvas before drawing is wiped due to resizing
         this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
 
