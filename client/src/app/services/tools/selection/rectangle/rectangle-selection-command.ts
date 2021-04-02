@@ -23,8 +23,8 @@ export class RectangleSelectionCommand extends Command {
         this.ctx = canvasContext;
         this.cornerCoords = Object.assign([], rectangleSelectionService.cornerCoords);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
-        this.selectionHeight = rectangleSelectionService.selectionHeight;
-        this.selectionWidth = rectangleSelectionService.selectionWidth;
+        this.selectionHeight = selectionCanvas.height;
+        this.selectionWidth = selectionCanvas.width;
         this.transformValues = rectangleSelectionService.transformValues;
         this.isSquare = rectangleSelectionService.isSquare;
     }
