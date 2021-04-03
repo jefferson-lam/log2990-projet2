@@ -44,8 +44,8 @@ describe('RectangleSelectionCommandService', () => {
         ] as Vec2[];
 
         rectangleSelectionService.cornerCoords = Object.assign([], pathStub);
-        rectangleSelectionService.selectionHeight = TEST_SELECTION_HEIGHT;
-        rectangleSelectionService.selectionWidth = TEST_SELECTION_WIDTH;
+        selectionCtxStub.canvas.height = TEST_SELECTION_HEIGHT;
+        selectionCtxStub.canvas.width = TEST_SELECTION_WIDTH;
         rectangleSelectionService.transformValues = TEST_TRANSFORM_VALUES;
         rectangleSelectionService.isSquare = TEST_IS_SQUARE;
 
