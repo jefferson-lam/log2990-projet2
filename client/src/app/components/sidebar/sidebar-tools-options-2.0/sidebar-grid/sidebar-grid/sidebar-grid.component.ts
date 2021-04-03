@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import * as GridConstants from '@app/constants/canvas-grid-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 
@@ -15,9 +16,9 @@ export class SidebarGridComponent implements OnInit {
     tickInterval: number = GridConstants.TICK_INTERVAL;
     squareWidth: number = GridConstants.DEFAULT_SQUARE_WIDTH;
     opacityValue: number = GridConstants.DEFAULT_OPACITY;
-    visibilityValue: boolean = false;
+    visibilityValue: boolean;
 
-    @ViewChild('toggleGrid', { static: false }) toggleGrid: ElementRef<HTMLElement>;
+    @ViewChild('toggleGrid') toggleGrid: MatSlideToggle;
 
     @Output() squareWidthChanged: EventEmitter<number> = new EventEmitter();
     @Output() opacityValueChanged: EventEmitter<number> = new EventEmitter();
@@ -29,6 +30,10 @@ export class SidebarGridComponent implements OnInit {
         this.squareWidthChanged.subscribe((newWidth: number) => this.canvasGridService.setSquareWidth(newWidth));
         this.opacityValueChanged.subscribe((newOpacityValue: number) => this.canvasGridService.setOpacityValue(newOpacityValue));
         this.visibilityValueChanged.subscribe((newVisibilityValue: boolean) => this.canvasGridService.setVisibility(newVisibilityValue));
+        this.canvasGridService.gridVisibilitySubject.asObservable().subscribe((gridVisibility) => {
+            this.toggleGrid.checked = gridVisibility;
+        });
+        this.visibilityValue = this.canvasGridService.gridVisibility;
     }
 
     changeSliderVisibilityInput(): void {
