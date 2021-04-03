@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatSlider } from '@angular/material/slider';
 import * as GridConstants from '@app/constants/canvas-grid-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 
@@ -13,12 +14,14 @@ export class SidebarGridComponent implements OnInit {
     minSquareWidth: number = GridConstants.MIN_SQUARE_WIDTH;
     minOpacityValue: number = GridConstants.MIN_OPACITY_VALUE;
     maxOpacityValue: number = GridConstants.MAX_OPACITY_VALUE;
-    tickInterval: number = GridConstants.TICK_INTERVAL;
+    opacityTickInterval: number = GridConstants.OPACITY_TICK_INTERVAL;
+    widthTickInterval: number = GridConstants.SQUARE_WIDTH_INTERVAL;
     squareWidth: number = GridConstants.DEFAULT_SQUARE_WIDTH;
     opacityValue: number = GridConstants.DEFAULT_OPACITY;
     visibilityValue: boolean;
 
     @ViewChild('toggleGrid') toggleGrid: MatSlideToggle;
+    @ViewChild('widthSlider') widthSlider: MatSlider;
 
     @Output() squareWidthChanged: EventEmitter<number> = new EventEmitter();
     @Output() opacityValueChanged: EventEmitter<number> = new EventEmitter();
@@ -33,15 +36,21 @@ export class SidebarGridComponent implements OnInit {
         this.canvasGridService.gridVisibilitySubject.asObservable().subscribe((gridVisibility) => {
             this.toggleGrid.checked = gridVisibility;
         });
-        this.visibilityValue = this.canvasGridService.gridVisibility;
+
+        this.canvasGridService.widthSubject.asObservable().subscribe((width) => {
+            this.widthSlider.value = width;
+            this.squareWidth = width;
+        });
+        this.visibilityValue = this.canvasGridService.isGridDisplayed;
     }
 
     changeSliderVisibilityInput(): void {
-        this.visibilityValue = this.canvasGridService.gridVisibility;
+        this.visibilityValue = this.canvasGridService.isGridDisplayed;
         console.log('this is ok ' + this.visibilityValue);
     }
 
     emitSquareWidth(): void {
+        console.log(this.squareWidth);
         this.squareWidthChanged.emit(this.squareWidth);
     }
 

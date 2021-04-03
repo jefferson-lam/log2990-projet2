@@ -9,9 +9,10 @@ import { Subject } from 'rxjs';
 export class CanvasGridService {
     opacityValue: number;
     squareWidth: number;
-    gridVisibility: boolean = false;
+    isGridDisplayed: boolean = false;
     gridCtx: CanvasRenderingContext2D;
     gridVisibilitySubject: Subject<boolean> = new Subject<boolean>();
+    widthSubject: Subject<number> = new Subject<number>();
 
     constructor(private drawingService: DrawingService) {
         this.drawingService.canvasHeightObservable.asObservable().subscribe((height) => {
@@ -28,39 +29,43 @@ export class CanvasGridService {
     }
 
     onKeyboardPlusOrEqualDown(): void {
-        this.squareWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) + GridConstants.SQUARE_WIDTH_INTERVAL;
-        this.removeGrid();
-        this.createGrid();
+        const newWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) + GridConstants.SQUARE_WIDTH_INTERVAL;
+        this.setSquareWidth(newWidth);
+        this.resetGrid();
     }
 
     onKeyboardMinusDown(): void {
-        this.squareWidth =
-            this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL < 5
-                ? 5
-                : this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL;
-        this.removeGrid();
-        this.createGrid();
-    }
-
-    setValues(): void {
-        this.opacityValue = GridConstants.DEFAULT_OPACITY;
-        this.squareWidth = GridConstants.DEFAULT_SQUARE_WIDTH;
+        const newWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL;
+        this.setSquareWidth(newWidth);
+        this.resetGrid();
     }
 
     setOpacityValue(opacityValue: number): void {
         this.opacityValue = opacityValue;
+        if (this.opacityValue > GridConstants.MAX_OPACITY_VALUE) this.opacityValue = GridConstants.MAX_OPACITY_VALUE;
+        else if (this.opacityValue < GridConstants.MIN_OPACITY_VALUE) this.opacityValue = GridConstants.MIN_OPACITY_VALUE;
+        if (this.isGridDisplayed) this.resetGrid();
     }
 
     setSquareWidth(squareWidth: number): void {
         this.squareWidth = squareWidth;
+        if (this.squareWidth > GridConstants.MAX_SQUARE_WIDTH) this.squareWidth = GridConstants.MAX_SQUARE_WIDTH;
+        else if (this.squareWidth < GridConstants.MIN_SQUARE_WIDTH) this.squareWidth = GridConstants.MIN_SQUARE_WIDTH;
+        if (this.isGridDisplayed) this.resetGrid();
+        this.widthSubject.next(this.squareWidth);
     }
 
     setVisibility(gridVisibility: boolean): void {
-        this.gridVisibility = !gridVisibility;
+        this.isGridDisplayed = !gridVisibility;
         this.toggleGrid();
     }
 
-    createGrid(): void {
+    private setValues(): void {
+        this.opacityValue = GridConstants.DEFAULT_OPACITY;
+        this.squareWidth = GridConstants.DEFAULT_SQUARE_WIDTH;
+    }
+
+    private createGrid(): void {
         const canvasWidth = this.gridCtx.canvas.width;
         const canvasHeight = this.gridCtx.canvas.height;
         this.gridCtx.beginPath();
@@ -72,31 +77,36 @@ export class CanvasGridService {
             this.gridCtx.moveTo(0, i * this.squareWidth);
             this.gridCtx.lineTo(canvasWidth, i * this.squareWidth);
         }
-        this.gridCtx.strokeStyle = 'rgba(0, 0, 0, 1)'; // 'black';
+        this.gridCtx.strokeStyle = `rgba(0, 0, 0, ${this.opacityValue})`;
         this.gridCtx.stroke();
     }
 
-    removeGrid(): void {
+    private removeGrid(): void {
         const canvasWidth = this.gridCtx.canvas.width;
         const canvasHeight = this.gridCtx.canvas.height;
         this.gridCtx.clearRect(0, 0, canvasWidth, canvasHeight);
     }
 
     private toggleGrid(): void {
-        if (!this.gridVisibility) {
+        if (!this.isGridDisplayed) {
             this.createGrid();
-            this.gridVisibility = true;
+            this.isGridDisplayed = true;
         } else {
             this.removeGrid();
-            this.gridVisibility = false;
+            this.isGridDisplayed = false;
         }
-        this.gridVisibilitySubject.next(this.gridVisibility);
+        this.gridVisibilitySubject.next(this.isGridDisplayed);
+    }
+
+    private resetGrid(): void {
+        this.removeGrid();
+        this.createGrid();
     }
 
     resize(width: number, height: number): void {
         this.gridCtx.canvas.width = width;
         this.gridCtx.canvas.height = height;
-        if (this.gridVisibility) {
+        if (this.isGridDisplayed) {
             this.createGrid();
         } else {
             this.removeGrid();
