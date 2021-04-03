@@ -66,15 +66,6 @@ describe('EllipseToolSelectionService', () => {
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
 
-        service['resizerHandlerService'].topLeftResizer = document.createElement('div');
-        service['resizerHandlerService'].topResizer = document.createElement('div');
-        service['resizerHandlerService'].topRightResizer = document.createElement('div');
-        service['resizerHandlerService'].rightResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomRightResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomLeftResizer = document.createElement('div');
-        service['resizerHandlerService'].leftResizer = document.createElement('div');
-
         parentMouseDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseDown');
         parentMouseUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseUp');
         parentKeyboardDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onKeyboardDown');

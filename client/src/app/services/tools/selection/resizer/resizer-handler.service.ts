@@ -1,7 +1,6 @@
 import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { Injectable } from '@angular/core';
 import { ResizeStrategy } from '@app/classes/resize-strategy';
-import { Vec2 } from '@app/classes/vec2';
 import { SelectionComponent } from '@app/components/selection/selection.component';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { BUTTON_OFFSET } from '@app/constants/selection-constants';
@@ -18,15 +17,6 @@ import { ResizeTopRight } from '@app/services/tools/selection/resizer/resize-str
     providedIn: 'root',
 })
 export class ResizerHandlerService {
-    leftResizer: HTMLElement;
-    rightResizer: HTMLElement;
-    bottomResizer: HTMLElement;
-    topResizer: HTMLElement;
-    topLeftResizer: HTMLElement;
-    topRightResizer: HTMLElement;
-    bottomLeftResizer: HTMLElement;
-    bottomRightResizer: HTMLElement;
-
     resizeStrategy: ResizeStrategy;
     resizerStrategies: Map<ResizerDown, ResizeStrategy>;
     resizers: Map<ResizerDown, HTMLElement>;
@@ -47,6 +37,7 @@ export class ResizerHandlerService {
             .set(ResizerDown.TopRight, new ResizeTopRight())
             .set(ResizerDown.Top, new ResizeTop());
         this.inUse = false;
+        this.isShiftDown = false;
     }
 
     assignComponent(selectionComponent: SelectionComponent): void {
@@ -68,8 +59,7 @@ export class ResizerHandlerService {
     }
 
     resetResizers(): void {
-        const resizers = this.getAllResizers();
-        resizers.forEach((resizer) => {
+        this.resizers.forEach((resizer) => {
             resizer.style.top = '0px';
             resizer.style.left = '0px';
             resizer.style.visibility = 'hidden';
@@ -115,19 +105,6 @@ export class ResizerHandlerService {
         const topResizer = this.resizers.get(ResizerDown.Top) as HTMLElement;
         topResizer.style.left = canvasPosition.x + canvas.width / 2 - BUTTON_OFFSET / 2 + 'px';
         topResizer.style.top = canvasPosition.y + 'px';
-    }
-
-    getTransformValues(element: HTMLElement): Vec2 {
-        const style = window.getComputedStyle(element);
-        const matrix = new WebKitCSSMatrix(style.transform);
-        return {
-            x: matrix.m41,
-            y: matrix.m42,
-        };
-    }
-
-    getAllResizers(): Map<ResizerDown, HTMLElement> {
-        return this.resizers;
     }
 
     setResizeStrategy(resizer: ResizerDown): void {
