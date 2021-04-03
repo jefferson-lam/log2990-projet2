@@ -22,6 +22,7 @@ export class SidebarComponent implements OnChanges {
     @Input() isRedoPossible: boolean = false;
     @Input() selectedTool: SidebarToolButton;
     @Input() isCanvasEmpty: boolean;
+    @Input() isGridOptionsDisplayed: boolean;
     shouldRun: boolean;
     isUndoSelection: boolean;
 
@@ -68,10 +69,6 @@ export class SidebarComponent implements OnChanges {
         this.selectedTool = tool;
     }
 
-    openGridSettings(): void {
-        this.selectedTool.keyShortcut = 'g';
-    }
-
     openNewDrawing(): void {
         this.openNewDrawingPopUp.emit();
     }
@@ -82,6 +79,10 @@ export class SidebarComponent implements OnChanges {
 
     saveDrawing(): void {
         this.openSavePopUp.emit();
+    }
+
+    openGridOptions(): void {
+        this.isGridOptionsDisplayed = !this.isGridOptionsDisplayed;
     }
 
     undo(): void {
