@@ -26,7 +26,6 @@ describe('ResizerHandlerService', () => {
             providers: [ResizeTopLeft, ResizeLeft, ResizeBottomLeft, ResizeBottom, ResizeBottomRight, ResizeRight, ResizeTopRight, ResizeTop],
         });
         service = TestBed.inject(ResizerHandlerService);
-        console.log(service.resizerStrategies);
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         canvas = canvasTestHelper.canvas;
 
