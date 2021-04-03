@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as GridConstants from '@app/constants/canvas-grid-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -10,6 +11,7 @@ export class CanvasGridService {
     squareWidth: number;
     gridVisibility: boolean = false;
     gridCtx: CanvasRenderingContext2D;
+    gridVisibilitySubject: Subject<boolean> = new Subject<boolean>();
 
     constructor(private drawingService: DrawingService) {
         this.drawingService.canvasHeightObservable.asObservable().subscribe((height) => {
@@ -54,8 +56,8 @@ export class CanvasGridService {
     }
 
     setVisibility(gridVisibility: boolean): void {
-        this.gridVisibility = gridVisibility;
-        console.log(this.gridVisibility);
+        this.gridVisibility = !gridVisibility;
+        this.toggleGrid();
     }
 
     createGrid(): void {
@@ -70,7 +72,7 @@ export class CanvasGridService {
             this.gridCtx.moveTo(0, i * this.squareWidth);
             this.gridCtx.lineTo(canvasWidth, i * this.squareWidth);
         }
-        this.gridCtx.strokeStyle = 'rgba(0, 0, 0, 1)'; //'black';
+        this.gridCtx.strokeStyle = 'rgba(0, 0, 0, 1)'; // 'black';
         this.gridCtx.stroke();
     }
 
@@ -80,7 +82,7 @@ export class CanvasGridService {
         this.gridCtx.clearRect(0, 0, canvasWidth, canvasHeight);
     }
 
-    toggleGrid(): void {
+    private toggleGrid(): void {
         if (!this.gridVisibility) {
             this.createGrid();
             this.gridVisibility = true;
@@ -88,6 +90,7 @@ export class CanvasGridService {
             this.removeGrid();
             this.gridVisibility = false;
         }
+        this.gridVisibilitySubject.next(this.gridVisibility);
     }
 
     resize(width: number, height: number): void {
