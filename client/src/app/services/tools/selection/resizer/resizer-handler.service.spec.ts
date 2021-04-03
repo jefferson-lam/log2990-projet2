@@ -1,14 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { BUTTON_OFFSET } from '@app/constants/selection-constants';
 import { ResizerHandlerService } from './resizer-handler.service';
 
 describe('ResizerHandlerService', () => {
     let service: ResizerHandlerService;
+    let canvasTestHelper: CanvasTestHelper;
+    let canvas: HTMLCanvasElement;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ResizerHandlerService);
+        canvasTestHelper = TestBed.inject(CanvasTestHelper);
+        canvas = canvasTestHelper.canvas;
+
         service.topLeftResizer = document.createElement('div');
         service.topResizer = document.createElement('div');
         service.topRightResizer = document.createElement('div');
@@ -50,7 +56,7 @@ describe('ResizerHandlerService', () => {
         const yMax = canvasPosition.y + canvasHeight - BUTTON_OFFSET + 'px';
         const yMean = canvasPosition.y + canvasHeight / 2 - BUTTON_OFFSET / 2 + 'px';
 
-        service.setResizerPositions(canvasPosition, canvasWidth, canvasHeight);
+        service.setResizerPositions(canvas);
         expect(service.topLeftResizer.style.left).toEqual(xOrigin);
         expect(service.topLeftResizer.style.top).toEqual(yOrigin);
         expect(service.topLeftResizer.style.visibility).toEqual(expectedVisibility);
@@ -86,15 +92,6 @@ describe('ResizerHandlerService', () => {
 
     it('getAllResizers should return all resizers', () => {
         const result = service.getAllResizers();
-        expect(result).toEqual([
-            service.topLeftResizer,
-            service.topResizer,
-            service.topRightResizer,
-            service.rightResizer,
-            service.bottomRightResizer,
-            service.bottomResizer,
-            service.bottomLeftResizer,
-            service.leftResizer,
-        ]);
+        expect(result).toEqual(service.resizers);
     });
 });

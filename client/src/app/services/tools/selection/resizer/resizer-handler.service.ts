@@ -81,6 +81,7 @@ export class ResizerHandlerService {
 
         this.resizers.forEach((resizer) => {
             resizer.style.visibility = 'visible';
+            resizer.style.transform = '';
         });
 
         const topLeftResizer = this.resizers.get(ResizerDown.TopLeft) as HTMLElement;

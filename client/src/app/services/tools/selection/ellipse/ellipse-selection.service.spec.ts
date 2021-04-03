@@ -191,7 +191,7 @@ describe('EllipseToolSelectionService', () => {
         expect(drawServiceSpy.selectionCanvas.height).toEqual(expectedHeight);
         expect(drawServiceSpy.selectionCanvas.style.left).toEqual('25px');
         expect(drawServiceSpy.selectionCanvas.style.top).toEqual('40px');
-        expect(resizerHandlerServiceSpy.setResizerPosition).toHaveBeenCalled();
+        expect(resizerHandlerServiceSpy.setResizerPositions).toHaveBeenCalled();
         expect(service.inUse).toBeFalsy();
         expect(service.isManipulating).toBeTruthy();
     });
