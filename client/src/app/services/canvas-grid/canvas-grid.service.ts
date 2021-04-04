@@ -24,17 +24,13 @@ export class CanvasGridService {
         this.setValues();
     }
 
-    onKeyboardGKeyDown(): void {
-        this.toggleGrid();
-    }
-
-    onKeyboardPlusOrEqualDown(): void {
+    increaseGridSize(): void {
         const newWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) + GridConstants.SQUARE_WIDTH_INTERVAL;
         this.setSquareWidth(newWidth);
         this.resetGrid();
     }
 
-    onKeyboardMinusDown(): void {
+    reduceGridSize(): void {
         const newWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL;
         this.setSquareWidth(newWidth);
         this.resetGrid();
@@ -56,8 +52,12 @@ export class CanvasGridService {
     }
 
     setVisibility(gridVisibility: boolean): void {
-        this.isGridDisplayed = !gridVisibility;
-        this.toggleGrid();
+        this.isGridDisplayed = gridVisibility;
+        if (this.isGridDisplayed) {
+            this.createGrid();
+        } else {
+            this.removeGrid();
+        }
     }
 
     private setValues(): void {
@@ -87,7 +87,7 @@ export class CanvasGridService {
         this.gridCtx.clearRect(0, 0, canvasWidth, canvasHeight);
     }
 
-    private toggleGrid(): void {
+    toggleGrid(): void {
         if (!this.isGridDisplayed) {
             this.createGrid();
             this.isGridDisplayed = true;
