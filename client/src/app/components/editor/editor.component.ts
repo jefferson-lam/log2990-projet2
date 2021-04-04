@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -21,19 +21,9 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class EditorComponent implements OnInit {
     cornerCoords: Vec2[] = [];
-
     currentTool: Tool;
     isPopUpOpen: boolean;
     isUndoSelection: boolean;
-    // fontStyle: string = 'Arial';
-    // fontFamily: string;
-    // fontSize: number = TextConstants.INIT_FONT_SIZE;
-    // textAlignment: string = 'center';
-    // textBold: boolean = false;
-    // textItalic: boolean = false;
-    // visibility: string = 'hidden';
-
-    @ViewChild('canvasTextBox', { static: false }) canvasTextBox: ElementRef<HTMLElement>;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -109,15 +99,6 @@ export class EditorComponent implements OnInit {
             this.currentTool.selectAll();
         }
     }
-
-    // @HostListener('mouseup', ['$event'])
-    // setInitialPositionTextBox(): void {
-    //     if (this.currentTool instanceof TextService) {
-    //         this.canvasTextBox.nativeElement.style.visibility = 'visible';
-    //         this.canvasTextBox.nativeElement.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
-    //         this.canvasTextBox.nativeElement.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
-    //     }
-    // }
 
     setTool(newTool: Tool): void {
         this.currentTool = newTool;

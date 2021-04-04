@@ -37,7 +37,7 @@ export class TextService extends Tool {
             this.textWidth = this.cornerCoords[TextConstants.START_INDEX].x;
             this.textHeight = this.cornerCoords[TextConstants.START_INDEX].y;
         }
-        if (this.finishedDrawing) {
+        if (this.finishedDrawing && this.placeHolderSpan.style.zIndex === '2') {
             const command: Command = new TextCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
             this.inUse = false;
@@ -50,6 +50,7 @@ export class TextService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
+            this.placeHolderSpan.style.zIndex = '2';
             this.placeHolderSpan.style.visibility = 'visible';
             this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
             this.placeHolderSpan.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
@@ -79,9 +80,7 @@ export class TextService extends Tool {
         if (event.key === 'Escape') {
             this.inUse = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        }
-        if (event.key === 'Enter') {
-            console.log('something happened');
+            this.placeHolderSpan.style.visibility = 'hidden';
         }
     }
 
@@ -114,9 +113,9 @@ export class TextService extends Tool {
         this.primaryColor = newColor;
     }
 
-    setSpanTextColor(): void {
-        this.placeHolderSpan.style.color = this.primaryColor;
-    }
+    // setSpanTextColor(): void {
+    //     this.placeHolderSpan.style.color = this.primaryColor;
+    // }
 
     private clearCornerCoords(): void {
         this.cornerCoords.fill({ x: 0, y: 0 });

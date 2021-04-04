@@ -24,6 +24,12 @@ describe('SettingsManagerService', () => {
             'setSidesCount',
             'setWaterDropWidth',
             'setEmissionCount',
+            'setFontFamily',
+            'setFontSize',
+            'setTextAlign',
+            'setTextBold',
+            'setTextItalic',
+            'setInputFromKeyboard',
         ]);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
         TestBed.configureTestingModule({
@@ -93,6 +99,38 @@ describe('SettingsManagerService', () => {
         const EXPECTED_EMISSION_COUNT = 50;
         service.setEmissionCount(EXPECTED_EMISSION_COUNT);
         expect(toolSpy.setEmissionCount).toHaveBeenCalled();
+    });
+
+    it('setFontFamily should call setFontFamily of toolManager', () => {
+        const EXPECTED_FONT_FAMILY = 'Arial';
+        service.setFontFamily(EXPECTED_FONT_FAMILY);
+        expect(toolSpy.setFontFamily).toHaveBeenCalled();
+    });
+
+    it('setFontSize should call setFontSize of toolManager', () => {
+        const EXPECTED_FONT_SIZE = 50;
+        service.setFontSize(EXPECTED_FONT_SIZE);
+        expect(toolSpy.setFontSize).toHaveBeenCalled();
+    });
+    it('setTextAlign should call setTextAlign of toolManager', () => {
+        const EXPECTED_ALIGN = 'center';
+        service.setTextAlign(EXPECTED_ALIGN);
+        expect(toolSpy.setTextAlign).toHaveBeenCalled();
+    });
+    it('setTextBold should call setTextBold of toolManager', () => {
+        const EXPECTED_BOLD = 'bold';
+        service.setTextBold(EXPECTED_BOLD);
+        expect(toolSpy.setTextBold).toHaveBeenCalled();
+    });
+    it('setInputFromKeyboard should call setInputFromKeyboard of toolManager', () => {
+        const EXPECTED_INPUT = 'Hello World';
+        service.setInputFromKeyboard(EXPECTED_INPUT);
+        expect(toolSpy.setInputFromKeyboard).toHaveBeenCalled();
+    });
+    it('setTextItalic should call setTextItalic of toolManager', () => {
+        const EXPECTED_ITALIC = 'italic';
+        service.setTextItalic(EXPECTED_ITALIC);
+        expect(toolSpy.setTextItalic).toHaveBeenCalled();
     });
 
     it('calls setPrimaryColorsTools when size changed', async(() => {

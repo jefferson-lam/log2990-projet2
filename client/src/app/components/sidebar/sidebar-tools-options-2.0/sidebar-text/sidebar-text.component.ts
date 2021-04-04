@@ -2,6 +2,7 @@ import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular
 import { Tool } from '@app/classes/tool';
 import * as TextConstants from '@app/constants/text-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { TextService } from '@app/services/tools/text/text-service';
 
 @Component({
@@ -34,7 +35,7 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     @Output() textBoldChanged: EventEmitter<string> = new EventEmitter();
     @Output() textItalicChanged: EventEmitter<string> = new EventEmitter();
 
-    constructor(public settingsManager: SettingsManagerService, private textService: TextService) {}
+    constructor(public settingsManager: SettingsManagerService, public toolManagerService: ToolManagerService, private textService: TextService) {}
 
     ngOnInit(): void {
         this.fontFamilyChanged.subscribe((newFont: string) => this.settingsManager.setFontFamily(newFont));
@@ -47,6 +48,7 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.textService.placeHolderSpan = document.createElement('span');
+        this.textService.placeHolderSpan.id = 'placeHolderSpan';
         this.textService.placeHolderSpan.style.position = 'absolute';
         this.textService.placeHolderSpan.setAttribute('role', 'textbox');
         this.textService.placeHolderSpan.contentEditable = 'true';
@@ -62,9 +64,6 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.inputFromKeyboard = this.textService.placeHolderSpan.innerText;
         this.textService.placeHolderSpan.style.zIndex = '2';
         this.textService.placeHolderSpan.style.color = this.textService.primaryColor;
-
-        // tslint:disable-next-line:no-string-literal
-        // this.textService.previewCommand = new TextCommand(this.textService['drawingService'].previewCtx, this.textService);
     }
 
     emitFontOptions(): void {

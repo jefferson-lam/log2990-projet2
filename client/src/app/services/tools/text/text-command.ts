@@ -55,7 +55,7 @@ export class TextCommand extends Command {
         for (let i = 0; i < this.splitText.length; i++) {
             ctx.fillText(
                 this.splitText[i],
-                this.textWidth + this.spanLeftPosition / 2,
+                this.textWidth + this.adjustWidthWithTextAlign(this.textAlign),
                 this.textHeight + this.fontSize / 2 + (this.spanTopPosition / this.splitText.length) * i,
             );
         }
@@ -63,5 +63,12 @@ export class TextCommand extends Command {
 
     splitTextString(): void {
         this.splitText = this.text.split('\n');
+    }
+
+    adjustWidthWithTextAlign(textAlign: string): number {
+        if (textAlign === 'center') return this.spanLeftPosition / 2;
+        if (textAlign === 'right') return this.spanLeftPosition;
+        if (textAlign === 'left') return 0;
+        else return 0;
     }
 }
