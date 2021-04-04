@@ -47,7 +47,7 @@ import { SidebarAerosolComponent } from './components/sidebar/sidebar-tools-opti
 import { SidebarEllipseSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse-selection/sidebar-ellipse-selection/sidebar-ellipse-selection.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
-import { SidebarGridComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-grid/sidebar-grid/sidebar-grid.component';
+import { SidebarGridComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-grid/sidebar-grid.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
 import { SidebarPipetteComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pipette/sidebar-pipette.component';
