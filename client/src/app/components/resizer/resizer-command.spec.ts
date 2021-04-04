@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { ResizerCommand } from './resizer-command';
 
 describe('ResizerCommand', () => {
     let service: ResizerCommand;
+    let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
     const numberValue: number = CanvasConstants.DEFAULT_WIDTH;
     let baseCanvas: HTMLCanvasElement;
     let previewLayer: HTMLCanvasElement;
@@ -31,8 +33,13 @@ describe('ResizerCommand', () => {
         document.body.append(bottomResizer);
         document.body.append(cornerResizer);
 
+        canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize']);
+
         TestBed.configureTestingModule({
-            providers: [{ provide: Number, useValue: numberValue }],
+            providers: [
+                { provide: Number, useValue: numberValue },
+                { provide: CanvasGridService, useValue: canvasGridServiceSpy },
+            ],
         });
         service = TestBed.inject(ResizerCommand);
 
@@ -45,12 +52,12 @@ describe('ResizerCommand', () => {
     });
 
     it('constructor can be without arguments', () => {
-        service = new ResizerCommand();
+        service = new ResizerCommand(canvasGridServiceSpy);
         expect(service).toBeTruthy();
     });
 
     it('constructor can be with arguments', () => {
-        service = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
+        service = new ResizerCommand(canvasGridServiceSpy, CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
         expect(service).toBeTruthy();
     });
 
@@ -67,6 +74,8 @@ describe('ResizerCommand', () => {
 
         expect(previewCtxDrawImageSpy).toHaveBeenCalled();
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
+
+        expect(canvasGridServiceSpy.resize).toHaveBeenCalled();
     });
 
     it('resizeCanvas should set new values', () => {
@@ -85,5 +94,6 @@ describe('ResizerCommand', () => {
         expect(service.cornerResizer.style.top).toBe(service.previewHeight + 'px');
         expect(service.bottomResizer.style.left).toBe(service.previewWidth / 2 + 'px');
         expect(service.bottomResizer.style.top).toBe(service.previewHeight + 'px');
+        expect(canvasGridServiceSpy.resize).toHaveBeenCalledWith(service.previewWidth, service.previewHeight);
     });
 });

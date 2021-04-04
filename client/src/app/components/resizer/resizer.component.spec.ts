@@ -4,6 +4,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { ResizerComponent } from '@app/components/resizer/resizer.component';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -14,6 +15,7 @@ describe('ResizerComponent', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawPreviewSpy: jasmine.Spy;
+    let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
     let baseCanvas: HTMLCanvasElement;
     let previewLayer: HTMLCanvasElement;
     let sideResizer: HTMLElement;
@@ -25,11 +27,13 @@ describe('ResizerComponent', () => {
     const cdkDragEndEvent: CdkDragEnd = {} as CdkDragEnd;
 
     beforeEach(async(() => {
+        canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize']);
         TestBed.configureTestingModule({
             declarations: [ResizerComponent],
             providers: [
                 { provide: DrawingService, useValue: drawingService },
                 { provide: UndoRedoService, useValue: undoRedoService },
+                { provide: CanvasGridService, useValue: canvasGridServiceSpy },
             ],
         }).compileComponents();
     }));
@@ -216,8 +220,8 @@ describe('ResizerComponent', () => {
 
     it('ngAfterViewInit should set resetCanvasSize to default values if drawingService.imageURL is null', () => {
         drawingService.imageURL = '';
-        const previousCommand = new ResizerCommand(1, 1);
-        const expectedCommand = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
+        const previousCommand = new ResizerCommand(canvasGridServiceSpy, 1, 1);
+        const expectedCommand = new ResizerCommand(canvasGridServiceSpy, CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
         undoRedoService.resetCanvasSize = previousCommand;
 
         component.ngAfterViewInit();
@@ -228,7 +232,7 @@ describe('ResizerComponent', () => {
     it('ngAfterViewInit should set resetCanvasSize if drawingService.imageURL is not null', () => {
         drawingService.imageURL =
             'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
-        const previousCommand = new ResizerCommand(2, 2);
+        const previousCommand = new ResizerCommand(canvasGridServiceSpy, 2, 2);
         undoRedoService.resetCanvasSize = previousCommand;
 
         component.ngAfterViewInit();
