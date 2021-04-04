@@ -4,6 +4,7 @@ import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service
 import { Subject } from 'rxjs';
 import { SidebarGridComponent } from './sidebar-grid.component';
 
+// tslint:disable: no-any
 describe('SidebarGridComponent', () => {
     let component: SidebarGridComponent;
     let fixture: ComponentFixture<SidebarGridComponent>;
@@ -13,7 +14,11 @@ describe('SidebarGridComponent', () => {
     let visibilityValueSubscribeSpy: jasmine.Spy<any>;
 
     beforeEach(async(() => {
-        canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', [], ['gridVisibilitySubject', 'widthSubject', 'isGridDisplayed']);
+        canvasGridServiceSpy = jasmine.createSpyObj(
+            'CanvasGridService',
+            ['setSquareWidth', 'setOpacityValue', 'setVisibility'],
+            ['gridVisibilitySubject', 'widthSubject', 'isGridDisplayed'],
+        );
         (Object.getOwnPropertyDescriptor(canvasGridServiceSpy, 'gridVisibilitySubject')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
             new Subject<any>(),
         );
@@ -77,5 +82,23 @@ describe('SidebarGridComponent', () => {
         const emitSpy = spyOn(component.visibilityValueChanged, 'emit');
         component.emitVisibilityValue();
         expect(emitSpy).toHaveBeenCalledWith(component.isGridOptionsDisplayed);
+    });
+
+    it('emission of squareWidthChanged should call setSquareWidth with specified width', () => {
+        const INPUT_WIDTH = 10;
+        component.squareWidthChanged.emit(INPUT_WIDTH);
+        expect(canvasGridServiceSpy.setSquareWidth).toHaveBeenCalledWith(INPUT_WIDTH);
+    });
+
+    it('emission of opacityValueChanged should call setOpacityValue with specified opacity', () => {
+        const INPUT_OPACITY = 0.5;
+        component.opacityValueChanged.emit(INPUT_OPACITY);
+        expect(canvasGridServiceSpy.setOpacityValue).toHaveBeenCalledWith(INPUT_OPACITY);
+    });
+
+    it('emission of visibilityValueChanged should call setVisibility with specified visibility', () => {
+        const INPUT_VISIBILITY = true;
+        component.visibilityValueChanged.emit(INPUT_VISIBILITY);
+        expect(canvasGridServiceSpy.setVisibility).toHaveBeenCalledWith(INPUT_VISIBILITY);
     });
 });
