@@ -23,7 +23,7 @@ export class EditorComponent implements OnInit {
     currentTool: Tool;
     isPopUpOpen: boolean;
     isUndoSelection: boolean;
-    isGridOptionsDisplayed: boolean = false;
+    isGridDisplayed: boolean = false;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -108,19 +108,21 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown.g', ['$event'])
     showGridOnCanvas(): void {
-        this.isGridOptionsDisplayed = !this.isGridOptionsDisplayed;
-        this.canvasGridService.onKeyboardGKeyDown();
+        this.isGridDisplayed = !this.isGridDisplayed;
+        this.canvasGridService.toggleGrid();
     }
 
     @HostListener('window:keydown.-', ['$event'])
     reduceGridSize(): void {
-        if (this.isGridOptionsDisplayed) this.canvasGridService.onKeyboardMinusDown();
+        if (this.isGridDisplayed) this.canvasGridService.reduceGridSize();
     }
 
     // Maybe add plus?
     @HostListener('window:keydown.=', ['$event'])
     increaseGridSize(): void {
-        if (this.isGridOptionsDisplayed) this.canvasGridService.onKeyboardPlusOrEqualDown();
+        if (this.isGridDisplayed) {
+            this.canvasGridService.increaseGridSize();
+        }
     }
 
     setTool(newTool: Tool): void {
