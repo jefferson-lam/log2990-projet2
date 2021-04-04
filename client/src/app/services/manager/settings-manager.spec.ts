@@ -15,7 +15,6 @@ describe('SettingsManagerService', () => {
     let editorComponent: EditorComponent;
     let toolSpy: jasmine.SpyObj<Tool>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
-    let canvasGridService: CanvasGridService;
 
     beforeEach(() => {
         toolSpy = jasmine.createSpyObj('Tool', [
@@ -34,7 +33,6 @@ describe('SettingsManagerService', () => {
                 { provide: EditorComponent, useValue: editorComponent },
                 { provide: Tool, useValue: toolSpy },
                 { provide: ToolManagerService, useValue: toolManagerSpy },
-                { provide: CanvasGridService, useValue: canvasGridService },
             ],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);

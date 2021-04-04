@@ -5,6 +5,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Subject } from 'rxjs';
 import { CanvasGridService } from './canvas-grid.service';
 
+// tslint:disable: no-any
+// tslint:disable: no-string-literal
 describe('CanvasGridService', () => {
     let service: CanvasGridService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
