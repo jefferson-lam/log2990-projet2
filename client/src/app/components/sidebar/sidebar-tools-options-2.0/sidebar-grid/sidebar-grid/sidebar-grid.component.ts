@@ -18,7 +18,7 @@ export class SidebarGridComponent implements OnInit {
     widthTickInterval: number = GridConstants.SQUARE_WIDTH_INTERVAL;
     squareWidth: number = GridConstants.DEFAULT_SQUARE_WIDTH;
     opacityValue: number = GridConstants.DEFAULT_OPACITY;
-    visibilityValue: boolean;
+    isGridOptionsDisplayed: boolean;
 
     @ViewChild('toggleGrid') toggleGrid: MatSlideToggle;
     @ViewChild('widthSlider') widthSlider: MatSlider;
@@ -41,16 +41,10 @@ export class SidebarGridComponent implements OnInit {
             this.widthSlider.value = width;
             this.squareWidth = width;
         });
-        this.visibilityValue = this.canvasGridService.isGridDisplayed;
-    }
-
-    changeSliderVisibilityInput(): void {
-        this.visibilityValue = this.canvasGridService.isGridDisplayed;
-        console.log('this is ok ' + this.visibilityValue);
+        this.isGridOptionsDisplayed = this.canvasGridService.isGridDisplayed;
     }
 
     emitSquareWidth(): void {
-        console.log(this.squareWidth);
         this.squareWidthChanged.emit(this.squareWidth);
     }
 
@@ -59,6 +53,6 @@ export class SidebarGridComponent implements OnInit {
     }
 
     emitVisibilityValue(): void {
-        this.visibilityValueChanged.emit(this.visibilityValue);
+        this.visibilityValueChanged.emit(this.isGridOptionsDisplayed);
     }
 }
