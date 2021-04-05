@@ -25,20 +25,11 @@ export class SelectionComponent implements AfterViewInit {
     selectionCtx: CanvasRenderingContext2D;
     previewSelectionCtx: CanvasRenderingContext2D;
 
-    // canvasHeightSubscriber: Subscription;
-    // canvasWidthSubscriber: Subscription;
-
     constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {}
 
     ngAfterViewInit(): void {
         this.selectionCtx = this.selectionCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewSelectionCtx = this.selectionCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.canvasHeightObservable.asObservable().subscribe((height) => {
-            this.selectionContainer.nativeElement.style.height = height + 'px';
-        });
-        this.drawingService.canvasWidthObservable.asObservable().subscribe((width) => {
-            this.selectionContainer.nativeElement.style.width = width + 'px';
-        });
         this.drawingService.selectionCtx = this.selectionCtx;
         this.drawingService.previewSelectionCtx = this.previewSelectionCtx;
         this.drawingService.selectionCanvas = this.selectionCanvas.nativeElement;
@@ -52,6 +43,15 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.topRightResizer = this.topRightResizer.nativeElement;
         this.resizerHandlerService.bottomLeftResizer = this.bottomLeftResizer.nativeElement;
         this.resizerHandlerService.bottomRightResizer = this.bottomRightResizer.nativeElement;
+
+        this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
+            this.resizeContainer(size[0], size[1]);
+        });
+    }
+
+    resizeContainer(width: number, height: number): void {
+        this.selectionContainer.nativeElement.style.width = width + 'px';
+        this.selectionContainer.nativeElement.style.height = height + 'px';
     }
 
     onCanvasMove(didCanvasMove: boolean): void {

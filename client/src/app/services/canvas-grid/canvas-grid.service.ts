@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import * as GridConstants from '@app/constants/canvas-grid-constants';
-import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -14,13 +13,7 @@ export class CanvasGridService {
     gridVisibilitySubject: Subject<boolean> = new Subject<boolean>();
     widthSubject: Subject<number> = new Subject<number>();
 
-    constructor(private drawingService: DrawingService) {
-        this.drawingService.canvasHeightObservable.asObservable().subscribe((height) => {
-            this.resize(this.gridCtx.canvas.width, height);
-        });
-        this.drawingService.canvasWidthObservable.asObservable().subscribe((width) => {
-            this.resize(width, this.gridCtx.canvas.height);
-        });
+    constructor() {
         this.setValues();
     }
 

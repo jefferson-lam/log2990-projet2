@@ -5,6 +5,7 @@ import * as CanvasConstants from '@app/constants/canvas-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
@@ -45,6 +46,11 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.baseCtx.fillStyle = 'white';
         this.baseCtx.fillRect(0, 0, this.baseCtx.canvas.width, this.baseCtx.canvas.height);
         this.canvasGridService.gridCtx = this.gridCtx;
+
+        this.drawingService.canvasSizeSubject = new BehaviorSubject<number[]>([this.drawingService.canvas.width, this.drawingService.canvas.height]);
+        this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
+            this.canvasGridService.resize(size[0], size[1]);
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
