@@ -13,6 +13,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subject } from 'rxjs';
@@ -30,6 +31,7 @@ describe('EditorComponent', () => {
     let toolStub: ToolStub;
     let rectangleSelectionService: RectangleSelectionService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let clipboardServiceSpy: jasmine.SpyObj<ClipboardService>;
     let keyboardEventSpy: jasmine.Spy;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
@@ -43,6 +45,7 @@ describe('EditorComponent', () => {
 
     beforeEach(async(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        clipboardServiceSpy = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'pasteSelection']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService, {} as UndoRedoService);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
@@ -57,6 +60,7 @@ describe('EditorComponent', () => {
             declarations: [EditorComponent, DrawingComponent, SidebarComponent],
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ClipboardService, useValue: clipboardServiceSpy },
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: ToolManagerService, useValue: toolManagerSpy },
                 { provide: Tool, useValue: toolStub },

@@ -1,49 +1,65 @@
 import { Injectable } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { RectangleSelectionService } from '../rectangle/rectangle-selection-service';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ClipboardService {
-    clipboard: ImageData;
-    canvasWidth: number;
-    canvasHeight: number;
+    // TODO: change imagedata initialization values to 1, this is for tests
+    clipboard: ImageData = new ImageData(1, 1);
+    // TODO: add implementation for lasso polygonal
+    currentTool: RectangleSelectionService | EllipseSelectionService;
 
-    // TODO: get selected tool for proper dimensions
-    constructor(private drawingService: DrawingService, private rectangleSelection: RectangleSelectionService) {}
+    constructor(public drawingService: DrawingService, public toolManager: ToolManagerService) {
+        this.toolManager.currentToolSubject.asObservable().subscribe((currentTool) => {
+            if (currentTool instanceof RectangleSelectionService || currentTool instanceof EllipseSelectionService) {
+                this.currentTool = currentTool;
+            }
+        });
+    }
 
     copySelection(): void {
-        if (this.isSelected(this.drawingService.selectionCtx, this.rectangleSelection.selectionWidth, this.rectangleSelection.selectionHeight)) {
+        console.log(this.isSelected(this.drawingService.selectionCtx, this.drawingService.selectionCanvas));
+        if (this.isSelected(this.drawingService.selectionCtx, this.drawingService.selectionCanvas)) {
             this.clipboard = this.drawingService.selectionCtx.getImageData(
                 0,
                 0,
-                this.rectangleSelection.selectionWidth,
-                this.rectangleSelection.selectionHeight,
+                this.drawingService.selectionCanvas.width,
+                this.drawingService.selectionCanvas.height,
             );
-            console.log(this.clipboard.data);
         }
     }
 
     cutSelection(): void {
         this.copySelection();
         this.drawingService.selectionCtx.fillStyle = 'white';
-        this.drawingService.selectionCtx.fillRect(0, 0, this.rectangleSelection.selectionWidth, this.rectangleSelection.selectionHeight);
-        // this.rectangleSelection.resetCanvasState(this.drawingService.selectionCanvas);
-        // this.rectangleSelection.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        // this.rectangleSelection.resetSelectedToolSettings();
-        // this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        // this.rectangleSelection.inUse = false;
+        this.drawingService.selectionCtx.fill();
+        // const resetKeyboardEvent: KeyboardEvent = {
+        //     key: 'Escape',
+        // } as KeyboardEvent;
+        // this.currentTool.isEscapeDown = true;
+        // this.currentTool.onKeyboardUp(resetKeyboardEvent);
+        this.currentTool.undoSelection();
     }
 
     pasteSelection(): void {
-        if (this.clipboard.data !== undefined) {
-            // TODO: paste selection to corner of base canvas as a selection
-            this.drawingService.baseCtx.putImageData(this.clipboard, 0, 0);
+        if (this.clipboard.data.some((pixel) => pixel !== 0)) {
+            this.currentTool.undoSelection();
+            this.drawingService.selectionCanvas.height = this.clipboard.height;
+            this.drawingService.selectionCanvas.width = this.clipboard.width;
+            this.drawingService.selectionCanvas.style.left = 0 + 'px';
+            this.drawingService.selectionCanvas.style.top = 0 + 'px';
+            this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
+            this.currentTool.isManipulating = true;
         }
     }
 
-    private isSelected(selectionCtx: CanvasRenderingContext2D, selectionWidth: number, selectionHeight: number): boolean {
-        return selectionCtx.getImageData(0, 0, selectionWidth, selectionHeight).data.some((pixel) => pixel !== 0);
+    private isSelected(selectionCtx: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement): boolean {
+        const isSelectionTool = this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService;
+        const selectionNotEmpty = selectionCtx.getImageData(0, 0, selectionCanvas.width, selectionCanvas.height).data.some((pixel) => pixel !== 0);
+        return isSelectionTool && selectionNotEmpty;
     }
 }
