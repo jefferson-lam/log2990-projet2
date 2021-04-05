@@ -23,7 +23,6 @@ export class EditorComponent implements OnInit {
     currentTool: Tool;
     isPopUpOpen: boolean;
     isUndoSelection: boolean;
-    isGridDisplayed: boolean = false;
 
     constructor(
         public toolManager: ToolManagerService,
