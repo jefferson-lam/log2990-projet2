@@ -152,4 +152,8 @@ export class ToolSelectionService extends Tool {
     clearCorners(cornerCoords: Vec2[]): Vec2[] {
         return cornerCoords.fill({ x: 0, y: 0 });
     }
+
+    onToolChange(): void {
+        this.resizerHandlerService.inUse = false;
+    }
 }

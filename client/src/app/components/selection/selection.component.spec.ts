@@ -35,6 +35,7 @@ describe('SelectionComponent', () => {
 
     beforeEach(() => {
         resizerHandlerService = TestBed.inject(ResizerHandlerService);
+        resizerHandlerService.inUse = true;
         fixture = TestBed.createComponent(SelectionComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
@@ -172,7 +173,15 @@ describe('SelectionComponent', () => {
         expect(result).toEqual(expectedResult);
     });
 
-    it('drawPreview should call resizerHandlerService resize and setResizerPositions', () => {
+    it('drawPreview should do nothing if resizerHandlerService.inUse', () => {
+        component.resizerHandlerService.inUse = false;
+        component.drawPreview(moveEvent);
+        expect(resizeSpy).not.toHaveBeenCalled();
+        expect(setResizerPositionsSpy).not.toHaveBeenCalled();
+        expect(drawScaledSpy).not.toHaveBeenCalled();
+    });
+
+    it('drawPreview should call resizerHandlerService resize and setResizerPositions if resizerHandlerService.inUse', () => {
         component.drawPreview(moveEvent);
         expect(resizeSpy).toHaveBeenCalled();
         expect(resizeSpy).toHaveBeenCalledWith(moveEvent);
@@ -180,21 +189,32 @@ describe('SelectionComponent', () => {
         expect(setResizerPositionsSpy).toHaveBeenCalledWith(component.previewSelectionCanvas);
     });
 
-    it('drawPreview should call drawWithScalingFactors and hide selectonCanvas', () => {
+    it('drawPreview should call drawWithScalingFactors and hide selectionCanvas if resizerHandlerService.inUse', () => {
         component.drawPreview(moveEvent);
         expect(drawScaledSpy).toHaveBeenCalled();
         expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
         expect(component.selectionCanvas.style.visibility).toBe('hidden');
     });
 
-    it('resizeSelectionCanvas should set resizerHandlerService.inUse to false, reset drag event and show selectionCanvas', () => {
+    it('resizeSelectionCanvas should do nothing if resizerHandlerService.inUse', () => {
+        component.resizerHandlerService.inUse = false;
+        component.resizeSelectionCanvas(endEvent);
+        expect(resizerHandlerService.inUse).toBeFalse();
+        expect(resetDragSpy).not.toHaveBeenCalled();
+        expect(drawScaledSpy).not.toHaveBeenCalled();
+        expect(drawScaledSpy).not.toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
+        expect(drawSelectionSpy).not.toHaveBeenCalled();
+        expect(drawSelectionSpy).not.toHaveBeenCalledWith(component.previewSelectionCanvas, 0, 0);
+    });
+
+    it('resizeSelectionCanvas should set resizerHandlerService.inUse to false, reset drag event and show selectionCanvas if resizerHandlerService.inUse', () => {
         component.resizeSelectionCanvas(endEvent);
         expect(resizerHandlerService.inUse).toBeFalse();
         expect(resetDragSpy).toHaveBeenCalled();
         expect(component.selectionCanvas.style.visibility).toBe('visible');
     });
 
-    it('resizeSelectionCanvas should call drawWithScalingFactors and drawImage', () => {
+    it('resizeSelectionCanvas should call drawWithScalingFactors and drawImage if resizerHandlerService.inUse', () => {
         component.resizeSelectionCanvas(endEvent);
         expect(drawScaledSpy).toHaveBeenCalled();
         expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
@@ -202,7 +222,7 @@ describe('SelectionComponent', () => {
         expect(drawSelectionSpy).toHaveBeenCalledWith(component.previewSelectionCanvas, 0, 0);
     });
 
-    it('resizeSelectionCanvas should reposition and resize selectionCanvas', () => {
+    it('resizeSelectionCanvas should reposition and resize selectionCanvas if resizerHandlerService.inUse', () => {
         component.previewSelectionCanvas.style.top = '100px';
         component.previewSelectionCanvas.style.left = '100px';
         component.resizeSelectionCanvas(endEvent);
@@ -212,7 +232,7 @@ describe('SelectionComponent', () => {
         expect(component.selectionCanvas.height).toBe(component.previewSelectionCanvas.height);
     });
 
-    it('resizeSelectionCanvas should fill selectionCtx with white', () => {
+    it('resizeSelectionCanvas should fill selectionCtx with white if resizerHandlerService.inUse', () => {
         const fillSpy = spyOn(component.selectionCtx, 'fillRect');
         component.resizeSelectionCanvas(endEvent);
         expect(component.selectionCtx.fillStyle).toBe('#ffffff');
@@ -338,6 +358,7 @@ describe('SelectionComponent', () => {
     });
 
     it('onShiftKeyDown should set resizerHandlerService.isShiftDown to true', () => {
+        component.resizerHandlerService.inUse = false;
         component.resizerHandlerService.isShiftDown = false;
         const keyEvent = {
             shiftKey: true,
@@ -370,6 +391,7 @@ describe('SelectionComponent', () => {
     });
 
     it('onShiftKeyUp should set resizerHandlerService.isShiftDown to false', () => {
+        component.resizerHandlerService.inUse = false;
         component.resizerHandlerService.isShiftDown = true;
         const keyEvent = {
             shiftKey: true,

@@ -167,6 +167,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     onToolChange(): void {
+        super.onToolChange();
         if (this.isManipulating) {
             const emptyMouseEvent: MouseEvent = {} as MouseEvent;
             this.onMouseDown(emptyMouseEvent);

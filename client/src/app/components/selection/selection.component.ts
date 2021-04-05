@@ -99,33 +99,37 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     drawPreview(event: CdkDragMove): void {
-        this.resizerHandlerService.resize(event);
-        this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
-        this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
-        this.selectionCanvas.style.visibility = 'hidden';
+        if (this.resizerHandlerService.inUse) {
+            this.resizerHandlerService.resize(event);
+            this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
+            this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+            this.selectionCanvas.style.visibility = 'hidden';
+        }
     }
 
     resizeSelectionCanvas(event: CdkDragEnd): void {
-        this.resizerHandlerService.inUse = false;
-        event.source._dragRef.reset();
-        this.selectionCanvas.style.visibility = 'visible';
+        if (this.resizerHandlerService.inUse) {
+            this.resizerHandlerService.inUse = false;
+            event.source._dragRef.reset();
+            this.selectionCanvas.style.visibility = 'visible';
 
-        // Save drawing to preview canvas before drawing is wiped due to resizing
-        this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+            // Save drawing to preview canvas before drawing is wiped due to resizing
+            this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
 
-        // Replace base canvas
-        this.selectionCanvas.style.top = this.previewSelectionCanvas.style.top;
-        this.selectionCanvas.style.left = this.previewSelectionCanvas.style.left;
+            // Replace base canvas
+            this.selectionCanvas.style.top = this.previewSelectionCanvas.style.top;
+            this.selectionCanvas.style.left = this.previewSelectionCanvas.style.left;
 
-        // Resize base canvas
-        this.selectionCanvas.width = this.previewSelectionCanvas.width;
-        this.selectionCanvas.height = this.previewSelectionCanvas.height;
+            // Resize base canvas
+            this.selectionCanvas.width = this.previewSelectionCanvas.width;
+            this.selectionCanvas.height = this.previewSelectionCanvas.height;
 
-        this.selectionCtx.fillStyle = 'white';
-        this.selectionCtx.fillRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
+            this.selectionCtx.fillStyle = 'white';
+            this.selectionCtx.fillRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
 
-        // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
-        this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);
+            // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
+            this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);
+        }
     }
 
     drawWithScalingFactors(targetContext: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {

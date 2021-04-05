@@ -5,6 +5,7 @@ import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constan
 import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
@@ -335,6 +336,12 @@ describe('EllipseToolSelectionService', () => {
         service.isManipulating = true;
         service.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
         expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('onToolChange should call super.onToolChange', () => {
+        const superSpy = spyOn(ToolSelectionService.prototype, 'onToolChange');
+        service.onToolChange();
+        expect(superSpy).toHaveBeenCalled();
     });
 
     it('onToolChange should call onMouseDown if isManipulating is true', () => {

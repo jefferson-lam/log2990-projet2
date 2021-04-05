@@ -189,6 +189,7 @@ export class RectangleSelectionService extends ToolSelectionService {
     }
 
     onToolChange(): void {
+        super.onToolChange();
         if (this.isManipulating) {
             const emptyMouseEvent: MouseEvent = {} as MouseEvent;
             this.onMouseDown(emptyMouseEvent);
@@ -234,6 +235,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         selectionWidth: number,
         selectionHeight: number,
     ): void {
+        this.drawingService.selectionCanvas.style.visibility = 'visible';
         selectionCtx.drawImage(
             baseCtx.canvas,
             cornerCoords[SelectionConstants.START_INDEX].x,

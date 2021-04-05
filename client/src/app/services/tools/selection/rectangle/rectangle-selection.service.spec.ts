@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { END_INDEX, START_INDEX } from '@app/constants/ellipse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
@@ -400,6 +401,12 @@ describe('RectangleSelectionService', () => {
         ]);
         expect(service.inUse).toBeFalsy();
         expect(service.isManipulating).toBeTruthy();
+    });
+
+    it('onToolChange should call super.onToolChange', () => {
+        const superSpy = spyOn(ToolSelectionService.prototype, 'onToolChange');
+        service.onToolChange();
+        expect(superSpy).toHaveBeenCalled();
     });
 
     it('onToolChange should call onMouseDown if isManipulating is true', () => {
