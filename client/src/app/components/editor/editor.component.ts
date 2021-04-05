@@ -117,7 +117,7 @@ export class EditorComponent implements OnInit {
         if (this.isGridDisplayed) this.canvasGridService.reduceGridSize();
     }
 
-    // Maybe add plus?
+    @HostListener('window:keydown.+', ['$event'])
     @HostListener('window:keydown.=', ['$event'])
     increaseGridSize(): void {
         if (this.isGridDisplayed) {
