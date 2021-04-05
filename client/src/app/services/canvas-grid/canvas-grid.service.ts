@@ -33,9 +33,11 @@ export class CanvasGridService {
     }
 
     reduceGridSize(): void {
-        const newWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL;
-        this.setSquareWidth(newWidth);
-        this.resetGrid();
+        if (this.isGridDisplayed) {
+            const newWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) - GridConstants.SQUARE_WIDTH_INTERVAL;
+            this.setSquareWidth(newWidth);
+            this.resetGrid();
+        }
     }
 
     setOpacityValue(opacityValue: number): void {
