@@ -147,22 +147,6 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(eventSpy);
     });
 
-    it('should call increaseGridSize if isGridDisplayed is true and + key was pressed', () => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: '+' });
-        component.isGridDisplayed = true;
-        component.onKeyboardDown(eventSpy);
-
-        expect(canvasGridServiceSpy.increaseGridSize).toHaveBeenCalled();
-    });
-
-    it('should not call increaseGridSize if isGridDisplayed is false and + key was pressed', () => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: '+' });
-        component.isGridDisplayed = false;
-        component.onKeyboardDown(eventSpy);
-
-        expect(canvasGridServiceSpy.increaseGridSize).not.toHaveBeenCalled();
-    });
-
     it("should call select tool when 'l' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'l' });
         component.onKeyboardDown(eventSpy);
@@ -188,29 +172,23 @@ describe('EditorComponent', () => {
     });
 
     it('showGridOnCanvas should set isGridDisplayed to false if initially true and call canvasGridService', () => {
-        component.isGridDisplayed = true;
         component.showGridOnCanvas();
-        expect(component.isGridDisplayed).toBeFalse();
         expect(canvasGridServiceSpy.toggleGrid).toHaveBeenCalled();
     });
 
     it('showGridOnCanvas should set isGridDisplayed to true if initially false and call canvasGridService', () => {
-        component.isGridDisplayed = false;
         component.showGridOnCanvas();
-        expect(component.isGridDisplayed).toBeTrue();
         expect(canvasGridServiceSpy.toggleGrid).toHaveBeenCalled();
     });
 
-    it('reduceGridSize should call canvasGridService reduceGridSize if isGridDisplayed is true', () => {
-        component.isGridDisplayed = true;
+    it('reduceGridSize should call canvasGridService reduceGridSize', () => {
         component.reduceGridSize();
         expect(canvasGridServiceSpy.reduceGridSize).toHaveBeenCalled();
     });
 
-    it('reduceGridSize should not call canvasGridService reduceGridSize if isGridDisplayed is false', () => {
-        component.isGridDisplayed = false;
-        component.reduceGridSize();
-        expect(canvasGridServiceSpy.reduceGridSize).not.toHaveBeenCalled();
+    it('increaseGridSize should call canvasGridService increaseGridSize', () => {
+        component.increaseGridSize();
+        expect(canvasGridServiceSpy.increaseGridSize).toHaveBeenCalled();
     });
 
     it('should prevent keydown default when ctrl+relevant key is down', () => {

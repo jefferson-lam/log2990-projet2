@@ -25,7 +25,7 @@ export class CanvasGridService {
     }
 
     increaseGridSize(): void {
-        if(this.isGridDisplayed) {
+        if (this.isGridDisplayed) {
             const newWidth = this.squareWidth - (this.squareWidth % GridConstants.SQUARE_WIDTH_INTERVAL) + GridConstants.SQUARE_WIDTH_INTERVAL;
             this.setSquareWidth(newWidth);
             this.resetGrid();

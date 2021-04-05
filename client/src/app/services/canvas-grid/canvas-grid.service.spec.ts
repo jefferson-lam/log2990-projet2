@@ -156,17 +156,35 @@ describe('CanvasGridService', () => {
         expect(visibilitySubjectSpy).toHaveBeenCalledWith(service.isGridDisplayed);
     });
 
-    it('increaseGridSize should increase current square width by set interval', () => {
+    it('increaseGridSize should increase current square width by set interval if isGridDisplayed is true', () => {
+        service.isGridDisplayed = true;
         const INITIAL_WIDTH = 10;
         service.squareWidth = INITIAL_WIDTH;
         service.increaseGridSize();
         expect(service.squareWidth).toEqual(INITIAL_WIDTH + GridConstants.SQUARE_WIDTH_INTERVAL);
     });
 
-    it('reduceGridSize should reduce current square width by set interval', () => {
+    it('increaseGridSize should not increase current square width by set interval if isGridDisplayed is false', () => {
+        service.isGridDisplayed = false;
+        const INITIAL_WIDTH = 10;
+        service.squareWidth = INITIAL_WIDTH;
+        service.increaseGridSize();
+        expect(service.squareWidth).toEqual(INITIAL_WIDTH);
+    });
+
+    it('reduceGridSize should reduce current square width by set interval if isGridDisplayed is true', () => {
+        service.isGridDisplayed = true;
         const INITIAL_WIDTH = 10;
         service.squareWidth = INITIAL_WIDTH;
         service.reduceGridSize();
         expect(service.squareWidth).toEqual(INITIAL_WIDTH - GridConstants.SQUARE_WIDTH_INTERVAL);
+    });
+
+    it('reduceGridSize should not reduce current square width by set interval if isGridDisplayed is false', () => {
+        service.isGridDisplayed = false;
+        const INITIAL_WIDTH = 10;
+        service.squareWidth = INITIAL_WIDTH;
+        service.reduceGridSize();
+        expect(service.squareWidth).toEqual(INITIAL_WIDTH);
     });
 });
