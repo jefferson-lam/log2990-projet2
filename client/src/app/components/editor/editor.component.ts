@@ -113,9 +113,7 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.+', ['$event'])
     @HostListener('window:keydown.=', ['$event'])
     increaseGridSize(): void {
-        if (this.isGridDisplayed) {
-            this.canvasGridService.increaseGridSize();
-        }
+        this.canvasGridService.increaseGridSize();
     }
 
     setTool(newTool: Tool): void {
