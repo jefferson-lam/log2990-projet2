@@ -22,8 +22,7 @@ export class ClipboardService {
     }
 
     copySelection(): void {
-        console.log(this.isSelected(this.drawingService.selectionCtx, this.drawingService.selectionCanvas));
-        if (this.isSelected(this.drawingService.selectionCtx, this.drawingService.selectionCanvas)) {
+        if (this.isSelected(this.drawingService.selectionCanvas)) {
             this.clipboard = this.drawingService.selectionCtx.getImageData(
                 0,
                 0,
@@ -42,7 +41,10 @@ export class ClipboardService {
         // } as KeyboardEvent;
         // this.currentTool.isEscapeDown = true;
         // this.currentTool.onKeyboardUp(resetKeyboardEvent);
-        this.currentTool.undoSelection();
+
+        if (this.isSelectionTool()) {
+            this.currentTool.undoSelection();
+        }
     }
 
     pasteSelection(): void {
@@ -54,12 +56,15 @@ export class ClipboardService {
             this.drawingService.selectionCanvas.style.top = 0 + 'px';
             this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
             this.currentTool.isManipulating = true;
+            // TODO: add boolean in selection tools commands to be able to use escape and mouse down
         }
     }
 
-    private isSelected(selectionCtx: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement): boolean {
-        const isSelectionTool = this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService;
-        const selectionNotEmpty = selectionCtx.getImageData(0, 0, selectionCanvas.width, selectionCanvas.height).data.some((pixel) => pixel !== 0);
-        return isSelectionTool && selectionNotEmpty;
+    private isSelected(selectionCanvas: HTMLCanvasElement): boolean {
+        return this.isSelectionTool() && selectionCanvas.width !== 0 && selectionCanvas.height !== 0;
+    }
+
+    private isSelectionTool(): boolean {
+        return this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService;
     }
 }

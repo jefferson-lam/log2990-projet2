@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { RectangleSelectionService } from '../rectangle/rectangle-selection-service';
 import { ClipboardService } from './clipboard.service';
 
 fdescribe('ClipboardService', () => {
@@ -10,6 +11,7 @@ fdescribe('ClipboardService', () => {
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
+    let rectangleSelectionService: RectangleSelectionService;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -24,7 +26,9 @@ fdescribe('ClipboardService', () => {
         selectionCtxStub = canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(ClipboardService);
+        rectangleSelectionService = TestBed.inject(RectangleSelectionService);
 
+        service.currentTool = rectangleSelectionService;
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].selectionCtx = selectionCtxStub;
@@ -35,14 +39,22 @@ fdescribe('ClipboardService', () => {
         expect(service).toBeTruthy();
     });
 
+    //   it('currentTool should always be a selection tool', () => {
+
+    // });
+
     it('copySelection should not do anything if selection is empty', () => {
         service.copySelection();
         expect(service.clipboard).toEqual(new ImageData(1, 1));
     });
 
     it('copySelection should copy selection data to clipboard', () => {
+        drawServiceSpy.selectionCanvas.width = 10;
+        drawServiceSpy.selectionCanvas.height = 10;
         const selectionCtxgetImageDataSpy = spyOn(selectionCtxStub, 'getImageData').and.callThrough();
         service.copySelection();
         expect(selectionCtxgetImageDataSpy).toHaveBeenCalled();
     });
+
+    it('pasteSelection undoes selection if active ', () => {});
 });
