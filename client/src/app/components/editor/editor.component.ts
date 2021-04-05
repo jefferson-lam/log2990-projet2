@@ -102,7 +102,6 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown.g', ['$event'])
     showGridOnCanvas(): void {
-        this.isGridDisplayed = !this.isGridDisplayed;
         this.canvasGridService.toggleGrid();
     }
 
