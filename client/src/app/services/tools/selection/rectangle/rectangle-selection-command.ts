@@ -3,6 +3,8 @@ import { Vec2 } from '@app/classes/vec2';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
 export class RectangleSelectionCommand extends Command {
+    initialSelectionWidth: number;
+    initialSelectionHeight: number;
     selectionWidth: number;
     selectionHeight: number;
     transformValues: Vec2;
@@ -23,6 +25,8 @@ export class RectangleSelectionCommand extends Command {
         this.ctx = canvasContext;
         this.cornerCoords = Object.assign([], rectangleSelectionService.cornerCoords);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
+        this.initialSelectionHeight = rectangleSelectionService.selectionHeight;
+        this.initialSelectionWidth = rectangleSelectionService.selectionWidth;
         this.selectionHeight = selectionCanvas.height;
         this.selectionWidth = selectionCanvas.width;
         this.transformValues = rectangleSelectionService.transformValues;
@@ -31,7 +35,7 @@ export class RectangleSelectionCommand extends Command {
 
     execute(): void {
         this.ctx.fillStyle = 'white';
-        this.ctx.fillRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
+        this.ctx.fillRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.initialSelectionWidth, this.initialSelectionHeight);
         // When implementing scaling, we will have to sum selectionWidth and selectionHeight to a
         // the distance scaled by the mouse
         this.ctx.drawImage(
