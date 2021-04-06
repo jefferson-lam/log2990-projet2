@@ -124,8 +124,8 @@ export class SelectionComponent implements AfterViewInit {
             this.selectionCanvas.width = this.previewSelectionCanvas.width;
             this.selectionCanvas.height = this.previewSelectionCanvas.height;
 
-            this.selectionCtx.fillStyle = 'white';
-            this.selectionCtx.fillRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
+            // Clear the contents of the selectionCtx before redrawing the scaled image
+            this.selectionCtx.clearRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
 
             // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
             this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);

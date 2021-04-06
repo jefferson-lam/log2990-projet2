@@ -233,10 +233,10 @@ describe('SelectionComponent', () => {
     });
 
     it('resizeSelectionCanvas should fill selectionCtx with white if resizerHandlerService.inUse', () => {
-        const fillSpy = spyOn(component.selectionCtx, 'fillRect');
+        const clearSpy = spyOn(component.selectionCtx, 'clearRect');
         component.resizeSelectionCanvas(endEvent);
-        expect(component.selectionCtx.fillStyle).toBe('#ffffff');
-        expect(fillSpy).toHaveBeenCalled();
+        expect(component.selectionCtx.fillStyle).toBe('#000000');
+        expect(clearSpy).toHaveBeenCalled();
     });
 
     it('drawWithScalingFactors should call getScalingFactors', () => {
