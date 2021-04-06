@@ -48,6 +48,18 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setEmissionCount(newEmissionCount);
     }
 
+    setImageSource(newSource: string): void {
+        this.editorComponent.currentTool.setImageSource(newSource);
+    }
+
+    setImageZoomFactor(newFactor: number): void {
+        this.editorComponent.currentTool.setImageZoomFactor(newFactor);
+    }
+
+    setAngleRotation(newAngle: number): void {
+        this.editorComponent.currentTool.setAngleRotation(newAngle);
+    }
+
     setPrimaryColorTools(color: string): void {
         this.toolManagerService.setPrimaryColorTools(color);
     }

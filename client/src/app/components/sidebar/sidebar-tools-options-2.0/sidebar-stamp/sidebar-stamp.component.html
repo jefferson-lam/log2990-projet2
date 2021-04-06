@@ -1,0 +1,40 @@
+<div id="settingsContainer">
+  <h2 id="title">Options Étampe</h2>
+  <div id='imagesContainer'>
+    <img #stamp1 class='image' src="assets/stamp_1.svg" alt="Image broken" width='100'  height='100' (click)='emitImageSrc(1); changeBorderIndicator(1)'>
+    <img #stamp2 class='image' src="assets/stamp_2.svg" alt="Image broken" width='100'  height='100' (click)='emitImageSrc(2); changeBorderIndicator(2)'>
+    <img #stamp3 class='image' src="assets/stamp_3.svg" alt="Image broken" width='100'  height='100' (click)='emitImageSrc(3); changeBorderIndicator(3)'>
+    <img #stamp4 class='image' src="assets/stamp_4.svg" alt="Image broken" width='100'  height='100' (click)='emitImageSrc(4); changeBorderIndicator(4)'>
+  </div>
+  <div id="zoomSettings">
+    <p> Facteur d'agrandissement : {{ zoomFactor }} </p>
+    <mat-slider
+      id="zoomValue"
+      color="warn"
+      thumbLabel
+      [tickInterval]="tickInterval"
+      [min]="minFactor"
+      [max]="maxFactor"
+      [(value)]="zoomFactor"
+      (change)="emitZoomFactor()"
+    >
+    </mat-slider>
+  </div>
+
+  <div id="rotateSettings">
+    <p> Degrés de rotation initial: {{ rotationAngle }} </p>
+    <mat-slider
+      id="angleValue"
+      color="warn"
+      thumbLabel
+      [tickInterval]="tickInterval"
+      [min]="minAngle"
+      [max]="maxAngle"
+      [(value)]="rotationAngle"
+      (change)="emitRotateAngle()"
+    > {{ rotationAngle }} degrés
+    </mat-slider>
+  </div>
+
+</div>
+

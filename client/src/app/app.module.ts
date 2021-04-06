@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -52,6 +53,7 @@ import { SidebarPipetteComponent } from './components/sidebar/sidebar-tools-opti
 import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-polygone/sidebar-polygone.component';
 import { SidebarRectangleSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle-selection/sidebar-rectangle-selection/sidebar-rectangle-selection.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
+import { SidebarStampComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-stamp/sidebar-stamp.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
@@ -85,6 +87,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         DirectionalMovementDirective,
         SidebarRectangleSelectionComponent,
         SidebarEllipseSelectionComponent,
+        SidebarStampComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
@@ -115,6 +118,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatChipsModule,
         MatRadioModule,
         MatProgressSpinnerModule,
+        MatSlideToggleModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

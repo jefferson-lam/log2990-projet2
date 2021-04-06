@@ -105,6 +105,11 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.currentTool.onMouseEnter(event);
     }
 
+    @HostListener('mousewheel', ['$event'])
+    onMouseWheel(event: WheelEvent): void {
+        this.currentTool.onMouseWheel(event);
+    }
+
     @HostListener('contextmenu', ['$event'])
     onContextMenu(event: MouseEvent): void {
         event.preventDefault();
