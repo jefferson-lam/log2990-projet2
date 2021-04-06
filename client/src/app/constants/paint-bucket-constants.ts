@@ -1,4 +1,4 @@
-export const DEFAULT_TOLERANCE_VALUE = 25;
+export const DEFAULT_TOLERANCE_VALUE = 0;
 
 export const MIN_TOLERANCE_VALUE = 0;
 
