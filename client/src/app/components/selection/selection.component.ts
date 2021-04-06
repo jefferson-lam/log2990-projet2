@@ -129,6 +129,7 @@ export class SelectionComponent implements AfterViewInit {
 
             // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
             this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);
+            this.previewSelectionCtx.clearRect(0, 0, this.previewSelectionCanvas.width, this.previewSelectionCanvas.height);
         }
     }
 
