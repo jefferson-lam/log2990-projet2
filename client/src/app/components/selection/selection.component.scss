@@ -8,6 +8,7 @@
     position: absolute;
     z-index: 13;
     border: 1px dashed #000000;
+    background: transparent;
 }
 
 #selectionContainer {
@@ -29,15 +30,19 @@
     visibility: hidden;
 }
 
-#leftSlider, #rightSlider {
-  cursor: w-resize;
+#leftSlider,
+#rightSlider {
+    cursor: w-resize;
 }
-#topSlider, #bottomSlider{
-  cursor: n-resize;
+#topSlider,
+#bottomSlider {
+    cursor: n-resize;
 }
-#bottomLeftSlider, #topRightSlider {
-  cursor: sw-resize;
+#bottomLeftSlider,
+#topRightSlider {
+    cursor: sw-resize;
 }
-#bottomRightSlider, #topLeftSlider {
-  cursor: se-resize;
+#bottomRightSlider,
+#topLeftSlider {
+    cursor: se-resize;
 }
