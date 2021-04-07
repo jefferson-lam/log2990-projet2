@@ -82,7 +82,6 @@ export class PaintBucketService extends Tool {
 
     matchColors(confidenceInterval: any, color: number) {
         if (color <= confidenceInterval[1] && color >= confidenceInterval[0]) {
-            this.hasSeen.set(color, true);
             return true;
         }
         return false;
@@ -110,9 +109,6 @@ export class PaintBucketService extends Tool {
         } // avoid endless loop
         while (stack.length) {
             iter++;
-            if (iter >= 4 * (w * h)) {
-                break;
-            }
             let idx = stack.pop()!;
             while (idx >= w && this.matchColors(confidenceInterval, p32[idx - w])) {
                 idx -= w;
@@ -120,11 +116,11 @@ export class PaintBucketService extends Tool {
             right = left = false;
             leftEdge = idx % w === 0;
             rightEdge = (idx + 1) % w === 0;
-            while (this.hasSeen.get(p32[idx]) || this.matchColors(confidenceInterval, p32[idx])) {
+            while (this.matchColors(confidenceInterval, p32[idx])) {
                 iter++;
                 p32[idx] = fillColor;
                 if (!leftEdge) {
-                    if (this.hasSeen.get(p32[idx - 1]) || this.matchColors(confidenceInterval, p32[idx - 1])) {
+                    if (this.matchColors(confidenceInterval, p32[idx - 1])) {
                         // check left
                         if (!left) {
                             if (!visited[idx - 1]) {
@@ -138,7 +134,7 @@ export class PaintBucketService extends Tool {
                     }
                 }
                 if (!rightEdge) {
-                    if (this.hasSeen.get(p32[idx + 1]) || this.matchColors(confidenceInterval, p32[idx + 1])) {
+                    if (this.matchColors(confidenceInterval, p32[idx + 1])) {
                         if (!right) {
                             if (!visited[idx + 1]) {
                                 stack.push(idx + 1); // new column to right
@@ -156,7 +152,6 @@ export class PaintBucketService extends Tool {
         ctx.putImageData(imgData, 0, 0);
         console.log(iter);
         console.log(p32.length);
-        this.hasSeen.clear();
         return;
     }
 
