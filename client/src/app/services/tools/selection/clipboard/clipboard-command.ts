@@ -2,11 +2,14 @@ import { Command } from '@app/classes/command';
 import { ClipboardService } from './clipboard.service';
 
 export class ClipboardCommand extends Command {
-    constructor(public clipboardService: ClipboardService) {
+    constructor(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService) {
         super();
+        this.setValues(canvasContext);
     }
 
-    setValues(): void {}
+    setValues(canvasContext: CanvasRenderingContext2D): void {
+        this.ctx = canvasContext;
+    }
 
     execute(): void {}
 }

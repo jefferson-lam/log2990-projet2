@@ -10,7 +10,12 @@ export class RectangleSelectionCommand extends Command {
     cornerCoords: Vec2[] = [];
     selectionCanvas: HTMLCanvasElement;
 
-    constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, rectangleSelectionService: RectangleSelectionService) {
+    constructor(
+        canvasContext: CanvasRenderingContext2D,
+        selectionCanvas: HTMLCanvasElement,
+        rectangleSelectionService: RectangleSelectionService,
+        // public clipboardService: ClipboardService,
+    ) {
         super();
         this.setValues(canvasContext, selectionCanvas, rectangleSelectionService);
     }
@@ -30,8 +35,11 @@ export class RectangleSelectionCommand extends Command {
     }
 
     execute(): void {
+        // if (!this.clipboardService.isPasted) {
         this.ctx.fillStyle = 'white';
         this.ctx.fillRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
+        // this.clipboardService.isPasted = false;
+        // }
         // When implementing scaling, we will have to sum selectionWidth and selectionHeight to a
         // the distance scaled by the mouse
         this.ctx.drawImage(

@@ -3,6 +3,7 @@ import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { Tool } from '@app/classes/tool';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -42,7 +43,7 @@ export class SidebarComponent implements OnChanges {
         { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' },
     ];
 
-    constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService) {
+    constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService, public clipboardService: ClipboardService) {
         this.shouldRun = false;
         this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
@@ -105,5 +106,31 @@ export class SidebarComponent implements OnChanges {
         if (this.currentTool instanceof RectangleSelectionService) {
             this.currentTool.selectAll();
         }
+    }
+
+    copySelection(): void {
+        // TODO: add implementation for lasso
+        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+            this.clipboardService.copySelection();
+        }
+    }
+
+    cutSelection(): void {
+        // TODO: add implementation for lasso
+        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+            this.clipboardService.cutSelection();
+        }
+    }
+
+    deleteSelection(): void {
+        // TODO: add implementation for lasso
+        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+            this.clipboardService.deleteSelection();
+        }
+    }
+
+    pasteSelection(): void {
+        // TODO: change current tool
+        this.clipboardService.pasteSelection();
     }
 }

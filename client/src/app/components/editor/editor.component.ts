@@ -62,6 +62,12 @@ export class EditorComponent implements OnInit {
         this.clipboardService.cutSelection();
     }
 
+    @HostListener('window:keydown.delete', ['$event'])
+    onDeleteKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        this.clipboardService.deleteSelection();
+    }
+
     @HostListener('window:keydown.control.e', ['$event'])
     onCtrlEKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
