@@ -1,14 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
-import { Subject } from 'rxjs';
 import { EllipseSelectionService } from '../ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '../rectangle/rectangle-selection-service';
 import { ClipboardService } from './clipboard.service';
 
-fdescribe('ClipboardService', () => {
+describe('ClipboardService', () => {
     let service: ClipboardService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let toolManagerService: ToolManagerService;
@@ -34,8 +32,7 @@ fdescribe('ClipboardService', () => {
         rectangleSelectionService = TestBed.inject(RectangleSelectionService);
         ellipseSelectionService = TestBed.inject(EllipseSelectionService);
 
-        toolManagerService.currentToolSubject = new Subject<Tool>();
-
+        service.currentTool = rectangleSelectionService;
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].selectionCtx = selectionCtxStub;
@@ -46,13 +43,7 @@ fdescribe('ClipboardService', () => {
         expect(service).toBeTruthy();
     });
 
-    // it('currentTool should change to rectangle selection tool if toolManager subject changes', () => {
-    //     toolManagerService.currentToolSubject.next(rectangleSelectionService);
-    //     expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
-    // });
-
     it('copySelection should not do anything if selection is empty', () => {
-        service.currentTool = rectangleSelectionService;
         canvasTestHelper.selectionCanvas.width = 0;
         canvasTestHelper.selectionCanvas.height = 0;
         service.copySelection();
@@ -60,9 +51,6 @@ fdescribe('ClipboardService', () => {
     });
 
     it('copySelection should copy selection data to clipboard', () => {
-        service.currentTool = rectangleSelectionService;
-        canvasTestHelper.selectionCanvas.width = 1;
-        canvasTestHelper.selectionCanvas.height = 1;
         const selectionCtxgetImageDataSpy = spyOn(selectionCtxStub, 'getImageData').and.callThrough();
         service.copySelection();
         expect(selectionCtxgetImageDataSpy).toHaveBeenCalled();
@@ -72,24 +60,55 @@ fdescribe('ClipboardService', () => {
             canvasTestHelper.selectionCanvas.width,
             canvasTestHelper.selectionCanvas.width,
         );
-        // const clipboardIsEmpty = service.clipboard.data.some((pixel) => pixel === 0);
-        // expect(clipboardIsEmpty).toBeFalse();
         expect(service.clipboard).not.toBe(new ImageData(1, 1));
+        expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
     });
 
     it('pasteSelection annuls selection if active ', () => {
-        service.currentTool = rectangleSelectionService;
-        const onKeyboardUpSpy = spyOn(service.currentTool, 'onKeyboardUp').and.callThrough();
-        canvasTestHelper.selectionCanvas.width = 1;
-        canvasTestHelper.selectionCanvas.height = 1;
-        service.copySelection();
+        // to initialize clipboard, or else data is empty
+        service.clipboard.data[0] = 255;
+        service.clipboard.data[1] = 255;
+        service.clipboard.data[2] = 255;
+        service.clipboard.data[3] = 255;
+        const undoSelectionSpy = spyOn(service.currentTool, 'undoSelection').and.callThrough();
         service.pasteSelection();
-        expect(onKeyboardUpSpy).toHaveBeenCalled();
+        expect(undoSelectionSpy).toHaveBeenCalled();
+        expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
+    });
+
+    it('pasteSelection changes to selection tool used during copy', () => {
+        service.clipboard.data[0] = 255;
+        service.clipboard.data[1] = 255;
+        service.clipboard.data[2] = 255;
+        service.clipboard.data[3] = 255;
+        const selectToolSpy = spyOn(toolManagerService, 'selectTool').and.callThrough();
+        service.pasteSelection();
+        expect(selectToolSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection moves selection canvas to corner of drawing canvas', () => {
+        service.clipboard.data[0] = 255;
+        service.clipboard.data[1] = 255;
+        service.clipboard.data[2] = 255;
+        service.clipboard.data[3] = 255;
+        const putImageDataSpy = spyOn(selectionCtxStub, 'putImageData').and.callThrough();
+        service.pasteSelection();
+        expect(putImageDataSpy).toHaveBeenCalled();
         expect(canvasTestHelper.selectionCanvas.height).toEqual(service.clipboard.height);
+        expect(canvasTestHelper.selectionCanvas.width).toEqual(service.clipboard.width);
+        expect(canvasTestHelper.selectionCanvas.style.left).toEqual('0px');
+        expect(canvasTestHelper.selectionCanvas.style.top).toEqual('0px');
+    });
+
+    it('pasteSelection does nothing if clipboard is empty ', () => {
+        const putImageDataSpy = spyOn(selectionCtxStub, 'putImageData').and.callThrough();
+        const someSpy = spyOn(service.clipboard.data, 'some').and.returnValue(false);
+        service.pasteSelection();
+        expect(someSpy).toHaveBeenCalled();
+        expect(putImageDataSpy).not.toHaveBeenCalled();
     });
 
     it('deleteSelection fills active selection using RectangleSelectionService method ', () => {
-        service.currentTool = rectangleSelectionService;
         const fillEllipseSpy = spyOn(ellipseSelectionService, 'fillEllipse').and.callFake(() => {
             return;
         });
@@ -111,10 +130,16 @@ fdescribe('ClipboardService', () => {
         const fillRectangleSpy = spyOn(rectangleSelectionService, 'fillRectangle').and.callFake(() => {
             return;
         });
-        // canvasTestHelper.selectionCanvas.width = 1;
-        // canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
         expect(fillEllipseSpy).toHaveBeenCalled();
         expect(fillRectangleSpy).not.toHaveBeenCalled();
+    });
+
+    it('cutSelection calls copy and delete selection', () => {
+        const copySelectionSpy = spyOn(service, 'copySelection');
+        const deleteSelectionSpy = spyOn(service, 'deleteSelection');
+        service.cutSelection();
+        expect(copySelectionSpy).toHaveBeenCalled();
+        expect(deleteSelectionSpy).toHaveBeenCalled();
     });
 });

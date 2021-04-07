@@ -130,7 +130,6 @@ export class SidebarComponent implements OnChanges {
     }
 
     pasteSelection(): void {
-        // TODO: change current tool
         this.clipboardService.pasteSelection();
     }
 }

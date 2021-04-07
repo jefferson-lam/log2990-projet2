@@ -11,6 +11,8 @@ import { LineService } from '@app/services/tools/line/line-service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SidebarComponent } from './sidebar.component';
@@ -25,6 +27,8 @@ describe('SidebarComponent', () => {
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
     let rectangleSelectionServiceStub: RectangleSelectionService;
+    let ellipseSelectionServiceStub: EllipseSelectionService;
+    let clipboardService: ClipboardService;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let undoRedoService: UndoRedoService;
@@ -57,6 +61,12 @@ describe('SidebarComponent', () => {
             {} as ResizerHandlerService,
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
+        ellipseSelectionServiceStub = new EllipseSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new EllipseService({} as DrawingService, {} as UndoRedoService),
+        );
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -76,6 +86,7 @@ describe('SidebarComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
 
+        clipboardService = TestBed.inject(ClipboardService);
         undoRedoService = TestBed.inject(UndoRedoService);
         mockCommand = new PencilCommand({} as CanvasRenderingContext2D, pencilStub as PencilService);
         commandExecuteSpy = spyOn(mockCommand, 'execute');
@@ -212,6 +223,14 @@ describe('SidebarComponent', () => {
         });
     });
 
+    it('when changing tool from editor, selected tool should correctly retrieve tool', () => {
+        const findSpy = spyOn(component.sidebarToolButtons, 'find');
+        component.ngOnChanges({
+            currentTool: {} as SimpleChange,
+        });
+        expect(findSpy).not.toHaveBeenCalled();
+    });
+
     it('pressing on newDrawing should emit to editor', () => {
         const newDrawingButton = fixture.debugElement.nativeElement.querySelector('#new-drawing-button');
         newDrawingButton.click();
@@ -322,38 +341,95 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on selectAll should change the currentTool to rectangleSelectionService and call its selectAll method', () => {
-        const rectangleSelectionService = new RectangleSelectionService(
-            {} as DrawingService,
-            {} as UndoRedoService,
-            {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
-        );
         toolManagerServiceSpy.getTool.and.callFake(() => {
-            return rectangleSelectionService;
+            return rectangleSelectionServiceStub;
         });
-        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+        const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
             return;
         });
         component.selectAll();
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleSelectionService);
+        expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleSelectionServiceStub);
         expect(selectAllSpy).toHaveBeenCalled();
     });
 
     it('clicking on selectAll should not call selectAll if the tool is not rectangleSelectionService', () => {
-        const rectangleSelectionService = new RectangleSelectionService(
-            {} as DrawingService,
-            {} as UndoRedoService,
-            {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
-        );
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return ellipseStub;
         });
-        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+        const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
             return;
         });
         component.selectAll();
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
         expect(selectAllSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on copySelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        component.currentTool = rectangleSelectionServiceStub;
+        const copySpy = spyOn(clipboardService, 'copySelection');
+        component.copySelection();
+        expect(copySpy).toHaveBeenCalled();
+    });
+
+    it('clicking on copySelection should only copy if currentTool is one of the tool selection (ellipse)', () => {
+        component.currentTool = ellipseSelectionServiceStub;
+        const copySpy = spyOn(clipboardService, 'copySelection');
+        component.copySelection();
+        expect(copySpy).toHaveBeenCalled();
+    });
+
+    it('clicking on copySelection should not copy if currentTool is not one of the tool selection', () => {
+        component.currentTool = ellipseStub;
+        const copySpy = spyOn(clipboardService, 'copySelection');
+        component.copySelection();
+        expect(copySpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on cutSelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        component.currentTool = rectangleSelectionServiceStub;
+        const cutSpy = spyOn(clipboardService, 'cutSelection');
+        component.cutSelection();
+        expect(cutSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on cutSelection should only copy if currentTool is one of the tool selection (ellipse)', () => {
+        component.currentTool = ellipseSelectionServiceStub;
+        const cutSpy = spyOn(clipboardService, 'cutSelection');
+        component.cutSelection();
+        expect(cutSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on cutSelection should not copy if currentTool is not one of the tool selection', () => {
+        component.currentTool = ellipseStub;
+        const cutSpy = spyOn(clipboardService, 'cutSelection');
+        component.cutSelection();
+        expect(cutSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on deleteSelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        component.currentTool = rectangleSelectionServiceStub;
+        const deleteSpy = spyOn(clipboardService, 'deleteSelection');
+        component.deleteSelection();
+        expect(deleteSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on deleteSelection should only copy if currentTool is one of the tool selection (ellipse)', () => {
+        component.currentTool = ellipseSelectionServiceStub;
+        const deleteSpy = spyOn(clipboardService, 'deleteSelection');
+        component.deleteSelection();
+        expect(deleteSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on deleteSelection should not copy if currentTool is not one of the tool selection', () => {
+        component.currentTool = ellipseStub;
+        const deleteSpy = spyOn(clipboardService, 'deleteSelection');
+        component.deleteSelection();
+        expect(deleteSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on pasteSelection should call clipboardService method', () => {
+        const pasteSpy = spyOn(clipboardService, 'pasteSelection');
+        component.pasteSelection();
+        expect(pasteSpy).toHaveBeenCalled();
     });
 });

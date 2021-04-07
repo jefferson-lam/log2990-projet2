@@ -153,4 +153,10 @@ describe('EllipseSelectionCommandService', () => {
         expect(radii[0]).toEqual(shortestSide);
         expect(radii[1]).toEqual(shortestSide);
     });
+
+    it('execute should not fill shape if isFromClipboard is set to true', () => {
+        command.isFromClipboard = true;
+        command.execute();
+        expect(baseCtxFillSpy).not.toHaveBeenCalled();
+    });
 });

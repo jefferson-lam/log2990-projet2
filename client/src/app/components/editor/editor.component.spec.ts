@@ -45,7 +45,7 @@ describe('EditorComponent', () => {
 
     beforeEach(async(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        clipboardServiceSpy = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'pasteSelection']);
+        clipboardServiceSpy = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'pasteSelection', 'deleteSelection']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService, {} as UndoRedoService);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
@@ -525,5 +525,30 @@ describe('EditorComponent', () => {
         component.newDialog._getAfterAllClosed().next();
 
         expect(component.isPopUpOpen).toBeFalse();
+    });
+
+    it('ctrl+c should call copySelection from ClipboardService', () => {
+        // TODO: change back to ctrl+c
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyF', key: 'f' });
+        component.onCtrlCKeyDown(eventSpy);
+        expect(clipboardServiceSpy.copySelection).toHaveBeenCalled();
+    });
+
+    it('ctrl+x should call cutSelection from ClipboardService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyX', key: 'x' });
+        component.onCtrlXKeyDown(eventSpy);
+        expect(clipboardServiceSpy.cutSelection).toHaveBeenCalled();
+    });
+
+    it('ctrl+v should call pasteSelection from ClipboardService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyV', key: 'v' });
+        component.onCtrlVKeyDown(eventSpy);
+        expect(clipboardServiceSpy.pasteSelection).toHaveBeenCalled();
+    });
+
+    it('delete should call deleteSelection from ClipboardService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        component.onDeleteKeyDown(eventSpy);
+        expect(clipboardServiceSpy.deleteSelection).toHaveBeenCalled();
     });
 });

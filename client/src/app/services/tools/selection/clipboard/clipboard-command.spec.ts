@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-fdescribe('ClipboardCommandService', () => {
+describe('ClipboardCommandService', () => {
     // let command: ClipboardCommand;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     // let canvasTestHelper: CanvasTestHelper;

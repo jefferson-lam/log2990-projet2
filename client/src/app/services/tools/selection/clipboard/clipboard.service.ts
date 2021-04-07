@@ -18,11 +18,9 @@ export class ClipboardService {
     lastSelectionTool: string;
 
     constructor(private drawingService: DrawingService, private toolManager: ToolManagerService) {
-        this.toolManager.currentToolSubject.asObservable().subscribe((currentTool) => {
-            if (currentTool instanceof RectangleSelectionService || currentTool instanceof EllipseSelectionService) {
-                this.currentTool = currentTool;
-            }
-        });
+        if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
+            this.currentTool = this.toolManager.currentTool;
+        }
     }
 
     copySelection(): void {
@@ -45,12 +43,7 @@ export class ClipboardService {
 
     pasteSelection(): void {
         if (this.clipboard.data.some((pixel) => pixel !== 0)) {
-            // this.command = new ClipboardCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             if (this.isSelected(this.drawingService.selectionCanvas)) {
-                // const escapeKeyEvent: KeyboardEvent = {
-                //     key: 'Escape',
-                // } as KeyboardEvent;
-                // this.currentTool.onKeyboardUp(escapeKeyEvent);
                 this.currentTool.undoSelection();
             }
             this.drawingService.selectionCanvas.height = this.clipboard.height;
@@ -60,7 +53,7 @@ export class ClipboardService {
             this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
             this.currentTool.isManipulating = true;
             this.changeToSelectionTool(this.lastSelectionTool);
-            // TODO: add boolean in selection tools commands to not act like pasting is just moving the previous selection
+            // This boolean is for avoiding behavior of simply moving the previous selection
             this.currentTool.isFromClipboard = true;
 
             // This simulates a mouse click on the corner of the canvas to automatically
@@ -107,10 +100,7 @@ export class ClipboardService {
     }
 
     private isSelected(selectionCanvas: HTMLCanvasElement): boolean {
-        return this.isSelectionTool() && selectionCanvas.width !== 0 && selectionCanvas.height !== 0;
-    }
-
-    private isSelectionTool(): boolean {
-        return this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService;
+        const isSelectionTool = this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService;
+        return isSelectionTool && selectionCanvas.width !== 0 && selectionCanvas.height !== 0;
     }
 }
