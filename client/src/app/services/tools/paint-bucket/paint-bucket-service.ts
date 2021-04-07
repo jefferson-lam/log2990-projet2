@@ -7,6 +7,12 @@ import { DEFAULT_TOLERANCE_VALUE, MIN_RGB_VALUE } from '@app/constants/paint-buc
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
+export interface ColorRgba {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
 @Injectable({
     providedIn: 'root',
 })
@@ -14,8 +20,9 @@ export class PaintBucketService extends Tool {
     primaryColor: string;
     primaryColorHex: number;
     toleranceValue: number = DEFAULT_TOLERANCE_VALUE;
-    hasSeen: Map<number, boolean> = new Map();
-    // hasSeen: Set<[number, number]> = new Set();
+    x: number;
+    y: number;
+    mouseButtonClicked: MouseButton;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
@@ -27,16 +34,18 @@ export class PaintBucketService extends Tool {
     }
 
     setToleranceValue(toleranceValue: number): void {
-        console.log(toleranceValue);
         this.toleranceValue = toleranceValue;
     }
 
     onMouseDown(event: MouseEvent) {
+        this.x = event.offsetX;
+        this.y = event.offsetY;
         if (event.button === MouseButton.Left) {
-            this.floodFill2(this.drawingService.baseCtx, event.offsetX, event.offsetY, this.primaryColorHex);
-        } else if (event.button === MouseButton.Right) {
-            this.fill(this.drawingService.baseCtx, event.offsetX, event.offsetY, this.primaryColorHex);
+            this.floodFill3(this.drawingService.baseCtx, this.x, this.y, { r: 0, g: 0, b: 0, a: 255 | 0 }, 255);
         }
+        // this.mouseButtonClicked = event.button;
+        // const command: Command = new PaintBucketCommand(this.drawingService.baseCtx, this);
+        // this.undoRedoService.executeCommand(command);
     }
 
     getPixel(pixelData: PixelData, x: number, y: number): number {
@@ -77,7 +86,6 @@ export class PaintBucketService extends Tool {
         ctx.imageSmoothingEnabled = true;
         ctx.putImageData(imageData, 0, 0);
         ctx.restore();
-        this.hasSeen.clear();
     }
 
     matchColors(confidenceInterval: any, color: number) {
@@ -85,6 +93,127 @@ export class PaintBucketService extends Tool {
             return true;
         }
         return false;
+    }
+
+    floodFill3(ctx: CanvasRenderingContext2D, startX: number, startY: number, curColor: ColorRgba, tolerance = 0) {
+        var idx,
+            blend,
+            dist,
+            spanLeft = true,
+            spanRight = true,
+            leftEdge = false,
+            rightEdge = false;
+        const width = ctx.canvas.width,
+            height = ctx.canvas.height,
+            pixels = width * height;
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const data = imageData.data;
+        const p32 = new Uint32Array(data.buffer);
+        const stack = [startX + startY * width];
+        const targetColor = p32[stack[0]];
+        const fr = curColor.r | 0;
+        const fg = curColor.g | 0;
+        const fb = curColor.b | 0;
+        const fa = curColor.a | 0;
+        const newColor = (fa << 24) + (fb << 16) + (fg << 8) + fr;
+        console.log(newColor);
+        if (targetColor === newColor || targetColor === undefined) {
+            return;
+        }
+
+        idx = stack[0] << 2;
+        const rightE = width - 1,
+            bottomE = height - 1;
+        const distances = new Uint16Array(width * height);
+        tolerance = (tolerance * tolerance * 4) ** 0.5;
+
+        const r = data[idx];
+        const g = data[idx + 1];
+        const b = data[idx + 2];
+        const a = data[idx + 3];
+
+        function colorDist(idx: number) {
+            if (distances[idx]) {
+                return Infinity;
+            }
+            idx <<= 2;
+            const R = r - data[idx];
+            const G = g - data[idx + 1];
+            const B = b - data[idx + 2];
+            const A = a - data[idx + 3];
+            return (R * R + B * B + G * G + A * A) ** 0.5;
+        }
+
+        while (stack.length) {
+            idx = stack.pop()!;
+            while (idx >= width && colorDist(idx - width) <= tolerance) {
+                idx -= width;
+            } // move to top edge
+            spanLeft = spanRight = false; // not going left right yet
+            leftEdge = idx % width === 0;
+            rightEdge = (idx + 1) % width === 0;
+            while ((dist = colorDist(idx)) <= tolerance) {
+                distances[idx] = ((dist / tolerance) * 255) | 0x8000;
+                if (!leftEdge) {
+                    if (colorDist(idx - 1) <= tolerance) {
+                        if (!spanLeft) {
+                            stack.push(idx - 1);
+                            spanLeft = true;
+                        } else if (spanLeft) {
+                            spanLeft = false;
+                        }
+                    }
+                }
+                if (!rightEdge) {
+                    if (colorDist(idx + 1) <= tolerance) {
+                        if (!spanRight) {
+                            stack.push(idx + 1);
+                            spanRight = true;
+                        } else if (spanRight) {
+                            spanRight = false;
+                        }
+                    }
+                }
+                idx += width;
+            }
+        }
+        idx = 0;
+        while (idx < pixels) {
+            dist = distances[idx];
+            if (dist !== 0) {
+                if (dist === 0x8000) {
+                    p32[idx] = newColor;
+                } else {
+                    blend = false;
+                    const x = idx % width;
+                    const y = (idx / width) | 0;
+                    if (x > 0 && distances[idx - 1] === 0) {
+                        blend = true;
+                    } else if (x < rightE && distances[idx + 1] === 0) {
+                        blend = true;
+                    } else if (y > 0 && distances[idx - width] === 0) {
+                        blend = true;
+                    } else if (y < bottomE && distances[idx + width] === 0) {
+                        blend = true;
+                    }
+                    if (blend) {
+                        dist &= 0xff;
+                        dist = dist / 255;
+                        const invDist = 1 - dist;
+                        const idx1 = idx << 2;
+                        data[idx1] = data[idx1] * dist + fr * invDist;
+                        data[idx1 + 1] = data[idx1 + 1] * dist + fg * invDist;
+                        data[idx1 + 2] = data[idx1 + 2] * dist + fb * invDist;
+                        data[idx1 + 3] = data[idx1 + 3] * dist + fa * invDist;
+                    } else {
+                        p32[idx] = newColor;
+                    }
+                }
+            }
+            idx++;
+        }
+
+        ctx.putImageData(imageData, 0, 0);
     }
 
     // Taken from: https://stackoverflow.com/questions/59833738/how-can-i-avoid-exceeding-the-max-call-stack-size-during-a-flood-fill-algorithm
