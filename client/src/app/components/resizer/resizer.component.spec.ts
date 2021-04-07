@@ -62,6 +62,7 @@ describe('ResizerComponent', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingService.canvas = canvasTestHelper.canvas;
 
         drawingService.previewCtx = previewCtxStub;
         drawingService.baseCtx = baseCtxStub;
@@ -220,8 +221,8 @@ describe('ResizerComponent', () => {
 
     it('ngAfterViewInit should set resetCanvasSize to default values if drawingService.imageURL is null', () => {
         drawingService.imageURL = '';
-        const previousCommand = new ResizerCommand(canvasGridServiceSpy, 1, 1);
-        const expectedCommand = new ResizerCommand(canvasGridServiceSpy, CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
+        const previousCommand = new ResizerCommand(drawingService, 1, 1);
+        const expectedCommand = new ResizerCommand(drawingService, CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
         undoRedoService.resetCanvasSize = previousCommand;
 
         component.ngAfterViewInit();
@@ -232,7 +233,7 @@ describe('ResizerComponent', () => {
     it('ngAfterViewInit should set resetCanvasSize if drawingService.imageURL is not null', () => {
         drawingService.imageURL =
             'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
-        const previousCommand = new ResizerCommand(canvasGridServiceSpy, 2, 2);
+        const previousCommand = new ResizerCommand(drawingService, 2, 2);
         undoRedoService.resetCanvasSize = previousCommand;
 
         component.ngAfterViewInit();

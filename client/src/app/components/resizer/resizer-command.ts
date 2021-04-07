@@ -69,6 +69,6 @@ export class ResizerCommand extends Command {
         this.previewCtx.canvas.height = this.previewHeight;
 
         // Emit new size
-        this.drawingService.canvasSizeSubject.next([this.drawingService.canvas.width, this.drawingService.canvas.height]);
+        this.drawingService.canvasSizeSubject.next([this.previewWidth, this.previewHeight]); //[this.drawingService.canvas.width, this.drawingService.canvas.height]);
     }
 }

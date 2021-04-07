@@ -39,22 +39,6 @@ describe('CanvasGridService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('resize should be called with new height and original width if canvasHeightObservable emits new value', () => {
-        const resizeSpy = spyOn(service, 'resize');
-        const EXPECTED_HEIGHT = 10;
-        const EXPECTED_WIDTH = service.gridCtx.canvas.width;
-        service['drawingService'].canvasHeightObservable.next(EXPECTED_HEIGHT);
-        expect(resizeSpy).toHaveBeenCalledWith(EXPECTED_WIDTH, EXPECTED_HEIGHT);
-    });
-
-    it('resize should be called with new width and original height if canvasWidthObservable emits new value', () => {
-        const resizeSpy = spyOn(service, 'resize');
-        const EXPECTED_HEIGHT = service.gridCtx.canvas.height;
-        const EXPECTED_WIDTH = 10;
-        service['drawingService'].canvasWidthObservable.next(EXPECTED_WIDTH);
-        expect(resizeSpy).toHaveBeenCalledWith(EXPECTED_WIDTH, EXPECTED_HEIGHT);
-    });
-
     it('setSquarewidth should set square width to specified value if between maximum and minimum values allowed', () => {
         const EXPECTED_WIDTH = (GridConstants.MAX_SQUARE_WIDTH + GridConstants.MIN_SQUARE_WIDTH) / 2;
         service.setSquareWidth(EXPECTED_WIDTH);

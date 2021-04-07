@@ -15,7 +15,7 @@ export class DrawingService {
     selectionCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
 
-    canvasSizeSubject: Subject<number[]>;
+    canvasSizeSubject: Subject<number[]> = new Subject<number[]>();
 
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
