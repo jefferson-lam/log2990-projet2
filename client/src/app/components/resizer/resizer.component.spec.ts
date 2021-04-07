@@ -1,12 +1,12 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { ResizerComponent } from '@app/components/resizer/resizer.component';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { ResizerCommand } from './resizer-command';
 
 describe('ResizerComponent', () => {
     let component: ResizerComponent;
@@ -261,6 +261,14 @@ describe('ResizerComponent', () => {
         component.ngAfterViewInit();
 
         expect(drawImageSpy).toHaveBeenCalled();
+    });
+
+    it('ngAfterViewInit should call loadDrawing of autoSaveService', () => {
+        const loadSpy = spyOn(component.autoSaveService, 'loadDrawing');
+
+        component.ngAfterViewInit();
+
+        expect(loadSpy).toHaveBeenCalled();
     });
 
     it('setPreviewSize should set width if isSideResizerDown and over min value', () => {

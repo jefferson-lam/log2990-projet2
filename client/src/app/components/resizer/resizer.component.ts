@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -23,7 +24,7 @@ export class ResizerComponent implements AfterViewInit {
     @ViewChild('cornerResizer', { static: false }) cornerResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
 
-    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService) {}
+    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, public autoSaveService: AutoSaveService) {}
 
     ngAfterViewInit(): void {
         this.previewCtx = this.drawingService.previewCtx;
@@ -48,6 +49,8 @@ export class ResizerComponent implements AfterViewInit {
                 CanvasConstants.DEFAULT_HEIGHT,
             );
         }
+
+        this.autoSaveService.loadDrawing();
     }
 
     /**

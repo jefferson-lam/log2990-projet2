@@ -30,7 +30,7 @@ import { AppComponent } from './components/app/app.component';
 import { ColorPickerModule } from './components/color-picker/color-picker.module';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
-import { DiscardChangesPopupComponent } from './components/main-page/main-page-carrousel/discard-changes-popup/discard-changes-popup.component';
+import { DiscardChangesPopupComponent } from './components/main-page/discard-changes-popup/discard-changes-popup.component';
 import { MainPageCarrouselComponent } from './components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
