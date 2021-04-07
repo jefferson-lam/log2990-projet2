@@ -1,5 +1,6 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
+import * as TextConstants from '@app/constants/text-constants';
 import { TextService } from '@app/services/tools/text/text-service';
 
 export class TextCommand extends Command {
@@ -48,7 +49,16 @@ export class TextCommand extends Command {
     writeText(ctx: CanvasRenderingContext2D): void {
         this.splitTextString();
         ctx.beginPath();
-        ctx.font = this.fontStyle + ' ' + this.fontWeight + ' ' + this.fontSize + 'px ' + this.fontFamily;
+        ctx.font =
+            this.fontStyle +
+            ' ' +
+            this.fontWeight +
+            ' ' +
+            this.fontSize +
+            'px/' +
+            this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION +
+            'px ' +
+            this.fontFamily;
         ctx.fillStyle = this.primaryColor;
         ctx.textAlign = this.textAlign as CanvasTextAlign;
         // tslint:disable-next-line:prefer-for-of
@@ -56,7 +66,10 @@ export class TextCommand extends Command {
             ctx.fillText(
                 this.splitText[i],
                 this.textWidth + this.adjustWidthWithTextAlign(this.textAlign),
-                this.textHeight + this.fontSize / 2 + (this.spanTopPosition / this.splitText.length) * i,
+                this.textHeight +
+                    this.fontSize / 2 +
+                    (this.spanTopPosition / this.splitText.length) * i +
+                    (this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION) / TextConstants.TEXT_LINE_HEIGHT_FACTOR,
             );
         }
     }

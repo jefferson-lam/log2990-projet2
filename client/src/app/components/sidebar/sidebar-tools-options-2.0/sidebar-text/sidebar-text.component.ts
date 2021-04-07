@@ -16,7 +16,6 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     fontSize: number = TextConstants.INIT_FONT_SIZE;
     tickInterval: number = TextConstants.TICK_INTERVALS;
     fillMode: number | undefined;
-
     fontStyle: string = 'normal';
     fontWeight: string = 'normal';
     textAlign: string = 'center';
@@ -60,6 +59,8 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.fontWeight = this.fontWeight;
         this.textService.placeHolderSpan.style.fontStyle = this.fontStyle;
         this.textService.placeHolderSpan.style.visibility = 'hidden';
+        this.textService.placeHolderSpan.style.lineHeight = this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION + 'px';
+        this.textService.placeHolderSpan.style.color = this.textService.primaryColor;
         this.textService.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
         this.textService.inputFromKeyboard = this.textService.placeHolderSpan.innerText;
         this.textService.placeHolderSpan.style.zIndex = '2';

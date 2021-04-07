@@ -74,6 +74,7 @@ export class TextService extends Tool {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.inUse = false;
         }
+        this.placeHolderSpan.style.color = this.primaryColor;
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
@@ -91,6 +92,7 @@ export class TextService extends Tool {
     setFontSize(fontSize: number): void {
         this.fontSize = fontSize;
         this.placeHolderSpan.style.fontSize = fontSize + 'px';
+        this.placeHolderSpan.style.lineHeight = fontSize * TextConstants.LINE_HEIGHT_CONVERSION + 'px';
     }
 
     setTextAlign(textAlign: string): void {
@@ -112,10 +114,6 @@ export class TextService extends Tool {
     setPrimaryColor(newColor: string): void {
         this.primaryColor = newColor;
     }
-
-    // setSpanTextColor(): void {
-    //     this.placeHolderSpan.style.color = this.primaryColor;
-    // }
 
     private clearCornerCoords(): void {
         this.cornerCoords.fill({ x: 0, y: 0 });

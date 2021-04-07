@@ -12,6 +12,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -24,12 +25,14 @@ export class EditorComponent implements OnInit {
     currentTool: Tool;
     isPopUpOpen: boolean;
     isUndoSelection: boolean;
+    keyBoardInUse: boolean;
 
     constructor(
         public toolManager: ToolManagerService,
         public newDialog: MatDialog,
         public settingsManager: SettingsManagerService,
         public undoRedoService: UndoRedoService,
+        public textService: TextService,
     ) {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
@@ -86,7 +89,7 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i|t)$/)) {
+        if (!this.textService.finishedDrawing && !this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i|t)$/)) {
             this.setTool(this.toolManager.selectTool(event));
         }
     }
