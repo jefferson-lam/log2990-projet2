@@ -7,6 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingComponent } from './drawing.component';
 
@@ -20,6 +21,7 @@ describe('DrawingComponent', () => {
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
     let lineStub: ToolStub;
+    let stampStub: ToolStub;
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
@@ -27,6 +29,7 @@ describe('DrawingComponent', () => {
         pencilStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         eraserStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         lineStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
+        stampStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
@@ -36,6 +39,7 @@ describe('DrawingComponent', () => {
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
                 { provide: LineService, useValue: lineStub },
+                { provide: StampService, useValue: stampStub },
             ],
         }).compileComponents();
     }));
@@ -163,6 +167,16 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
     });
 
+    it(" should call the tool's mouse wheel when receiving a mouse wheel event", () => {
+        const wheelEvent = {} as WheelEvent;
+        const wheelEventSpy = spyOn(stampStub, 'onMouseWheel').and.callThrough();
+        component.currentTool = stampStub;
+        component.onMouseWheel(wheelEvent);
+
+        expect(wheelEventSpy).toHaveBeenCalled();
+        expect(wheelEventSpy).toHaveBeenCalledWith(wheelEvent);
+    });
+
     it('should call onContextmenu when receiving a contextmenu event', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault']);
         component.onContextMenu(eventSpy);
@@ -192,5 +206,13 @@ describe('DrawingComponent', () => {
             currentTool: new SimpleChange(null, lineStub, false),
         });
         expect(canvasStyle.cursor).toBe('crosshair');
+    });
+
+    it('ngOnChanges should set cursor to none if stamp selected', () => {
+        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
+        component.ngOnChanges({
+            currentTool: new SimpleChange(null, stampStub, false),
+        });
+        expect(canvasStyle.cursor).toBe('none');
     });
 });

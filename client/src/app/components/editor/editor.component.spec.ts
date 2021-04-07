@@ -14,6 +14,7 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subject } from 'rxjs';
 import { EditorComponent } from './editor.component';
@@ -29,6 +30,7 @@ describe('EditorComponent', () => {
     let fixture: ComponentFixture<EditorComponent>;
     let toolStub: ToolStub;
     let rectangleSelectionService: RectangleSelectionService;
+    let stampService: StampService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let keyboardEventSpy: jasmine.Spy;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
@@ -79,6 +81,8 @@ describe('EditorComponent', () => {
             {} as ResizerHandlerService,
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
+
+        stampService = new StampService({} as DrawingService, {} as UndoRedoService);
 
         undoSpy = spyOn(component.undoRedoService, 'undo');
         redoSpy = spyOn(component.undoRedoService, 'redo');
@@ -299,6 +303,18 @@ describe('EditorComponent', () => {
         component.onCtrlAKeyDown(eventSpy);
         expect(setToolSpy).toHaveBeenCalled();
         expect(selectAllSpy).toHaveBeenCalled();
+    });
+
+    it("should call changeRotationAngleOnAlt when 'alt' key is down", () => {
+        const stampSpy = spyOn(stampService, 'changeRotationAngleOnAlt');
+        component.setStampAngleAlt();
+        expect(stampSpy).not.toHaveBeenCalled();
+    });
+
+    it("should call changeRotationAngleNormal when 'alt' key is down", () => {
+        const stampSpy = spyOn(stampService, 'changeRotationAngleNormal');
+        component.setStampAngleNormal();
+        expect(stampSpy).not.toHaveBeenCalled();
     });
 
     it("openNewDrawingPopUp should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open and if tool is selection", () => {

@@ -11,6 +11,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -28,6 +29,7 @@ export class EditorComponent implements OnInit {
         public newDialog: MatDialog,
         public settingsManager: SettingsManagerService,
         public undoRedoService: UndoRedoService,
+        public stampService: StampService,
     ) {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
@@ -96,6 +98,16 @@ export class EditorComponent implements OnInit {
         if (this.currentTool instanceof RectangleSelectionService) {
             this.currentTool.selectAll();
         }
+    }
+
+    @HostListener('window:keydown.alt', ['$event'])
+    setStampAngleAlt(): void {
+        this.stampService.changeRotationAngleOnAlt();
+    }
+
+    @HostListener('window:keyup.alt', ['$event'])
+    setStampAngleNormal(): void {
+        this.stampService.changeRotationAngleNormal();
     }
 
     setTool(newTool: Tool): void {

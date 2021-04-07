@@ -4,6 +4,7 @@ import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
 import { ColorService } from '@app/services/color/color.service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
@@ -24,6 +25,9 @@ describe('SettingsManagerService', () => {
             'setSidesCount',
             'setWaterDropWidth',
             'setEmissionCount',
+            'setImageSource',
+            'setImageZoomFactor',
+            'setAngleRotation',
         ]);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
         TestBed.configureTestingModule({
@@ -35,7 +39,7 @@ describe('SettingsManagerService', () => {
             ],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService);
+        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService, {} as StampService);
         editorComponent.currentTool = toolSpy;
     });
 
@@ -93,6 +97,24 @@ describe('SettingsManagerService', () => {
         const EXPECTED_EMISSION_COUNT = 50;
         service.setEmissionCount(EXPECTED_EMISSION_COUNT);
         expect(toolSpy.setEmissionCount).toHaveBeenCalled();
+    });
+
+    it('setImageSource should call setImageSource of toolManager', () => {
+        const EXPECTED_IMAGE_SOURCE = 'new_image_svg';
+        service.setImageSource(EXPECTED_IMAGE_SOURCE);
+        expect(toolSpy.setImageSource).toHaveBeenCalled();
+    });
+
+    it('setImageZoomFactor should call setImageZoomFactor of toolManager', () => {
+        const EXPECTED_ZOOM_FACTOR = 50;
+        service.setImageZoomFactor(EXPECTED_ZOOM_FACTOR);
+        expect(toolSpy.setImageZoomFactor).toHaveBeenCalled();
+    });
+
+    it('setAngleRotation should call setAngleRotation of toolManager', () => {
+        const EXPECTED_ANGLE = 50;
+        service.setAngleRotation(EXPECTED_ANGLE);
+        expect(toolSpy.setAngleRotation).toHaveBeenCalled();
     });
 
     it('calls setPrimaryColorsTools when size changed', async(() => {

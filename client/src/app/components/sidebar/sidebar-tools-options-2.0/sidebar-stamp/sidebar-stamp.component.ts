@@ -23,6 +23,8 @@ export class SidebarStampComponent implements OnInit {
     @ViewChild('stamp2', { static: false }) stamp2: ElementRef<HTMLElement>;
     @ViewChild('stamp3', { static: false }) stamp3: ElementRef<HTMLElement>;
     @ViewChild('stamp4', { static: false }) stamp4: ElementRef<HTMLElement>;
+    @ViewChild('stamp5', { static: false }) stamp5: ElementRef<HTMLElement>;
+    @ViewChild('stamp6', { static: false }) stamp6: ElementRef<HTMLElement>;
 
     @Output() stampClicked: EventEmitter<boolean> = new EventEmitter();
     @Output() stampSourceChanged: EventEmitter<string> = new EventEmitter();
@@ -39,37 +41,37 @@ export class SidebarStampComponent implements OnInit {
     }
 
     changeBorderIndicator(imageIndex: number): void {
+        this.stamp1.nativeElement.style.border = '';
+        this.stamp2.nativeElement.style.border = '';
+        this.stamp3.nativeElement.style.border = '';
+        this.stamp4.nativeElement.style.border = '';
+        this.stamp5.nativeElement.style.border = '';
+        this.stamp6.nativeElement.style.border = '';
         switch (imageIndex) {
             case StampConstants.IMAGE_INDEX_1:
                 this.stamp1.nativeElement.style.border = '2px dashed floralwhite';
-                this.stamp2.nativeElement.style.border = '';
-                this.stamp3.nativeElement.style.border = '';
-                this.stamp4.nativeElement.style.border = '';
                 break;
             case StampConstants.IMAGE_INDEX_2:
                 this.stamp2.nativeElement.style.border = '2px dashed floralwhite';
-                this.stamp1.nativeElement.style.border = '';
-                this.stamp3.nativeElement.style.border = '';
-                this.stamp4.nativeElement.style.border = '';
                 break;
             case StampConstants.IMAGE_INDEX_3:
                 this.stamp3.nativeElement.style.border = '2px dashed floralwhite';
-                this.stamp2.nativeElement.style.border = '';
-                this.stamp1.nativeElement.style.border = '';
-                this.stamp4.nativeElement.style.border = '';
                 break;
             case StampConstants.IMAGE_INDEX_4:
                 this.stamp4.nativeElement.style.border = '2px dashed floralwhite';
-                this.stamp2.nativeElement.style.border = '';
-                this.stamp3.nativeElement.style.border = '';
-                this.stamp1.nativeElement.style.border = '';
+                break;
+            case StampConstants.IMAGE_INDEX_5:
+                this.stamp5.nativeElement.style.border = '2px dashed floralwhite';
+                break;
+            case StampConstants.IMAGE_INDEX_6:
+                this.stamp6.nativeElement.style.border = '2px dashed floralwhite';
                 break;
         }
     }
 
-    emitImageSrc(imageIndex: number): void {
+    changeStampSource(stampIndex: number): void {
         this.stampClickState = true;
-        switch (imageIndex) {
+        switch (stampIndex) {
             case StampConstants.IMAGE_INDEX_1:
                 this.imageSource = 'assets/stamp_1.svg';
                 break;
@@ -82,9 +84,22 @@ export class SidebarStampComponent implements OnInit {
             case StampConstants.IMAGE_INDEX_4:
                 this.imageSource = 'assets/stamp_4.svg';
                 break;
+            case StampConstants.IMAGE_INDEX_5:
+                this.imageSource = 'assets/stamp_5.svg';
+                break;
+            case StampConstants.IMAGE_INDEX_6:
+                this.imageSource = 'assets/stamp_6.svg';
+                break;
         }
-        this.stampSourceChanged.emit(this.imageSource);
+        this.emitStampClickState();
+    }
+
+    emitStampClickState(): void {
         this.stampClicked.emit(this.stampClickState);
+    }
+
+    emitImageSrc(): void {
+        this.stampSourceChanged.emit(this.imageSource);
     }
 
     emitZoomFactor(): void {

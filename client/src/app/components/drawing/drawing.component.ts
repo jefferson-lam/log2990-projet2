@@ -42,12 +42,18 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
     ngOnChanges(changes: SimpleChanges): void {
         const newTool = changes.currentTool.currentValue;
         const canvasStyle = (document.getElementById('previewLayer') as HTMLCanvasElement).style;
-        if (newTool === this.toolManager.pencilService) {
-            canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
-        } else if (newTool === this.toolManager.eraserService) {
-            canvasStyle.cursor = 'none';
-        } else {
-            canvasStyle.cursor = 'crosshair';
+        switch (newTool) {
+            case this.toolManager.pencilService:
+                canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
+                break;
+            case this.toolManager.eraserService:
+                canvasStyle.cursor = 'none';
+                break;
+            case this.toolManager.stampService:
+                canvasStyle.cursor = 'none';
+                break;
+            default:
+                canvasStyle.cursor = 'crosshair';
         }
     }
 

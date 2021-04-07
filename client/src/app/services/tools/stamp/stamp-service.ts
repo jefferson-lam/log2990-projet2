@@ -33,8 +33,7 @@ export class StampService extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.cornerCoords[PolygoneConstants.START_INDEX] = this.mouseDownCoord;
+            this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
         }
     }
 
@@ -81,18 +80,19 @@ export class StampService extends Tool {
     }
 
     onMouseWheel(event: WheelEvent): void {
-        this.changeRotationAngle(event);
+        this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.previewCommand.setValues(this.drawingService.previewCtx, this);
         this.previewCommand.execute();
+        this.changeRotationAngle(event);
     }
 
-    onKeyboardDown(event: KeyboardEvent): void {
-        if (event.key === 'Alt') this.degreesRotation = 1;
+    changeRotationAngleOnAlt(): void {
+        this.degreesRotation = 1;
     }
 
-    onKeyboardUp(event: KeyboardEvent): void {
-        if (event.key === 'Alt') this.degreesRotation = StampConstants.INIT_DEGREES_ANGLE_COUNTER;
+    changeRotationAngleNormal(): void {
+        this.degreesRotation = StampConstants.INIT_DEGREES_ANGLE_COUNTER;
     }
 
     changeRotationAngle(event: WheelEvent): void {

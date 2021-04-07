@@ -37,7 +37,7 @@ export class StampCommand extends Command {
             newStamp,
             -this.getStampSize(this.imageZoomFactor) / 2,
             -this.getStampSize(this.imageZoomFactor) / 2,
-            this.getStampSize(this.imageZoomFactor),
+            this.getStampSize(this.imageZoomFactor) * StampConstants.FORMAT_MATCH,
             this.getStampSize(this.imageZoomFactor),
         );
         ctx.restore();
