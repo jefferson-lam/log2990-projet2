@@ -95,6 +95,8 @@ export class PaintBucketService extends Tool {
         return false;
     }
 
+    // Referenced from:
+    // https://stackoverflow.com/questions/65359146/canvas-floodfill-leaves-white-pixels-at-edges-for-png-images-with-transparent
     floodFill3(ctx: CanvasRenderingContext2D, startX: number, startY: number, curColor: ColorRgba, tolerance = 0) {
         var idx,
             blend,
