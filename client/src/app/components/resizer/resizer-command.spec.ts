@@ -3,6 +3,7 @@ import * as CanvasConstants from '@app/constants/canvas-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerCommand } from './resizer-command';
 
+// tslint:disable: no-string-literal
 describe('ResizerCommand', () => {
     let service: ResizerCommand;
     const numberValue: number = CanvasConstants.DEFAULT_WIDTH;
