@@ -53,6 +53,7 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.control.v', ['$event'])
     onCtrlVKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
+        this.setTool(this.toolManager.getTool(this.clipboardService.lastSelectionTool));
         this.clipboardService.pasteSelection();
     }
 

@@ -23,6 +23,7 @@ export class RectangleSelectionService extends ToolSelectionService {
     isManipulating: boolean = false;
     selectionHeight: number = 0;
     selectionWidth: number = 0;
+    isFromClipboard: boolean = false;
 
     constructor(
         drawingService: DrawingService,

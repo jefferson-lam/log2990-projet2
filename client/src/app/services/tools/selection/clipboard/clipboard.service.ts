@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
@@ -14,7 +15,7 @@ export class ClipboardService {
     // TODO: add implementation for lasso polygonal
     currentTool: RectangleSelectionService | EllipseSelectionService;
     command: ClipboardCommand;
-    isPasted: boolean = false;
+    lastSelectionTool: string;
 
     constructor(private drawingService: DrawingService, private toolManager: ToolManagerService) {
         this.toolManager.currentToolSubject.asObservable().subscribe((currentTool) => {
@@ -32,6 +33,7 @@ export class ClipboardService {
                 this.drawingService.selectionCanvas.width,
                 this.drawingService.selectionCanvas.height,
             );
+            this.lastSelectionTool = this.getCurrentSelectionToolName();
         }
     }
 
@@ -45,6 +47,10 @@ export class ClipboardService {
         if (this.clipboard.data.some((pixel) => pixel !== 0)) {
             // this.command = new ClipboardCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             if (this.isSelected(this.drawingService.selectionCanvas)) {
+                // const escapeKeyEvent: KeyboardEvent = {
+                //     key: 'Escape',
+                // } as KeyboardEvent;
+                // this.currentTool.onKeyboardUp(escapeKeyEvent);
                 this.currentTool.undoSelection();
             }
             this.drawingService.selectionCanvas.height = this.clipboard.height;
@@ -53,15 +59,20 @@ export class ClipboardService {
             this.drawingService.selectionCanvas.style.top = 0 + 'px';
             this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
             this.currentTool.isManipulating = true;
-            this.isPasted = true;
-            // TODO: change currentTool to selection tool
-            // this.toolManager.selectTool()
+            this.changeToSelectionTool(this.lastSelectionTool);
             // TODO: add boolean in selection tools commands to not act like pasting is just moving the previous selection
+            this.currentTool.isFromClipboard = true;
+
+            // This simulates a mouse click on the corner of the canvas to automatically
+            // select the pasted selection
+            // const topLeftMouseClick: MouseEvent = { x: this.clipboard.width / 2, y: this.clipboard.height / 2 } as MouseEvent;
+            // this.currentTool.onMouseDown(topLeftMouseClick);
         }
     }
 
     deleteSelection(): void {
         if (this.isSelected(this.drawingService.selectionCanvas)) {
+            // this.command = new ClipboardCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             this.currentTool.undoSelection();
             if (this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.fillEllipse(this.drawingService.baseCtx, this.currentTool.cornerCoords, this.currentTool.isCircle, 'white');
@@ -77,7 +88,23 @@ export class ClipboardService {
         }
     }
 
-    changeToSelectionTool(): void {}
+    private changeToSelectionTool(lastSelectionTool: string): void {
+        const selectionKeyEvent: KeyboardEvent = {
+            key: lastSelectionTool,
+        } as KeyboardEvent;
+        this.toolManager.selectTool(selectionKeyEvent);
+    }
+
+    private getCurrentSelectionToolName(): string {
+        switch (this.currentTool.constructor) {
+            case EllipseSelectionService:
+                return ToolManagerConstants.ELLIPSE_SELECTION_KEY;
+            case RectangleSelectionService:
+                return ToolManagerConstants.RECTANGLE_SELECTION_KEY;
+            default:
+                return '';
+        }
+    }
 
     private isSelected(selectionCanvas: HTMLCanvasElement): boolean {
         return this.isSelectionTool() && selectionCanvas.width !== 0 && selectionCanvas.height !== 0;

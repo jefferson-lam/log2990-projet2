@@ -24,6 +24,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     cornerCoords: Vec2[] = new Array<Vec2>(2);
     selectionHeight: number = 0;
     selectionWidth: number = 0;
+    isFromClipboard: boolean = false;
 
     constructor(
         drawingService: DrawingService,

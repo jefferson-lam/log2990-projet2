@@ -10,6 +10,7 @@ export class EllipseSelectionCommand extends Command {
     isCircle: boolean;
     cornerCoords: Vec2[] = [];
     selectionCanvas: HTMLCanvasElement;
+    isFromClipboard: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, ellipseSelectionService: EllipseSelectionService) {
         super();
@@ -23,6 +24,7 @@ export class EllipseSelectionCommand extends Command {
         this.selectionWidth = ellipseSelectionService.selectionWidth;
         this.transformValues = ellipseSelectionService.transformValues;
         this.isCircle = ellipseSelectionService.isCircle;
+        this.isFromClipboard = ellipseSelectionService.isFromClipboard;
     }
 
     execute(): void {
@@ -32,10 +34,13 @@ export class EllipseSelectionCommand extends Command {
         const radiiXAndY = this.getRadiiXAndY(this.cornerCoords);
         const xRadius = radiiXAndY[0];
         const yRadius = radiiXAndY[1];
-        this.ctx.beginPath();
-        this.ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
-        this.ctx.fillStyle = 'white';
-        this.ctx.fill();
+
+        if (!this.isFromClipboard) {
+            this.ctx.beginPath();
+            this.ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
+            this.ctx.fillStyle = 'white';
+            this.ctx.fill();
+        }
 
         // Clip the ctx to only fit the what is inside the outline that is offset by 1
         this.clipEllipse(this.ctx, this.transformValues, this.selectionHeight, this.selectionWidth, 1);
@@ -52,6 +57,7 @@ export class EllipseSelectionCommand extends Command {
         );
         // restore is called because save is called in clipEllipse function.
         this.ctx.restore();
+        this.isFromClipboard = false;
     }
 
     cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {
