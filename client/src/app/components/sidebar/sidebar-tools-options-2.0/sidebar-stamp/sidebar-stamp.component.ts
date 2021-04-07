@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Tool } from '@app/classes/tool';
 import * as StampConstants from '@app/constants/stamp-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
@@ -18,6 +19,7 @@ export class SidebarStampComponent implements OnInit {
     maxAngle: number = StampConstants.MAX_ANGLE;
     zoomFactor: number = StampConstants.INIT_ZOOM_FACTOR;
     tickInterval: number = StampConstants.TICK_INTERVAL;
+    currentTool: Tool;
 
     @ViewChild('stamp1', { static: false }) stamp1: ElementRef<HTMLElement>;
     @ViewChild('stamp2', { static: false }) stamp2: ElementRef<HTMLElement>;

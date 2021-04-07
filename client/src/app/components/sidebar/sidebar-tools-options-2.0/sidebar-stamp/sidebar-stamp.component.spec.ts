@@ -10,7 +10,14 @@ describe('SidebarStampComponent', () => {
     let stampSourceSpy: jasmine.Spy;
     let zoomFactorSpy: jasmine.Spy;
     let rotationAngleSpy: jasmine.Spy;
+    let stampClickSpy: jasmine.Spy;
     let settingsManagerService: SettingsManagerService;
+    let stamp1: HTMLElement;
+    let stamp2: HTMLElement;
+    let stamp3: HTMLElement;
+    let stamp4: HTMLElement;
+    let stamp5: HTMLElement;
+    let stamp6: HTMLElement;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -20,6 +27,25 @@ describe('SidebarStampComponent', () => {
     }));
 
     beforeEach(() => {
+        stamp1 = document.createElement('img');
+        stamp1.id = 'image';
+        document.body.append(stamp1);
+        stamp2 = document.createElement('img');
+        stamp2.id = 'image';
+        document.body.append(stamp2);
+        stamp3 = document.createElement('img');
+        stamp3.id = 'image';
+        document.body.append(stamp3);
+        stamp4 = document.createElement('img');
+        stamp4.id = 'image';
+        document.body.append(stamp4);
+        stamp5 = document.createElement('img');
+        stamp5.id = 'image';
+        document.body.append(stamp5);
+        stamp6 = document.createElement('img');
+        stamp6.id = 'image';
+        document.body.append(stamp6);
+
         fixture = TestBed.createComponent(SidebarStampComponent);
         stampComponent = fixture.componentInstance;
         fixture.detectChanges();
@@ -27,6 +53,14 @@ describe('SidebarStampComponent', () => {
         stampSourceSpy = spyOn(stampComponent.stampSourceChanged, 'subscribe');
         zoomFactorSpy = spyOn(stampComponent.zoomFactorChanged, 'subscribe');
         rotationAngleSpy = spyOn(stampComponent.rotationAngleChanged, 'subscribe');
+        stampClickSpy = spyOn(stampComponent.stampClicked, 'subscribe');
+
+        stampComponent.stamp1.nativeElement.style.border = '';
+        stampComponent.stamp2.nativeElement.style.border = '';
+        stampComponent.stamp3.nativeElement.style.border = '';
+        stampComponent.stamp4.nativeElement.style.border = '';
+        stampComponent.stamp5.nativeElement.style.border = '';
+        stampComponent.stamp6.nativeElement.style.border = '';
     });
 
     it('should create', () => {
@@ -117,10 +151,12 @@ describe('SidebarStampComponent', () => {
 
     it('should call subscribe method when created at first', () => {
         stampComponent.imageSource = 'hello.svg';
+        stampComponent.stampClickState = true;
         stampComponent.ngOnInit();
         expect(stampSourceSpy).toHaveBeenCalled();
         expect(zoomFactorSpy).toHaveBeenCalled();
         expect(rotationAngleSpy).toHaveBeenCalled();
+        expect(stampClickSpy).toHaveBeenCalled();
     });
 
     it('should call setImageSource() from settingsManager after image source change', () => {

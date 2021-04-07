@@ -30,8 +30,8 @@ describe('EditorComponent', () => {
     let fixture: ComponentFixture<EditorComponent>;
     let toolStub: ToolStub;
     let rectangleSelectionService: RectangleSelectionService;
-    let stampService: StampService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let stampServiceSpy: jasmine.SpyObj<StampService>;
     let keyboardEventSpy: jasmine.Spy;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
@@ -48,6 +48,7 @@ describe('EditorComponent', () => {
         toolStub = new ToolStub(drawServiceSpy as DrawingService, {} as UndoRedoService);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
+        stampServiceSpy = jasmine.createSpyObj('StampService', ['changeRotationAngleOnAlt', 'changeRotationAngleNormal']);
         (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
             new Subject<any>(),
         );
@@ -62,6 +63,7 @@ describe('EditorComponent', () => {
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: ToolManagerService, useValue: toolManagerSpy },
                 { provide: Tool, useValue: toolStub },
+                { provide: StampService, useValue: stampServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -81,8 +83,6 @@ describe('EditorComponent', () => {
             {} as ResizerHandlerService,
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
-
-        stampService = new StampService({} as DrawingService, {} as UndoRedoService);
 
         undoSpy = spyOn(component.undoRedoService, 'undo');
         redoSpy = spyOn(component.undoRedoService, 'redo');
@@ -306,15 +306,13 @@ describe('EditorComponent', () => {
     });
 
     it("should call changeRotationAngleOnAlt when 'alt' key is down", () => {
-        const stampSpy = spyOn(stampService, 'changeRotationAngleOnAlt');
         component.setStampAngleAlt();
-        expect(stampSpy).not.toHaveBeenCalled();
+        expect(stampServiceSpy.changeRotationAngleOnAlt).toHaveBeenCalled();
     });
 
     it("should call changeRotationAngleNormal when 'alt' key is down", () => {
-        const stampSpy = spyOn(stampService, 'changeRotationAngleNormal');
         component.setStampAngleNormal();
-        expect(stampSpy).not.toHaveBeenCalled();
+        expect(stampServiceSpy.changeRotationAngleNormal).toHaveBeenCalled();
     });
 
     it("openNewDrawingPopUp should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open and if tool is selection", () => {
