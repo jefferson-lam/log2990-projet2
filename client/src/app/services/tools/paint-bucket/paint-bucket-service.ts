@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { PixelData } from '@app/classes/pixel-data';
 import { Tool } from '@app/classes/tool';
+import { MAX_RGB_VALUE } from '@app/constants/color-constants';
 import { MouseButton } from '@app/constants/mouse-constants';
-import { DEFAULT_TOLERANCE_VALUE } from '@app/constants/paint-bucket-constants';
+import { DEFAULT_TOLERANCE_VALUE, MIN_RGB_VALUE } from '@app/constants/paint-bucket-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -13,8 +14,8 @@ export class PaintBucketService extends Tool {
     primaryColor: string;
     primaryColorHex: number;
     toleranceValue: number = DEFAULT_TOLERANCE_VALUE;
-    // hasSeen: Map<number, boolean> = new Map();
-    hasSeen: Set<[number, number]> = new Set();
+    hasSeen: Map<number, boolean> = new Map();
+    // hasSeen: Set<[number, number]> = new Set();
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
@@ -62,22 +63,13 @@ export class PaintBucketService extends Tool {
             while (pixels.length > 0) {
                 const y = pixels.pop()!;
                 const x = pixels.pop()!;
-                this.hasSeen.add([x, y]);
                 const currentPixelColor = this.getPixel(pixelData, x, y);
                 if (currentPixelColor >= lowerBound && currentPixelColor <= upperBound) {
                     pixelData.data[y * pixelData.width + x] = fillColor;
-                    if (!this.hasSeen.has([x + 1, y])) {
-                        pixels.push(x + 1, y);
-                    }
-                    if (!this.hasSeen.has([x - 1, y])) {
-                        pixels.push(x - 1, y);
-                    }
-                    if (!this.hasSeen.has([x, y + 1])) {
-                        pixels.push(x, y + 1);
-                    }
-                    if (!this.hasSeen.has([x, y - 1])) {
-                        pixels.push(x, y - 1);
-                    }
+                    pixels.push(x + 1, y);
+                    pixels.push(x - 1, y);
+                    pixels.push(x, y + 1);
+                    pixels.push(x, y - 1);
                 }
             }
         }
@@ -90,25 +82,37 @@ export class PaintBucketService extends Tool {
 
     matchColors(confidenceInterval: any, color: number) {
         if (color <= confidenceInterval[1] && color >= confidenceInterval[0]) {
+            this.hasSeen.set(color, true);
             return true;
         }
         return false;
     }
 
+    // Taken from: https://stackoverflow.com/questions/59833738/how-can-i-avoid-exceeding-the-max-call-stack-size-during-a-flood-fill-algorithm
     floodFill2(ctx: CanvasRenderingContext2D, x: number, y: number, fillColor: number) {
         let left, right, leftEdge, rightEdge;
         const w = ctx.canvas.width,
             h = ctx.canvas.height;
+        if (this.toleranceValue === 100) {
+            ctx.fillStyle = this.primaryColor;
+            ctx.fillRect(0, 0, w, h);
+            return;
+        }
+        const visited = new Uint8Array(w * h);
         const imgData = ctx.getImageData(0, 0, w, h);
         const p32 = new Uint32Array(imgData.data.buffer);
         const stack = [x + y * w]; // add starting pos to stack
         const targetColor = p32[stack[0]];
         const confidenceInterval = this.findBounds(targetColor, this.toleranceValue);
-        console.log(confidenceInterval);
+        let iter = 0;
         if (targetColor === fillColor || targetColor === undefined) {
             return;
         } // avoid endless loop
         while (stack.length) {
+            iter++;
+            if (iter >= 4 * (w * h)) {
+                break;
+            }
             let idx = stack.pop()!;
             while (idx >= w && this.matchColors(confidenceInterval, p32[idx - w])) {
                 idx -= w;
@@ -116,24 +120,31 @@ export class PaintBucketService extends Tool {
             right = left = false;
             leftEdge = idx % w === 0;
             rightEdge = (idx + 1) % w === 0;
-            while (this.matchColors(confidenceInterval, p32[idx])) {
+            while (this.hasSeen.get(p32[idx]) || this.matchColors(confidenceInterval, p32[idx])) {
+                iter++;
                 p32[idx] = fillColor;
                 if (!leftEdge) {
-                    if (this.matchColors(confidenceInterval, p32[idx - 1])) {
+                    if (this.hasSeen.get(p32[idx - 1]) || this.matchColors(confidenceInterval, p32[idx - 1])) {
                         // check left
                         if (!left) {
-                            stack.push(idx - 1); // found new column to left
-                            left = true; //
+                            if (!visited[idx - 1]) {
+                                stack.push(idx - 1); // found new column to left
+                                visited[idx - 1] = 1;
+                                left = true; //
+                            }
                         }
                     } else if (left) {
                         left = false;
                     }
                 }
                 if (!rightEdge) {
-                    if (this.matchColors(confidenceInterval, p32[idx + 1])) {
+                    if (this.hasSeen.get(p32[idx + 1]) || this.matchColors(confidenceInterval, p32[idx + 1])) {
                         if (!right) {
-                            stack.push(idx + 1); // new column to right
-                            right = true;
+                            if (!visited[idx + 1]) {
+                                stack.push(idx + 1); // new column to right
+                                visited[idx + 1] = 1;
+                                right = true;
+                            }
                         }
                     } else if (right) {
                         right = false;
@@ -143,6 +154,9 @@ export class PaintBucketService extends Tool {
             }
         }
         ctx.putImageData(imgData, 0, 0);
+        console.log(iter);
+        console.log(p32.length);
+        this.hasSeen.clear();
         return;
     }
 
@@ -229,19 +243,23 @@ export class PaintBucketService extends Tool {
     }
 
     private findUpperBound(colorValue: number, tolerancePercentage: number): number {
-        let newColorValue = Math.round(colorValue + colorValue * tolerancePercentage);
-        if (newColorValue > 255) {
-            newColorValue = 255;
+        let newColorValue = Math.round(colorValue + MAX_RGB_VALUE * tolerancePercentage);
+        if (newColorValue > MAX_RGB_VALUE) {
+            newColorValue = MAX_RGB_VALUE;
         }
         return newColorValue;
     }
 
     private findLowerBound(colorValue: number, tolerancePercentage: number): number {
-        let newColorValue = Math.round(colorValue - colorValue * tolerancePercentage);
-        if (newColorValue < 0) {
-            newColorValue = 0;
+        let newColorValue = Math.round(colorValue - MAX_RGB_VALUE * tolerancePercentage);
+        if (newColorValue < MIN_RGB_VALUE) {
+            newColorValue = MIN_RGB_VALUE;
         }
         return newColorValue;
+    }
+
+    onToolChange() {
+        this.toleranceValue = 0;
     }
 
     // private matchColors(confidenceInterval: any, currentPixelColor: number): boolean {
