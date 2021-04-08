@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { PaintBucketCommand } from './paint-bucket-command';
 
-describe('PaintBucketCommandService', () => {
+describe('PaintBucketCommand', () => {
     let service: PaintBucketCommand;
 
     beforeEach(() => {
