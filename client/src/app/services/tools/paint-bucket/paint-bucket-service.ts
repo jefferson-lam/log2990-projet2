@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { MouseButton } from '@app/constants/mouse-constants';
-import { DEFAULT_TOLERANCE_VALUE } from '@app/constants/paint-bucket-constants';
+import { BASE_10, DEFAULT_TOLERANCE_VALUE, MAX_RGB_VALUE, MIN_RGB_VALUE, NORMALISATION_FACTOR } from '@app/constants/paint-bucket-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PaintBucketCommand } from '@app/services/tools/paint-bucket/paint-bucket-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
+// tslint:disable:no-bitwise
 export interface ColorRgba {
     red: number;
     green: number;
@@ -35,10 +36,10 @@ export class PaintBucketService extends Tool {
     }
 
     setToleranceValue(toleranceValue: number): void {
-        this.toleranceValue = (toleranceValue * 255) / 100;
+        this.toleranceValue = (toleranceValue * MAX_RGB_VALUE) / NORMALISATION_FACTOR;
     }
 
-    onMouseDown(event: MouseEvent) {
+    onMouseDown(event: MouseEvent): void {
         this.startX = event.offsetX;
         this.startY = event.offsetY;
         this.mouseButtonClicked = event.button;
@@ -46,29 +47,30 @@ export class PaintBucketService extends Tool {
         this.undoRedoService.executeCommand(command);
     }
 
+    onToolChange(): void {
+        this.toleranceValue = DEFAULT_TOLERANCE_VALUE;
+    }
+
+    // regex matches for strings that have format: rgba(r,g,b,a)
+    // and extracts into an array of length 4 containing each value
     private getRgba(color: string): ColorRgba {
-        const match = color.match(/[.?\d]+/g)!;
-        const rgba = {
-            red: parseInt(match[0]),
-            green: parseInt(match[1]),
-            blue: parseInt(match[2]),
-            // Convert to 255
-            alpha: Math.round(parseInt(match[3]) * 255),
+        const match = color.match(/[.?\d]+/g);
+        if (match) {
+            const rgba = {
+                red: parseInt(match[0], BASE_10),
+                green: parseInt(match[1], BASE_10),
+                blue: parseInt(match[2], BASE_10),
+                // Convert to 255
+                // tslint:disable-next-line:no-magic-numbers
+                alpha: Math.round(parseInt(match[3], 10) * MAX_RGB_VALUE),
+            };
+            return rgba;
+        }
+        return {
+            red: MIN_RGB_VALUE,
+            green: MIN_RGB_VALUE,
+            blue: MIN_RGB_VALUE,
+            alpha: MIN_RGB_VALUE,
         };
-        return rgba;
-    }
-
-    number2rgba(color: number): ColorRgba {
-        const rgba = {
-            red: color & 0xff,
-            green: (color >> 8) & 0xff,
-            blue: (color >> 16) & 0xff,
-            alpha: ((color >> 24) & 0xff) / 255,
-        };
-        return rgba;
-    }
-
-    onToolChange() {
-        this.toleranceValue = 25;
     }
 }

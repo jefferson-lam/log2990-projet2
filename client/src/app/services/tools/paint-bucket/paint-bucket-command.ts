@@ -1,8 +1,11 @@
 import { Command } from '@app/classes/command';
 import { PixelData } from '@app/classes/pixel-data';
 import { MouseButton } from '@app/constants/mouse-constants';
+import { ALPHA_INDEX, BIT_16, BIT_24, BIT_8, DIMENSION_4D, DISTANCE_MASK, INVALID_VALUE, MAX_RGB_VALUE } from '@app/constants/paint-bucket-constants';
 import { ColorRgba, PaintBucketService } from './paint-bucket-service';
 
+// tslint:disable:no-bitwise
+// tslint:disable:cyclomatic-complexity
 export class PaintBucketCommand extends Command {
     primaryColorRgba: ColorRgba;
     primaryColor: string;
@@ -16,7 +19,7 @@ export class PaintBucketCommand extends Command {
         this.setValues(canvasContext, paintBucketService);
     }
 
-    setValues(canvasContext: CanvasRenderingContext2D, paintBucketService: PaintBucketService) {
+    setValues(canvasContext: CanvasRenderingContext2D, paintBucketService: PaintBucketService): void {
         this.ctx = canvasContext;
         this.primaryColorRgba = paintBucketService.primaryColorRgba;
         this.primaryColor = paintBucketService.primaryColor;
@@ -26,7 +29,7 @@ export class PaintBucketCommand extends Command {
         this.mouseButtonClicked = paintBucketService.mouseButtonClicked;
     }
 
-    execute() {
+    execute(): void {
         if (this.mouseButtonClicked === MouseButton.Left) {
             this.floodFill(this.ctx, this.startX, this.startY, this.primaryColorRgba, this.toleranceValue);
         } else if (this.mouseButtonClicked === MouseButton.Right) {
@@ -34,16 +37,18 @@ export class PaintBucketCommand extends Command {
         }
     }
 
-    fill(ctx: CanvasRenderingContext2D, x: number, y: number, fillColor: ColorRgba, toleranceValue: number) {
+    fill(ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: ColorRgba, toleranceValue: number): void {
         const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
         const pixelData: PixelData = {
             width: imageData.width,
             height: imageData.height,
             data: new Uint32Array(imageData.data.buffer),
         };
-        const color = (fillColor.alpha << 24) + (fillColor.blue << 16) + (fillColor.green << 8) + fillColor.red;
-        const tolerance = (toleranceValue * toleranceValue * 4) ** 0.5;
-        const targetColor = this.getPixel(pixelData, x, y);
+        const color = (fillColor.alpha << BIT_24) + (fillColor.blue << BIT_16) + (fillColor.green << BIT_8) + fillColor.red;
+
+        // Normalise tolerance to be able to compare with 4d space
+        const tolerance = Math.sqrt(toleranceValue * toleranceValue * DIMENSION_4D);
+        const targetColor = this.getPixel(pixelData, startX, startY);
         for (let y = 0; y < pixelData.height; y++) {
             for (let x = 0; x < pixelData.width; x++) {
                 const currentPixelColor = this.getPixel(pixelData, x, y);
@@ -57,80 +62,85 @@ export class PaintBucketCommand extends Command {
 
     // Referenced from:
     // https://stackoverflow.com/questions/65359146/canvas-floodfill-leaves-white-pixels-at-edges-for-png-images-with-transparent
-    floodFill(ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: ColorRgba, tolerance = 0) {
-        let idx,
-            blend,
-            dist,
-            spanLeft = true,
-            spanRight = true,
-            leftEdge = false,
-            rightEdge = false;
-        const width = ctx.canvas.width,
-            height = ctx.canvas.height,
-            pixels = width * height;
+    // Uses the span-fill flood fill algorithm.
+    floodFill(ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: ColorRgba, toleranceValue: number): void {
+        let pixelPosition;
+        let blend;
+        let distance;
+        let spanLeft = true;
+        let spanRight = true;
+        let leftEdge = false;
+        let rightEdge = false;
+        const width = ctx.canvas.width;
+        const height = ctx.canvas.height;
         const imageData = ctx.getImageData(0, 0, width, height);
+        const pixels = width * height;
         const data = imageData.data;
-        const p32 = new Uint32Array(data.buffer);
+        const pixelData = {
+            width: { width },
+            height: { height },
+            data: new Uint32Array(imageData.data.buffer),
+        };
 
-        // Add the starting mouse click to the stack
+        // Add the starting mouse click to the stack. We use a stack to simulate recursion.
         const stack = [startX + startY * width];
 
         // Get the color in decimal form
-        const targetColor = p32[stack[0]];
+        const targetColor = pixelData.data[stack[0]];
 
-        const fillRed = fillColor.red | 0;
-        const fillGreen = fillColor.green | 0;
-        const fillBlue = fillColor.blue | 0;
-        const fillAlpha = fillColor.alpha | 0;
+        // Convert fillColor into its decimal form as ABGR.
+        const newColor = (fillColor.alpha << BIT_24) + (fillColor.blue << BIT_16) + (fillColor.green << BIT_8) + fillColor.red;
 
-        const newColor = (fillAlpha << 24) + (fillBlue << 16) + (fillGreen << 8) + fillRed;
         if (targetColor === newColor || targetColor === undefined) {
             return;
         }
 
         // Shift by 2 allows us to access typical RGBA color from the original data, not the buffer.
-        idx = stack[0] << 2;
+        pixelPosition = stack[0] << 2;
+        const rightE = width - 1;
+        const bottomE = height - 1;
 
-        const rightE = width - 1,
-            bottomE = height - 1;
+        // Array of distances will keep track which pixel has been marked as valid to paint on
+        // If distance is 0 for that specific pixel, it means that it did not pass the tolerance check
         const distances = new Uint16Array(width * height);
 
-        // Normaliser pour espace 4d
-        tolerance = (tolerance * tolerance * 4) ** 0.5;
+        // Normalise tolerance to account for 4d space
+        const tolerance = Math.sqrt(toleranceValue * toleranceValue * DIMENSION_4D);
 
-        const red = data[idx];
-        const green = data[idx + 1];
-        const blue = data[idx + 2];
-        const alpha = data[idx + 3];
+        const red = data[pixelPosition];
+        const green = data[pixelPosition + 1];
+        const blue = data[pixelPosition + 2];
+        const alpha = data[pixelPosition + ALPHA_INDEX];
 
-        // Inline function so we have access to all local variables
-        const colorDist = (idx: number) => {
-            if (distances[idx]) {
+        // Inline function so we have access to all local variables and to accelerate computation
+        const colorDist = (pixelIndex: number) => {
+            if (distances[pixelIndex]) {
                 return Infinity;
             }
-            idx <<= 2;
-            const R = red - data[idx];
-            const G = green - data[idx + 1];
-            const B = blue - data[idx + 2];
-            const A = alpha - data[idx + 3];
-            const dist = (R * R + B * B + G * G + A * A) ** 0.5;
-            return dist; // Euclidian distance between two colors
+            pixelIndex <<= 2;
+            const R = red - data[pixelIndex];
+            const G = green - data[pixelIndex + 1];
+            const B = blue - data[pixelIndex + 2];
+            const A = alpha - data[pixelIndex + ALPHA_INDEX];
+            const colorDistance = Math.sqrt(R * R + B * B + G * G + A * A);
+            return colorDistance; // Euclidian distance between two colors
         };
 
         while (stack.length) {
-            idx = stack.pop()!;
-            while (idx >= width && colorDist(idx - width) <= tolerance) {
-                idx -= width;
+            pixelPosition = stack.pop()!;
+            while (pixelPosition >= width && colorDist(pixelPosition - width) <= tolerance) {
+                pixelPosition -= width;
             } // move to top edge
             spanLeft = spanRight = false; // not going left right yet
-            leftEdge = idx % width === 0;
-            rightEdge = (idx + 1) % width === 0;
-            while ((dist = colorDist(idx)) <= tolerance) {
-                distances[idx] = ((dist / tolerance) * 255) | 0x8000;
+            leftEdge = pixelPosition % width === 0;
+            rightEdge = (pixelPosition + 1) % width === 0;
+            distance = colorDist(pixelPosition);
+            while (distance <= tolerance) {
+                distances[pixelPosition] = ((distance / tolerance) * MAX_RGB_VALUE) | DISTANCE_MASK;
                 if (!leftEdge) {
-                    if (colorDist(idx - 1) <= tolerance) {
+                    if (colorDist(pixelPosition - 1) <= tolerance) {
                         if (!spanLeft) {
-                            stack.push(idx - 1);
+                            stack.push(pixelPosition - 1);
                             spanLeft = true;
                         } else if (spanLeft) {
                             spanLeft = false;
@@ -138,52 +148,53 @@ export class PaintBucketCommand extends Command {
                     }
                 }
                 if (!rightEdge) {
-                    if (colorDist(idx + 1) <= tolerance) {
+                    if (colorDist(pixelPosition + 1) <= tolerance) {
                         if (!spanRight) {
-                            stack.push(idx + 1);
+                            stack.push(pixelPosition + 1);
                             spanRight = true;
                         } else if (spanRight) {
                             spanRight = false;
                         }
                     }
                 }
-                idx += width;
+                pixelPosition += width;
+                distance = colorDist(pixelPosition);
             }
         }
-        idx = 0;
-        while (idx < pixels) {
-            dist = distances[idx];
-            if (dist !== 0) {
-                if (dist === 0x8000) {
-                    p32[idx] = newColor;
+        pixelPosition = 0;
+        while (pixelPosition < pixels) {
+            distance = distances[pixelPosition];
+            if (distance !== 0) {
+                if (distance === DISTANCE_MASK) {
+                    pixelData.data[pixelPosition] = newColor;
                 } else {
                     blend = false;
-                    const x = idx % width;
-                    const y = (idx / width) | 0;
-                    if (x > 0 && distances[idx - 1] === 0) {
+                    const x = pixelPosition % width;
+                    const y = (pixelPosition / width) | 0;
+                    if (x > 0 && distances[pixelPosition - 1] === 0) {
                         blend = true;
-                    } else if (x < rightE && distances[idx + 1] === 0) {
+                    } else if (x < rightE && distances[pixelPosition + 1] === 0) {
                         blend = true;
-                    } else if (y > 0 && distances[idx - width] === 0) {
+                    } else if (y > 0 && distances[pixelPosition - width] === 0) {
                         blend = true;
-                    } else if (y < bottomE && distances[idx + width] === 0) {
+                    } else if (y < bottomE && distances[pixelPosition + width] === 0) {
                         blend = true;
                     }
                     if (blend) {
-                        dist &= 0xff;
-                        dist = dist / 255;
-                        const invDist = 1 - dist;
-                        const idx1 = idx << 2;
-                        data[idx1] = data[idx1] * dist + fillRed * invDist;
-                        data[idx1 + 1] = data[idx1 + 1] * dist + fillGreen * invDist;
-                        data[idx1 + 2] = data[idx1 + 2] * dist + fillBlue * invDist;
-                        data[idx1 + 3] = data[idx1 + 3] * dist + fillAlpha * invDist;
+                        distance &= MAX_RGB_VALUE;
+                        distance = distance / MAX_RGB_VALUE;
+                        const invDist = 1 - distance;
+                        const idx1 = pixelPosition << 2;
+                        data[idx1] = data[idx1] * distance + fillColor.red * invDist;
+                        data[idx1 + 1] = data[idx1 + 1] * distance + fillColor.green * invDist;
+                        data[idx1 + 2] = data[idx1 + 2] * distance + fillColor.blue * invDist;
+                        data[idx1 + ALPHA_INDEX] = data[idx1 + ALPHA_INDEX] * distance + fillColor.alpha * invDist;
                     } else {
-                        p32[idx] = newColor;
+                        pixelData.data[pixelPosition] = newColor;
                     }
                 }
             }
-            idx++;
+            pixelPosition++;
         }
 
         ctx.putImageData(imageData, 0, 0);
@@ -191,17 +202,17 @@ export class PaintBucketCommand extends Command {
 
     number2rgba(color: number): ColorRgba {
         const rgba = {
-            red: color & 0xff,
-            green: (color >> 8) & 0xff,
-            blue: (color >> 16) & 0xff,
-            alpha: ((color >> 24) & 0xff) / 255,
+            red: color & MAX_RGB_VALUE,
+            green: (color >> BIT_8) & MAX_RGB_VALUE,
+            blue: (color >> BIT_16) & MAX_RGB_VALUE,
+            alpha: ((color >> BIT_24) & MAX_RGB_VALUE) / MAX_RGB_VALUE,
         };
         return rgba;
     }
 
     getPixel(pixelData: PixelData, x: number, y: number): number {
         if (x < 0 || y < 0 || x >= pixelData.width || y >= pixelData.height) {
-            return -1;
+            return INVALID_VALUE;
         } else {
             return pixelData.data[y * pixelData.width + x];
         }
@@ -211,8 +222,7 @@ export class PaintBucketCommand extends Command {
         const R = currentColor.red - fillColor.red;
         const G = currentColor.green - fillColor.green;
         const B = currentColor.blue - fillColor.blue;
-
-        const dist = (R * R + G * G + B * B) ** 0.5;
-        return dist;
+        const distance = Math.sqrt(R * R + G * G + B * B);
+        return distance;
     }
 }
