@@ -4,7 +4,7 @@ import { DEFAULT_TOLERANCE_VALUE } from '@app/constants/paint-bucket-constants';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { PaintBucketService } from './paint-bucket-service';
 
-fdescribe('PaintBucketService', () => {
+describe('PaintBucketService', () => {
     let service: PaintBucketService;
     let executeSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
@@ -73,6 +73,13 @@ fdescribe('PaintBucketService', () => {
     it('getRgba should return correct RGBA values', () => {
         const rgbaString = 'rgba(0, 0, 0, 1)';
         const expectedRgba = { red: 0, green: 0, blue: 0, alpha: 255 };
+        const result = service.getRgba(rgbaString);
+        expect(result).toEqual(expectedRgba);
+    });
+
+    it('getRgba should return correct RGBA values when opacity is fractional', () => {
+        const rgbaString = 'rgba(0, 0, 0, 0.6)';
+        const expectedRgba = { red: 0, green: 0, blue: 0, alpha: 43 };
         const result = service.getRgba(rgbaString);
         expect(result).toEqual(expectedRgba);
     });
