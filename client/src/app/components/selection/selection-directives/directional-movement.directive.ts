@@ -8,7 +8,6 @@ const CONTINUOUS_PRESS_DELAY_MS = 100;
 })
 export class DirectionalMovementDirective {
     keyPressed: Map<string, number> = new Map();
-    leftMovement: number;
     private hasMovedOnce: boolean = false;
     @Output() canvasMovement: EventEmitter<boolean> = new EventEmitter();
 

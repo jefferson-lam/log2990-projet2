@@ -4,9 +4,9 @@ import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle/rectangle-selection-command';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -85,8 +85,7 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-
-            this.setSelectionCanvasPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
+            this.setSelectionCanvasPosition(this.cornerCoords[SelectionConstants.START_INDEX]);
             this.inUse = false;
             this.isManipulating = true;
         }
@@ -185,17 +184,14 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.selectionWidth,
             this.selectionHeight,
         );
-        this.setSelectionCanvasPosition(
-            { x: SelectionConstants.DEFAULT_LEFT_POSITION, y: SelectionConstants.DEFAULT_TOP_POSITION },
-            this.selectionWidth,
-            this.selectionHeight,
-        );
+        this.setSelectionCanvasPosition({ x: SelectionConstants.DEFAULT_LEFT_POSITION, y: SelectionConstants.DEFAULT_TOP_POSITION });
 
         this.inUse = false;
         this.isManipulating = true;
     }
 
     onToolChange(): void {
+        super.onToolChange();
         if (this.isManipulating) {
             const emptyMouseEvent: MouseEvent = {} as MouseEvent;
             this.onMouseDown(emptyMouseEvent);
@@ -219,13 +215,12 @@ export class RectangleSelectionService extends ToolSelectionService {
             selectionHeight,
         );
     }
-
-    private setSelectionCanvasPosition(topLeft: Vec2, selectionWidth: number, selectionHeight: number): void {
+    private setSelectionCanvasPosition(topLeft: Vec2): void {
         this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
         this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPosition(topLeft, selectionWidth, selectionHeight);
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
     }
 
     private validateSelectionHeightAndWidth(): boolean {
@@ -252,6 +247,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         selectionWidth: number,
         selectionHeight: number,
     ): void {
+        this.drawingService.selectionCanvas.style.visibility = 'visible';
         selectionCtx.drawImage(
             baseCtx.canvas,
             cornerCoords[SelectionConstants.START_INDEX].x,
