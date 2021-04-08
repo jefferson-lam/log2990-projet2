@@ -1,9 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ImgurService } from '@app/services/imgur/imgur.service';
 import { ExportCompletePageComponent } from './export-complete-page.component';
 
-describe('ExportCompletePageComponent', () => {
+fdescribe('ExportCompletePageComponent', () => {
     let component: ExportCompletePageComponent;
     let fixture: ComponentFixture<ExportCompletePageComponent>;
+    let imgurStub: ImgurService;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -14,6 +16,7 @@ describe('ExportCompletePageComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ExportCompletePageComponent);
         component = fixture.componentInstance;
+        imgurStub = TestBed.inject(ImgurService);
         fixture.detectChanges();
     });
 
@@ -27,5 +30,12 @@ describe('ExportCompletePageComponent', () => {
 
         component.setUrlText();
         expect(urlHeader.innerText).toEqual('www.thisisalink.com');
+    });
+
+    it('resetValues should call resetServiceSettings', () => {
+        const resetServiceSettingsSpy = spyOn(imgurStub, 'resetServiceSettings');
+
+        component.resetValues();
+        expect(resetServiceSettingsSpy).toHaveBeenCalled();
     });
 });

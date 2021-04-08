@@ -13,13 +13,21 @@
 }
 
 #saveButton,
-#cancelButton,
-#imgurButton {
+#cancelButton {
     align-content: center;
     font-size: large;
     background-color: coral;
     margin: auto;
-    width: 125px;
+    width: 210px;
+}
+
+#imgurButton {
+    align-content: center;
+    font-size: large;
+    color: #1cb76d;
+    background-color: #34373c;
+    margin: auto;
+    width: 210px;
 }
 
 .modal-dialog {

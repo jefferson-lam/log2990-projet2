@@ -9,3 +9,5 @@ export enum PopUpToggle {
     COMPLETE,
     ERROR,
 }
+
+export const OK_STATUS = 200;

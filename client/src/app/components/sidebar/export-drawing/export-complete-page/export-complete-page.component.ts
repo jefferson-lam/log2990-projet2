@@ -9,18 +9,23 @@ import { ImgurService } from '@app/services/imgur/imgur.service';
 export class ExportCompletePageComponent implements OnInit {
     imageUrl: string;
 
-    constructor(private imgurService: ImgurService) {}
+    constructor(private imgurService: ImgurService) {
+        this.imgurService = imgurService;
+    }
 
     ngOnInit(): void {
-        this.imgurService.urlObservable.subscribe((url: string) => {
-            console.log('complete-page:' + url);
-            this.imageUrl = url;
+        this.imgurService.serviceSettingsObservable.subscribe((serviceSettings: [number, string]) => {
+            this.imageUrl = serviceSettings[1];
             this.setUrlText();
         });
     }
 
-    setUrlText() {
-        let urlHeader = document.getElementById('urlLink') as HTMLElement;
+    setUrlText(): void {
+        const urlHeader = document.getElementById('urlLink') as HTMLElement;
         urlHeader.innerText = this.imageUrl;
+    }
+
+    resetValues(): void {
+        this.imgurService.resetServiceSettings();
     }
 }

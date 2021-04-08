@@ -11,69 +11,82 @@ export class ImgurService {
 
     responseStatus: number = 0;
     data: string;
+    shouldOpenPopUp: boolean = false;
+    isSendingRequest: boolean = false;
+    mutex: number;
 
     url: string;
-    urlSource: Subject<string>;
-    urlObservable: Observable<string>;
-
     exportProgressEnum: typeof ExportDrawingConstants.ExportProgress = ExportDrawingConstants.ExportProgress;
     exportProgress: ExportDrawingConstants.ExportProgress;
-    exportProgressSource: Subject<number>;
-    exportProgressObservable: Observable<number>;
+    serviceSettings: [number, string];
+
+    serviceSettingsSource: Subject<[number, string]>;
+    serviceSettingsObservable: Observable<[number, string]>;
 
     constructor() {
-        this.url = '';
-        this.urlSource = new BehaviorSubject<string>(this.url);
-        this.urlObservable = this.urlSource.asObservable();
-
+        this.url = 'none';
         this.exportProgress = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
-        this.exportProgressSource = new BehaviorSubject<number>(this.exportProgress);
-        this.exportProgressObservable = this.exportProgressSource.asObservable();
+
+        this.serviceSettings = [this.exportProgress, this.url];
+        this.serviceSettingsSource = new BehaviorSubject<[number, string]>(this.serviceSettings);
+        this.serviceSettingsObservable = this.serviceSettingsSource.asObservable();
+        this.mutex = 0;
     }
 
-    exportDrawing(imageString: string, name: string): void {
-        let img = this.imageStringSplit(imageString);
+    exportDrawing(imageString: string): void {
+        this.isSendingRequest = true;
+        const img = this.imageStringSplit(imageString);
         const headers = new Headers();
         headers.append('Authorization', this.CLIENT_ID);
         const formData = new FormData();
         formData.append('image', img);
 
-        let requestOptions = {
+        const requestOptions = {
             method: 'POST',
-            headers: headers,
+            headers,
             body: formData,
         };
 
         fetch(this.IMGUR_URL, requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                if (data.status === 200) {
-                    this.setUrlFromResponse(data);
-                    this.setExportProgress(ExportDrawingConstants.ExportProgress.COMPLETE);
-                } else {
-                    this.url = 'none';
-                    this.urlSource.next(this.url);
-                    this.setExportProgress(ExportDrawingConstants.ExportProgress.ERROR);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-                this.setExportProgress(ExportDrawingConstants.ExportProgress.ERROR);
+                this.setDataFromResponse(data);
             });
+        this.isSendingRequest = false;
     }
 
+    // tslint:disable-next-line:no-any
+    setDataFromResponse(data: any): void {
+        if (data.status === ExportDrawingConstants.OK_STATUS) {
+            this.mutex++;
+            this.setUrlFromResponse(data);
+            this.setExportProgress(ExportDrawingConstants.ExportProgress.COMPLETE);
+            this.serviceSettingsSource.next(this.serviceSettings);
+        } else {
+            this.mutex++;
+            this.serviceSettings[1] = 'none';
+            this.setExportProgress(ExportDrawingConstants.ExportProgress.ERROR);
+            this.serviceSettingsSource.next(this.serviceSettings);
+        }
+    }
+
+    // tslint:disable-next-line:no-any
     setUrlFromResponse(data: any): void {
-        this.url = data.data.link;
-        this.urlSource.next(this.url);
+        this.serviceSettings[1] = data.data.link;
     }
 
     setExportProgress(progress: number): void {
-        this.exportProgress = progress;
-        this.exportProgressSource.next(this.exportProgress);
+        this.serviceSettings[0] = progress;
     }
 
     imageStringSplit(img: string): string {
-        let stringArray = img.split(',');
+        const stringArray = img.split(',');
         return stringArray[1];
+    }
+
+    resetServiceSettings(): void {
+        this.serviceSettings[0] = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
+        this.serviceSettings[1] = 'none';
+        this.serviceSettingsSource.next(this.serviceSettings);
     }
 }

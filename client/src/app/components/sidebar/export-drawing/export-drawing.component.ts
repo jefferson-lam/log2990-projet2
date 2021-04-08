@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MAX_RGB_VALUE } from '@app/constants/color-constants';
 import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
@@ -14,7 +14,7 @@ import { ExportErrorPageComponent } from './export-error-page/export-error-page.
     templateUrl: './export-drawing.component.html',
     styleUrls: ['./export-drawing.component.scss'],
 })
-export class ExportDrawingComponent implements AfterViewInit {
+export class ExportDrawingComponent implements AfterViewInit, OnInit {
     @ViewChild('exportImg', { static: false }) exportImg: ElementRef<HTMLImageElement>;
     @ViewChild('exportCanvas', { static: true }) exportCanvasRef: ElementRef<HTMLCanvasElement>;
     exportCanvas: HTMLCanvasElement;
@@ -34,7 +34,7 @@ export class ExportDrawingComponent implements AfterViewInit {
     request: Message = { title: 'Error', body: '' };
 
     url: string;
-    PopUpToggleEnum: typeof ExportDrawingConstants.PopUpToggle = ExportDrawingConstants.PopUpToggle;
+    popUpToggleEnum: typeof ExportDrawingConstants.PopUpToggle = ExportDrawingConstants.PopUpToggle;
     popUpToggle: ExportDrawingConstants.PopUpToggle;
 
     constructor(drawingService: DrawingService, private imgurService: ImgurService, public newDialog: MatDialog) {
@@ -49,12 +49,9 @@ export class ExportDrawingComponent implements AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.imgurService.exportProgressObservable.subscribe((exportProgress: number) => {
-            this.popUpToggle = exportProgress;
-            this.openPopUp();
-        });
-        this.imgurService.urlObservable.subscribe((url: string) => {
-            this.url = url;
+        this.imgurService.serviceSettingsObservable.subscribe((serviceSettings: [number, string]) => {
+            this.popUpToggle = serviceSettings[0];
+            this.url = serviceSettings[1];
             this.openPopUp();
         });
     }
@@ -116,26 +113,26 @@ export class ExportDrawingComponent implements AfterViewInit {
     }
 
     exportToImgur(): void {
-        this.imgurService.exportDrawing(this.exportCanvas.toDataURL('image/' + this.type), this.name);
+        this.imgurService.exportDrawing(this.exportCanvas.toDataURL('image/' + this.type));
     }
 
     openPopUp(): void {
-        if (this.url === 'none') {
+        if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.NONE && this.imgurService.mutex === 0) {
+            return;
+        } else if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.ERROR && this.imgurService.mutex === 1) {
             this.openErrorPopUp();
-        } else {
+        } else if (this.imgurService.mutex === 1) {
             this.openCompletePopUp();
         }
     }
 
     openErrorPopUp(): void {
-        if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.ERROR) {
-            this.newDialog.open(ExportErrorPageComponent);
-        }
+        this.newDialog.open(ExportErrorPageComponent);
+        this.imgurService.mutex--;
     }
 
     openCompletePopUp(): void {
-        if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.COMPLETE) {
-            this.newDialog.open(ExportCompletePageComponent);
-        }
+        this.newDialog.open(ExportCompletePageComponent);
+        this.imgurService.mutex--;
     }
 }

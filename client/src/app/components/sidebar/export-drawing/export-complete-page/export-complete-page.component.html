@@ -9,6 +9,6 @@
         <a mat-dialog-title id="urlLink" href="{{ imageUrl }}" target="_blank">{{ imageUrl }}</a>
     </div>
     <div id="buttonDiv">
-        <button mat-button mat-dialog-close>Confirmer</button>
+        <button mat-button mat-dialog-close (click)="resetValues()">Confirmer</button>
     </div>
 </div>

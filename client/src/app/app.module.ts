@@ -90,7 +90,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         ExportCompletePageComponent,
         ExportErrorPageComponent,
     ],
-    entryComponents: [MainPageCarrouselComponent],
+    entryComponents: [MainPageCarrouselComponent, ExportCompletePageComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,

@@ -1,7 +1,6 @@
 <meta name="referrer" content="no-referrer" />
 <div class="modal-dialog">
     <h1 mat-dialog-title>Exporter le dessin</h1>
-
     <div id="exportCanvasContainer">
         <canvas
             id="exportCanvas"
@@ -43,7 +42,7 @@
 
     <div mat-dialog-actions>
         <button mat-button mat-dialog-close id="cancelButton">Fermer</button>
-        <button mat-button mat-dialog-close id="saveButton" (click)="saveImage()">Télécharger</button>
-        <button mat-button mat-dialog-close id="imgurButton" (click)="exportToImgur()">Exporter</button>
+        <button mat-button mat-dialog-close id="saveButton" (click)="saveImage()">Exporter</button>
+        <button mat-button mat-dialog-close id="imgurButton" (click)="exportToImgur()">Téléverser sur Imgur</button>
     </div>
 </div>
