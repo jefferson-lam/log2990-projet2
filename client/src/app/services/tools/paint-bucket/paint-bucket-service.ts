@@ -68,7 +68,7 @@ export class PaintBucketService extends Tool {
                 green: parseInt(match[1], BASE_10),
                 blue: parseInt(match[2], BASE_10),
                 // Convert from (0..1) to 255
-                alpha: Math.round(parseInt(match[ALPHA_INDEX], BASE_10) * MAX_RGB_VALUE),
+                alpha: Math.round(parseFloat(match[ALPHA_INDEX]) * MAX_RGB_VALUE),
             };
             return rgba;
         }
