@@ -83,11 +83,11 @@ export class ResizerComponent implements AfterViewInit {
     }
 
     lockMinCanvasValue(): void {
-        if (this.previewCtx.canvas.width < CanvasConstants.MIN_LENGTH_CANVAS) {
-            this.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        if (this.previewCtx.canvas.width < CanvasConstants.MIN_WIDTH_CANVAS) {
+            this.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
 
-            this.sideResizer.nativeElement.style.left = CanvasConstants.MIN_LENGTH_CANVAS + 'px';
-            this.cornerResizer.nativeElement.style.left = CanvasConstants.MIN_LENGTH_CANVAS + 'px';
+            this.sideResizer.nativeElement.style.left = CanvasConstants.MIN_WIDTH_CANVAS + 'px';
+            this.cornerResizer.nativeElement.style.left = CanvasConstants.MIN_WIDTH_CANVAS + 'px';
             this.bottomResizer.nativeElement.style.left = this.previewCtx.canvas.width / 2 + 'px';
         }
         if (this.previewCtx.canvas.height < CanvasConstants.MIN_HEIGHT_CANVAS) {

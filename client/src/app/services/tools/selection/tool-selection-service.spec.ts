@@ -429,4 +429,10 @@ describe('ToolSelectionService', () => {
         const result = service.clearCorners([startPoint, endPoint]);
         expect(result).toEqual([expectedPoint, expectedPoint]);
     });
+
+    it('onToolChange should set resizeHandlerService.inUse to false', () => {
+        service.resizerHandlerService.inUse = true;
+        service.onToolChange();
+        expect(service.resizerHandlerService.inUse).toBeFalse();
+    });
 });
