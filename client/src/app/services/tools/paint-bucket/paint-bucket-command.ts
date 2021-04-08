@@ -65,7 +65,6 @@ export class PaintBucketCommand extends Command {
     // Uses the span-fill flood fill algorithm.
     floodFill(ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: ColorRgba, toleranceValue: number): void {
         let pixelPosition;
-        let blend;
         let distance;
         let spanLeft = true;
         let spanRight = true;
@@ -97,8 +96,6 @@ export class PaintBucketCommand extends Command {
 
         // Shift by 2 allows us to access typical RGBA color from the original data, not the buffer.
         pixelPosition = stack[0] << 2;
-        const rightE = width - 1;
-        const bottomE = height - 1;
 
         // Array of distances will keep track which pixel has been marked as valid to paint on
         // If distance is 0 for that specific pixel, it means that it did not pass the tolerance check
@@ -165,34 +162,7 @@ export class PaintBucketCommand extends Command {
         while (pixelPosition < pixels) {
             distance = distances[pixelPosition];
             if (distance !== 0) {
-                if (distance === DISTANCE_MASK) {
-                    pixelData.data[pixelPosition] = newColor;
-                } else {
-                    blend = false;
-                    const x = pixelPosition % width;
-                    const y = (pixelPosition / width) | 0;
-                    if (x > 0 && distances[pixelPosition - 1] === 0) {
-                        blend = true;
-                    } else if (x < rightE && distances[pixelPosition + 1] === 0) {
-                        blend = true;
-                    } else if (y > 0 && distances[pixelPosition - width] === 0) {
-                        blend = true;
-                    } else if (y < bottomE && distances[pixelPosition + width] === 0) {
-                        blend = true;
-                    }
-                    if (blend) {
-                        distance &= MAX_RGB_VALUE;
-                        distance = distance / MAX_RGB_VALUE;
-                        const invDist = 1 - distance;
-                        const idx1 = pixelPosition << 2;
-                        data[idx1] = data[idx1] * distance + fillColor.red * invDist;
-                        data[idx1 + 1] = data[idx1 + 1] * distance + fillColor.green * invDist;
-                        data[idx1 + 2] = data[idx1 + 2] * distance + fillColor.blue * invDist;
-                        data[idx1 + ALPHA_INDEX] = data[idx1 + ALPHA_INDEX] * distance + fillColor.alpha * invDist;
-                    } else {
-                        pixelData.data[pixelPosition] = newColor;
-                    }
-                }
+                pixelData.data[pixelPosition] = newColor;
             }
             pixelPosition++;
         }
