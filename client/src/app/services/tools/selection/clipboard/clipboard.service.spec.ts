@@ -70,9 +70,9 @@ describe('ClipboardService', () => {
         service.clipboard.data[1] = 255;
         service.clipboard.data[2] = 255;
         service.clipboard.data[3] = 255;
-        const undoSelectionSpy = spyOn(service.currentTool, 'undoSelection').and.callThrough();
+        const mouseDownSpy = spyOn(service.currentTool, 'onMouseDown').and.callThrough();
         service.pasteSelection();
-        expect(undoSelectionSpy).toHaveBeenCalled();
+        expect(mouseDownSpy).toHaveBeenCalled();
         expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
     });
 

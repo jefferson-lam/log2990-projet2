@@ -37,6 +37,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onMouseDown(event: MouseEvent): void {
         if (this.isManipulating) {
+            console.log('òn mouse down ellipse');
             // transformValues represent where the canvas' topleft corner was moved
             this.transformValues = {
                 x: parseInt(this.drawingService.selectionCanvas.style.left, 10),

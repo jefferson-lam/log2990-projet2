@@ -4,7 +4,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { ClipboardCommand } from './clipboard-command';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -14,13 +14,14 @@ export class ClipboardService {
     clipboard: ImageData = new ImageData(1, 1);
     // TODO: add implementation for lasso polygonal
     currentTool: RectangleSelectionService | EllipseSelectionService;
-    command: ClipboardCommand;
     lastSelectionTool: string;
 
-    constructor(private drawingService: DrawingService, private toolManager: ToolManagerService) {
-        if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
-            this.currentTool = this.toolManager.currentTool;
-        }
+    constructor(public drawingService: DrawingService, public toolManager: ToolManagerService, public undoRedoService: UndoRedoService) {
+        this.toolManager.currentToolSubject.asObservable().subscribe((currentTool) => {
+            if (currentTool instanceof RectangleSelectionService || currentTool instanceof EllipseSelectionService) {
+                this.currentTool = currentTool;
+            }
+        });
     }
 
     copySelection(): void {
@@ -37,14 +38,13 @@ export class ClipboardService {
 
     cutSelection(): void {
         this.copySelection();
-        // this.undoRedoService.executeCommand(this.command);
         this.deleteSelection();
     }
 
     pasteSelection(): void {
         if (this.clipboard.data.some((pixel) => pixel !== 0)) {
             if (this.isSelected(this.drawingService.selectionCanvas)) {
-                this.currentTool.undoSelection();
+                this.currentTool.onMouseDown({} as MouseEvent);
             }
             this.drawingService.selectionCanvas.height = this.clipboard.height;
             this.drawingService.selectionCanvas.width = this.clipboard.width;
@@ -52,6 +52,8 @@ export class ClipboardService {
             this.drawingService.selectionCanvas.style.top = 0 + 'px';
             this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
             this.currentTool.isManipulating = true;
+            // this.command.setValues(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
+            // this.command.execute();
             this.changeToSelectionTool(this.lastSelectionTool);
             // This boolean is for avoiding behavior of simply moving the previous selection
             this.currentTool.isFromClipboard = true;
@@ -65,7 +67,6 @@ export class ClipboardService {
 
     deleteSelection(): void {
         if (this.isSelected(this.drawingService.selectionCanvas)) {
-            // this.command = new ClipboardCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
             this.currentTool.undoSelection();
             if (this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.fillEllipse(this.drawingService.baseCtx, this.currentTool.cornerCoords, this.currentTool.isCircle, 'white');
