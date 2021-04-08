@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '../ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '../rectangle/rectangle-selection-service';
 import { ClipboardService } from './clipboard.service';
 
-describe('ClipboardService', () => {
+fdescribe('ClipboardService', () => {
     let service: ClipboardService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let toolManagerService: ToolManagerService;
@@ -37,6 +38,19 @@ describe('ClipboardService', () => {
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].selectionCtx = selectionCtxStub;
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
+        service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
+    });
+
+    it('currenttool should change to Rectangle if toolManagers subject changes', () => {
+        toolManagerService.currentToolSubject.next(rectangleSelectionService);
+        expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
+        expect(service.currentTool).toEqual(rectangleSelectionService);
+    });
+
+    it('currenttool should change to Ellipse if toolManagers subject changes', () => {
+        toolManagerService.currentToolSubject.next(ellipseSelectionService);
+        expect(service.currentTool).toBeInstanceOf(EllipseSelectionService);
+        expect(service.currentTool).toEqual(ellipseSelectionService);
     });
 
     it('should be created', () => {
@@ -86,7 +100,7 @@ describe('ClipboardService', () => {
         expect(selectToolSpy).toHaveBeenCalled();
     });
 
-    it('pasteSelection moves selection canvas to corner of drawing canvas', () => {
+    it('pasteSelection pastes clipboard data to moved selection canvas', () => {
         service.clipboard.data[0] = 255;
         service.clipboard.data[1] = 255;
         service.clipboard.data[2] = 255;
@@ -94,10 +108,25 @@ describe('ClipboardService', () => {
         const putImageDataSpy = spyOn(selectionCtxStub, 'putImageData').and.callThrough();
         service.pasteSelection();
         expect(putImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection moves selection canvas to corner of drawing canvas', () => {
+        service.clipboard.data[0] = 255;
+        service.clipboard.data[1] = 255;
+        service.clipboard.data[2] = 255;
+        service.clipboard.data[3] = 255;
+        const setCanvasSpy = spyOn(service.currentTool, 'setSelectionCanvasPosition').and.callThrough();
+        service.pasteSelection();
+        expect(setCanvasSpy).toHaveBeenCalled();
         expect(canvasTestHelper.selectionCanvas.height).toEqual(service.clipboard.height);
         expect(canvasTestHelper.selectionCanvas.width).toEqual(service.clipboard.width);
         expect(canvasTestHelper.selectionCanvas.style.left).toEqual('0px');
         expect(canvasTestHelper.selectionCanvas.style.top).toEqual('0px');
+
+        expect(canvasTestHelper.previewSelectionCanvas.height).toEqual(service.clipboard.height);
+        expect(canvasTestHelper.previewSelectionCanvas.width).toEqual(service.clipboard.width);
+        expect(canvasTestHelper.previewSelectionCanvas.style.left).toEqual('0px');
+        expect(canvasTestHelper.previewSelectionCanvas.style.top).toEqual('0px');
     });
 
     it('pasteSelection does nothing if clipboard is empty ', () => {
@@ -141,5 +170,17 @@ describe('ClipboardService', () => {
         service.cutSelection();
         expect(copySelectionSpy).toHaveBeenCalled();
         expect(deleteSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('copySelection should save last selection tool (ellipse)', () => {
+        service.currentTool = ellipseSelectionService;
+        service.copySelection();
+        expect(service.lastSelectionTool).toEqual(ToolManagerConstants.ELLIPSE_SELECTION_KEY);
+    });
+
+    it('copySelection should save last selection tool (rectangle)', () => {
+        service.currentTool = rectangleSelectionService;
+        service.copySelection();
+        expect(service.lastSelectionTool).toEqual(ToolManagerConstants.RECTANGLE_SELECTION_KEY);
     });
 });

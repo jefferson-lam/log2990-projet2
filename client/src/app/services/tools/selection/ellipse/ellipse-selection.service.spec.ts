@@ -415,7 +415,7 @@ describe('EllipseToolSelectionService', () => {
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
-        service.fillEllipse(baseCtxStub, service.cornerCoords, false, 'white');
+        service.fillEllipse(baseCtxStub, service.cornerCoords, false);
         expect(baseCtxEllipseSpy).toHaveBeenCalled();
         expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,

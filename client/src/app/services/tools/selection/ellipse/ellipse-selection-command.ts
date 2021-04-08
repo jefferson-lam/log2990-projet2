@@ -57,7 +57,6 @@ export class EllipseSelectionCommand extends Command {
         );
         // restore is called because save is called in clipEllipse function.
         this.ctx.restore();
-        this.isFromClipboard = false;
     }
 
     cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {

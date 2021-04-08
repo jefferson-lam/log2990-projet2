@@ -53,7 +53,6 @@ export class RectangleSelectionCommand extends Command {
             this.selectionWidth,
             this.selectionHeight,
         );
-        this.isFromClipboard = false;
     }
 
     cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {
