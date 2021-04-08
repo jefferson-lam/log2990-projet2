@@ -7,7 +7,7 @@ import { EllipseSelectionService } from '../ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '../rectangle/rectangle-selection-service';
 import { ClipboardService } from './clipboard.service';
 
-fdescribe('ClipboardService', () => {
+describe('ClipboardService', () => {
     let service: ClipboardService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let toolManagerService: ToolManagerService;
@@ -87,7 +87,6 @@ fdescribe('ClipboardService', () => {
         const mouseDownSpy = spyOn(service.currentTool, 'onMouseDown').and.callThrough();
         service.pasteSelection();
         expect(mouseDownSpy).toHaveBeenCalled();
-        expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
     });
 
     it('pasteSelection changes to selection tool used during copy', () => {
@@ -115,9 +114,7 @@ fdescribe('ClipboardService', () => {
         service.clipboard.data[1] = 255;
         service.clipboard.data[2] = 255;
         service.clipboard.data[3] = 255;
-        const setCanvasSpy = spyOn(service.currentTool, 'setSelectionCanvasPosition').and.callThrough();
         service.pasteSelection();
-        expect(setCanvasSpy).toHaveBeenCalled();
         expect(canvasTestHelper.selectionCanvas.height).toEqual(service.clipboard.height);
         expect(canvasTestHelper.selectionCanvas.width).toEqual(service.clipboard.width);
         expect(canvasTestHelper.selectionCanvas.style.left).toEqual('0px');

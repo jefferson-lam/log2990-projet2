@@ -49,9 +49,7 @@ export class ClipboardService {
                 this.currentTool.onMouseDown({} as MouseEvent);
             }
             this.changeToSelectionTool(this.lastSelectionTool);
-
             this.setPastedCanvasPosition({ x: 0, y: 0 });
-
             this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
             this.currentTool.cornerCoords = this.cornerCoords;
             this.currentTool.isManipulating = true;
@@ -83,7 +81,11 @@ export class ClipboardService {
         this.drawingService.previewSelectionCanvas.width = this.clipboard.width;
         this.drawingService.selectionCanvas.height = this.clipboard.height;
         this.drawingService.selectionCanvas.width = this.clipboard.width;
-        this.currentTool.setSelectionCanvasPosition(topLeft);
+
+        this.drawingService.selectionCanvas.style.left = 0 + 'px';
+        this.drawingService.selectionCanvas.style.top = 0 + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = 0 + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = 0 + 'px';
     }
 
     private changeToSelectionTool(lastSelectionTool: string): void {
