@@ -79,7 +79,7 @@ describe('PaintBucketService', () => {
 
     it('getRgba should return correct RGBA values when opacity is fractional', () => {
         const rgbaString = 'rgba(0, 0, 0, 0.6)';
-        const expectedRgba = { red: 0, green: 0, blue: 0, alpha: 43 };
+        const expectedRgba = { red: 0, green: 0, blue: 0, alpha: 153 };
         const result = service.getRgba(rgbaString);
         expect(result).toEqual(expectedRgba);
     });
