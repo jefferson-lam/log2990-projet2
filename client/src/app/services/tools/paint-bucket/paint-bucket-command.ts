@@ -1,7 +1,7 @@
 import { Command } from '@app/classes/command';
 import { PixelData } from '@app/classes/pixel-data';
 import { MouseButton } from '@app/constants/mouse-constants';
-import { ALPHA_INDEX, BIT_16, BIT_24, BIT_8, DIMENSION_4D, DISTANCE_MASK, INVALID_VALUE, MAX_RGB_VALUE } from '@app/constants/paint-bucket-constants';
+import { ALPHA_INDEX, BIT_16, BIT_24, BIT_8, DIMENSION_4D, DISTANCE_MASK, MAX_RGB_VALUE } from '@app/constants/paint-bucket-constants';
 import { ColorRgba, PaintBucketService } from './paint-bucket-service';
 
 // tslint:disable:no-bitwise
@@ -48,10 +48,11 @@ export class PaintBucketCommand extends Command {
 
         // Normalise tolerance to be able to compare with 4d space
         const tolerance = Math.sqrt(toleranceValue * toleranceValue * DIMENSION_4D);
-        const targetColor = this.getPixel(pixelData, startX, startY);
+        const targetColor = pixelData.data[startY * pixelData.width + startX];
+
         for (let y = 0; y < pixelData.height; y++) {
             for (let x = 0; x < pixelData.width; x++) {
-                const currentPixelColor = this.getPixel(pixelData, x, y);
+                const currentPixelColor = pixelData.data[y * pixelData.width + x];
                 if (this.calculateColorDistance(this.number2rgba(currentPixelColor), this.number2rgba(targetColor)) <= tolerance) {
                     pixelData.data[y * pixelData.width + x] = color;
                 }
@@ -170,6 +171,7 @@ export class PaintBucketCommand extends Command {
         ctx.putImageData(imageData, 0, 0);
     }
 
+    // This number is stored in #AABBGGRR format, hence the shifting.
     number2rgba(color: number): ColorRgba {
         const rgba = {
             red: color & MAX_RGB_VALUE,
@@ -180,19 +182,12 @@ export class PaintBucketCommand extends Command {
         return rgba;
     }
 
-    getPixel(pixelData: PixelData, x: number, y: number): number {
-        if (x < 0 || y < 0 || x >= pixelData.width || y >= pixelData.height) {
-            return INVALID_VALUE;
-        } else {
-            return pixelData.data[y * pixelData.width + x];
-        }
-    }
-
     calculateColorDistance(currentColor: ColorRgba, fillColor: ColorRgba): number {
         const R = currentColor.red - fillColor.red;
         const G = currentColor.green - fillColor.green;
         const B = currentColor.blue - fillColor.blue;
-        const distance = Math.sqrt(R * R + G * G + B * B);
+        const A = currentColor.alpha - fillColor.alpha;
+        const distance = Math.round(Math.sqrt(R * R + G * G + B * B + A * A));
         return distance;
     }
 }
