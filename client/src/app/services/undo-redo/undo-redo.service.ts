@@ -10,6 +10,7 @@ export class UndoRedoService {
     undoPile: Command[] = [];
     redoPile: Command[] = [];
 
+    initialImage: HTMLImageElement;
     resetCanvasSize: Command;
 
     pileSizeSource: Subject<number[]> = new BehaviorSubject<number[]>([this.undoPile.length, this.redoPile.length]);
@@ -26,10 +27,10 @@ export class UndoRedoService {
     }
 
     executeCommand(command: Command): void {
+        command.execute();
         this.undoPile.push(command);
         this.redoPile = [];
         this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
-        command.execute();
     }
 
     undo(): void {
@@ -47,14 +48,12 @@ export class UndoRedoService {
     }
 
     refresh(): void {
-        this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.resetCanvasSize.execute();
-        if (this.drawingService.imageURL !== '') {
-            const image = new Image();
-            image.src = this.drawingService.imageURL;
-            this.drawingService.baseCtx.drawImage(image, 0, 0, image.width, image.height);
+        if (this.initialImage) {
+            this.drawingService.baseCtx.drawImage(this.initialImage, 0, 0, this.initialImage.width, this.initialImage.height);
         }
         this.undoPile.forEach((c) => c.execute());
+        this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
     }
 }

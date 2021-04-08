@@ -20,8 +20,4 @@ export class DrawingService {
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
-
-    setInitialImage(dataUrl: string): void {
-        this.imageURL = dataUrl;
-    }
 }

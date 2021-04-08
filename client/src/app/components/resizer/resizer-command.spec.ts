@@ -70,7 +70,7 @@ describe('ResizerCommand', () => {
     });
 
     it('resizeCanvas should set new values', () => {
-        service.previewWidth = CanvasConstants.MIN_LENGTH_CANVAS;
+        service.previewWidth = CanvasConstants.MIN_WIDTH_CANVAS;
         service.previewHeight = CanvasConstants.MIN_HEIGHT_CANVAS;
 
         service.resizeCanvas();
