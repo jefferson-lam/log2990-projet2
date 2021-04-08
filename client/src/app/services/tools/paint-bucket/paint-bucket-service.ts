@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { MouseButton } from '@app/constants/mouse-constants';
-import { BASE_10, DEFAULT_TOLERANCE_VALUE, MAX_RGB_VALUE, MIN_RGB_VALUE, NORMALISATION_FACTOR } from '@app/constants/paint-bucket-constants';
+import {
+    ALPHA_INDEX,
+    BASE_10,
+    DEFAULT_TOLERANCE_VALUE,
+    MAX_RGB_VALUE,
+    MIN_RGB_VALUE,
+    NORMALISATION_FACTOR,
+} from '@app/constants/paint-bucket-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PaintBucketCommand } from '@app/services/tools/paint-bucket/paint-bucket-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -32,11 +39,11 @@ export class PaintBucketService extends Tool {
     setPrimaryColor(newColor: string): void {
         this.primaryColorRgba = this.getRgba(newColor);
         this.primaryColor = newColor;
-        console.log(this.primaryColor);
     }
 
+    // We convert the tolerance value from x/100 to x/255
     setToleranceValue(toleranceValue: number): void {
-        this.toleranceValue = (toleranceValue * MAX_RGB_VALUE) / NORMALISATION_FACTOR;
+        this.toleranceValue = Math.round((toleranceValue * MAX_RGB_VALUE) / NORMALISATION_FACTOR);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -53,16 +60,15 @@ export class PaintBucketService extends Tool {
 
     // regex matches for strings that have format: rgba(r,g,b,a)
     // and extracts into an array of length 4 containing each value
-    private getRgba(color: string): ColorRgba {
+    getRgba(color: string): ColorRgba {
         const match = color.match(/[.?\d]+/g);
         if (match) {
             const rgba = {
                 red: parseInt(match[0], BASE_10),
                 green: parseInt(match[1], BASE_10),
                 blue: parseInt(match[2], BASE_10),
-                // Convert to 255
-                // tslint:disable-next-line:no-magic-numbers
-                alpha: Math.round(parseInt(match[3], 10) * MAX_RGB_VALUE),
+                // Convert from (0..1) to 255
+                alpha: Math.round(parseInt(match[ALPHA_INDEX], BASE_10) * MAX_RGB_VALUE),
             };
             return rgba;
         }
