@@ -69,9 +69,9 @@ describe('ResizerComponent', () => {
 
         component.baseCtx = baseCtxStub;
         component.previewCtx = previewCtxStub;
-        component.baseCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        component.baseCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
         component.baseCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS;
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS;
 
         drawPreviewSpy = spyOn(component, 'drawPreviewOfNewSize').and.callThrough();
@@ -84,23 +84,23 @@ describe('ResizerComponent', () => {
     });
 
     it('lockMinCanvasValue should set canvas height and width to minimum 250px', () => {
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS - 1;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS - 1;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS - 1;
         component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
+        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
         expect(component.cornerResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
         expect(component.bottomResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
     });
 
     it('lockMinCanvasValue should set canvas width to minimum 250px', () => {
         const oldCanvasHeight = 400;
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS - 1;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS - 1;
         component.previewCtx.canvas.height = oldCanvasHeight;
         component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.bottomResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS / 2 + 'px');
+        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component.bottomResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS / 2 + 'px');
     });
 
     it('lockMinCanvasValue should set canvas height to minimum 250px', () => {

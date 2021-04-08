@@ -3,7 +3,8 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { END_INDEX, START_INDEX } from '@app/constants/ellipse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
@@ -18,7 +19,6 @@ describe('RectangleSelectionService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
-    // let previewSelectionCtxStub: CanvasRenderingContext2D;
     let parentMouseDownSpy: jasmine.Spy;
     let parentMouseUpSpy: jasmine.Spy;
     let parentKeyboardDownSpy: jasmine.Spy;
@@ -38,7 +38,7 @@ describe('RectangleSelectionService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['resetResizers', 'setResizerPosition']);
+        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['resetResizers', 'setResizerPositions']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
@@ -50,7 +50,6 @@ describe('RectangleSelectionService', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         selectionCtxStub = canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
-        // previewSelectionCtxStub = canvasTestHelper.previewSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(RectangleSelectionService);
         undoRedoService = TestBed.inject(UndoRedoService);
@@ -65,15 +64,6 @@ describe('RectangleSelectionService', () => {
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
-
-        service['resizerHandlerService'].topLeftResizer = document.createElement('div');
-        service['resizerHandlerService'].topResizer = document.createElement('div');
-        service['resizerHandlerService'].topRightResizer = document.createElement('div');
-        service['resizerHandlerService'].rightResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomRightResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomLeftResizer = document.createElement('div');
-        service['resizerHandlerService'].leftResizer = document.createElement('div');
 
         parentMouseDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseDown');
         parentMouseUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseUp');
@@ -411,6 +401,12 @@ describe('RectangleSelectionService', () => {
         ]);
         expect(service.inUse).toBeFalsy();
         expect(service.isManipulating).toBeTruthy();
+    });
+
+    it('onToolChange should call super.onToolChange', () => {
+        const superSpy = spyOn(ToolSelectionService.prototype, 'onToolChange');
+        service.onToolChange();
+        expect(superSpy).toHaveBeenCalled();
     });
 
     it('onToolChange should call onMouseDown if isManipulating is true', () => {
