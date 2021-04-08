@@ -6,7 +6,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
 import { Message } from '@common/communication/message';
 import { ServerDrawing } from '@common/communication/server-drawing';
-import { timeout } from 'rxjs/operators';
 import { TagInputComponent } from './tag-input/tag-input.component';
 import { TitleInputComponent } from './title-input/title-input.component';
 @Component({
@@ -56,32 +55,29 @@ export class SaveDrawingComponent implements AfterViewInit {
     saveDrawing(): void {
         this.dialogRef.disableClose = true;
         this.saveProgress = SaveDrawingConstants.SaveProgress.SAVING;
-        this.database
-            .saveDrawing(this.titleInput.title, this.tagInput.tags)
-            .pipe(timeout(SaveDrawingConstants.TIMEOUT_MAX_TIME))
-            .subscribe({
-                complete: () => {
-                    if (this.request.title.includes('Success')) {
-                        this.saveProgress = SaveDrawingConstants.SaveProgress.COMPLETE;
-                    } else {
-                        this.saveProgress = SaveDrawingConstants.SaveProgress.ERROR;
-                        this.resultMessage = this.request.body;
-                    }
-                    this.resultMessage = this.request.body;
-                    this.dialogRef.disableClose = false;
-                    this.sendDrawingToServer();
-                },
-                next: (result: Message) => {
-                    this.request = result;
-                },
-                error: (error: Error) => {
+        this.database.saveDrawing(this.titleInput.title, this.tagInput.tags).subscribe({
+            complete: () => {
+                if (this.request.title.includes('Success')) {
+                    this.saveProgress = SaveDrawingConstants.SaveProgress.COMPLETE;
+                } else {
                     this.saveProgress = SaveDrawingConstants.SaveProgress.ERROR;
-                    if (error.message.includes('Timeout')) {
-                        this.resultMessage = 'Temps de connection au serveur a expiré.';
-                    }
-                    this.dialogRef.disableClose = false;
-                },
-            });
+                    this.resultMessage = this.request.body;
+                }
+                this.resultMessage = this.request.body;
+                this.dialogRef.disableClose = false;
+                this.sendDrawingToServer();
+            },
+            next: (result: Message) => {
+                this.request = result;
+            },
+            error: (error: Message) => {
+                this.saveProgress = SaveDrawingConstants.SaveProgress.ERROR;
+                if (error.body.includes('Timeout')) {
+                    this.resultMessage = 'Temps de connection au serveur a expiré.';
+                }
+                this.dialogRef.disableClose = false;
+            },
+        });
     }
 
     private sendDrawingToServer(): void {

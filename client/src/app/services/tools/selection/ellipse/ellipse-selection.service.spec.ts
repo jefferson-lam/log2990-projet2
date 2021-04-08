@@ -4,7 +4,8 @@ import { Vec2 } from '@app/classes/vec2';
 import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constants';
 import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
@@ -41,7 +42,7 @@ describe('EllipseToolSelectionService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['resetResizers', 'setResizerPosition']);
+        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['resetResizers', 'setResizerPositions']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
@@ -65,15 +66,6 @@ describe('EllipseToolSelectionService', () => {
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
-
-        service['resizerHandlerService'].topLeftResizer = document.createElement('div');
-        service['resizerHandlerService'].topResizer = document.createElement('div');
-        service['resizerHandlerService'].topRightResizer = document.createElement('div');
-        service['resizerHandlerService'].rightResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomRightResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomResizer = document.createElement('div');
-        service['resizerHandlerService'].bottomLeftResizer = document.createElement('div');
-        service['resizerHandlerService'].leftResizer = document.createElement('div');
 
         parentMouseDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseDown');
         parentMouseUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseUp');
@@ -191,7 +183,7 @@ describe('EllipseToolSelectionService', () => {
         expect(drawServiceSpy.selectionCanvas.height).toEqual(expectedHeight);
         expect(drawServiceSpy.selectionCanvas.style.left).toEqual('25px');
         expect(drawServiceSpy.selectionCanvas.style.top).toEqual('40px');
-        expect(resizerHandlerServiceSpy.setResizerPosition).toHaveBeenCalled();
+        expect(resizerHandlerServiceSpy.setResizerPositions).toHaveBeenCalled();
         expect(service.inUse).toBeFalsy();
         expect(service.isManipulating).toBeTruthy();
     });
@@ -344,6 +336,12 @@ describe('EllipseToolSelectionService', () => {
         service.isManipulating = true;
         service.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
         expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('onToolChange should call super.onToolChange', () => {
+        const superSpy = spyOn(ToolSelectionService.prototype, 'onToolChange');
+        service.onToolChange();
+        expect(superSpy).toHaveBeenCalled();
     });
 
     it('onToolChange should call onMouseDown if isManipulating is true', () => {
