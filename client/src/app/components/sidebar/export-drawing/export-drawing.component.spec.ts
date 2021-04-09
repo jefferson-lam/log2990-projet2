@@ -224,6 +224,17 @@ fdescribe('ExportDrawingComponent', () => {
         expect(openCompletePopUpSpy).toHaveBeenCalled();
     });
 
+    it('openPopUp should not call openCompletePopUp or openErrorPopUp if popUpToggle is 1 and mutex is 0', () => {
+        const openCompletePopUpSpy = spyOn(component, 'openCompletePopUp');
+        const openErrorPopUpSpy = spyOn(component, 'openErrorPopUp');
+        component.popUpToggle = ExportDrawingConstants.PopUpToggle.COMPLETE;
+        imgurStub.mutex = 0;
+
+        component.openPopUp();
+        expect(openCompletePopUpSpy).not.toHaveBeenCalled();
+        expect(openErrorPopUpSpy).not.toHaveBeenCalled();
+    });
+
     it('openErrorPopUp should open ExportErrorPageComponent dialog', () => {
         imgurStub.mutex = 1;
         component.openErrorPopUp();
