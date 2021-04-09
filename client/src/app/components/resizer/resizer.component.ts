@@ -35,7 +35,6 @@ export class ResizerComponent implements AfterViewInit {
         this.cornerResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
         this.bottomResizer.nativeElement.style.left = this.baseCtx.canvas.width / 2 + 'px';
         this.bottomResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
-
         this.autoSaveService.loadDrawing();
     }
 
