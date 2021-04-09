@@ -134,6 +134,18 @@ describe('ClipboardService', () => {
         expect(putImageDataSpy).not.toHaveBeenCalled();
     });
 
+    it('pasteSelection doesnt undo if theres no active selection', () => {
+        service.clipboard.data[0] = 255;
+        service.clipboard.data[1] = 255;
+        service.clipboard.data[2] = 255;
+        service.clipboard.data[3] = 255;
+        canvasTestHelper.selectionCanvas.width = 0;
+        canvasTestHelper.selectionCanvas.height = 0;
+        const mouseDownSpy = spyOn(service.currentTool, 'onMouseDown').and.callThrough();
+        service.pasteSelection();
+        expect(mouseDownSpy).not.toHaveBeenCalled();
+    });
+
     it('deleteSelection fills active selection using RectangleSelectionService method ', () => {
         const fillEllipseSpy = spyOn(ellipseSelectionService, 'fillEllipse').and.callFake(() => {
             return;
@@ -158,6 +170,20 @@ describe('ClipboardService', () => {
         });
         service.deleteSelection();
         expect(fillEllipseSpy).toHaveBeenCalled();
+        expect(fillRectangleSpy).not.toHaveBeenCalled();
+    });
+
+    it('deleteSelection does nothing when there is no active selection ', () => {
+        canvasTestHelper.selectionCanvas.width = 0;
+        canvasTestHelper.selectionCanvas.height = 0;
+        const fillEllipseSpy = spyOn(ellipseSelectionService, 'fillEllipse').and.callFake(() => {
+            return;
+        });
+        const fillRectangleSpy = spyOn(rectangleSelectionService, 'fillRectangle').and.callFake(() => {
+            return;
+        });
+        service.deleteSelection();
+        expect(fillEllipseSpy).not.toHaveBeenCalled();
         expect(fillRectangleSpy).not.toHaveBeenCalled();
     });
 

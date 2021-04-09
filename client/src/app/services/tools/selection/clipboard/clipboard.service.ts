@@ -64,7 +64,7 @@ export class ClipboardService {
             if (this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.undoSelection();
                 this.currentTool.fillEllipse(this.drawingService.baseCtx, this.currentTool.cornerCoords, this.currentTool.isCircle);
-            } else if (this.currentTool instanceof RectangleSelectionService) {
+            } else {
                 this.currentTool.undoSelection();
                 this.currentTool.fillRectangle(
                     this.drawingService.baseCtx,
