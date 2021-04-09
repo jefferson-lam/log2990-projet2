@@ -8,6 +8,7 @@ import * as StampConstants from '@app/constants/stamp-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { StampCommand } from '@app/services/tools/stamp/stamp-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -15,10 +16,13 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class StampService extends Tool {
     cornerCoords: Vec2[];
     stampState: boolean;
-    imageSource: string;
+    imageSource: string = 'assets/stamp_1.svg';
+    realRotationValues: number = StampConstants.MIN_ANGLE;
     rotationAngle: number = StampConstants.INIT_ROTATION_ANGLE;
     imageZoomFactor: number = StampConstants.INIT_ZOOM_FACTOR;
     degreesRotation: number = StampConstants.INIT_DEGREES_ANGLE_COUNTER;
+
+    angleSubject: Subject<number> = new Subject<number>();
 
     previewCommand: StampCommand;
 
@@ -49,12 +53,10 @@ export class StampService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.stampState) {
-            this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
-        }
+        this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.previewCommand.setValues(this.drawingService.previewCtx, this);
+        this.previewCommand.execute();
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -70,8 +72,7 @@ export class StampService extends Tool {
     }
 
     onMouseEnter(event: MouseEvent): void {
-        const LEFT_CLICK_BUTTONS = 1;
-        if (event.buttons === LEFT_CLICK_BUTTONS && this.inUse) {
+        if (event.buttons === MouseConstants.PRIMARY_BUTTON && this.inUse) {
             this.inUse = true;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -98,13 +99,22 @@ export class StampService extends Tool {
     changeRotationAngle(event: WheelEvent): void {
         if (event.deltaY > 0) {
             this.rotationAngle -= this.degreesRotation * StampConstants.CONVERT_RAD;
+            this.realRotationValues -= this.degreesRotation;
         } else {
             this.rotationAngle += this.degreesRotation * StampConstants.CONVERT_RAD;
+            this.realRotationValues += this.degreesRotation;
         }
+        this.setAngleSliderValue(this.realRotationValues);
     }
 
-    setStampClickedState(stampState: boolean): void {
-        this.stampState = stampState;
+    setAngleSliderValue(angle: number): void {
+        if (angle > StampConstants.MAX_ANGLE) {
+            this.realRotationValues = StampConstants.MIN_ANGLE;
+        }
+        if (angle < StampConstants.MIN_ANGLE) {
+            this.realRotationValues = StampConstants.MAX_ANGLE;
+        }
+        this.angleSubject.next(this.realRotationValues);
     }
 
     setImageSource(newImageSource: string): void {
@@ -117,6 +127,10 @@ export class StampService extends Tool {
 
     setAngleRotation(newAngle: number): void {
         this.rotationAngle = newAngle;
+    }
+
+    onToolChange(): void {
+        this.onMouseUp({} as MouseEvent);
     }
 
     private clearCornerCoords(): void {

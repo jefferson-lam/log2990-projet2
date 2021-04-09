@@ -31,8 +31,9 @@
   </div>
 
   <div id="rotateSettings">
-    <p> Degrés de rotation initial: {{ rotationAngle }} </p>
+    <p> Degrés de rotation: {{ rotationAngle }} </p>
     <mat-slider
+      #angleSlider
       id="angleValue"
       color="warn"
       thumbLabel

@@ -87,17 +87,9 @@ describe('StampService', () => {
 
     it('onMouseMove should call executeCommand if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
-        service.stampState = true;
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(previewExecuteSpy).toHaveBeenCalled();
-    });
-
-    it('onMouseMove should not call executeCommand if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.stampState = false;
-        service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
     it('onMouseLeave should call executeCommand if mouse was pressed', () => {
@@ -189,6 +181,19 @@ describe('StampService', () => {
         expect(service.rotationAngle).toEqual(EXPECTED_VALUE_ANGLE);
     });
 
+    it('setAngleSliderValue should change angle if out of max bounds', () => {
+        const MAX_ANGLE = 400;
+        service.setAngleSliderValue(MAX_ANGLE);
+        expect(service.realRotationValues).toEqual(0);
+    });
+
+    it('setAngleSliderValue should change angle if out of min bounds', () => {
+        const MAX_ANGLE = -400;
+        const EXPECTED_ANGLE = 360;
+        service.setAngleSliderValue(MAX_ANGLE);
+        expect(service.realRotationValues).toEqual(EXPECTED_ANGLE);
+    });
+
     it('changeRotationAngleOnAlt should change rotation angle', () => {
         service.changeRotationAngleOnAlt();
         expect(service.degreesRotation).toEqual(1);
@@ -198,12 +203,6 @@ describe('StampService', () => {
         const EXPECTED_ANGLE = 15;
         service.changeRotationAngleNormal();
         expect(service.degreesRotation).toEqual(EXPECTED_ANGLE);
-    });
-
-    it('setStampClickedState should change click state', () => {
-        const EXPECTED_STATE = true;
-        service.setStampClickedState(EXPECTED_STATE);
-        expect(service.stampState).toEqual(EXPECTED_STATE);
     });
 
     it('setImageSource should change image source', () => {
@@ -222,5 +221,13 @@ describe('StampService', () => {
         const EXPECTED_ANGLE = 36;
         service.setAngleRotation(EXPECTED_ANGLE);
         expect(service.rotationAngle).toEqual(EXPECTED_ANGLE);
+    });
+
+    it('onToolChange should call onMouseUp', () => {
+        const onMouseUpSpy = spyOn(service, 'onMouseUp');
+
+        service.onToolChange();
+
+        expect(onMouseUpSpy).toHaveBeenCalled();
     });
 });

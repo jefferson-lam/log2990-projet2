@@ -35,7 +35,7 @@ export class StampCommand extends Command {
         ctx.rotate(rotationAngle);
         ctx.drawImage(
             newStamp,
-            -this.getStampSize(this.imageZoomFactor) / 2,
+            -this.getStampSize(this.imageZoomFactor) / StampConstants.WIDTH_STAMP_FACTOR,
             -this.getStampSize(this.imageZoomFactor) / 2,
             this.getStampSize(this.imageZoomFactor) * StampConstants.FORMAT_MATCH,
             this.getStampSize(this.imageZoomFactor),

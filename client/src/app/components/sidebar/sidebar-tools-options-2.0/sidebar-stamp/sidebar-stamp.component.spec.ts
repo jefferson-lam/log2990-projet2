@@ -2,15 +2,17 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as StampConstants from '@app/constants/stamp-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
+import { Subject } from 'rxjs';
 import { SidebarStampComponent } from './sidebar-stamp.component';
 
 describe('SidebarStampComponent', () => {
+    let stampServiceSpy: jasmine.SpyObj<StampService>;
     let stampComponent: SidebarStampComponent;
     let fixture: ComponentFixture<SidebarStampComponent>;
     let stampSourceSpy: jasmine.Spy;
     let zoomFactorSpy: jasmine.Spy;
     let rotationAngleSpy: jasmine.Spy;
-    let stampClickSpy: jasmine.Spy;
     let settingsManagerService: SettingsManagerService;
     let stamp1: HTMLElement;
     let stamp2: HTMLElement;
@@ -20,8 +22,16 @@ describe('SidebarStampComponent', () => {
     let stamp6: HTMLElement;
 
     beforeEach(async(() => {
+        stampServiceSpy = jasmine.createSpyObj('StampService', ['setAngleRotation'], ['angleSubject']);
+        // tslint:disable-next-line:no-any
+        (Object.getOwnPropertyDescriptor(stampServiceSpy, 'angleSubject')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
+            // tslint:disable-next-line:no-any
+            new Subject<any>(),
+        );
+
         TestBed.configureTestingModule({
             declarations: [SidebarStampComponent],
+            providers: [{ provide: StampService, useValue: stampServiceSpy }],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
@@ -53,7 +63,6 @@ describe('SidebarStampComponent', () => {
         stampSourceSpy = spyOn(stampComponent.stampSourceChanged, 'subscribe');
         zoomFactorSpy = spyOn(stampComponent.zoomFactorChanged, 'subscribe');
         rotationAngleSpy = spyOn(stampComponent.rotationAngleChanged, 'subscribe');
-        stampClickSpy = spyOn(stampComponent.stampClicked, 'subscribe');
 
         stampComponent.stamp1.nativeElement.style.border = '';
         stampComponent.stamp2.nativeElement.style.border = '';
@@ -67,18 +76,9 @@ describe('SidebarStampComponent', () => {
         expect(stampComponent).toBeTruthy();
     });
 
-    it('emitImageSrc should emit image click state', () => {
-        const emitSpy = spyOn(stampComponent.stampClicked, 'emit');
-        stampComponent.imageSource = 'hello.svg';
-        stampComponent.emitStampClickState();
-
-        expect(emitSpy).toHaveBeenCalled();
-    });
-
     it('emitImageSrc should emit image source', () => {
         const emitSpy = spyOn(stampComponent.stampSourceChanged, 'emit');
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.stampClickState = true;
         stampComponent.emitImageSrc();
 
         expect(emitSpy).toHaveBeenCalled();
@@ -150,13 +150,12 @@ describe('SidebarStampComponent', () => {
     });
 
     it('should call subscribe method when created at first', () => {
+        stampServiceSpy.rotationAngle = 0;
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.stampClickState = true;
         stampComponent.ngOnInit();
         expect(stampSourceSpy).toHaveBeenCalled();
         expect(zoomFactorSpy).toHaveBeenCalled();
         expect(rotationAngleSpy).toHaveBeenCalled();
-        expect(stampClickSpy).toHaveBeenCalled();
     });
 
     it('should call setImageSource() from settingsManager after image source change', () => {

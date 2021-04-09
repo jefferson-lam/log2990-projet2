@@ -1,5 +1,7 @@
 export const INIT_STAMP_SIZE = 150;
 
+export const WIDTH_STAMP_FACTOR = 1.34;
+
 export const INIT_ZOOM_FACTOR = 1;
 
 export const MAX_ZOOM_FACTOR = 30;

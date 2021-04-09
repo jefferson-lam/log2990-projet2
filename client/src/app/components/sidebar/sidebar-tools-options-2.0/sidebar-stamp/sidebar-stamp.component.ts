@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { MatSlider } from '@angular/material/slider';
 import { Tool } from '@app/classes/tool';
 import * as StampConstants from '@app/constants/stamp-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
@@ -27,8 +28,8 @@ export class SidebarStampComponent implements OnInit {
     @ViewChild('stamp4', { static: false }) stamp4: ElementRef<HTMLElement>;
     @ViewChild('stamp5', { static: false }) stamp5: ElementRef<HTMLElement>;
     @ViewChild('stamp6', { static: false }) stamp6: ElementRef<HTMLElement>;
+    @ViewChild('angleSlider') angleSlider: MatSlider;
 
-    @Output() stampClicked: EventEmitter<boolean> = new EventEmitter();
     @Output() stampSourceChanged: EventEmitter<string> = new EventEmitter();
     @Output() zoomFactorChanged: EventEmitter<number> = new EventEmitter();
     @Output() rotationAngleChanged: EventEmitter<number> = new EventEmitter();
@@ -39,7 +40,11 @@ export class SidebarStampComponent implements OnInit {
         this.stampSourceChanged.subscribe((newSource: string) => this.settingsManager.setImageSource(newSource));
         this.zoomFactorChanged.subscribe((newFactor: number) => this.settingsManager.setImageZoomFactor(newFactor));
         this.rotationAngleChanged.subscribe((newAngle: number) => this.settingsManager.setAngleRotation(newAngle));
-        this.stampClicked.subscribe((stampState: boolean) => this.stampService.setStampClickedState(stampState));
+
+        this.stampService.angleSubject.asObservable().subscribe((angle: number) => {
+            this.angleSlider.value = angle;
+            this.rotationAngle = angle;
+        });
     }
 
     changeBorderIndicator(imageIndex: number): void {
@@ -93,11 +98,6 @@ export class SidebarStampComponent implements OnInit {
                 this.imageSource = 'assets/stamp_6.svg';
                 break;
         }
-        this.emitStampClickState();
-    }
-
-    emitStampClickState(): void {
-        this.stampClicked.emit(this.stampClickState);
     }
 
     emitImageSrc(): void {
