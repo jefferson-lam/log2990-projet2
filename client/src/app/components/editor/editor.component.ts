@@ -25,7 +25,6 @@ export class EditorComponent implements OnInit {
     currentTool: Tool;
     isPopUpOpen: boolean;
     isUndoSelection: boolean;
-    keyBoardInUse: boolean;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -89,7 +88,7 @@ export class EditorComponent implements OnInit {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.textService.finishedDrawing && !this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i|t)$/)) {
+        if (!this.textService.lockKeyboard && !this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i|t)$/)) {
             this.setTool(this.toolManager.selectTool(event));
         }
     }

@@ -5,6 +5,7 @@ import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -42,7 +43,7 @@ export class SidebarComponent implements OnChanges {
         { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' },
     ];
 
-    constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService) {
+    constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService, public textService: TextService) {
         this.shouldRun = false;
         this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
@@ -66,6 +67,10 @@ export class SidebarComponent implements OnChanges {
         this.currentTool = this.toolManagerService.getTool(tool.keyShortcut);
         this.notifyOnToolSelect.emit(this.currentTool);
         this.selectedTool = tool;
+        if (tool.service !== 'TextService') {
+            this.textService.lockKeyboard = false;
+            this.textService.drawTextOnCanvas();
+        }
     }
 
     openNewDrawing(): void {

@@ -18,7 +18,7 @@ export class TextService extends Tool {
     inputFromKeyboard: string;
     textWidth: number;
     textHeight: number;
-    finishedDrawing: boolean = false;
+    lockKeyboard: boolean = false;
     placeHolderSpan: HTMLSpanElement;
 
     previewCommand: TextCommand;
@@ -32,31 +32,27 @@ export class TextService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
-        if (this.inUse && !this.finishedDrawing) {
+        if (this.inUse && !this.lockKeyboard) {
             this.cornerCoords[TextConstants.START_INDEX] = this.getPositionFromMouse(event);
             this.textWidth = this.cornerCoords[TextConstants.START_INDEX].x;
             this.textHeight = this.cornerCoords[TextConstants.START_INDEX].y;
         }
-        if (this.finishedDrawing && this.placeHolderSpan.style.zIndex === '2') {
-            const command: Command = new TextCommand(this.drawingService.baseCtx, this);
-            this.undoRedoService.executeCommand(command);
-            this.inUse = false;
-            this.clearCornerCoords();
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.placeHolderSpan.style.visibility = 'hidden';
-            this.finishedDrawing = false;
+        if (this.lockKeyboard && this.placeHolderSpan.style.zIndex === '2') {
+            this.drawTextOnCanvas();
+            this.lockKeyboard = false;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
+            // this.setMouseOnSpanElement();
             this.placeHolderSpan.style.zIndex = '2';
             this.placeHolderSpan.style.visibility = 'visible';
             this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
             this.placeHolderSpan.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
             this.placeHolderSpan.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
             this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
-            this.finishedDrawing = true;
+            this.lockKeyboard = true;
         }
     }
 
@@ -79,11 +75,31 @@ export class TextService extends Tool {
 
     onKeyboardDown(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
-            this.inUse = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.placeHolderSpan.style.visibility = 'hidden';
         }
     }
+
+    drawTextOnCanvas(): void {
+        const command: Command = new TextCommand(this.drawingService.baseCtx, this);
+        this.undoRedoService.executeCommand(command);
+        this.inUse = false;
+        this.clearCornerCoords();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.placeHolderSpan.style.visibility = 'hidden';
+    }
+
+    // setMouseOnSpanElement(): void {
+    //     const range = document.createRange();
+    //     range.setStartAfter(this.placeHolderSpan);
+    //     const sel = window.getSelection();
+    //     range.collapse(true);
+    //     // @ts-ignore
+    //     sel.removeAllRanges();
+    //     // @ts-ignore
+    //     sel.addRange(range);
+    //     this.placeHolderSpan.focus();
+    // }
 
     setFontFamily(fontFamily: string): void {
         this.placeHolderSpan.style.fontFamily = fontFamily;
