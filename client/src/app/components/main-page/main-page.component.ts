@@ -39,14 +39,12 @@ export class MainPageComponent implements OnInit {
                 if (discarded) {
                     this.undoRedoService.reset();
                     localStorage.removeItem('autosave');
-                    localStorage.removeItem('initialDrawing');
                     this.router.navigate(['/', 'editor']);
                 }
             });
         } else {
             this.undoRedoService.reset();
             this.router.navigate(['/', 'editor']);
-            localStorage.removeItem('initialDrawing');
         }
     }
 
@@ -58,7 +56,6 @@ export class MainPageComponent implements OnInit {
     }
 
     continueDrawing(): void {
-        localStorage.setItem('initialDrawing', localStorage.getItem('autosave') as string);
         this.router.navigate(['/', 'editor']);
     }
 
