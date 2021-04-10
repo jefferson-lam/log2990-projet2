@@ -1,15 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import * as GridConstants from '@app/constants/canvas-grid-constants';
-import { DrawingService } from '@app/services/drawing/drawing.service';
-import { Subject } from 'rxjs';
 import { CanvasGridService } from './canvas-grid.service';
 
 // tslint:disable: no-any
 // tslint:disable: no-string-literal
 describe('CanvasGridService', () => {
     let service: CanvasGridService;
-    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let canvasTestHelper: CanvasTestHelper;
     let gridCtxClearRectSpy: jasmine.Spy;
     let gridCtxStrokeSpy: jasmine.Spy;
@@ -17,15 +14,7 @@ describe('CanvasGridService', () => {
     let visibilitySubjectSpy: jasmine.Spy;
 
     beforeEach(() => {
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', [], ['canvasHeightObservable', 'canvasWidthObservable']);
-        (Object.getOwnPropertyDescriptor(drawingServiceSpy, 'canvasHeightObservable')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
-            new Subject<any>(),
-        );
-        (Object.getOwnPropertyDescriptor(drawingServiceSpy, 'canvasWidthObservable')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
-            new Subject<any>(),
-        );
-
-        TestBed.configureTestingModule({ providers: [{ provide: DrawingService, useValue: drawingServiceSpy }] });
+        TestBed.configureTestingModule({});
         service = TestBed.inject(CanvasGridService);
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         service.gridCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
