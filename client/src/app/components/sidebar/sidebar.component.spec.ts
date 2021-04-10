@@ -4,11 +4,14 @@ import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PipetteService } from '@app/services/tools/pipette/pipette-service';
+import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
@@ -50,10 +53,6 @@ describe('SidebarComponent', () => {
     // tslint:disable:max-file-line-count
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool'], ['currentToolSubject']);
-        // (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<() => Subject<Tool>>).and.returnValue(
-        //     new Subject<Tool>(),
-        // );
-        // toolManagerServiceSpy.currentToolSubject = new Subject<Tool>();
         pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService);
         eraserStub = new EraserService({} as DrawingService, {} as UndoRedoService);
         lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
@@ -71,7 +70,22 @@ describe('SidebarComponent', () => {
             {} as ResizerHandlerService,
             new EllipseService({} as DrawingService, {} as UndoRedoService),
         );
-        clipboardServiceStub = new ClipboardService({} as DrawingService, {} as ToolManagerService);
+        clipboardServiceStub = new ClipboardService(
+            {} as DrawingService,
+            new ToolManagerService(
+                {} as PencilService,
+                {} as EraserService,
+                {} as LineService,
+                {} as RectangleService,
+                {} as EllipseService,
+                {} as DrawingService,
+                {} as RectangleSelectionService,
+                {} as EllipseSelectionService,
+                {} as PolygoneService,
+                {} as AerosolService,
+                {} as PipetteService,
+            ),
+        );
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
