@@ -88,7 +88,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarRectangleSelectionComponent,
         SidebarEllipseSelectionComponent,
         SidebarGridComponent,
-        SidebarGridComponent,
     ],
     entryComponents: [MainPageCarrouselComponent],
     imports: [
