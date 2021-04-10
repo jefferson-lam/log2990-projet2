@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ColorRgba } from '@app/classes/color-rgb';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { MouseButton } from '@app/constants/mouse-constants';
@@ -15,12 +16,7 @@ import { PaintBucketCommand } from '@app/services/tools/paint-bucket/paint-bucke
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 // tslint:disable:no-bitwise
-export interface ColorRgba {
-    red: number;
-    green: number;
-    blue: number;
-    alpha: number;
-}
+
 @Injectable({
     providedIn: 'root',
 })

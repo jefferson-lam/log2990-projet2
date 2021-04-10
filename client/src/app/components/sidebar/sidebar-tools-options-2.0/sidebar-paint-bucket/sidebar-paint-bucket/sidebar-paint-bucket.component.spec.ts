@@ -30,7 +30,8 @@ describe('SidebarPaintBucketComponent', () => {
 
     it('emitToleranceValue should emit tolerance value', () => {
         const emitSpy = spyOn(component.toleranceValueChanged, 'emit');
-        component.toleranceValue = 75;
+        const toleranceValue = 75;
+        component.toleranceValue = toleranceValue;
         component.emitToleranceValue();
         expect(emitSpy).toHaveBeenCalled();
     });

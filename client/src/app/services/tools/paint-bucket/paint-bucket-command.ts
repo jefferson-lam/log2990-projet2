@@ -1,8 +1,9 @@
+import { ColorRgba } from '@app/classes/color-rgb';
 import { Command } from '@app/classes/command';
 import { PixelData } from '@app/classes/pixel-data';
 import { MouseButton } from '@app/constants/mouse-constants';
 import { ALPHA_INDEX, BIT_16, BIT_24, BIT_8, DIMENSION_4D, DISTANCE_MASK, MAX_RGB_VALUE } from '@app/constants/paint-bucket-constants';
-import { ColorRgba, PaintBucketService } from './paint-bucket-service';
+import { PaintBucketService } from './paint-bucket-service';
 
 // tslint:disable:no-bitwise
 // tslint:disable:cyclomatic-complexity

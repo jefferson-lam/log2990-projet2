@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { ColorRgba } from '@app/classes/color-rgb';
 import { MouseButton } from '@app/constants/mouse-constants';
 import { ALPHA_INDEX, DEFAULT_TOLERANCE_VALUE, DIMENSION_4D, MAX_RGB_VALUE } from '@app/constants/paint-bucket-constants';
 import { PaintBucketCommand } from './paint-bucket-command';
-import { ColorRgba, PaintBucketService } from './paint-bucket-service';
+import { PaintBucketService } from './paint-bucket-service';
 
 // tslint:disable:max-file-line-count
 describe('PaintBucketCommand', () => {
