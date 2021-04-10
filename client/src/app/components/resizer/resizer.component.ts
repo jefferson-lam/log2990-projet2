@@ -35,21 +35,6 @@ export class ResizerComponent implements AfterViewInit {
         this.cornerResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
         this.bottomResizer.nativeElement.style.left = this.baseCtx.canvas.width / 2 + 'px';
         this.bottomResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
-        if (this.drawingService.imageURL !== '') {
-            const image = new Image();
-            image.src = this.drawingService.imageURL;
-            this.undoRedoService.reset();
-            this.undoRedoService.resetCanvasSize = new ResizerCommand(this.drawingService, image.width, image.height);
-            this.undoRedoService.resetCanvasSize.execute();
-            this.baseCtx.drawImage(image, 0, 0, image.width, image.height);
-        } else {
-            this.undoRedoService.resetCanvasSize = new ResizerCommand(
-                this.drawingService,
-                CanvasConstants.DEFAULT_WIDTH,
-                CanvasConstants.DEFAULT_HEIGHT,
-            );
-        }
-
         this.autoSaveService.loadDrawing();
     }
 
