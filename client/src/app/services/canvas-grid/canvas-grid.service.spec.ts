@@ -20,7 +20,7 @@ describe('CanvasGridService', () => {
         service.gridCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         gridCtxClearRectSpy = spyOn(service.gridCtx, 'clearRect');
         gridCtxStrokeSpy = spyOn(service.gridCtx, 'stroke');
-        widthSubjectSpy = spyOn(service.widthSubject, 'next');
+        widthSubjectSpy = spyOn(service.squareidthSubject, 'next');
         visibilitySubjectSpy = spyOn(service.gridVisibilitySubject, 'next');
     });
 

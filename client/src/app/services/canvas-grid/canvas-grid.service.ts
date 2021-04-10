@@ -11,7 +11,7 @@ export class CanvasGridService {
     isGridDisplayed: boolean = false;
     gridCtx: CanvasRenderingContext2D;
     gridVisibilitySubject: Subject<boolean> = new Subject<boolean>();
-    widthSubject: Subject<number> = new Subject<number>();
+    squareWidthSubject: Subject<number> = new Subject<number>();
 
     constructor() {
         this.setValues();
@@ -45,7 +45,7 @@ export class CanvasGridService {
         if (this.squareWidth > GridConstants.MAX_SQUARE_WIDTH) this.squareWidth = GridConstants.MAX_SQUARE_WIDTH;
         else if (this.squareWidth < GridConstants.MIN_SQUARE_WIDTH) this.squareWidth = GridConstants.MIN_SQUARE_WIDTH;
         if (this.isGridDisplayed) this.resetGrid();
-        this.widthSubject.next(this.squareWidth);
+        this.squareidthSubject.next(this.squareWidth);
     }
 
     setVisibility(gridVisibility: boolean): void {

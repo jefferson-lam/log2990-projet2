@@ -37,7 +37,7 @@ export class SidebarGridComponent implements OnInit {
             this.toggleGrid.checked = gridVisibility;
         });
 
-        this.canvasGridService.widthSubject.asObservable().subscribe((width) => {
+        this.canvasGridService.squareWidthSubject.asObservable().subscribe((width) => {
             this.widthSlider.value = width;
             this.squareWidth = width;
         });

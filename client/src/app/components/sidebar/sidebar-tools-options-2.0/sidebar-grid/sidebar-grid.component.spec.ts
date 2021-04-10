@@ -61,7 +61,7 @@ describe('SidebarGridComponent', () => {
 
     it('widthSlider value and square width should change when canvasGridService emits isGridDisplayed', () => {
         const EXPECTED_WIDTH = 30;
-        component.canvasGridService.widthSubject.next(EXPECTED_WIDTH);
+        component.canvasGridService.squareWidthSubject.next(EXPECTED_WIDTH);
         expect(component.widthSlider.value).toEqual(EXPECTED_WIDTH);
         expect(component.squareWidth).toEqual(EXPECTED_WIDTH);
     });
