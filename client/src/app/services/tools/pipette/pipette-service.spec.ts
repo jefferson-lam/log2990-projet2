@@ -79,6 +79,25 @@ describe('PipetteServiceService', () => {
         expect(service.inBound).toEqual(true);
     });
 
+    it('onMouseMove should keep inBound true if centerPixel is not transparent and inBound is true', () => {
+        service.inBound = true;
+        const arrayData = new Uint8ClampedArray(PipetteConstants.RAWDATA_SIZE * PipetteConstants.RAWDATA_SIZE * PipetteConstants.RGBA_SIZE);
+        for (let i = 0; i < arrayData.length; i++) {
+            arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
+        }
+        const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
+
+        const ctx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
+        ctx.putImageData(pixelData, 0, 0);
+        drawServiceSpy.baseCtx.drawImage(ctx.canvas, 0, 0);
+
+        const setInBoundSpy = spyOn(service, 'setInBound').and.callThrough();
+
+        service.onMouseMove(mouseMove);
+        expect(setInBoundSpy).toHaveBeenCalled();
+        expect(service.inBound).toEqual(true);
+    });
+
     it('onMouseMove should set inBound to false if centerPixel is transparent', () => {
         const pixelData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
 
