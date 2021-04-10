@@ -45,7 +45,7 @@ export class TextService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            // this.setMouseOnSpanElement();
+            this.placeHolderSpan.id = 'placeHolderSpan';
             this.placeHolderSpan.style.zIndex = '2';
             this.placeHolderSpan.style.visibility = 'visible';
             this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
@@ -53,6 +53,8 @@ export class TextService extends Tool {
             this.placeHolderSpan.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
             this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.lockKeyboard = true;
+            this.placeHolderSpan.focus();
+            this.setSelectedText();
         }
     }
 
@@ -89,17 +91,15 @@ export class TextService extends Tool {
         this.placeHolderSpan.style.visibility = 'hidden';
     }
 
-    // setMouseOnSpanElement(): void {
-    //     const range = document.createRange();
-    //     range.setStartAfter(this.placeHolderSpan);
-    //     const sel = window.getSelection();
-    //     range.collapse(true);
-    //     // @ts-ignore
-    //     sel.removeAllRanges();
-    //     // @ts-ignore
-    //     sel.addRange(range);
-    //     this.placeHolderSpan.focus();
-    // }
+    setSelectedText(): void {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(this.placeHolderSpan);
+        // @ts-ignore
+        selection.removeAllRanges();
+        // @ts-ignore
+        selection.addRange(range);
+    }
 
     setFontFamily(fontFamily: string): void {
         this.placeHolderSpan.style.fontFamily = fontFamily;

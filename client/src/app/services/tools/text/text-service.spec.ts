@@ -58,7 +58,7 @@ describe('TextService', () => {
     it('onMouseDown should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 40 };
         service.inUse = true;
-        service.finishedDrawing = false;
+        service.lockKeyboard = false;
         service.onMouseDown(mouseEvent);
         expect(service.textWidth).toEqual(expectedResult.x);
         expect(service.textHeight).toEqual(expectedResult.y);
@@ -66,12 +66,12 @@ describe('TextService', () => {
 
     it('onMouseDown should set inUse property to true on left click', () => {
         service.onMouseDown(mouseEvent);
-        service.finishedDrawing = false;
+        service.lockKeyboard = false;
         expect(service.inUse).toEqual(true);
     });
 
     it('onMouseDown should execute new command if finished drawing is true', () => {
-        service.finishedDrawing = true;
+        service.lockKeyboard = true;
         service.placeHolderSpan.style.zIndex = '2';
 
         service.onMouseDown(mouseEvent);
@@ -80,7 +80,7 @@ describe('TextService', () => {
         expect(service.inUse).toEqual(false);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(service.placeHolderSpan.style.visibility).toEqual('hidden');
-        expect(service.finishedDrawing).toEqual(false);
+        expect(service.lockKeyboard).toEqual(false);
     });
 
     it('onMouseUp should not call executeCommand if mouse was not already down', () => {
@@ -100,7 +100,7 @@ describe('TextService', () => {
         expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
         expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords[0].x + 'px');
         expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords[0].y + 'px');
-        expect(service.finishedDrawing).toEqual(true);
+        expect(service.lockKeyboard).toEqual(true);
     });
 
     it('onMouseLeave should clear canvas if inUse is true', () => {
