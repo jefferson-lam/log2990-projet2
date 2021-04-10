@@ -1,16 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MouseButton } from '@app/constants/mouse-constants';
-import { DEFAULT_TOLERANCE_VALUE } from '@app/constants/paint-bucket-constants';
+import { ALPHA_INDEX, DEFAULT_TOLERANCE_VALUE, DIMENSION_4D, MAX_RGB_VALUE } from '@app/constants/paint-bucket-constants';
 import { PaintBucketCommand } from './paint-bucket-command';
 import { ColorRgba, PaintBucketService } from './paint-bucket-service';
 
+// tslint:disable:max-file-line-count
 describe('PaintBucketCommand', () => {
     let command: PaintBucketCommand;
     let paintBucketService: PaintBucketService;
 
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
+
+    let fillColor: ColorRgba;
 
     let floodFillSpy: jasmine.Spy;
     let fillSpy: jasmine.Spy;
@@ -21,9 +24,17 @@ describe('PaintBucketCommand', () => {
     const OPACITY = 255;
     const TEST_PRIMARY_COLOR = `rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE}, ${OPACITY})`;
     const TEST_TOLERANCE_VALUE = DEFAULT_TOLERANCE_VALUE;
+    const MAX_TOLERANCE = 255;
+    const TOLERANCE_25 = 64;
+    const TOLERANCE_50 = 128;
+    const TOLERANCE_75 = 191;
     const DEFAULT_MOUSE_BUTTON = MouseButton.Left;
-    const DEFAULT_START_X = 150;
-    const DEFAULT_START_Y = 150;
+    const DEFAULT_START_X = 30;
+    const DEFAULT_START_Y = 30;
+    const DEFAULT_CANVAS_HEIGHT = 250;
+    const DEFAULT_CANVAS_WIDTH = 250;
+    const NEXT_COLOR_INCREMENT = 4;
+    const COLOR_RANGE = 3;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -31,6 +42,8 @@ describe('PaintBucketCommand', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
 
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        baseCtxStub.canvas.width = DEFAULT_CANVAS_WIDTH;
+        baseCtxStub.canvas.height = DEFAULT_CANVAS_HEIGHT;
 
         paintBucketService.setPrimaryColor(TEST_PRIMARY_COLOR);
         paintBucketService.setToleranceValue(TEST_TOLERANCE_VALUE);
@@ -40,8 +53,15 @@ describe('PaintBucketCommand', () => {
 
         command = new PaintBucketCommand(baseCtxStub, paintBucketService);
 
-        floodFillSpy = spyOn(command, 'floodFill');
-        fillSpy = spyOn(command, 'fill');
+        floodFillSpy = spyOn(command, 'floodFill').and.callThrough();
+        fillSpy = spyOn(command, 'fill').and.callThrough();
+
+        fillColor = {
+            red: 190,
+            green: 170,
+            blue: 70,
+            alpha: 255,
+        };
     });
 
     it('should be created', () => {
@@ -59,6 +79,13 @@ describe('PaintBucketCommand', () => {
         command.mouseButtonClicked = MouseButton.Right;
         command.execute();
         expect(fillSpy).toHaveBeenCalled();
+        expect(floodFillSpy).not.toHaveBeenCalled();
+    });
+
+    it('execute should not call if not valid mouse button', () => {
+        command.mouseButtonClicked = MouseButton.Forward;
+        command.execute();
+        expect(fillSpy).not.toHaveBeenCalled();
         expect(floodFillSpy).not.toHaveBeenCalled();
     });
 
@@ -245,7 +272,7 @@ describe('PaintBucketCommand', () => {
 
     // Tolerance: 25/100 -> 64/255 -> 128/512
     it('should return true if both colors distance of 0 and if tolerance is 25', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(255 / 4), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_25, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 128,
@@ -265,7 +292,7 @@ describe('PaintBucketCommand', () => {
 
     // Distance: 128
     it('should return true if both colors distance of 25 and if tolerance is 25', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(255 / 4), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_25, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 97,
@@ -285,7 +312,7 @@ describe('PaintBucketCommand', () => {
 
     // Distance: 129
     it('should return false if both colors distance of 26 and if tolerance is 25', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(255 / 4), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_25, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 97,
@@ -305,7 +332,7 @@ describe('PaintBucketCommand', () => {
 
     // Tolerance: 50/100 -> 128/255 -> 256/512
     it('should return true if both colors distance of 0 and if tolerance is 50', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(255 / 2), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_50, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 128,
@@ -325,7 +352,7 @@ describe('PaintBucketCommand', () => {
 
     // Distance: 256
     it('should return true if both colors distance of 50 and if tolerance is 50', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(255 / 2), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_50, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 50,
@@ -345,7 +372,7 @@ describe('PaintBucketCommand', () => {
 
     // Distance: 257
     it('should return false if both colors distance of 51 and if tolerance is 50', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(255 / 2), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_50, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 50,
@@ -365,7 +392,7 @@ describe('PaintBucketCommand', () => {
 
     // Tolerance: 75/100 -> 191/255 -> 382/512
     it('should return true if both colors distance of 0 and if tolerance is 75', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(191), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_75, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 128,
@@ -385,7 +412,7 @@ describe('PaintBucketCommand', () => {
 
     // Distance: 384, tolerance = 382
     it('should return true if both colors distance of 75 and if tolerance is 75', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(191), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_75, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 50,
@@ -405,7 +432,7 @@ describe('PaintBucketCommand', () => {
 
     // Distance: 385, tolerance 384
     it('should return false if both colors distance of 76 and if tolerance is 76', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(191), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_75, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 50,
@@ -425,7 +452,7 @@ describe('PaintBucketCommand', () => {
 
     // Tolerance: 100/100 -> 255/255 -> 512/512
     it('should return true if both colors distance of 0 and if tolerance is 100', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(255), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(MAX_TOLERANCE, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 128,
@@ -445,7 +472,7 @@ describe('PaintBucketCommand', () => {
 
     // Distance: 510, tolerance = 510
     it('should return true if both colors distance of 100 and if tolerance is 100', () => {
-        const toleranceValue = Math.round(Math.sqrt(Math.pow(Math.round(255), 2) * 4));
+        const toleranceValue = Math.round(Math.sqrt(Math.pow(MAX_TOLERANCE, 2) * DIMENSION_4D));
         command.toleranceValue = toleranceValue;
         const currentRgba = {
             red: 0,
@@ -461,5 +488,200 @@ describe('PaintBucketCommand', () => {
         } as ColorRgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
+    });
+
+    // Testing floodfill functionality by drawing rectangles and filling rectangle, and checking if
+    // specified rectangles are correctly filled
+    it('fill should correctly fill both rectangles of same color', () => {
+        const rectangleHeight = 50;
+        const rectangleWidth = 50;
+        const rect1StartX = 25;
+        const rect1StartY = 25;
+        const rect2StartX = 100;
+        const rect2StartY = 100;
+        baseCtxStub.fillStyle = 'green';
+        baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+
+        command.fill(baseCtxStub, command.startX, command.startY, fillColor, DEFAULT_TOLERANCE_VALUE);
+        const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+        for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect1.data[i]).toEqual(fillColor.red);
+            expect(rect1.data[i + 1]).toEqual(fillColor.green);
+            expect(rect1.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect1.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+
+        for (let i = 0; i + COLOR_RANGE < rect2.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect2.data[i]).toEqual(fillColor.red);
+            expect(rect2.data[i + 1]).toEqual(fillColor.green);
+            expect(rect2.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect2.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+    });
+
+    it('fill should correctly fill both rectangles of color of 50 tolerance', () => {
+        const rectangleHeight = 50;
+        const rectangleWidth = 50;
+        const rect1StartX = 25;
+        const rect1StartY = 25;
+        const rect2StartX = 100;
+        const rect2StartY = 100;
+        const tolerance = 128; // 50%
+        baseCtxStub.fillStyle = 'green';
+        baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        baseCtxStub.fillStyle = '#1bc42c'; // dark green
+        baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+
+        command.fill(baseCtxStub, command.startX, command.startY, fillColor, tolerance);
+        const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+        for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect1.data[i]).toEqual(fillColor.red);
+            expect(rect1.data[i + 1]).toEqual(fillColor.green);
+            expect(rect1.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect1.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+
+        for (let i = 0; i + COLOR_RANGE < rect2.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect2.data[i]).toEqual(fillColor.red);
+            expect(rect2.data[i + 1]).toEqual(fillColor.green);
+            expect(rect2.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect2.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+    });
+
+    it('fill should fill everything with a tolerance of 100', () => {
+        const rectangleHeight = 50;
+        const rectangleWidth = 50;
+        const rect1StartX = 25;
+        const rect1StartY = 25;
+        const rect2StartX = 100;
+        const rect2StartY = 100;
+        const tolerance = 255; // 50%
+        baseCtxStub.fillStyle = 'green';
+        baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        baseCtxStub.fillStyle = '#1bc42c'; // dark green
+        baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+
+        command.fill(baseCtxStub, command.startX, command.startY, fillColor, tolerance);
+        const imageData = baseCtxStub.getImageData(0, 0, baseCtxStub.canvas.width, baseCtxStub.canvas.height);
+        for (let i = 0; i + COLOR_RANGE < imageData.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(imageData.data[i]).toEqual(fillColor.red);
+            expect(imageData.data[i + 1]).toEqual(fillColor.green);
+            expect(imageData.data[i + 2]).toEqual(fillColor.blue);
+            expect(imageData.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+    });
+
+    it('floodFill should correctly fill colored rectangle that is selected, not the surounding pixels', () => {
+        const rectangleHeight = 50;
+        const rectangleWidth = 50;
+        const rect1StartX = 25;
+        const rect1StartY = 25;
+        const rect2StartX = 100;
+        const rect2StartY = 100;
+        const expectedGreenGValue = 128;
+        baseCtxStub.fillStyle = '#1bc42c'; // dark green
+        baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        baseCtxStub.fillStyle = 'green';
+        baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+
+        command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, DEFAULT_TOLERANCE_VALUE);
+
+        const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+        for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect1.data[i]).toEqual(fillColor.red);
+            expect(rect1.data[i + 1]).toEqual(fillColor.green);
+            expect(rect1.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect1.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+
+        for (let i = 0; i + COLOR_RANGE < rect2.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect2.data[i]).toEqual(0);
+            expect(rect2.data[i + 1]).toEqual(expectedGreenGValue);
+            expect(rect2.data[i + 2]).toEqual(0);
+            expect(rect2.data[i + ALPHA_INDEX]).toEqual(MAX_RGB_VALUE);
+        }
+    });
+
+    it('floodfill should fill all connected pixels that are same color', () => {
+        const rectangleHeight = 50;
+        const rectangleWidth = 50;
+        const rect1StartX = 25;
+        const rect1StartY = 25;
+        const rect2StartX = 50;
+        const rect2StartY = 50;
+        baseCtxStub.fillStyle = '#1bc42c'; // dark green
+        baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+        command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, DEFAULT_TOLERANCE_VALUE);
+        const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+        for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect1.data[i]).toEqual(fillColor.red);
+            expect(rect1.data[i + 1]).toEqual(fillColor.green);
+            expect(rect1.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect1.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+
+        for (let i = 0; i + COLOR_RANGE < rect2.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect2.data[i]).toEqual(fillColor.red);
+            expect(rect2.data[i + 1]).toEqual(fillColor.green);
+            expect(rect2.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect2.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+    });
+
+    it('floodfill should fill all connected pixels whose color is close if called with toleranceValue', () => {
+        const rectangleHeight = 50;
+        const rectangleWidth = 50;
+        const rect1StartX = 25;
+        const rect1StartY = 25;
+        const rect2StartX = 50;
+        const rect2StartY = 50;
+        const tolerance = 50;
+        baseCtxStub.fillStyle = '#1bc42c'; // dark green
+        baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        baseCtxStub.fillStyle = 'green';
+        baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+        command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, tolerance);
+        const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
+        const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+        for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect1.data[i]).toEqual(fillColor.red);
+            expect(rect1.data[i + 1]).toEqual(fillColor.green);
+            expect(rect1.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect1.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+
+        for (let i = 0; i + COLOR_RANGE < rect2.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(rect2.data[i]).toEqual(fillColor.red);
+            expect(rect2.data[i + 1]).toEqual(fillColor.green);
+            expect(rect2.data[i + 2]).toEqual(fillColor.blue);
+            expect(rect2.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+    });
+
+    it('floodfill should fill all connected pixels whose color is close if called with 100 toleranceValue', () => {
+        const tolerance = 100;
+        command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, tolerance);
+        const imageData = baseCtxStub.getImageData(0, 0, baseCtxStub.canvas.width, baseCtxStub.canvas.height);
+        for (let i = 0; i + ALPHA_INDEX < imageData.data.length; i += NEXT_COLOR_INCREMENT) {
+            expect(imageData.data[i]).toEqual(fillColor.red);
+            expect(imageData.data[i + 1]).toEqual(fillColor.green);
+            expect(imageData.data[i + 2]).toEqual(fillColor.blue);
+            expect(imageData.data[i + ALPHA_INDEX]).toEqual(fillColor.alpha);
+        }
+    });
+
+    it('floodFill called on empty canvas should return', () => {
+        baseCtxStub.canvas.width = 1;
+        baseCtxStub.canvas.height = 1;
+        expect(() => {
+            command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, DEFAULT_TOLERANCE_VALUE);
+        }).not.toThrow();
     });
 });

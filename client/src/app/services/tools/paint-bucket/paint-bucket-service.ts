@@ -47,11 +47,20 @@ export class PaintBucketService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.startX = event.offsetX;
-        this.startY = event.offsetY;
-        this.mouseButtonClicked = event.button;
-        const command: Command = new PaintBucketCommand(this.drawingService.baseCtx, this);
-        this.undoRedoService.executeCommand(command);
+        this.inUse = event.button === MouseButton.Left || event.button === MouseButton.Right;
+        if (this.inUse) {
+            this.startX = event.offsetX;
+            this.startY = event.offsetY;
+            this.mouseButtonClicked = event.button;
+            const command: Command = new PaintBucketCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
+        }
+    }
+
+    onMouseUp(event: MouseEvent): void {
+        if (this.inUse) {
+            this.inUse = false;
+        }
     }
 
     onToolChange(): void {

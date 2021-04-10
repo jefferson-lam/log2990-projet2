@@ -70,6 +70,28 @@ describe('PaintBucketService', () => {
         expect(executeSpy).toHaveBeenCalled();
     });
 
+    it('onMouseDown should call if mouseEvent is not Left or Right', () => {
+        const forwardMouseEvent = {
+            button: MouseButton.Forward,
+        } as MouseEvent;
+        expect(() => {
+            service.onMouseDown(forwardMouseEvent);
+        }).not.toThrow();
+        expect(service.inUse).toBeFalsy();
+    });
+
+    it('onMouseUp should set inUse to false if inUse is true', () => {
+        service.inUse = true;
+        service.onMouseUp(mouseEvent);
+        expect(service.inUse).toBeFalsy();
+    });
+
+    it('onMouseUp should pass if not inUse', () => {
+        service.inUse = false;
+        service.onMouseUp(mouseEvent);
+        expect(service.inUse).toBeFalsy();
+    });
+
     it('getRgba should return correct RGBA values', () => {
         const rgbaString = 'rgba(0, 0, 0, 1)';
         const expectedRgba = { red: 0, green: 0, blue: 0, alpha: 255 };

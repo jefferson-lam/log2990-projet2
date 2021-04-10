@@ -67,8 +67,6 @@ export class PaintBucketCommand extends Command {
     floodFill(ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: ColorRgba, toleranceValue: number): void {
         let pixelPosition;
         let distance;
-        let spanLeft = true;
-        let spanRight = true;
         let leftEdge = false;
         let rightEdge = false;
         const width = ctx.canvas.width;
@@ -125,11 +123,10 @@ export class PaintBucketCommand extends Command {
         };
 
         while (stack.length) {
-            pixelPosition = stack.pop()!;
+            pixelPosition = stack.pop() as number;
             while (pixelPosition >= width && colorDist(pixelPosition - width) <= tolerance) {
                 pixelPosition -= width;
             } // move to top edge
-            spanLeft = spanRight = false; // not going left right yet
             leftEdge = pixelPosition % width === 0;
             rightEdge = (pixelPosition + 1) % width === 0;
             distance = colorDist(pixelPosition);
@@ -137,22 +134,12 @@ export class PaintBucketCommand extends Command {
                 distances[pixelPosition] = ((distance / tolerance) * MAX_RGB_VALUE) | DISTANCE_MASK;
                 if (!leftEdge) {
                     if (colorDist(pixelPosition - 1) <= tolerance) {
-                        if (!spanLeft) {
-                            stack.push(pixelPosition - 1);
-                            spanLeft = true;
-                        } else if (spanLeft) {
-                            spanLeft = false;
-                        }
+                        stack.push(pixelPosition - 1);
                     }
                 }
                 if (!rightEdge) {
                     if (colorDist(pixelPosition + 1) <= tolerance) {
-                        if (!spanRight) {
-                            stack.push(pixelPosition + 1);
-                            spanRight = true;
-                        } else if (spanRight) {
-                            spanRight = false;
-                        }
+                        stack.push(pixelPosition + 1);
                     }
                 }
                 pixelPosition += width;
