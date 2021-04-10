@@ -45,7 +45,7 @@ export class CanvasGridService {
         if (this.squareWidth > GridConstants.MAX_SQUARE_WIDTH) this.squareWidth = GridConstants.MAX_SQUARE_WIDTH;
         else if (this.squareWidth < GridConstants.MIN_SQUARE_WIDTH) this.squareWidth = GridConstants.MIN_SQUARE_WIDTH;
         if (this.isGridDisplayed) this.resetGrid();
-        this.squareidthSubject.next(this.squareWidth);
+        this.squareWidthSubject.next(this.squareWidth);
     }
 
     setVisibility(gridVisibility: boolean): void {
