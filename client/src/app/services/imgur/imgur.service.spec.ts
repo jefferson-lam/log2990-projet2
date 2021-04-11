@@ -7,80 +7,8 @@ describe('ImgurService', () => {
     let service: ImgurService;
     let httpMock: HttpTestingController;
 
-    // tslint:disable:no-magic-numbers
-    const goodDataMock = {
-        data: {
-            account_id: 0,
-            account_url: '',
-            ad_type: 0,
-            ad_url: '',
-            animated: false,
-            bandwidth: 0,
-            datetime: 1616804031,
-            deletehash: 'JPlKmsg4gesCGRz',
-            description: '',
-            edited: '0',
-            favorite: false,
-            has_sound: false,
-            height: 800,
-            id: 'IKSivKJ',
-            in_gallery: false,
-            in_most_viral: false,
-            is_ad: false,
-            link: 'https://i.imgur.com/IKSivKJ.png',
-            name: '',
-            nsfw: false,
-            section: '',
-            size: 100,
-            tags: [],
-            title: '',
-            type: 'image/png',
-            views: 0,
-            vote: '',
-            width: 1000,
-        },
-        success: true,
-
-        status: ExportDrawingConstants.OK_STATUS,
-    };
-    // tslint:enable:no-magic-numbers
-
-    const badDataMock = {
-        data: {
-            account_id: 0,
-            account_url: '',
-            ad_type: 0,
-            ad_url: '',
-            animated: false,
-            bandwidth: 0,
-            datetime: 0,
-            deletehash: '',
-            description: '',
-            edited: '0',
-            favorite: false,
-            has_sound: false,
-            height: 0,
-            id: '',
-            in_gallery: false,
-            in_most_viral: false,
-            is_ad: false,
-            link: '',
-            name: '',
-            nsfw: false,
-            section: '',
-            size: 0,
-            tags: [''],
-            title: '',
-            type: 'image/png',
-            views: 0,
-            vote: '',
-            width: 0,
-        },
-        success: false,
-        status: ExportDrawingConstants.BAD_REQUEST,
-    } as ExportDrawingConstants.ParsedType;
-
-    const stringImg = 'uselessData,thisistheimage';
+    const STRING_IMG = 'uselessData,thisistheimage';
+    const URL = 'www.url.com';
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -113,24 +41,27 @@ describe('ImgurService', () => {
         const setUrlFromResponseSpy = spyOn(service, 'setUrlFromResponse');
         const setExportProgressSpy = spyOn(service, 'setExportProgress');
 
-        service.setDataFromResponse(goodDataMock);
+        service.setDataFromResponse(ExportDrawingConstants.OK_STATUS, URL);
         expect(setUrlFromResponseSpy).toHaveBeenCalled();
         expect(setExportProgressSpy).toHaveBeenCalledWith(ExportDrawingConstants.ExportProgress.COMPLETE);
+        expect(service.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS]).toEqual(ExportDrawingConstants.ExportProgress.COMPLETE);
+        expect(service.serviceSettings[ExportDrawingConstants.URL]).toEqual(URL);
     });
 
     it('should set exportProgress and url correctly if status != 200', () => {
         const setUrlFromResponseSpy = spyOn(service, 'setUrlFromResponse');
         const setExportProgressSpy = spyOn(service, 'setExportProgress');
 
-        service.setDataFromResponse(badDataMock);
+        service.setDataFromResponse(ExportDrawingConstants.BAD_REQUEST, URL);
         expect(setUrlFromResponseSpy).not.toHaveBeenCalled();
-        expect(service.url).toEqual('none');
         expect(setExportProgressSpy).toHaveBeenCalledWith(ExportDrawingConstants.ExportProgress.ERROR);
+        expect(service.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS]).toEqual(ExportDrawingConstants.ExportProgress.ERROR);
+        expect(service.url).toEqual('none');
     });
 
     it('setUrlFromResponse should set url correctly', () => {
-        service.setUrlFromResponse(goodDataMock);
-        expect(service.serviceSettings[ExportDrawingConstants.URL]).toEqual('https://i.imgur.com/IKSivKJ.png');
+        service.setUrlFromResponse(URL);
+        expect(service.serviceSettings[ExportDrawingConstants.URL]).toEqual(URL);
     });
 
     it('setExportProgress should set exportProgress correctly', () => {
@@ -139,7 +70,7 @@ describe('ImgurService', () => {
     });
 
     it('imageStringSplit should split string correctly', () => {
-        const result = service.imageStringSplit(stringImg);
+        const result = service.imageStringSplit(STRING_IMG);
         expect(result).toEqual('thisistheimage');
     });
 
