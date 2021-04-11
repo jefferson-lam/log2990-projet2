@@ -20,7 +20,7 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     fontWeight: string = 'normal';
     textAlign: string = 'center';
     fontFamily: string = 'Arial';
-    fontOptions: string;
+    fontOptions: string = 'normal';
     textBold: boolean = false;
     textItalic: boolean = false;
     inputFromKeyboard: string;
@@ -66,6 +66,9 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.zIndex = '2';
         this.textService.placeHolderSpan.style.color = this.textService.primaryColor;
         this.textService.placeHolderSpan.style.border = '1px solid black';
+        this.textService.placeHolderSpan.style.whiteSpace = 'nowrap';
+        this.textService.placeHolderSpan.style.overflow = 'hidden';
+        this.textService.placeHolderSpan.style.textOverflow = '';
     }
 
     emitFontOptions(): void {

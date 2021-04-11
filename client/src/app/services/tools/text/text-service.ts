@@ -18,6 +18,8 @@ export class TextService extends Tool {
     inputFromKeyboard: string;
     textWidth: number;
     textHeight: number;
+    mouseLeftCanvas: boolean = false;
+    escapeKeyUsed: boolean = false;
     lockKeyboard: boolean = false;
     placeHolderSpan: HTMLSpanElement;
 
@@ -32,12 +34,12 @@ export class TextService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
-        if (this.inUse && !this.lockKeyboard) {
+        if (this.inUse && (!this.lockKeyboard || this.escapeKeyUsed)) {
             this.cornerCoords[TextConstants.START_INDEX] = this.getPositionFromMouse(event);
             this.textWidth = this.cornerCoords[TextConstants.START_INDEX].x;
             this.textHeight = this.cornerCoords[TextConstants.START_INDEX].y;
         }
-        if (this.lockKeyboard && this.placeHolderSpan.style.zIndex === '2') {
+        if (this.lockKeyboard && this.placeHolderSpan.style.zIndex === '2' && !this.escapeKeyUsed) {
             this.drawTextOnCanvas();
             this.lockKeyboard = false;
         }
@@ -45,6 +47,7 @@ export class TextService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
+            this.placeHolderSpan.style.display = 'block';
             this.placeHolderSpan.id = 'placeHolderSpan';
             this.placeHolderSpan.style.zIndex = '2';
             this.placeHolderSpan.style.visibility = 'visible';
@@ -53,32 +56,34 @@ export class TextService extends Tool {
             this.placeHolderSpan.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
             this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.lockKeyboard = true;
+            this.escapeKeyUsed = false;
             this.placeHolderSpan.focus();
             this.setSelectedText();
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
+        this.mouseLeftCanvas = true;
         if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
-        const LEFT_CLICK_BUTTONS = 1;
-        if (event.buttons === LEFT_CLICK_BUTTONS && this.inUse) {
-            this.inUse = true;
+        if ((event.buttons === MouseConstants.PRIMARY_BUTTON && this.inUse) || this.mouseLeftCanvas) {
+            this.inUse = event.button === MouseConstants.MouseButton.Left;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.inUse = false;
         }
         this.placeHolderSpan.style.color = this.primaryColor;
+        this.mouseLeftCanvas = false;
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.placeHolderSpan.style.visibility = 'hidden';
+            this.placeHolderSpan.style.display = 'none';
         }
     }
 

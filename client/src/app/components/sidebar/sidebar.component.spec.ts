@@ -12,6 +12,7 @@ import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SidebarComponent } from './sidebar.component';
 
@@ -24,6 +25,7 @@ describe('SidebarComponent', () => {
     let lineStub: ToolStub;
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
+    let textStub: ToolStub;
     let rectangleSelectionServiceStub: RectangleSelectionService;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
@@ -51,6 +53,7 @@ describe('SidebarComponent', () => {
         lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
         rectangleStub = new RectangleService({} as DrawingService, {} as UndoRedoService);
         ellipseStub = new EllipseService({} as DrawingService, {} as UndoRedoService);
+        textStub = new TextService({} as DrawingService, {} as UndoRedoService);
         rectangleSelectionServiceStub = new RectangleSelectionService(
             {} as DrawingService,
             {} as UndoRedoService,
@@ -66,6 +69,7 @@ describe('SidebarComponent', () => {
                 { provide: RectangleService, useValue: rectangleStub },
                 { provide: EllipseService, useValue: ellipseStub },
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
+                { provide: ToolStub, useValue: toolManagerServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -355,5 +359,26 @@ describe('SidebarComponent', () => {
         component.selectAll();
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
         expect(selectAllSpy).not.toHaveBeenCalled();
+    });
+
+    it('clicking on text button should select the text tool for user and change lockKyBoard false', () => {
+        toolManagerServiceSpy.getTool.and.callFake(() => {
+            return textStub;
+        });
+
+        fixture.detectChanges();
+        const textButton = fixture.debugElement.nativeElement.querySelector('#icon-button-Texte');
+        textButton.click();
+        fixture.detectChanges();
+
+        expect(selectToolSpy).toHaveBeenCalledWith({
+            service: 'TextService',
+            name: 'Texte',
+            icon: 'text_format',
+            keyShortcut: 't',
+            helpShortcut: '(Touche T)',
+        });
+        expect(selectToolEmitterSpy).toHaveBeenCalledWith(textStub);
+        expect(component.textService.lockKeyboard).toEqual(false);
     });
 });
