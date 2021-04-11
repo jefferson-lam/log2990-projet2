@@ -9,9 +9,7 @@ import { ImgurService } from '@app/services/imgur/imgur.service';
 export class ExportCompletePageComponent implements OnInit {
     imageUrl: string;
 
-    constructor(private imgurService: ImgurService) {
-        this.imgurService = imgurService;
-    }
+    constructor(private imgurService: ImgurService) {}
 
     ngOnInit(): void {
         this.imgurService.serviceSettingsObservable.subscribe((serviceSettings: [number, string]) => {
