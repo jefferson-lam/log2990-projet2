@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatOptionModule } from '@angular/material/core';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
@@ -119,12 +119,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatChipsModule,
         MatRadioModule,
         MatProgressSpinnerModule,
-    ],
-    providers: [
-        {
-            provide: MatDialogRef,
-            useValue: {},
-        },
     ],
     bootstrap: [AppComponent],
 })

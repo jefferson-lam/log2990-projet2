@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ImgurService } from '@app/services/imgur/imgur.service';
 import { ExportCompletePageComponent } from './export-complete-page.component';
 
-fdescribe('ExportCompletePageComponent', () => {
+describe('ExportCompletePageComponent', () => {
     let component: ExportCompletePageComponent;
     let fixture: ComponentFixture<ExportCompletePageComponent>;
     let imgurStub: ImgurService;

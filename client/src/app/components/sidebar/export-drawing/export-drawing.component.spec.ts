@@ -13,7 +13,7 @@ import { ExportCompletePageComponent } from './export-complete-page/export-compl
 import { ExportDrawingComponent } from './export-drawing.component';
 import { ExportErrorPageComponent } from './export-error-page/export-error-page.component';
 
-fdescribe('ExportDrawingComponent', () => {
+describe('ExportDrawingComponent', () => {
     let component: ExportDrawingComponent;
     let fixture: ComponentFixture<ExportDrawingComponent>;
     let drawingStub: DrawingService;
@@ -192,7 +192,7 @@ fdescribe('ExportDrawingComponent', () => {
 
         expect(imgDataSpy).toHaveBeenCalled();
         expect(imgDataSpy).toHaveBeenCalledWith('image/' + component.type);
-        expect(exportDrawingSpy).toHaveBeenCalledWith(component.exportCanvas.toDataURL('image/' + component.type));
+        expect(exportDrawingSpy).toHaveBeenCalledWith(component.exportCanvas.toDataURL('image/' + component.type), component.name);
     });
 
     it('openPopUp should not do anything if popUpToggle and mutex are 0', () => {

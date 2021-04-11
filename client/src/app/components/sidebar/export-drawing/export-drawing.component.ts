@@ -113,7 +113,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
     }
 
     exportToImgur(): void {
-        this.imgurService.exportDrawing(this.exportCanvas.toDataURL('image/' + this.type));
+        this.imgurService.exportDrawing(this.exportCanvas.toDataURL('image/' + this.type), this.name);
     }
 
     openPopUp(): void {

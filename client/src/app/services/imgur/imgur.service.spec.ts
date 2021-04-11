@@ -3,51 +3,82 @@ import { TestBed } from '@angular/core/testing';
 import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { ImgurService } from './imgur.service';
 
-fdescribe('ImgurService', () => {
+describe('ImgurService', () => {
     let service: ImgurService;
     let httpMock: HttpTestingController;
 
+    // tslint:disable:no-magic-numbers
     const goodDataMock = {
         data: {
-            id: 'IKSivKJ',
-            title: null,
-            description: null,
-            type: 'image/png',
-            animated: false,
-            views: 0,
-            bandwidth: 0,
-            vote: null,
-            favorite: false,
-            nsfw: null,
-            section: null,
-            account_url: null,
             account_id: 0,
-            is_ad: false,
-            in_most_viral: false,
-            has_sound: false,
-            tags: [],
+            account_url: '',
             ad_type: 0,
             ad_url: '',
+            animated: false,
+            bandwidth: 0,
+            datetime: 1616804031,
+            deletehash: 'JPlKmsg4gesCGRz',
+            description: '',
             edited: '0',
+            favorite: false,
+            has_sound: false,
+            height: 800,
+            id: 'IKSivKJ',
             in_gallery: false,
-            name: '',
+            in_most_viral: false,
+            is_ad: false,
             link: 'https://i.imgur.com/IKSivKJ.png',
+            name: '',
+            nsfw: false,
+            section: '',
+            size: 100,
+            tags: [],
+            title: '',
+            type: 'image/png',
+            views: 0,
+            vote: '',
+            width: 1000,
         },
         success: true,
 
-        status: 200,
+        status: ExportDrawingConstants.OK_STATUS,
     };
+    // tslint:enable:no-magic-numbers
 
     const badDataMock = {
         data: {
-            id: null,
-            title: null,
-            description: null,
+            account_id: 0,
+            account_url: '',
+            ad_type: 0,
+            ad_url: '',
+            animated: false,
+            bandwidth: 0,
+            datetime: 0,
+            deletehash: '',
+            description: '',
+            edited: '0',
+            favorite: false,
+            has_sound: false,
+            height: 0,
+            id: '',
+            in_gallery: false,
+            in_most_viral: false,
+            is_ad: false,
+            link: '',
+            name: '',
+            nsfw: false,
+            section: '',
+            size: 0,
+            tags: [''],
+            title: '',
+            type: 'image/png',
+            views: 0,
+            vote: '',
+            width: 0,
         },
         success: false,
-        // tslint:disable-next-line:no-magic-numbers
-        status: 400,
-    };
+        status: ExportDrawingConstants.BAD_REQUEST,
+    } as ExportDrawingConstants.ParsedType;
 
     const stringImg = 'uselessData,thisistheimage';
 
@@ -72,8 +103,9 @@ fdescribe('ImgurService', () => {
         const canvas = document.createElement('canvas');
         let image = 'data,';
         image += canvas.toDataURL();
+        const imageName = 'name';
 
-        service.exportDrawing(image);
+        service.exportDrawing(image, imageName);
         expect(service.isSendingRequest).toEqual(false);
     });
 
@@ -98,12 +130,12 @@ fdescribe('ImgurService', () => {
 
     it('setUrlFromResponse should set url correctly', () => {
         service.setUrlFromResponse(goodDataMock);
-        expect(service.serviceSettings[1]).toEqual('https://i.imgur.com/IKSivKJ.png');
+        expect(service.serviceSettings[ExportDrawingConstants.URL]).toEqual('https://i.imgur.com/IKSivKJ.png');
     });
 
     it('setExportProgress should set exportProgress correctly', () => {
         service.setExportProgress(ExportDrawingConstants.ExportProgress.COMPLETE);
-        expect(service.serviceSettings[0]).toEqual(ExportDrawingConstants.ExportProgress.COMPLETE);
+        expect(service.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS]).toEqual(ExportDrawingConstants.ExportProgress.COMPLETE);
     });
 
     it('imageStringSplit should split string correctly', () => {

@@ -9,10 +9,10 @@ export class ImgurService {
     private readonly IMGUR_URL: string = 'https://api.imgur.com/3/image/';
     private readonly CLIENT_ID: string = 'Client-ID 7cb69a96d40be21';
 
-    responseStatus: number = 0;
+    responseStatus: number;
     data: string;
-    shouldOpenPopUp: boolean = false;
-    isSendingRequest: boolean = false;
+    shouldOpenPopUp: boolean;
+    isSendingRequest: boolean;
     mutex: number;
 
     url: string;
@@ -31,15 +31,19 @@ export class ImgurService {
         this.serviceSettingsSource = new BehaviorSubject<[number, string]>(this.serviceSettings);
         this.serviceSettingsObservable = this.serviceSettingsSource.asObservable();
         this.mutex = 0;
+        this.responseStatus = 0;
+        this.shouldOpenPopUp = false;
+        this.isSendingRequest = false;
     }
 
-    exportDrawing(imageString: string): void {
+    exportDrawing(imageString: string, name: string): void {
         this.isSendingRequest = true;
         const img = this.imageStringSplit(imageString);
         const headers = new Headers();
         headers.append('Authorization', this.CLIENT_ID);
         const formData = new FormData();
         formData.append('image', img);
+        formData.append('name', name);
 
         const requestOptions = {
             method: 'POST',
@@ -50,33 +54,29 @@ export class ImgurService {
         fetch(this.IMGUR_URL, requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                this.setDataFromResponse(data);
+                this.setDataFromResponse(data as ExportDrawingConstants.ParsedType);
             });
         this.isSendingRequest = false;
     }
 
-    // tslint:disable-next-line:no-any
-    setDataFromResponse(data: any): void {
+    setDataFromResponse(data: ExportDrawingConstants.ParsedType): void {
+        this.mutex++;
         if (data.status === ExportDrawingConstants.OK_STATUS) {
-            this.mutex++;
             this.setUrlFromResponse(data);
             this.setExportProgress(ExportDrawingConstants.ExportProgress.COMPLETE);
-            this.serviceSettingsSource.next(this.serviceSettings);
         } else {
-            this.mutex++;
             this.serviceSettings[1] = 'none';
             this.setExportProgress(ExportDrawingConstants.ExportProgress.ERROR);
-            this.serviceSettingsSource.next(this.serviceSettings);
         }
+        this.serviceSettingsSource.next(this.serviceSettings);
     }
 
-    // tslint:disable-next-line:no-any
-    setUrlFromResponse(data: any): void {
-        this.serviceSettings[1] = data.data.link;
+    setUrlFromResponse(data: ExportDrawingConstants.ParsedType): void {
+        this.serviceSettings[ExportDrawingConstants.URL] = data.data.link;
     }
 
     setExportProgress(progress: number): void {
-        this.serviceSettings[0] = progress;
+        this.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS] = progress;
     }
 
     imageStringSplit(img: string): string {
@@ -85,8 +85,8 @@ export class ImgurService {
     }
 
     resetServiceSettings(): void {
-        this.serviceSettings[0] = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
-        this.serviceSettings[1] = 'none';
+        this.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS] = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
+        this.serviceSettings[ExportDrawingConstants.URL] = 'none';
         this.serviceSettingsSource.next(this.serviceSettings);
     }
 }
