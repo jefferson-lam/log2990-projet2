@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { ImgurService } from './imgur.service';
 
-fdescribe('ImgurService', () => {
+describe('ImgurService', () => {
     let service: ImgurService;
     let httpMock: HttpTestingController;
 
