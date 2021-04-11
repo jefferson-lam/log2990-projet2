@@ -208,6 +208,7 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     fillRectangle(baseCtx: CanvasRenderingContext2D, cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): void {
         // Erase the contents on the base canvas
+        this.isFromClipboard = false;
         baseCtx.fillStyle = 'white';
         baseCtx.fillRect(
             cornerCoords[SelectionConstants.START_INDEX].x,

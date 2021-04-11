@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { ToolSelectionService } from '../tool-selection-service';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 
 @Injectable({
     providedIn: 'root',
@@ -49,7 +49,7 @@ export class ClipboardService {
                 this.currentTool.onMouseDown({} as MouseEvent);
             }
             this.changeToSelectionTool(this.lastSelectionTool);
-            this.setPastedCanvasPosition({ x: 0, y: 0 });
+            this.setPastedCanvasPosition();
             this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
             this.currentTool.cornerCoords = this.cornerCoords;
             this.currentTool.isManipulating = true;
@@ -60,23 +60,31 @@ export class ClipboardService {
 
     deleteSelection(): void {
         if (this.isSelected(this.drawingService.selectionCanvas)) {
+            this.currentTool.undoSelection();
             // Because there are three selection tools, this if else imbrication is inevitable (switch case doesn't work)
-            if (this.currentTool instanceof EllipseSelectionService) {
-                this.currentTool.undoSelection();
-                this.currentTool.fillEllipse(this.drawingService.baseCtx, this.currentTool.cornerCoords, this.currentTool.isCircle);
-            } else {
-                this.currentTool.undoSelection();
-                this.currentTool.fillRectangle(
-                    this.drawingService.baseCtx,
-                    this.currentTool.cornerCoords,
-                    this.currentTool.selectionWidth,
-                    this.currentTool.selectionHeight,
-                );
-            }
+            this.deleteEllipse();
+            this.deleteRectangle();
         }
     }
 
-    private setPastedCanvasPosition(topLeft: Vec2): void {
+    private deleteEllipse(): void {
+        if (this.currentTool instanceof EllipseSelectionService) {
+            this.currentTool.fillEllipse(this.drawingService.baseCtx, this.currentTool.cornerCoords, this.currentTool.isCircle);
+        }
+    }
+
+    private deleteRectangle(): void {
+        if (this.currentTool instanceof RectangleSelectionService) {
+            this.currentTool.fillRectangle(
+                this.drawingService.baseCtx,
+                this.currentTool.cornerCoords,
+                this.currentTool.selectionWidth,
+                this.currentTool.selectionHeight,
+            );
+        }
+    }
+
+    private setPastedCanvasPosition(): void {
         this.drawingService.previewSelectionCanvas.height = this.clipboard.height;
         this.drawingService.previewSelectionCanvas.width = this.clipboard.width;
         this.drawingService.selectionCanvas.height = this.clipboard.height;
