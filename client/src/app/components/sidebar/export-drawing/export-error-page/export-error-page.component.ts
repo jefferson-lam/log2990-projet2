@@ -7,9 +7,7 @@ import { ImgurService } from '@app/services/imgur/imgur.service';
     styleUrls: ['./export-error-page.component.scss'],
 })
 export class ExportErrorPageComponent {
-    constructor(private imgurService: ImgurService) {
-        this.imgurService = imgurService;
-    }
+    constructor(private imgurService: ImgurService) {}
 
     resetValues(): void {
         this.imgurService.resetServiceSettings();
