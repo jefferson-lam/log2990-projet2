@@ -54,15 +54,15 @@ export class ImgurService {
         fetch(this.IMGUR_URL, requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                this.setDataFromResponse(data as ExportDrawingConstants.ParsedType);
+                this.setDataFromResponse(data.status, data.data.link);
             });
         this.isSendingRequest = false;
     }
 
-    setDataFromResponse(data: ExportDrawingConstants.ParsedType): void {
+    setDataFromResponse(status: number, url: string): void {
         this.mutex++;
-        if (data.status === ExportDrawingConstants.OK_STATUS) {
-            this.setUrlFromResponse(data);
+        if (status === ExportDrawingConstants.OK_STATUS) {
+            this.setUrlFromResponse(url);
             this.setExportProgress(ExportDrawingConstants.ExportProgress.COMPLETE);
         } else {
             this.serviceSettings[1] = 'none';
@@ -71,8 +71,8 @@ export class ImgurService {
         this.serviceSettingsSource.next(this.serviceSettings);
     }
 
-    setUrlFromResponse(data: ExportDrawingConstants.ParsedType): void {
-        this.serviceSettings[ExportDrawingConstants.URL] = data.data.link;
+    setUrlFromResponse(url: string): void {
+        this.serviceSettings[ExportDrawingConstants.URL] = url;
     }
 
     setExportProgress(progress: number): void {
