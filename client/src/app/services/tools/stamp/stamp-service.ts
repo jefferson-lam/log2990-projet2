@@ -104,7 +104,6 @@ export class StampService extends Tool {
             this.rotationAngle += this.degreesRotation * StampConstants.CONVERT_RAD;
             this.realRotationValues += this.degreesRotation;
         }
-        console.log(this.rotationAngle);
         this.setAngleSliderValue(this.realRotationValues);
     }
 
