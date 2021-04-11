@@ -44,19 +44,17 @@ export class ColorHistoryComponent implements AfterViewInit, OnInit {
         const height = this.canvas.nativeElement.height;
 
         let idx = 0;
-        let x;
-        let y;
+        let x = 0;
+        let y = 0;
         for (let i = 0; i < ColorConstants.COLOR_HISTORY_ROWS; ++i) {
             for (let j = 0; j < ColorConstants.COLOR_HISTORY_COLUMNS; ++j) {
                 x = (width / ColorConstants.COLOR_HISTORY_COLUMNS) * j;
                 y = (height / ColorConstants.COLOR_HISTORY_ROWS) * i;
-                if (idx < this.savedColors.length) {
-                    this.ctx.fillStyle = this.colorService.convertRgbaToString(this.savedColors[idx++]);
-                } else {
-                    this.ctx.fillStyle = 'white';
-                }
-                this.ctx.fillRect(x, y, x + width / ColorConstants.COLOR_HISTORY_COLUMNS, y + height / ColorConstants.COLOR_HISTORY_ROWS);
+                idx < this.savedColors.length
+                    ? (this.ctx.fillStyle = this.colorService.convertRgbaToString(this.savedColors[idx++]))
+                    : (this.ctx.fillStyle = 'white');
             }
+            this.ctx.fillRect(x, y, x + width / ColorConstants.COLOR_HISTORY_COLUMNS, y + height / ColorConstants.COLOR_HISTORY_ROWS);
         }
     }
 

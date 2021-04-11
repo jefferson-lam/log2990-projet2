@@ -39,24 +39,24 @@ export class SidebarPipetteComponent implements OnInit {
         this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
 
         if (this.inBound) {
-            this.clipPreview(this.ctx);
+            this.clipPreview();
             this.ctx.putImageData(this.rawData, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION);
-            this.zoomPreview(this.ctx);
-            this.centerPixelStroke(this.ctx);
-            this.previewStroke(this.ctx);
+            this.zoomPreview();
+            this.centerPixelStroke();
+            this.previewStroke();
         } else {
             this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
         }
     }
 
-    clipPreview(ctx: CanvasRenderingContext2D): void {
+    clipPreview(): void {
         this.ctx.beginPath();
         this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.clip();
         this.ctx.closePath();
     }
 
-    zoomPreview(ctx: CanvasRenderingContext2D): void {
+    zoomPreview(): void {
         this.ctx.drawImage(
             this.ctx.canvas,
             PipetteConstants.RAWDATA_POSITION,
@@ -70,7 +70,7 @@ export class SidebarPipetteComponent implements OnInit {
         );
     }
 
-    centerPixelStroke(ctx: CanvasRenderingContext2D): void {
+    centerPixelStroke(): void {
         this.ctx.strokeStyle = PipetteConstants.BLACK_STROKE;
         this.ctx.lineWidth = PipetteConstants.CENTER_PIXEL_LINE_WIDTH;
         this.ctx.strokeRect(
@@ -81,7 +81,7 @@ export class SidebarPipetteComponent implements OnInit {
         );
     }
 
-    previewStroke(ctx: CanvasRenderingContext2D): void {
+    previewStroke(): void {
         this.ctx.beginPath();
         this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.lineWidth = PipetteConstants.OUTER_BORDER_LINE_WIDTH;
