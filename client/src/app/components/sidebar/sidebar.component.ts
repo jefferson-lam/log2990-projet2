@@ -68,8 +68,8 @@ export class SidebarComponent implements OnChanges {
         this.notifyOnToolSelect.emit(this.currentTool);
         this.selectedTool = tool;
         if (tool.service !== 'TextService') {
-            this.textService.lockKeyboard = false;
             this.textService.drawTextOnCanvas();
+            this.textService.lockKeyboard = false;
         }
     }
 

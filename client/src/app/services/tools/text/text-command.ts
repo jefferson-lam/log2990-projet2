@@ -81,7 +81,6 @@ export class TextCommand extends Command {
     adjustWidthWithTextAlign(textAlign: string): number {
         if (textAlign === 'center') return this.spanLeftPosition / 2;
         if (textAlign === 'right') return this.spanLeftPosition;
-        if (textAlign === 'left') return 0;
         else return 0;
     }
 }

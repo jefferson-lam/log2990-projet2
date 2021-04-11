@@ -12,22 +12,30 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class TextService extends Tool {
-    cornerCoords: Vec2[] = [];
-    primaryColor: string = '#b5cf60';
-    fontSize: number = TextConstants.INIT_FONT_SIZE;
+    primaryColor: string;
     inputFromKeyboard: string;
+
+    fontSize: number;
     textWidth: number;
     textHeight: number;
-    mouseLeftCanvas: boolean = false;
-    escapeKeyUsed: boolean = false;
-    lockKeyboard: boolean = false;
-    placeHolderSpan: HTMLSpanElement;
 
+    mouseLeftCanvas: boolean;
+    escapeKeyUsed: boolean;
+    lockKeyboard: boolean;
+
+    placeHolderSpan: HTMLSpanElement;
+    cornerCoords: Vec2[];
     previewCommand: TextCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         const MAX_PATH_DATA_SIZE = 2;
+        this.primaryColor = '#b5cf60';
+        this.fontSize = TextConstants.INIT_FONT_SIZE;
+        this.inputFromKeyboard = '';
+        this.mouseLeftCanvas = false;
+        this.escapeKeyUsed = false;
+        this.lockKeyboard = false;
         this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
     }
@@ -46,7 +54,7 @@ export class TextService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.inUse) {
+        if (this.inUse && !this.lockKeyboard) {
             this.placeHolderSpan.style.display = 'block';
             this.placeHolderSpan.id = 'placeHolderSpan';
             this.placeHolderSpan.style.zIndex = '2';

@@ -11,18 +11,18 @@ import { TextService } from '@app/services/tools/text/text-service';
     styleUrls: ['./sidebar-text.component.scss'],
 })
 export class SidebarTextComponent implements OnInit, AfterViewInit {
-    max: number = TextConstants.MAX_FONT_SIZE;
-    min: number = TextConstants.MIN_FONT_SIZE;
-    fontSize: number = TextConstants.INIT_FONT_SIZE;
-    tickInterval: number = TextConstants.TICK_INTERVALS;
+    max: number;
+    min: number;
+    fontSize: number;
+    tickInterval: number;
     fillMode: number | undefined;
-    fontStyle: string = 'normal';
-    fontWeight: string = 'normal';
-    textAlign: string = 'center';
-    fontFamily: string = 'Arial';
-    fontOptions: string = 'normal';
-    textBold: boolean = false;
-    textItalic: boolean = false;
+    fontStyle: string;
+    fontWeight: string;
+    textAlign: string;
+    fontFamily: string;
+    fontOptions: string;
+    textBold: boolean;
+    textItalic: boolean;
     inputFromKeyboard: string;
 
     currentTool: Tool;
@@ -34,7 +34,19 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     @Output() textBoldChanged: EventEmitter<string> = new EventEmitter();
     @Output() textItalicChanged: EventEmitter<string> = new EventEmitter();
 
-    constructor(public settingsManager: SettingsManagerService, public toolManagerService: ToolManagerService, private textService: TextService) {}
+    constructor(public settingsManager: SettingsManagerService, public toolManagerService: ToolManagerService, private textService: TextService) {
+        this.max = TextConstants.MAX_FONT_SIZE;
+        this.min = TextConstants.MIN_FONT_SIZE;
+        this.tickInterval = TextConstants.TICK_INTERVALS;
+        this.fontSize = TextConstants.INIT_FONT_SIZE;
+        this.fontStyle = 'normal';
+        this.fontWeight = 'normal';
+        this.textAlign = 'center';
+        this.fontFamily = 'Arial';
+        this.fontOptions = 'normal';
+        this.textBold = false;
+        this.textItalic = false;
+    }
 
     ngOnInit(): void {
         this.fontFamilyChanged.subscribe((newFont: string) => this.settingsManager.setFontFamily(newFont));
