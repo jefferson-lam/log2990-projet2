@@ -2,9 +2,6 @@
     <app-sidebar
         (notifyOnToolSelect)="setTool($event)"
         [currentTool]="currentTool"
-        (openExportPopUp)="openExportPopUp()"
-        (openNewDrawingPopUp)="openNewDrawingPopUp()"
-        (openSavePopUp)="openSavePopUp()"
     ></app-sidebar>
     <div class="drawing-container">
         <app-drawing class="drawing" tabindex="0" [currentTool]="currentTool"></app-drawing>
