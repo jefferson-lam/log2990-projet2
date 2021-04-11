@@ -16,7 +16,6 @@ export class ImgurService {
     mutex: number;
 
     url: string;
-    exportProgressEnum: typeof ExportDrawingConstants.ExportProgress = ExportDrawingConstants.ExportProgress;
     exportProgress: ExportDrawingConstants.ExportProgress;
     serviceSettings: [number, string];
 
@@ -39,17 +38,10 @@ export class ImgurService {
     exportDrawing(imageString: string, name: string): void {
         this.isSendingRequest = true;
         const img = this.imageStringSplit(imageString);
-        const headers = new Headers();
-        headers.append('Authorization', this.CLIENT_ID);
-        const formData = new FormData();
-        formData.append('image', img);
-        formData.append('name', name);
+        const headers = this.createHeaders();
+        const formData = this.createBody(img, name);
 
-        const requestOptions = {
-            method: 'POST',
-            headers,
-            body: formData,
-        };
+        const requestOptions = this.createRequestOptions(headers, formData);
 
         fetch(this.IMGUR_URL, requestOptions)
             .then((response) => response.json())
@@ -59,13 +51,35 @@ export class ImgurService {
         this.isSendingRequest = false;
     }
 
+    createHeaders(): Headers {
+        const headers = new Headers();
+        headers.append('Authorization', this.CLIENT_ID);
+        return headers;
+    }
+
+    createBody(img: string, name: string): FormData {
+        const formData = new FormData();
+        formData.append('image', img);
+        formData.append('name', name);
+        return formData;
+    }
+
+    createRequestOptions(headers: Headers, formData: FormData): ExportDrawingConstants.PostRequest {
+        const requestOptions = {
+            method: 'POST',
+            headers,
+            body: formData,
+        };
+        return requestOptions;
+    }
+
     setDataFromResponse(status: number, url: string): void {
         this.mutex++;
         if (status === ExportDrawingConstants.OK_STATUS) {
             this.setUrlFromResponse(url);
             this.setExportProgress(ExportDrawingConstants.ExportProgress.COMPLETE);
         } else {
-            this.serviceSettings[1] = 'none';
+            this.setUrlFromResponse('none');
             this.setExportProgress(ExportDrawingConstants.ExportProgress.ERROR);
         }
         this.serviceSettingsSource.next(this.serviceSettings);
