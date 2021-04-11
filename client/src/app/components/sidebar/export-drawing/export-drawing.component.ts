@@ -34,7 +34,6 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
     request: Message = { title: 'Error', body: '' };
 
     url: string;
-    popUpToggleEnum: typeof ExportDrawingConstants.PopUpToggle = ExportDrawingConstants.PopUpToggle;
     popUpToggle: ExportDrawingConstants.PopUpToggle;
 
     constructor(drawingService: DrawingService, private imgurService: ImgurService, public newDialog: MatDialog) {
@@ -116,11 +115,9 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
     }
 
     openPopUp(): void {
-        if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.NONE && this.imgurService.mutex === 0) {
-            return;
-        } else if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.ERROR && this.imgurService.mutex === 1) {
+        if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.ERROR && this.imgurService.mutex === 1) {
             this.openErrorPopUp();
-        } else if (this.imgurService.mutex === 1) {
+        } else if (this.imgurService.mutex) {
             this.openCompletePopUp();
         }
     }
