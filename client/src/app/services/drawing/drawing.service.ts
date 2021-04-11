@@ -20,4 +20,10 @@ export class DrawingService {
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+
+    newDrawing(): void {
+        this.baseCtx.fillStyle = 'white';
+        this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.clearCanvas(this.previewCtx);
+    }
 }

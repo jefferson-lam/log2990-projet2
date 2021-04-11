@@ -59,7 +59,7 @@ describe('AutoSaveService', () => {
             new Image(),
         );
 
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', [''], ['canvas', 'baseCtx']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['newDrawing'], ['canvas', 'baseCtx']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
@@ -148,6 +148,12 @@ describe('AutoSaveService', () => {
         expect(executeSpy).toHaveBeenCalled();
         expect(srcSetSpy).toHaveBeenCalled();
         expect(srcSetSpy).toHaveBeenCalledWith('');
+    });
+
+    it('loadDrawing should call drawingService.newDrawing if not autosave', () => {
+        service.loadDrawing();
+
+        expect(drawServiceSpy.newDrawing).toHaveBeenCalled();
     });
 
     it('loadDrawing should call autoSaveDrawing and reset undoRedoService', () => {
