@@ -307,7 +307,6 @@ describe('MainPageCarrouselComponent', () => {
 
         expect(setSpy).toHaveBeenCalled();
         expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
-        expect(setSpy).toHaveBeenCalledWith('initialDrawing', mockImageURL);
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
@@ -346,7 +345,6 @@ describe('MainPageCarrouselComponent', () => {
         component.openDrawing(mockImageURL);
 
         expect(setSpy).toHaveBeenCalled();
-        expect(setSpy).toHaveBeenCalledWith('initialDrawing', mockImageURL);
         expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);

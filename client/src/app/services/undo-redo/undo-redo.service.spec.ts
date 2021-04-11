@@ -172,8 +172,10 @@ describe('UndoRedoService', () => {
         expect(executeSpy).toHaveBeenCalled();
     });
 
-    it('refresh should call drawingService.baseCtx.drawImage if initialImage exists', () => {
+    it('refresh should call drawingService.baseCtx.drawImage if initialImage.src is not empty', () => {
         service.initialImage = new Image();
+        service.initialImage.src =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
         // tslint:disable:no-string-literal
         const drawImageSpy = spyOn(service['drawingService'].baseCtx, 'drawImage');
 

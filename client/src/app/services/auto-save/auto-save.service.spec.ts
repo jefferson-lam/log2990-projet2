@@ -132,14 +132,6 @@ describe('AutoSaveService', () => {
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    it('loadDrawing should reset undoRedoService after initialImage.onload event if autosaved drawing', async () => {
-        localStorage.setItem('autosave', mockImageURL);
-        await service.loadDrawing();
-        localStorage.clear();
-
-        expect(undoRedoServiceSpy.reset).toHaveBeenCalled();
-    });
-
     it('loadDrawing should autoSaveDrawing after initialImage.onload event if autosaved drawing', async () => {
         localStorage.setItem('autosave', mockImageURL);
         await service.loadDrawing();
@@ -148,11 +140,20 @@ describe('AutoSaveService', () => {
         expect(autoSaveSpy).toHaveBeenCalled();
     });
 
-    it('loadDrawing should call autoSaveDrawing and execute resetCanvasSize if not autosaved drawing', () => {
+    it("loadDrawing should set undoRedoService.initialImage.src to '' and execute resetCanvasSize if not autosaved drawing", () => {
+        const srcSetSpy = spyOnProperty(undoRedoServiceSpy.initialImage, 'src', 'set');
         localStorage.clear();
         service.loadDrawing();
 
         expect(executeSpy).toHaveBeenCalled();
+        expect(srcSetSpy).toHaveBeenCalled();
+        expect(srcSetSpy).toHaveBeenCalledWith('');
+    });
+
+    it('loadDrawing should call autoSaveDrawing and reset undoRedoService', () => {
+        service.loadDrawing();
+
         expect(autoSaveSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.reset).toHaveBeenCalled();
     });
 });

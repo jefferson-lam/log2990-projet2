@@ -18,6 +18,7 @@ export class UndoRedoService {
 
     constructor(private drawingService: DrawingService) {
         this.reset();
+        this.initialImage = new Image();
     }
 
     reset(): void {
@@ -50,7 +51,7 @@ export class UndoRedoService {
     refresh(): void {
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.resetCanvasSize.execute();
-        if (this.initialImage) {
+        if (this.initialImage.src !== '') {
             this.drawingService.baseCtx.drawImage(this.initialImage, 0, 0, this.initialImage.width, this.initialImage.height);
         }
         this.undoPile.forEach((c) => c.execute());
