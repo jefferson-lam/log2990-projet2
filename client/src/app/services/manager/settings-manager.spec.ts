@@ -4,10 +4,10 @@ import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
 import { ColorService } from '@app/services/color/color.service';
+import { SettingsManagerService } from '@app/services/manager/settings-manager';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { ClipboardService } from '../tools/selection/clipboard/clipboard.service';
-import { SettingsManagerService } from './settings-manager';
-import { ToolManagerService } from './tool-manager-service';
 
 // tslint:disable:no-any
 describe('SettingsManagerService', () => {

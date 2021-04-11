@@ -3,9 +3,9 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
-import { EllipseSelectionService } from '../ellipse/ellipse-selection-service';
-import { RectangleSelectionService } from '../rectangle/rectangle-selection-service';
-import { ClipboardService } from './clipboard.service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 
 describe('ClipboardService', () => {
     let service: ClipboardService;
@@ -79,41 +79,38 @@ describe('ClipboardService', () => {
     });
 
     it('pasteSelection annuls selection if active ', () => {
-        // to initialize clipboard, or else data is empty
-        service.clipboard.data[0] = 255;
-        service.clipboard.data[1] = 255;
-        service.clipboard.data[2] = 255;
-        service.clipboard.data[3] = 255;
+        // initializing clipboard with random values, or else data is empty
+        for (let i = 0; i < service.clipboard.data.length; ++i) {
+            service.clipboard.data[i] = 1;
+        }
+
         const mouseDownSpy = spyOn(service.currentTool, 'onMouseDown').and.callThrough();
         service.pasteSelection();
         expect(mouseDownSpy).toHaveBeenCalled();
     });
 
     it('pasteSelection changes to selection tool used during copy', () => {
-        service.clipboard.data[0] = 255;
-        service.clipboard.data[1] = 255;
-        service.clipboard.data[2] = 255;
-        service.clipboard.data[3] = 255;
+        for (let i = 0; i < service.clipboard.data.length; ++i) {
+            service.clipboard.data[i] = 1;
+        }
         const selectToolSpy = spyOn(toolManagerService, 'selectTool').and.callThrough();
         service.pasteSelection();
         expect(selectToolSpy).toHaveBeenCalled();
     });
 
     it('pasteSelection pastes clipboard data to moved selection canvas', () => {
-        service.clipboard.data[0] = 255;
-        service.clipboard.data[1] = 255;
-        service.clipboard.data[2] = 255;
-        service.clipboard.data[3] = 255;
+        for (let i = 0; i < service.clipboard.data.length; ++i) {
+            service.clipboard.data[i] = 1;
+        }
         const putImageDataSpy = spyOn(selectionCtxStub, 'putImageData').and.callThrough();
         service.pasteSelection();
         expect(putImageDataSpy).toHaveBeenCalled();
     });
 
     it('pasteSelection moves selection canvas to corner of drawing canvas', () => {
-        service.clipboard.data[0] = 255;
-        service.clipboard.data[1] = 255;
-        service.clipboard.data[2] = 255;
-        service.clipboard.data[3] = 255;
+        for (let i = 0; i < service.clipboard.data.length; ++i) {
+            service.clipboard.data[i] = 1;
+        }
         service.pasteSelection();
         expect(canvasTestHelper.selectionCanvas.height).toEqual(service.clipboard.height);
         expect(canvasTestHelper.selectionCanvas.width).toEqual(service.clipboard.width);
@@ -135,10 +132,9 @@ describe('ClipboardService', () => {
     });
 
     it('pasteSelection doesnt undo if theres no active selection', () => {
-        service.clipboard.data[0] = 255;
-        service.clipboard.data[1] = 255;
-        service.clipboard.data[2] = 255;
-        service.clipboard.data[3] = 255;
+        for (let i = 0; i < service.clipboard.data.length; ++i) {
+            service.clipboard.data[i] = 1;
+        }
         canvasTestHelper.selectionCanvas.width = 0;
         canvasTestHelper.selectionCanvas.height = 0;
         const mouseDownSpy = spyOn(service.currentTool, 'onMouseDown').and.callThrough();
