@@ -27,7 +27,7 @@ describe('ImgurService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should send image to imgur server', () => {
+    it('exportDrawing should send image to imgur server', () => {
         const canvas = document.createElement('canvas');
         let image = 'data,';
         image += canvas.toDataURL();
@@ -37,26 +37,22 @@ describe('ImgurService', () => {
         expect(service.isSendingRequest).toEqual(false);
     });
 
-    it('should set exportProgress and url correctly if status = 200', () => {
+    it('setDataFromResponse should set exportProgress and url correctly if status = 200', () => {
         const setUrlFromResponseSpy = spyOn(service, 'setUrlFromResponse');
         const setExportProgressSpy = spyOn(service, 'setExportProgress');
 
         service.setDataFromResponse(ExportDrawingConstants.OK_STATUS, URL);
-        expect(setUrlFromResponseSpy).toHaveBeenCalled();
+        expect(setUrlFromResponseSpy).toHaveBeenCalledWith(URL);
         expect(setExportProgressSpy).toHaveBeenCalledWith(ExportDrawingConstants.ExportProgress.COMPLETE);
-        expect(service.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS]).toEqual(ExportDrawingConstants.ExportProgress.COMPLETE);
-        expect(service.serviceSettings[ExportDrawingConstants.URL]).toEqual(URL);
     });
 
-    it('should set exportProgress and url correctly if status != 200', () => {
+    it('setDataFromResponse should set exportProgress and url correctly if status != 200', () => {
         const setUrlFromResponseSpy = spyOn(service, 'setUrlFromResponse');
         const setExportProgressSpy = spyOn(service, 'setExportProgress');
 
         service.setDataFromResponse(ExportDrawingConstants.BAD_REQUEST, URL);
-        expect(setUrlFromResponseSpy).not.toHaveBeenCalled();
+        expect(setUrlFromResponseSpy).toHaveBeenCalledWith('none');
         expect(setExportProgressSpy).toHaveBeenCalledWith(ExportDrawingConstants.ExportProgress.ERROR);
-        expect(service.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS]).toEqual(ExportDrawingConstants.ExportProgress.ERROR);
-        expect(service.url).toEqual('none');
     });
 
     it('setUrlFromResponse should set url correctly', () => {
