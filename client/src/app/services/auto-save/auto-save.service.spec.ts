@@ -5,8 +5,8 @@ import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subject } from 'rxjs';
-import SpyObj = jasmine.SpyObj;
 import { AutoSaveService } from './auto-save.service';
+import SpyObj = jasmine.SpyObj;
 
 describe('AutoSaveService', () => {
     let service: AutoSaveService;
@@ -53,7 +53,7 @@ describe('AutoSaveService', () => {
             undoRedoServiceSpy.pileSizeSource.asObservable(),
         );
         (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'resetCanvasSize')?.get as jasmine.Spy<() => Command>).and.returnValue(
-            new ResizerCommand(),
+            new ResizerCommand(drawServiceSpy),
         );
         (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'initialImage')?.get as jasmine.Spy<() => HTMLImageElement>).and.returnValue(
             new Image(),

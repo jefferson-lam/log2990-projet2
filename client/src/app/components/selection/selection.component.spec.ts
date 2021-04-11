@@ -74,8 +74,7 @@ describe('SelectionComponent', () => {
     it('subscribers should correctly update values', () => {
         const expectedHeight = 100;
         const expectedWidth = 500;
-        drawingService.canvasHeightObservable.next(expectedHeight);
-        drawingService.canvasWidthObservable.next(expectedWidth);
+        drawingService.canvasSizeSubject.next([expectedWidth, expectedHeight]);
         expect(component.selectionContainer.nativeElement.style.height).toEqual('100px');
         expect(component.selectionContainer.nativeElement.style.width).toEqual('500px');
     });

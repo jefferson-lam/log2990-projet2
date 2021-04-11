@@ -30,6 +30,7 @@ export class AutoSaveService {
             });
 
             this.undoRedoService.resetCanvasSize = new ResizerCommand(
+                this.drawingService,
                 this.undoRedoService.initialImage.width,
                 this.undoRedoService.initialImage.height,
             );
@@ -43,7 +44,11 @@ export class AutoSaveService {
             );
         } else {
             this.undoRedoService.initialImage.src = '';
-            this.undoRedoService.resetCanvasSize = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
+            this.undoRedoService.resetCanvasSize = new ResizerCommand(
+                this.drawingService,
+                CanvasConstants.DEFAULT_WIDTH,
+                CanvasConstants.DEFAULT_HEIGHT,
+            );
             this.undoRedoService.resetCanvasSize.execute();
         }
         this.undoRedoService.reset();
