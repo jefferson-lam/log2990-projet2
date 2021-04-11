@@ -3,11 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { ImgurService } from './imgur.service';
 
-describe('ImgurService', () => {
+fdescribe('ImgurService', () => {
     let service: ImgurService;
     let httpMock: HttpTestingController;
 
     const STRING_IMG = 'uselessData,thisistheimage';
+    const IMG = 'thisistheimage';
     const URL = 'www.url.com';
 
     beforeEach(() => {
@@ -35,6 +36,39 @@ describe('ImgurService', () => {
 
         service.exportDrawing(image, imageName);
         expect(service.isSendingRequest).toEqual(false);
+    });
+
+    it('createHeaders should create and return correct header', () => {
+        const headers = new Headers();
+        headers.append('Authorization', 'Client-ID 7cb69a96d40be21');
+
+        const returnValue = service.createHeaders();
+        expect(returnValue).toEqual(headers);
+    });
+
+    it('createBody should create and return correct body', () => {
+        const formData = new FormData();
+        formData.append('image', IMG);
+        formData.append('name', 'name');
+
+        const returnValue = service.createBody(IMG, 'name');
+        expect(returnValue).toEqual(formData);
+    });
+
+    it('createRequestOptions should create and return correct requestOptions', () => {
+        const headers = new Headers();
+        headers.append('Authorization', 'Client-ID 7cb69a96d40be21');
+        const formData = new FormData();
+        formData.append('image', IMG);
+        formData.append('name', 'name');
+        const requestOptions = {
+            method: 'POST',
+            headers,
+            body: formData,
+        };
+
+        const returnValue = service.createRequestOptions(headers, formData);
+        expect(returnValue).toEqual(requestOptions);
     });
 
     it('setDataFromResponse should set exportProgress and url correctly if status = 200', () => {
