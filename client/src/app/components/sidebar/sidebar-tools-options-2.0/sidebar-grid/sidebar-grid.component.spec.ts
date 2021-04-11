@@ -17,12 +17,12 @@ describe('SidebarGridComponent', () => {
         canvasGridServiceSpy = jasmine.createSpyObj(
             'CanvasGridService',
             ['setSquareWidth', 'setOpacityValue', 'setVisibility'],
-            ['gridVisibilitySubject', 'widthSubject', 'isGridDisplayed'],
+            ['gridVisibilitySubject', 'squareWidthSubject', 'isGridDisplayed'],
         );
         (Object.getOwnPropertyDescriptor(canvasGridServiceSpy, 'gridVisibilitySubject')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
             new Subject<any>(),
         );
-        (Object.getOwnPropertyDescriptor(canvasGridServiceSpy, 'widthSubject')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
+        (Object.getOwnPropertyDescriptor(canvasGridServiceSpy, 'squareWidthSubject')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
             new Subject<any>(),
         );
         TestBed.configureTestingModule({
