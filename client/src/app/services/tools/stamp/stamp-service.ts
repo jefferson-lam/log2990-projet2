@@ -83,9 +83,9 @@ export class StampService extends Tool {
     onMouseWheel(event: WheelEvent): void {
         this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.changeRotationAngle(event);
         this.previewCommand.setValues(this.drawingService.previewCtx, this);
         this.previewCommand.execute();
-        this.changeRotationAngle(event);
     }
 
     changeRotationAngleOnAlt(): void {
@@ -104,6 +104,7 @@ export class StampService extends Tool {
             this.rotationAngle += this.degreesRotation * StampConstants.CONVERT_RAD;
             this.realRotationValues += this.degreesRotation;
         }
+        console.log(this.rotationAngle);
         this.setAngleSliderValue(this.realRotationValues);
     }
 
