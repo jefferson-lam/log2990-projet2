@@ -5,8 +5,8 @@ import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subject } from 'rxjs';
-import SpyObj = jasmine.SpyObj;
 import { AutoSaveService } from './auto-save.service';
+import SpyObj = jasmine.SpyObj;
 
 describe('AutoSaveService', () => {
     let service: AutoSaveService;
@@ -53,7 +53,7 @@ describe('AutoSaveService', () => {
             undoRedoServiceSpy.pileSizeSource.asObservable(),
         );
         (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'resetCanvasSize')?.get as jasmine.Spy<() => Command>).and.returnValue(
-            new ResizerCommand(),
+            new ResizerCommand(drawServiceSpy),
         );
         (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'initialImage')?.get as jasmine.Spy<() => HTMLImageElement>).and.returnValue(
             new Image(),
@@ -132,14 +132,6 @@ describe('AutoSaveService', () => {
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    it('loadDrawing should reset undoRedoService after initialImage.onload event if autosaved drawing', async () => {
-        localStorage.setItem('autosave', mockImageURL);
-        await service.loadDrawing();
-        localStorage.clear();
-
-        expect(undoRedoServiceSpy.reset).toHaveBeenCalled();
-    });
-
     it('loadDrawing should autoSaveDrawing after initialImage.onload event if autosaved drawing', async () => {
         localStorage.setItem('autosave', mockImageURL);
         await service.loadDrawing();
@@ -148,11 +140,20 @@ describe('AutoSaveService', () => {
         expect(autoSaveSpy).toHaveBeenCalled();
     });
 
-    it('loadDrawing should call autoSaveDrawing and execute resetCanvasSize if not autosaved drawing', () => {
+    it("loadDrawing should set undoRedoService.initialImage.src to '' and execute resetCanvasSize if not autosaved drawing", () => {
+        const srcSetSpy = spyOnProperty(undoRedoServiceSpy.initialImage, 'src', 'set');
         localStorage.clear();
         service.loadDrawing();
 
         expect(executeSpy).toHaveBeenCalled();
+        expect(srcSetSpy).toHaveBeenCalled();
+        expect(srcSetSpy).toHaveBeenCalledWith('');
+    });
+
+    it('loadDrawing should call autoSaveDrawing and reset undoRedoService', () => {
+        service.loadDrawing();
+
         expect(autoSaveSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.reset).toHaveBeenCalled();
     });
 });

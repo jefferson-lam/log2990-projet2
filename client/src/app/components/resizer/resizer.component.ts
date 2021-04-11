@@ -35,7 +35,6 @@ export class ResizerComponent implements AfterViewInit {
         this.cornerResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
         this.bottomResizer.nativeElement.style.left = this.baseCtx.canvas.width / 2 + 'px';
         this.bottomResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
-
         this.autoSaveService.loadDrawing();
     }
 
@@ -73,9 +72,7 @@ export class ResizerComponent implements AfterViewInit {
 
     expandCanvas(event: CdkDragEnd): void {
         this.lockMinCanvasValue();
-        this.drawingService.canvasHeightObservable.next(this.previewCtx.canvas.height);
-        this.drawingService.canvasWidthObservable.next(this.previewCtx.canvas.width);
-        const command: Command = new ResizerCommand();
+        const command: Command = new ResizerCommand(this.drawingService);
         this.undoRedoService.executeCommand(command);
         this.isSideResizerDown = false;
         this.isCornerResizerDown = false;
