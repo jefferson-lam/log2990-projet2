@@ -22,7 +22,7 @@ export class PopupManagerService {
         this.dialog.afterAllClosed.subscribe(() => {
             this.isPopUpOpen = false;
         });
-        this.dialog.afterOpened.subscribe(() => {
+        this.dialog.afterOpened.asObservable().subscribe(() => {
             this.isPopUpOpen = true;
         });
     }

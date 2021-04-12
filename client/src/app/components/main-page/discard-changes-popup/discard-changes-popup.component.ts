@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -9,7 +8,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     styleUrls: ['./discard-changes-popup.component.scss'],
 })
 export class DiscardChangesPopupComponent {
-    constructor(public matDialogRef: MatDialogRef<DiscardChangesPopupComponent>, public undoRedoService: UndoRedoService, public router: Router) {
+    constructor(public matDialogRef: MatDialogRef<DiscardChangesPopupComponent>, public undoRedoService: UndoRedoService) {
         this.matDialogRef.disableClose = true;
     }
 

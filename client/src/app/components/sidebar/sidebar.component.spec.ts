@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
@@ -27,14 +28,12 @@ describe('SidebarComponent', () => {
     let rectangleSelectionServiceStub: RectangleSelectionService;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
+    let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
     let undoRedoService: UndoRedoService;
     let mockCommand: Command;
     let commandExecuteSpy: jasmine.Spy;
     let selectToolEmitterSpy: jasmine.Spy;
     let selectToolSpy: jasmine.Spy;
-    let openExportPopUpSpy: jasmine.Spy;
-    let openNewDrawingPopUpSpy: jasmine.Spy;
-    let openSavePopUpSpy: jasmine.Spy;
     let undoServiceSpy: jasmine.Spy;
     let redoServiceSpy: jasmine.Spy;
     let selectionUndoSelectionSpy: jasmine.Spy;
@@ -46,6 +45,7 @@ describe('SidebarComponent', () => {
     // tslint:disable:max-file-line-count
     beforeEach(async(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool']);
+        popupManagerSpy = jasmine.createSpyObj('PopupManagerService', ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp'], ['isPopupOpen']);
         pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService);
         eraserStub = new EraserService({} as DrawingService, {} as UndoRedoService);
         lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
@@ -66,6 +66,7 @@ describe('SidebarComponent', () => {
                 { provide: RectangleService, useValue: rectangleStub },
                 { provide: EllipseService, useValue: ellipseStub },
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
+                { provide: PopupManagerService, useValue: popupManagerSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -81,9 +82,6 @@ describe('SidebarComponent', () => {
         commandExecuteSpy = spyOn(mockCommand, 'execute');
         selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
         selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
-        openExportPopUpSpy = spyOn(component.openExportPopUp, 'emit');
-        openNewDrawingPopUpSpy = spyOn(component.openNewDrawingPopUp, 'emit');
-        openSavePopUpSpy = spyOn(component.openSavePopUp, 'emit');
         component.currentTool = pencilStub;
         undoServiceSpy = spyOn(undoRedoService, 'undo').and.callThrough();
         redoServiceSpy = spyOn(undoRedoService, 'redo').and.callThrough();
@@ -216,21 +214,21 @@ describe('SidebarComponent', () => {
         const newDrawingButton = fixture.debugElement.nativeElement.querySelector('#new-drawing-button');
         newDrawingButton.click();
         fixture.detectChanges();
-        expect(openNewDrawingPopUpSpy).toHaveBeenCalled();
+        expect(popupManagerSpy.openNewDrawingPopUp).toHaveBeenCalled();
     });
 
     it('pressing on exportDrawing should emit to editor', () => {
         const exportDrawingButton = fixture.debugElement.nativeElement.querySelector('#export-drawing-button');
         exportDrawingButton.click();
         fixture.detectChanges();
-        expect(openExportPopUpSpy).toHaveBeenCalled();
+        expect(popupManagerSpy.openExportPopUp).toHaveBeenCalled();
     });
 
     it('pressing on saveDrawing should emit to editor', () => {
         const saveDrawingButton = fixture.debugElement.nativeElement.querySelector('#save-drawing-button');
         saveDrawingButton.click();
         fixture.detectChanges();
-        expect(openSavePopUpSpy).toHaveBeenCalled();
+        expect(popupManagerSpy.openSavePopUp).toHaveBeenCalled();
     });
 
     it('clicking on undo button when undo pile is not empty and tool is not used should call undoRedoService.undo', () => {
