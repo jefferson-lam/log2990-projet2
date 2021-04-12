@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constants';
+import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -15,15 +15,15 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class EllipseSelectionService extends ToolSelectionService {
-    inUse: boolean = false;
-    isManipulating: boolean = false;
+    inUse: boolean;
+    isManipulating: boolean;
     transformValues: Vec2;
-    isCircle: boolean = false;
-    isShiftDown: boolean = false;
-    isEscapeDown: boolean = false;
-    cornerCoords: Vec2[] = new Array<Vec2>(2);
-    selectionHeight: number = 0;
-    selectionWidth: number = 0;
+    isCircle: boolean;
+    isShiftDown: boolean;
+    isEscapeDown: boolean;
+    cornerCoords: Vec2[];
+    selectionHeight: number;
+    selectionWidth: number;
 
     constructor(
         drawingService: DrawingService,
@@ -32,6 +32,14 @@ export class EllipseSelectionService extends ToolSelectionService {
         public ellipseService: EllipseService,
     ) {
         super(drawingService, undoRedoService, resizerHandlerService, ellipseService);
+        this.inUse = false;
+        this.isManipulating = false;
+        this.isCircle = false;
+        this.isShiftDown = false;
+        this.isEscapeDown = false;
+        this.cornerCoords = new Array<Vec2>(EllipseConstants.DIMENSION);
+        this.selectionHeight = 0;
+        this.selectionWidth = 0;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -193,7 +201,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         const xRadius = radiiXAndY[0];
         const yRadius = radiiXAndY[1];
         ctx.beginPath();
-        ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, EllipseConstants.START_ANGLE, EllipseConstants.END_ANGLE);
         ctx.fillStyle = fillColor;
         ctx.fill();
     }
@@ -212,14 +220,30 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(start.x, start.y);
-        ctx.ellipse(startX, startY, xRadius + offset, yRadius + offset, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(
+            startX,
+            startY,
+            xRadius + offset,
+            yRadius + offset,
+            EllipseConstants.ROTATION,
+            EllipseConstants.START_ANGLE,
+            EllipseConstants.END_ANGLE,
+        );
         ctx.clip();
     }
 
     drawOutlineEllipse(ctx: CanvasRenderingContext2D, startX: number, startY: number, radiusX: number, radiusY: number, offset: number): void {
         ctx.beginPath();
         ctx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
-        ctx.ellipse(startX, startY, radiusX + offset, radiusY + offset, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(
+            startX,
+            startY,
+            radiusX + offset,
+            radiusY + offset,
+            EllipseConstants.ROTATION,
+            EllipseConstants.START_ANGLE,
+            EllipseConstants.END_ANGLE,
+        );
         ctx.stroke();
     }
 
