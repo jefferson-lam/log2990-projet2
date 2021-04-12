@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { Tool } from '@app/classes/tool';
+import { SIDEBAR_TOOL_BUTTONS } from '@app/constants/sidebar-constants';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
@@ -26,22 +27,7 @@ export class SidebarComponent implements OnChanges {
     shouldRun: boolean;
     isUndoSelection: boolean;
 
-    sidebarToolButtons: SidebarToolButton[] = [
-        { service: 'PencilService', name: 'Crayon', icon: 'create', keyShortcut: 'c', helpShortcut: '(Touche C)' },
-        { service: 'EraserService', name: 'Efface', icon: 'settings_cell', keyShortcut: 'e', helpShortcut: '(Touche E)' },
-        { service: 'RectangleService', name: 'Rectangle', icon: 'crop_5_4', keyShortcut: '1', helpShortcut: '(Touche 1)' },
-        { service: 'EllipseService', name: 'Ellipse', icon: 'panorama_fish_eye', keyShortcut: '2', helpShortcut: '(Touche 2)' },
-        { service: 'PolygoneService', name: 'Polygone', icon: 'signal_cellular_null', keyShortcut: '3', helpShortcut: '(Touche 3)' },
-        { service: 'LineService', name: 'Ligne', icon: 'remove', keyShortcut: 'l', helpShortcut: '(Touche L)' },
-        { service: 'TextService', name: 'Texte', icon: 'text_format', keyShortcut: 't', helpShortcut: '(Touche T)' },
-        { service: 'StampService', name: 'Étampe', icon: 'how_to_vote', keyShortcut: 'd', helpShortcut: '(Touche D)' },
-        { service: 'AerosolService', name: 'Aérosol', icon: 'blur_on', keyShortcut: 'a', helpShortcut: '(Touche A)' },
-        { service: 'PipetteService', name: 'Pipette', icon: 'invert_colors', keyShortcut: 'i', helpShortcut: '(Touche I)' },
-        { service: 'RectangleSelectionService', name: 'Rectangle de Selection', icon: 'blur_linear', keyShortcut: 'r', helpShortcut: '(Touche R)' },
-        { service: 'EllipseSelectionService', name: 'Ellipse de selection', icon: 'blur_circular', keyShortcut: 's', helpShortcut: '(Touche S)' },
-        { service: 'SelectLassoService', name: 'Lasso polygonal', icon: 'gesture', keyShortcut: 'v', helpShortcut: '(Touche V)' },
-        { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' },
-    ];
+    sidebarToolButtons: SidebarToolButton[];
 
     constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService) {
         this.notifyOnToolSelect = new EventEmitter<Tool>();
@@ -52,6 +38,7 @@ export class SidebarComponent implements OnChanges {
         this.isRedoPossible = false;
         this.shouldRun = false;
         this.isUndoSelection = false;
+        this.sidebarToolButtons = SIDEBAR_TOOL_BUTTONS;
         this.selectedTool = this.sidebarToolButtons[0];
         this.undoRedoService.pileSizeObservable.subscribe((sizes: number[]) => {
             this.isUndoPossible = sizes[0] > 0;
