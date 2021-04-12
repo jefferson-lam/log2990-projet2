@@ -1,6 +1,10 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-carrousel/main-page-carrousel.component';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -12,17 +16,36 @@ export class MainPageComponent implements OnInit {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    oldDrawingTrue: boolean = true;
-    drawingExists: boolean;
+    ongoingDrawing: boolean;
 
     isPopUpOpen: boolean = false;
 
-    constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog, public router: Router, public drawingService: DrawingService, public undoRedoService: UndoRedoService) {}
 
     ngOnInit(): void {
+        this.ongoingDrawing = false;
+        if (localStorage.getItem('autosave')) {
+            this.ongoingDrawing = true;
+        }
         this.dialog.afterAllClosed.subscribe(() => {
             this.isPopUpOpen = false;
         });
+    }
+
+    newDrawing(): void {
+        if (localStorage.getItem('autosave')) {
+            const dialogRef = this.dialog.open(DiscardChangesPopupComponent);
+            dialogRef.afterClosed().subscribe((discarded) => {
+                if (discarded) {
+                    this.undoRedoService.reset();
+                    localStorage.removeItem('autosave');
+                    this.router.navigate(['/', 'editor']);
+                }
+            });
+        } else {
+            this.undoRedoService.reset();
+            this.router.navigate(['/', 'editor']);
+        }
     }
 
     openCarousel(): void {
@@ -30,6 +53,10 @@ export class MainPageComponent implements OnInit {
             height: '700px',
             width: '1800px',
         });
+    }
+
+    continueDrawing(): void {
+        this.router.navigate(['/', 'editor']);
     }
 
     @HostListener('window:keydown.control.g', ['$event'])

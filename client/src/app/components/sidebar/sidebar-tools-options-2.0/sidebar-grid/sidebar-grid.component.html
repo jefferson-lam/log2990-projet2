@@ -1,0 +1,38 @@
+<div id="settingsContainer">
+    <h2 id="title">Options Grille</h2>
+    <div>
+        <div id="opacitySettings">
+            <p>Opacité du grillage : {{ opacityValue }}</p>
+            <mat-slider
+                id="opacityCount"
+                color="warn"
+                #opacitySlider
+                thumbLabel
+                [step]="opacityTickInterval"
+                [min]="minOpacityValue"
+                [max]="maxOpacityValue"
+                [(value)]="opacityValue"
+                (change)="emitOpacityValue()"
+            >
+            </mat-slider>
+        </div>
+        <div id="widthSetting">
+            <p>Taille des carrés : {{ squareWidth }}</p>
+            <mat-slider
+                id="widthLine"
+                color="warn"
+                #widthSlider
+                thumbLabel
+                [step]="widthTickInterval"
+                [min]="minSquareWidth"
+                [max]="maxSquareWidth"
+                [(value)]="squareWidth"
+                (change)="emitSquareWidth()"
+            >
+            </mat-slider>
+        </div>
+        <div id="toggleVisibility">
+            <mat-slide-toggle #toggleGrid [(ngModel)]="isGridOptionsDisplayed" (change)="emitVisibilityValue()"> Visibilité </mat-slide-toggle>
+        </div>
+    </div>
+</div>

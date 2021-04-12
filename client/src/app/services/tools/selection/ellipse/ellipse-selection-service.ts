@@ -5,9 +5,9 @@ import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constan
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EllipseSelectionCommand } from '@app/services/tools/selection/ellipse/ellipse-selection-command';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -79,7 +79,7 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.setSelectionCanvasPosition(this.cornerCoords[SelectionConstants.START_INDEX], this.selectionWidth, this.selectionHeight);
+            this.setSelectionCanvasPosition(this.cornerCoords[SelectionConstants.START_INDEX]);
             this.inUse = false;
             this.isManipulating = true;
         }
@@ -167,6 +167,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     onToolChange(): void {
+        super.onToolChange();
         if (this.isManipulating) {
             const emptyMouseEvent: MouseEvent = {} as MouseEvent;
             this.onMouseDown(emptyMouseEvent);
@@ -239,12 +240,12 @@ export class EllipseSelectionService extends ToolSelectionService {
         return true;
     }
 
-    private setSelectionCanvasPosition(topLeft: Vec2, selectionWidth: number, selectionHeight: number): void {
+    private setSelectionCanvasPosition(topLeft: Vec2): void {
         this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
         this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPosition(topLeft, selectionWidth, selectionHeight);
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {

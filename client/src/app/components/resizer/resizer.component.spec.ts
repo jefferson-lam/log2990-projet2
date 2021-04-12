@@ -1,7 +1,6 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { ResizerComponent } from '@app/components/resizer/resizer.component';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -58,15 +57,16 @@ describe('ResizerComponent', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingService.canvas = canvasTestHelper.canvas;
 
         drawingService.previewCtx = previewCtxStub;
         drawingService.baseCtx = baseCtxStub;
 
         component.baseCtx = baseCtxStub;
         component.previewCtx = previewCtxStub;
-        component.baseCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        component.baseCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
         component.baseCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS;
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS;
 
         drawPreviewSpy = spyOn(component, 'drawPreviewOfNewSize').and.callThrough();
@@ -79,23 +79,23 @@ describe('ResizerComponent', () => {
     });
 
     it('lockMinCanvasValue should set canvas height and width to minimum 250px', () => {
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS - 1;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS - 1;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS - 1;
         component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
+        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
         expect(component.cornerResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
         expect(component.bottomResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
     });
 
     it('lockMinCanvasValue should set canvas width to minimum 250px', () => {
         const oldCanvasHeight = 400;
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS - 1;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS - 1;
         component.previewCtx.canvas.height = oldCanvasHeight;
         component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.bottomResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS / 2 + 'px');
+        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component.bottomResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS / 2 + 'px');
     });
 
     it('lockMinCanvasValue should set canvas height to minimum 250px', () => {
@@ -214,48 +214,12 @@ describe('ResizerComponent', () => {
         expect(component.isCornerResizerDown).toEqual(true);
     });
 
-    it('ngAfterViewInit should set resetCanvasSize to default values if drawingService.imageURL is null', () => {
-        drawingService.imageURL = '';
-        const previousCommand = new ResizerCommand(1, 1);
-        const expectedCommand = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
-        undoRedoService.resetCanvasSize = previousCommand;
+    it('ngAfterViewInit should call loadDrawing of autoSaveService', () => {
+        const loadSpy = spyOn(component.autoSaveService, 'loadDrawing');
 
         component.ngAfterViewInit();
 
-        expect(undoRedoService.resetCanvasSize).toEqual(expectedCommand);
-    });
-
-    it('ngAfterViewInit should set resetCanvasSize if drawingService.imageURL is not null', () => {
-        drawingService.imageURL =
-            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
-        const previousCommand = new ResizerCommand(2, 2);
-        undoRedoService.resetCanvasSize = previousCommand;
-
-        component.ngAfterViewInit();
-
-        expect(undoRedoService.resetCanvasSize).not.toEqual(previousCommand);
-    });
-
-    it('ngAfterViewInit should reset UndoRedoService and execute resetCanvasSize if drawingService.imageURL is not null', () => {
-        drawingService.imageURL =
-            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
-
-        const resetSpy = spyOn(undoRedoService, 'reset');
-
-        component.ngAfterViewInit();
-
-        expect(resetSpy).toHaveBeenCalled();
-    });
-
-    it('ngAfterViewInit should drawImage on canvas if drawingService.imageURL is not null', () => {
-        drawingService.imageURL =
-            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
-
-        const drawImageSpy = spyOn(component.baseCtx, 'drawImage');
-
-        component.ngAfterViewInit();
-
-        expect(drawImageSpy).toHaveBeenCalled();
+        expect(loadSpy).toHaveBeenCalled();
     });
 
     it('setPreviewSize should set width if isSideResizerDown and over min value', () => {

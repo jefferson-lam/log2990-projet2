@@ -1,7 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import createSpyObj = jasmine.createSpyObj;
+import { Subject } from 'rxjs';
 import { ResizerCommand } from './resizer-command';
 
+// tslint:disable: no-string-literal
 describe('ResizerCommand', () => {
     let service: ResizerCommand;
     const numberValue: number = CanvasConstants.DEFAULT_WIDTH;
@@ -12,8 +16,14 @@ describe('ResizerCommand', () => {
     let bottomResizer: HTMLElement;
     let baseCtxDrawImageSpy: jasmine.Spy;
     let previewCtxDrawImageSpy: jasmine.Spy;
+    let canvasSizeSubject: jasmine.Spy;
+    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
+        drawingServiceSpy = createSpyObj('DrawingService', ['newDrawing'], ['canvasSizeSubject']);
+        (Object.getOwnPropertyDescriptor(drawingServiceSpy, 'canvasSizeSubject')?.get as jasmine.Spy<() => Subject<number[]>>).and.returnValue(
+            new Subject<number[]>(),
+        );
         sideResizer = document.createElement('div');
         sideResizer.id = 'sideResizer';
         bottomResizer = document.createElement('div');
@@ -32,12 +42,19 @@ describe('ResizerCommand', () => {
         document.body.append(cornerResizer);
 
         TestBed.configureTestingModule({
-            providers: [{ provide: Number, useValue: numberValue }],
+            providers: [
+                { provide: Number, useValue: numberValue },
+                { provide: DrawingService, useValue: drawingServiceSpy },
+            ],
         });
         service = TestBed.inject(ResizerCommand);
 
+        canvasSizeSubject = spyOn(drawingServiceSpy.canvasSizeSubject, 'next');
         previewCtxDrawImageSpy = spyOn(service.previewCtx, 'drawImage').and.callThrough();
         baseCtxDrawImageSpy = spyOn(service.baseCtx, 'drawImage').and.callThrough();
+
+        service.previewWidth = CanvasConstants.MIN_WIDTH_CANVAS;
+        service.previewHeight = CanvasConstants.MIN_HEIGHT_CANVAS;
     });
 
     it('should be created', () => {
@@ -45,12 +62,12 @@ describe('ResizerCommand', () => {
     });
 
     it('constructor can be without arguments', () => {
-        service = new ResizerCommand();
+        service = new ResizerCommand(drawingServiceSpy);
         expect(service).toBeTruthy();
     });
 
     it('constructor can be with arguments', () => {
-        service = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
+        service = new ResizerCommand(drawingServiceSpy, CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
         expect(service).toBeTruthy();
     });
 
@@ -69,21 +86,65 @@ describe('ResizerCommand', () => {
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
     });
 
-    it('resizeCanvas should set new values', () => {
-        service.previewWidth = CanvasConstants.MIN_LENGTH_CANVAS;
-        service.previewHeight = CanvasConstants.MIN_HEIGHT_CANVAS;
+    it('resizeCanvas should call resizeBaseCanvas', () => {
+        const resizeBaseSpy = spyOn(service, 'resizeBaseCanvas');
 
         service.resizeCanvas();
 
-        expect(service.previewCtx.canvas.width).toBe(service.previewWidth);
-        expect(service.baseCtx.canvas.width).toBe(service.previewWidth);
-        expect(service.previewCtx.canvas.height).toBe(service.previewHeight);
-        expect(service.baseCtx.canvas.height).toBe(service.previewHeight);
+        expect(resizeBaseSpy).toHaveBeenCalled();
+    });
+
+    it('resizeCanvas should call resizePreviewCanvas', () => {
+        const resizePreviewSpy = spyOn(service, 'resizePreviewCanvas');
+
+        service.resizeCanvas();
+
+        expect(resizePreviewSpy).toHaveBeenCalled();
+    });
+
+    it('resizeCanvas should call newDrawing', () => {
+        service.resizeCanvas();
+
+        expect(drawingServiceSpy.newDrawing).toHaveBeenCalled();
+    });
+
+    it('resizeCanvas should call placeResizers', () => {
+        const placeResizersSpy = spyOn(service, 'placeResizers');
+
+        service.resizeCanvas();
+
+        expect(placeResizersSpy).toHaveBeenCalled();
+    });
+
+    it('resizeCanvas should emit new size', () => {
+        service.resizeCanvas();
+
+        expect(canvasSizeSubject).toHaveBeenCalled();
+        expect(canvasSizeSubject).toHaveBeenCalledWith([service.previewWidth, service.previewHeight]);
+    });
+
+    it('placeResizers should set resizers positions', () => {
+        service.placeResizers();
+
         expect(service.sideResizer.style.left).toBe(service.previewWidth + 'px');
         expect(service.sideResizer.style.top).toBe(service.previewHeight / 2 + 'px');
         expect(service.cornerResizer.style.left).toBe(service.previewWidth + 'px');
         expect(service.cornerResizer.style.top).toBe(service.previewHeight + 'px');
         expect(service.bottomResizer.style.left).toBe(service.previewWidth / 2 + 'px');
         expect(service.bottomResizer.style.top).toBe(service.previewHeight + 'px');
+    });
+
+    it('resizeBaseCanvas should set new canvas size', () => {
+        service.resizeBaseCanvas();
+
+        expect(service.baseCtx.canvas.width).toBe(service.previewWidth);
+        expect(service.baseCtx.canvas.height).toBe(service.previewHeight);
+    });
+
+    it('resizePreviewCanvas should set new canvas size', () => {
+        service.resizePreviewCanvas();
+
+        expect(service.previewCtx.canvas.width).toBe(service.previewWidth);
+        expect(service.previewCtx.canvas.height).toBe(service.previewHeight);
     });
 });

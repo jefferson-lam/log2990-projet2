@@ -7,6 +7,7 @@ import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
@@ -28,6 +29,7 @@ export class EditorComponent implements OnInit {
         public newDialog: MatDialog,
         public settingsManager: SettingsManagerService,
         public undoRedoService: UndoRedoService,
+        public canvasGridService: CanvasGridService,
     ) {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
@@ -98,6 +100,22 @@ export class EditorComponent implements OnInit {
         }
     }
 
+    @HostListener('window:keydown.g', ['$event'])
+    showGridOnCanvas(): void {
+        this.canvasGridService.toggleGrid();
+    }
+
+    @HostListener('window:keydown.-', ['$event'])
+    reduceGridSize(): void {
+        this.canvasGridService.reduceGridSize();
+    }
+
+    @HostListener('window:keydown.+', ['$event'])
+    @HostListener('window:keydown.=', ['$event'])
+    increaseGridSize(): void {
+        this.canvasGridService.increaseGridSize();
+    }
+
     setTool(newTool: Tool): void {
         this.currentTool = newTool;
     }
@@ -116,7 +134,7 @@ export class EditorComponent implements OnInit {
     }
 
     openNewDrawingPopUp(): void {
-        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+        if (!this.undoRedoService.isUndoPileEmpty() && !this.isPopUpOpen) {
             if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.onToolChange();
             }

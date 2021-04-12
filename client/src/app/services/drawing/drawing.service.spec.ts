@@ -19,16 +19,24 @@ describe('DrawingService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should clear the whole canvas', () => {
+    it('clearCanvas should clear the whole canvas', () => {
         service.clearCanvas(service.baseCtx);
         const pixelBuffer = new Uint32Array(service.baseCtx.getImageData(0, 0, service.canvas.width, service.canvas.height).data.buffer);
         const hasColoredPixels = pixelBuffer.some((color) => color !== 0);
         expect(hasColoredPixels).toEqual(false);
     });
 
-    it('setInitialImage should set imageURL to specified url', () => {
-        const EXPECTED_URL = 'EXPECTED_URL';
-        service.setInitialImage(EXPECTED_URL);
-        expect(service.imageURL).toEqual(EXPECTED_URL);
+    it('newDrawing should fillRect on baseCtx canvas', () => {
+        const fillRectSpy = spyOn(service.baseCtx, 'fillRect');
+        service.newDrawing();
+        expect(service.baseCtx.fillStyle).toBe('#ffffff');
+        expect(fillRectSpy).toHaveBeenCalled();
+    });
+
+    it("newDrawing should call clear canvas of preview layer of component's drawing service", () => {
+        const clearCanvasSpy = spyOn(service, 'clearCanvas');
+        service.newDrawing();
+        expect(clearCanvasSpy).toHaveBeenCalled();
+        expect(clearCanvasSpy).toHaveBeenCalledWith(service.previewCtx);
     });
 });
