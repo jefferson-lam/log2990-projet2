@@ -7,20 +7,27 @@ import { Rgba } from '@app/classes/rgba';
     styleUrls: ['./rgb-selector.component.scss'],
 })
 export class RgbSelectorComponent implements OnChanges {
-    red: string = '0';
-    green: string = '0';
-    blue: string = '0';
-    invalidInput: boolean = false;
+    red: string;
+    green: string;
+    blue: string;
+    invalidInput: boolean;
 
     @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
     @ViewChild('greenInput', { static: false }) greenInput: ElementRef<HTMLInputElement>;
     @ViewChild('blueInput', { static: false }) blueInput: ElementRef<HTMLInputElement>;
 
-    @Input()
-    initialColor: Rgba = { red: '255', green: '255', blue: '255', alpha: 1 };
+    @Input() initialColor: Rgba;
 
-    @Output()
-    newColor: EventEmitter<Rgba> = new EventEmitter();
+    @Output() newColor: EventEmitter<Rgba>;
+
+    constructor() {
+        this.red = '0';
+        this.green = '0';
+        this.blue = '0';
+        this.invalidInput = false;
+        this.initialColor = { red: '255', green: '255', blue: '255', alpha: 1 };
+        this.newColor = new EventEmitter();
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.initialColor) {
