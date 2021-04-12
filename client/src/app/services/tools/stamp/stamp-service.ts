@@ -16,19 +16,25 @@ import { Subject } from 'rxjs';
 export class StampService extends Tool {
     cornerCoords: Vec2[];
     stampState: boolean;
-    imageSource: string = 'assets/stamp_1.svg';
-    realRotationValues: number = StampConstants.MIN_ANGLE;
-    rotationAngle: number = StampConstants.INIT_ROTATION_ANGLE;
-    imageZoomFactor: number = StampConstants.INIT_ZOOM_FACTOR;
-    degreesRotation: number = StampConstants.INIT_DEGREES_ANGLE_COUNTER;
+    imageSource: string;
+    realRotationValues: number;
+    rotationAngle: number;
+    imageZoomFactor: number;
+    degreesRotation: number;
 
-    angleSubject: Subject<number> = new Subject<number>();
+    angleSubject: Subject<number>;
 
     previewCommand: StampCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         const MAX_PATH_DATA_SIZE = 2;
+        this.imageSource = 'assets/stamp_1.svg';
+        this.realRotationValues = StampConstants.MIN_ANGLE;
+        this.rotationAngle = StampConstants.INIT_ROTATION_ANGLE;
+        this.imageZoomFactor = StampConstants.INIT_REAL_ZOOM;
+        this.degreesRotation = StampConstants.INIT_DEGREES_ANGLE_COUNTER;
+        this.angleSubject = new Subject<number>();
         this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
         this.previewCommand = new StampCommand(this.drawingService.previewCtx, this);
@@ -53,6 +59,7 @@ export class StampService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
+        this.rotationAngle = this.realRotationValues * StampConstants.CONVERT_RAD;
         this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.previewCommand.setValues(this.drawingService.previewCtx, this);
@@ -98,21 +105,21 @@ export class StampService extends Tool {
 
     changeRotationAngle(event: WheelEvent): void {
         if (event.deltaY > 0) {
-            this.rotationAngle -= this.degreesRotation * StampConstants.CONVERT_RAD;
             this.realRotationValues -= this.degreesRotation;
+            this.rotationAngle = this.realRotationValues * StampConstants.CONVERT_RAD;
         } else {
-            this.rotationAngle += this.degreesRotation * StampConstants.CONVERT_RAD;
             this.realRotationValues += this.degreesRotation;
+            this.rotationAngle = this.realRotationValues * StampConstants.CONVERT_RAD;
         }
         this.setAngleSliderValue(this.realRotationValues);
     }
 
     setAngleSliderValue(angle: number): void {
         if (angle > StampConstants.MAX_ANGLE) {
-            this.realRotationValues = StampConstants.MIN_ANGLE;
+            this.realRotationValues = angle - StampConstants.MAX_ANGLE;
         }
         if (angle < StampConstants.MIN_ANGLE) {
-            this.realRotationValues = StampConstants.MAX_ANGLE;
+            this.realRotationValues = angle + StampConstants.MAX_ANGLE;
         }
         this.angleSubject.next(this.realRotationValues);
     }

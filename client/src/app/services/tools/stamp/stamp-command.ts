@@ -5,13 +5,14 @@ import * as StampConstants from '@app/constants/stamp-constants';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
 
 export class StampCommand extends Command {
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
     rotationAngle: number;
     imageSource: string;
     imageZoomFactor: number;
 
     constructor(canvasContext: CanvasRenderingContext2D, stampService: StampService) {
         super();
+        this.cornerCoords = [];
         this.setValues(canvasContext, stampService);
     }
 
@@ -44,6 +45,8 @@ export class StampCommand extends Command {
     }
 
     getStampSize(zoomFactor: number): number {
+        if (zoomFactor === 0) this.imageZoomFactor = 1;
+        if (zoomFactor < 0) return (1 / Math.abs(zoomFactor)) * (StampConstants.INIT_STAMP_SIZE / 2);
         return zoomFactor * (StampConstants.INIT_STAMP_SIZE / 2);
     }
 }

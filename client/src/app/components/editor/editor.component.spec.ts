@@ -306,7 +306,8 @@ describe('EditorComponent', () => {
     });
 
     it("should call changeRotationAngleOnAlt when 'alt' key is down", () => {
-        component.setStampAngleAlt();
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
+        component.setStampAngleAlt(eventSpy);
         expect(stampServiceSpy.changeRotationAngleOnAlt).toHaveBeenCalled();
     });
 

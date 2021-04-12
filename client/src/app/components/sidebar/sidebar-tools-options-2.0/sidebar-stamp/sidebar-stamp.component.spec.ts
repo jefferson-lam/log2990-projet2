@@ -64,12 +64,12 @@ describe('SidebarStampComponent', () => {
         zoomFactorSpy = spyOn(stampComponent.zoomFactorChanged, 'subscribe');
         rotationAngleSpy = spyOn(stampComponent.rotationAngleChanged, 'subscribe');
 
-        stampComponent.stamp1.nativeElement.style.border = '';
-        stampComponent.stamp2.nativeElement.style.border = '';
-        stampComponent.stamp3.nativeElement.style.border = '';
-        stampComponent.stamp4.nativeElement.style.border = '';
-        stampComponent.stamp5.nativeElement.style.border = '';
-        stampComponent.stamp6.nativeElement.style.border = '';
+        stampComponent.relaxedEgg.nativeElement.style.border = '';
+        stampComponent.sleepyEgg.nativeElement.style.border = '';
+        stampComponent.hungryEgg.nativeElement.style.border = '';
+        stampComponent.toastEgg.nativeElement.style.border = '';
+        stampComponent.huskyPortrait.nativeElement.style.border = '';
+        stampComponent.corgiPortrait.nativeElement.style.border = '';
     });
 
     it('should create', () => {
@@ -180,33 +180,39 @@ describe('SidebarStampComponent', () => {
         expect(setAngleRotationSpy).toHaveBeenCalled();
     });
 
+    it('setAngleRotation() should set its rotation value emitted from stampService', () => {
+        const EXPECTED_ANGLE = 34;
+        stampComponent.stampService.angleSubject.next(EXPECTED_ANGLE);
+        expect(stampComponent.angleSlider.value).toEqual(EXPECTED_ANGLE);
+    });
+
     it('changeBorderIndicator should change border style', () => {
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
-        expect(stampComponent.stamp6.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        expect(stampComponent.corgiPortrait.nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_5);
-        expect(stampComponent.stamp5.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        expect(stampComponent.huskyPortrait.nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_4);
-        expect(stampComponent.stamp4.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        expect(stampComponent.toastEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_3);
-        expect(stampComponent.stamp3.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        expect(stampComponent.hungryEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_2);
-        expect(stampComponent.stamp2.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        expect(stampComponent.sleepyEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_1);
-        expect(stampComponent.stamp1.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        expect(stampComponent.relaxedEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 });

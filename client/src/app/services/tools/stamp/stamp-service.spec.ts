@@ -183,13 +183,14 @@ describe('StampService', () => {
 
     it('setAngleSliderValue should change angle if out of max bounds', () => {
         const MAX_ANGLE = 400;
+        const EXPECTED_VALUE = 40;
         service.setAngleSliderValue(MAX_ANGLE);
-        expect(service.realRotationValues).toEqual(0);
+        expect(service.realRotationValues).toEqual(EXPECTED_VALUE);
     });
 
     it('setAngleSliderValue should change angle if out of min bounds', () => {
         const MAX_ANGLE = -400;
-        const EXPECTED_ANGLE = 360;
+        const EXPECTED_ANGLE = -40;
         service.setAngleSliderValue(MAX_ANGLE);
         expect(service.realRotationValues).toEqual(EXPECTED_ANGLE);
     });

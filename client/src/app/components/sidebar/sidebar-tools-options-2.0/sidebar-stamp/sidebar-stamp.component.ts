@@ -13,28 +13,36 @@ import { StampService } from '@app/services/tools/stamp/stamp-service';
 export class SidebarStampComponent implements OnInit {
     imageSource: string;
     stampClickState: boolean;
-    rotationAngle: number = StampConstants.INIT_ROTATION_ANGLE;
-    minFactor: number = StampConstants.MIN_ZOOM_FACTOR;
-    maxFactor: number = StampConstants.MAX_ZOOM_FACTOR;
-    minAngle: number = StampConstants.MIN_ANGLE;
-    maxAngle: number = StampConstants.MAX_ANGLE;
-    zoomFactor: number = StampConstants.INIT_ZOOM_FACTOR;
-    tickInterval: number = StampConstants.TICK_INTERVAL;
+    rotationAngle: number;
+    minFactor: number;
+    maxFactor: number;
+    minAngle: number;
+    maxAngle: number;
+    zoomFactor: number;
+    tickInterval: number;
     currentTool: Tool;
 
-    @ViewChild('stamp1', { static: false }) stamp1: ElementRef<HTMLElement>;
-    @ViewChild('stamp2', { static: false }) stamp2: ElementRef<HTMLElement>;
-    @ViewChild('stamp3', { static: false }) stamp3: ElementRef<HTMLElement>;
-    @ViewChild('stamp4', { static: false }) stamp4: ElementRef<HTMLElement>;
-    @ViewChild('stamp5', { static: false }) stamp5: ElementRef<HTMLElement>;
-    @ViewChild('stamp6', { static: false }) stamp6: ElementRef<HTMLElement>;
+    @ViewChild('relaxedEgg', { static: false }) relaxedEgg: ElementRef<HTMLElement>;
+    @ViewChild('sleepyEgg', { static: false }) sleepyEgg: ElementRef<HTMLElement>;
+    @ViewChild('hungryEgg', { static: false }) hungryEgg: ElementRef<HTMLElement>;
+    @ViewChild('toastEgg', { static: false }) toastEgg: ElementRef<HTMLElement>;
+    @ViewChild('huskyPortrait', { static: false }) huskyPortrait: ElementRef<HTMLElement>;
+    @ViewChild('corgiPortrait', { static: false }) corgiPortrait: ElementRef<HTMLElement>;
     @ViewChild('angleSlider') angleSlider: MatSlider;
 
     @Output() stampSourceChanged: EventEmitter<string> = new EventEmitter();
     @Output() zoomFactorChanged: EventEmitter<number> = new EventEmitter();
     @Output() rotationAngleChanged: EventEmitter<number> = new EventEmitter();
 
-    constructor(public settingsManager: SettingsManagerService, public stampService: StampService) {}
+    constructor(public settingsManager: SettingsManagerService, public stampService: StampService) {
+        this.rotationAngle = StampConstants.INIT_ROTATION_ANGLE;
+        this.minFactor = StampConstants.MIN_ZOOM_FACTOR;
+        this.maxFactor = StampConstants.MAX_ZOOM_FACTOR;
+        this.minAngle = StampConstants.MIN_ANGLE;
+        this.maxAngle = StampConstants.MAX_ANGLE;
+        this.zoomFactor = StampConstants.INIT_ZOOM_FACTOR;
+        this.tickInterval = StampConstants.TICK_INTERVAL;
+    }
 
     ngOnInit(): void {
         this.stampSourceChanged.subscribe((newSource: string) => this.settingsManager.setImageSource(newSource));
@@ -48,30 +56,30 @@ export class SidebarStampComponent implements OnInit {
     }
 
     changeBorderIndicator(imageIndex: number): void {
-        this.stamp1.nativeElement.style.border = '';
-        this.stamp2.nativeElement.style.border = '';
-        this.stamp3.nativeElement.style.border = '';
-        this.stamp4.nativeElement.style.border = '';
-        this.stamp5.nativeElement.style.border = '';
-        this.stamp6.nativeElement.style.border = '';
+        this.relaxedEgg.nativeElement.style.border = '';
+        this.sleepyEgg.nativeElement.style.border = '';
+        this.hungryEgg.nativeElement.style.border = '';
+        this.toastEgg.nativeElement.style.border = '';
+        this.huskyPortrait.nativeElement.style.border = '';
+        this.corgiPortrait.nativeElement.style.border = '';
         switch (imageIndex) {
             case StampConstants.IMAGE_INDEX_1:
-                this.stamp1.nativeElement.style.border = '2px dashed floralwhite';
+                this.relaxedEgg.nativeElement.style.border = '2px dashed floralwhite';
                 break;
             case StampConstants.IMAGE_INDEX_2:
-                this.stamp2.nativeElement.style.border = '2px dashed floralwhite';
+                this.sleepyEgg.nativeElement.style.border = '2px dashed floralwhite';
                 break;
             case StampConstants.IMAGE_INDEX_3:
-                this.stamp3.nativeElement.style.border = '2px dashed floralwhite';
+                this.hungryEgg.nativeElement.style.border = '2px dashed floralwhite';
                 break;
             case StampConstants.IMAGE_INDEX_4:
-                this.stamp4.nativeElement.style.border = '2px dashed floralwhite';
+                this.toastEgg.nativeElement.style.border = '2px dashed floralwhite';
                 break;
             case StampConstants.IMAGE_INDEX_5:
-                this.stamp5.nativeElement.style.border = '2px dashed floralwhite';
+                this.huskyPortrait.nativeElement.style.border = '2px dashed floralwhite';
                 break;
             case StampConstants.IMAGE_INDEX_6:
-                this.stamp6.nativeElement.style.border = '2px dashed floralwhite';
+                this.corgiPortrait.nativeElement.style.border = '2px dashed floralwhite';
                 break;
         }
     }

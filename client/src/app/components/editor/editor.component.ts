@@ -101,7 +101,8 @@ export class EditorComponent implements OnInit {
     }
 
     @HostListener('window:keydown.alt', ['$event'])
-    setStampAngleAlt(): void {
+    setStampAngleAlt(event: KeyboardEvent): void {
+        event.preventDefault();
         this.stampService.changeRotationAngleOnAlt();
     }
 
