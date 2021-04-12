@@ -8,14 +8,19 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
     styleUrls: ['./sidebar-paint-bucket.component.scss'],
 })
 export class SidebarPaintBucketComponent implements OnInit {
-    maxToleranceValue: number = PaintBucketConstants.MAX_TOLERANCE_VALUE;
-    minToleranceValue: number = PaintBucketConstants.MIN_TOLERANCE_VALUE;
-    toleranceValue: number = PaintBucketConstants.DEFAULT_TOLERANCE_VALUE;
-    tickInterval: number = 1;
+    maxToleranceValue: number;
+    minToleranceValue: number;
+    toleranceValue: number;
+    tickInterval: number;
 
     @Output() toleranceValueChanged: EventEmitter<number> = new EventEmitter();
 
-    constructor(public settingsManager: SettingsManagerService) {}
+    constructor(public settingsManager: SettingsManagerService) {
+        this.maxToleranceValue = PaintBucketConstants.MAX_TOLERANCE_VALUE;
+        this.minToleranceValue = PaintBucketConstants.MIN_TOLERANCE_VALUE;
+        this.toleranceValue = PaintBucketConstants.DEFAULT_TOLERANCE_VALUE;
+        this.tickInterval = 1;
+    }
 
     ngOnInit(): void {
         this.toleranceValueChanged.subscribe((newToleranceValue: number) => this.settingsManager.setToleranceValue(newToleranceValue));

@@ -23,13 +23,14 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class PaintBucketService extends Tool {
     primaryColor: string;
     primaryColorRgba: ColorRgba;
-    toleranceValue: number = DEFAULT_TOLERANCE_VALUE;
+    toleranceValue: number;
     startX: number;
     startY: number;
     mouseButtonClicked: MouseButton;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
+        this.toleranceValue = DEFAULT_TOLERANCE_VALUE;
     }
 
     setPrimaryColor(newColor: string): void {
