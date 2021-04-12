@@ -24,29 +24,43 @@ export class MainPageCarrouselComponent {
     @Input() newTagAdded: boolean;
     @Input() deleteDrawingTrue: boolean;
 
-    tagErrorPresent: boolean = false;
-    tagErrorMessage: string = '';
-    serverErrorMessage: string = '';
-    deleted: boolean = false;
-    noValidDrawing: boolean = false;
-    visible: boolean = true;
-    selectable: boolean = true;
-    removable: boolean = true;
+    tagErrorPresent: boolean;
+    tagErrorMessage: string;
+    serverErrorMessage: string;
+    deleted: boolean;
+    noValidDrawing: boolean;
+    visible: boolean;
+    selectable: boolean;
+    removable: boolean;
     deleteClick: boolean;
     drawingLoading: boolean;
     imageNotInServer: boolean;
 
-    separatorKeysCodes: number[] = [ENTER, COMMA];
-    allTags: string[] = [''];
-    tagsInSearch: string[] = [];
+    separatorKeysCodes: number[];
+    allTags: string[];
+    tagsInSearch: string[];
 
-    drawingCounter: number = 0;
+    drawingCounter: number;
     fetchedDrawingByTag: string[];
     showCasedDrawings: ImageFormat[];
-    placeHolderDrawing: ImageFormat = new ImageFormat();
-    previewDrawings: ImageFormat[] = [];
+    placeHolderDrawing: ImageFormat;
+    previewDrawings: ImageFormat[];
 
     constructor(private database: DatabaseService, private localServerService: LocalServerService, private router: Router, public dialog: MatDialog) {
+        this.tagErrorPresent = false;
+        this.tagErrorMessage = '';
+        this.serverErrorMessage = '';
+        this.deleted = false;
+        this.noValidDrawing = false;
+        this.visible = true;
+        this.selectable = true;
+        this.removable = true;
+        this.separatorKeysCodes = [ENTER, COMMA];
+        this.allTags = [''];
+        this.tagsInSearch = [];
+        this.drawingCounter = 0;
+        this.placeHolderDrawing = new ImageFormat();
+        this.previewDrawings = [];
         this.resetShowcasedDrawings();
     }
 
