@@ -172,14 +172,27 @@ describe('UndoRedoService', () => {
         expect(executeSpy).toHaveBeenCalled();
     });
 
-    it('refresh should call drawingService.baseCtx.drawImage if drawingService.imageUrl is not null', () => {
+    it('refresh should call drawingService.baseCtx.drawImage if initialImage.src is not empty', () => {
+        service.initialImage = new Image();
+        service.initialImage.src =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
         // tslint:disable:no-string-literal
         const drawImageSpy = spyOn(service['drawingService'].baseCtx, 'drawImage');
-        service['drawingService'].imageURL = 'notempty';
-        // tslint:enable:no-string-literal
 
         service.refresh();
 
         expect(drawImageSpy).toHaveBeenCalled();
+    });
+
+    it('isUndoPileEmpty should return true if undo pile is empty', () => {
+        service.undoPile = [];
+        const result = service.isUndoPileEmpty();
+        expect(result).toBeTrue();
+    });
+
+    it('isUndoPileEmpty should return false if undo pile is not empty', () => {
+        service.undoPile = [{} as Command];
+        const result = service.isUndoPileEmpty();
+        expect(result).toBeFalse();
     });
 });

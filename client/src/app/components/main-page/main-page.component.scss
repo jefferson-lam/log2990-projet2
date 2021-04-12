@@ -70,13 +70,12 @@
     font-size: large;
 }
 
-#oldDrawing-button {
+#continue-button {
     background-color: #4682b4;
     font-size: large;
-    visibility: hidden;
 }
 
-#carousel-button:hover, #creation-button:hover, #oldDrawing-button:hover{
+#carousel-button:hover, #creation-button:hover, #continue-button:hover{
   color: beige;
   background-color: #0c3164;
 }

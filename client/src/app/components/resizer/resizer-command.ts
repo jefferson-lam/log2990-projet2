@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +16,7 @@ export class ResizerCommand extends Command {
     previewWidth: number;
     previewHeight: number;
 
-    constructor(@Inject(Number) width?: number, @Inject(Number) height?: number) {
+    constructor(private drawingService: DrawingService, @Inject(Number) width?: number, @Inject(Number) height?: number) {
         super();
         this.baseCtx = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = (document.getElementById('previewLayer') as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
@@ -44,26 +45,33 @@ export class ResizerCommand extends Command {
     resizeCanvas(): void {
         // Save drawing to preview canvas before drawing is wiped due to resizing
         this.previewCtx.drawImage(this.baseCtx.canvas, 0, 0);
+        this.resizeBaseCanvas();
+        this.drawingService.newDrawing();
+        this.placeResizers();
 
-        // Resize base canvas ctx
-        this.baseCtx.canvas.width = this.previewWidth;
-        this.baseCtx.canvas.height = this.previewHeight;
+        // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
+        this.baseCtx.drawImage(this.previewCtx.canvas, 0, 0);
+        this.resizePreviewCanvas();
 
-        this.baseCtx.fillStyle = 'white';
-        this.baseCtx.fillRect(0, 0, this.previewWidth, this.previewHeight);
+        // Emit new size
+        this.drawingService.canvasSizeSubject.next([this.previewWidth, this.previewHeight]);
+    }
 
-        // Place resizers
+    placeResizers(): void {
         this.sideResizer.style.left = this.baseCtx.canvas.width + 'px';
         this.sideResizer.style.top = this.baseCtx.canvas.height / 2 + 'px';
         this.cornerResizer.style.left = this.baseCtx.canvas.width + 'px';
         this.cornerResizer.style.top = this.baseCtx.canvas.height + 'px';
         this.bottomResizer.style.top = this.baseCtx.canvas.height + 'px';
         this.bottomResizer.style.left = this.baseCtx.canvas.width / 2 + 'px';
+    }
 
-        // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
-        this.baseCtx.drawImage(this.previewCtx.canvas, 0, 0);
+    resizeBaseCanvas(): void {
+        this.baseCtx.canvas.width = this.previewWidth;
+        this.baseCtx.canvas.height = this.previewHeight;
+    }
 
-        // Resize preview canvas ctx
+    resizePreviewCanvas(): void {
         this.previewCtx.canvas.width = this.previewWidth;
         this.previewCtx.canvas.height = this.previewHeight;
     }

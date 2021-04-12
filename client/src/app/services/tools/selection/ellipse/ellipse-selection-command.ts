@@ -19,8 +19,8 @@ export class EllipseSelectionCommand extends Command {
         this.ctx = canvasContext;
         this.cornerCoords = Object.assign([], ellipseSelectionService.cornerCoords);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
-        this.selectionHeight = ellipseSelectionService.selectionHeight;
-        this.selectionWidth = ellipseSelectionService.selectionWidth;
+        this.selectionHeight = selectionCanvas.height;
+        this.selectionWidth = selectionCanvas.width;
         this.transformValues = ellipseSelectionService.transformValues;
         this.isCircle = ellipseSelectionService.isCircle;
     }
