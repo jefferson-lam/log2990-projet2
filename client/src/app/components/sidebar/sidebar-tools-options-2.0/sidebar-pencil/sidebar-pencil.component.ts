@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import * as PencilConstants from '@app/constants/pencil-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
@@ -8,17 +9,23 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
     styleUrls: ['./sidebar-pencil.component.scss'],
 })
 export class SidebarPencilComponent implements OnInit {
-    constructor(public settingsManager: SettingsManagerService) {}
-    max: number = 200;
-    min: number = 1;
-    tickInterval: number = 1;
+    max: number;
+    min: number;
+    tickInterval: number;
     toolSize: number | undefined;
     currentTool: Tool;
 
     @Input() newTool: Tool;
     @Input() selected: number;
 
-    @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
+    @Output() toolSizeChanged: EventEmitter<number>;
+
+    constructor(public settingsManager: SettingsManagerService) {
+        this.max = PencilConstants.MAX_SIZE_PENCIL;
+        this.min = PencilConstants.MIN_SIZE_PENCIL;
+        this.tickInterval = PencilConstants.TICK_INTERVAL;
+        this.toolSizeChanged = new EventEmitter();
+    }
 
     ngOnInit(): void {
         this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));
