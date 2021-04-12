@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -24,6 +25,7 @@ export class MainPageComponent implements OnInit {
         public drawingService: DrawingService,
         public undoRedoService: UndoRedoService,
         public popupManager: PopupManagerService,
+        public shortcutManager: ShortcutManagerService,
     ) {}
 
     ngOnInit(): void {
@@ -55,7 +57,6 @@ export class MainPageComponent implements OnInit {
 
     @HostListener('window:keydown.control.g', ['$event'])
     onCtrlGKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.popupManager.openCarouselPopUp();
+        this.shortcutManager.onCtrlGKeyDown(event);
     }
 }

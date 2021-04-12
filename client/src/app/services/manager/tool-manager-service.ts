@@ -12,15 +12,15 @@ import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ToolManagerService {
-    keyBindings: Map<string, Tool> = new Map();
+    keyBindings: Map<string, Tool>;
     currentTool: Tool;
-    currentToolSubject: Subject<Tool> = new Subject<Tool>();
+    currentToolSubject: Subject<Tool>;
 
     constructor(
         public pencilService: PencilService,
@@ -37,9 +37,11 @@ export class ToolManagerService {
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
+        this.currentToolSubject = new BehaviorSubject<Tool>(this.currentTool);
     }
 
     private bindKeys(): void {
+        this.keyBindings = new Map<string, Tool>();
         this.keyBindings
             .set(ToolManagerConstants.PENCIL_KEY, this.pencilService)
             .set(ToolManagerConstants.ERASER_KEY, this.eraserService)
@@ -53,15 +55,10 @@ export class ToolManagerService {
             .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService);
     }
 
-    selectTool(event: KeyboardEvent): Tool {
-        const tool = this.getTool(event.key);
-        this.currentToolSubject.next(tool);
-        return tool;
-    }
-
-    getTool(keyShortcut: string): Tool {
+    selectTool(keyShortcut: string): Tool {
         if (this.keyBindings.has(keyShortcut)) {
             this.currentTool = this.onToolChange(this.keyBindings.get(keyShortcut) as Tool);
+            this.currentToolSubject.next(this.currentTool);
             return this.currentTool;
         } else {
             return this.currentTool;

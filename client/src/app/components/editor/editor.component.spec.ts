@@ -143,23 +143,23 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.selectTool).toHaveBeenCalledWith(eventSpy);
     });
 
-    it('showGridOnCanvas should set isGridDisplayed to false if initially true and call canvasGridService', () => {
-        component.showGridOnCanvas();
+    it('onGKeyDown should set isGridDisplayed to false if initially true and call canvasGridService', () => {
+        component.onGKeyDown();
         expect(canvasGridServiceSpy.toggleGrid).toHaveBeenCalled();
     });
 
-    it('showGridOnCanvas should set isGridDisplayed to true if initially false and call canvasGridService', () => {
-        component.showGridOnCanvas();
+    it('onGKeyDown should set isGridDisplayed to true if initially false and call canvasGridService', () => {
+        component.onGKeyDown();
         expect(canvasGridServiceSpy.toggleGrid).toHaveBeenCalled();
     });
 
-    it('reduceGridSize should call canvasGridService reduceGridSize', () => {
-        component.reduceGridSize();
+    it('onMinusKeyDown should call canvasGridService onMinusKeyDown', () => {
+        component.onMinusKeyDown();
         expect(canvasGridServiceSpy.reduceGridSize).toHaveBeenCalled();
     });
 
     it('increaseGridSize should call canvasGridService increaseGridSize', () => {
-        component.increaseGridSize();
+        component.onEqualKeyDown();
         expect(canvasGridServiceSpy.increaseGridSize).toHaveBeenCalled();
     });
 

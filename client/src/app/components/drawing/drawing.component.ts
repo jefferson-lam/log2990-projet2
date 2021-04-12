@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
@@ -12,7 +12,7 @@ import { BehaviorSubject } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class DrawingComponent implements AfterViewInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
@@ -25,9 +25,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
     private gridCanvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
 
     @Input() currentTool: Tool;
-    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService, public canvasGridService: CanvasGridService) {
-        this.currentTool = toolManager.pencilService; // default value
-    }
+    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService, public canvasGridService: CanvasGridService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -51,14 +49,17 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
             this.canvasGridService.resize(size[0], size[1]);
         });
+        this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
+            this.currentTool = tool;
+            this.changeCursor(tool);
+        });
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        const newTool = changes.currentTool.currentValue;
+    changeCursor(tool: Tool): void {
         const canvasStyle = (document.getElementById('previewLayer') as HTMLCanvasElement).style;
-        if (newTool === this.toolManager.pencilService) {
+        if (tool === this.toolManager.pencilService) {
             canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
-        } else if (newTool === this.toolManager.eraserService) {
+        } else if (tool === this.toolManager.eraserService) {
             canvasStyle.cursor = 'none';
         } else {
             canvasStyle.cursor = 'crosshair';
