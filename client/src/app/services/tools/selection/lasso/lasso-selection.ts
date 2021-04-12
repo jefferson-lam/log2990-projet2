@@ -26,20 +26,45 @@ export class LassoSelectionService extends ToolSelectionService {
         this.isManipulating = false;
         this.isConnected = false;
         this.linePathData = new Array<Vec2>();
+        this.lineService.linePathDataSubject.asObservable().subscribe((point) => {
+            this.linePathData.push(point);
+        });
     }
 
     onMouseDown(event: MouseEvent): void {
-        if (!this.inUse) {
+        super.onMouseDown(event);
+        if (!this.inUse && !this.isManipulating) {
+            this.clearPath();
             this.initialPoint = this.getPositionFromMouse(event);
             this.linePathData[SelectionConstants.START_INDEX] = this.initialPoint;
-            this.linePathData.push(this.initialPoint);
-        } else {
-            this.linePathData.push(this.linePathData[this.linePathData.length - 1]);
+            this.inUse = true;
+            console.log(this.initialPoint);
+        } else if (this.inUse && !this.isManipulating) {
+            if (
+                this.linePathData[this.linePathData.length - 1].x === this.initialPoint.x &&
+                this.linePathData[this.linePathData.length - 1].y === this.initialPoint.y
+            ) {
+                this.isConnected = true;
+            }
         }
-        super.onMouseDown(event);
+
+        if (this.isConnected) {
+            this.inUse = false;
+            this.lineService.onToolChange();
+            console.log('Hello!');
+            this.isConnected = false;
+        }
     }
 
-    onMouseMove(event: MouseEvent): void {
-        super.onMouseMove(event);
+    onMouseDoubleClick(event: MouseEvent): void {
+        this.lineService.inUse = false;
+        this.clearPath();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
+
+    isIntersect() {}
+
+    private clearPath(): void {
+        this.linePathData = [];
     }
 }
