@@ -157,13 +157,11 @@ export class MainPageCarrouselComponent {
             dialogRef.afterClosed().subscribe((discarded) => {
                 if (discarded) {
                     localStorage.setItem('autosave', dataUrl);
-                    localStorage.setItem('initialDrawing', dataUrl);
                     this.router.navigate(['/', 'editor']);
                 }
             });
         } else {
             localStorage.setItem('autosave', dataUrl);
-            localStorage.setItem('initialDrawing', dataUrl);
             this.router.navigate(['/', 'editor']);
         }
     }

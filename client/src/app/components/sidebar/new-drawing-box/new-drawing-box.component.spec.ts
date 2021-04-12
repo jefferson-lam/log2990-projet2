@@ -1,17 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { DrawingService } from '@app/services/drawing/drawing.service';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { NewDrawingBoxComponent } from './new-drawing-box.component';
 
 describe('NewDrawingBoxComponent', () => {
     let component: NewDrawingBoxComponent;
     let fixture: ComponentFixture<NewDrawingBoxComponent>;
-    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let autoSaveServiceSpy: jasmine.SpyObj<AutoSaveService>;
 
     beforeEach(async(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        autoSaveServiceSpy = jasmine.createSpyObj('AutoSaveService', ['loadDrawing']);
         TestBed.configureTestingModule({
             declarations: [NewDrawingBoxComponent],
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [{ provide: AutoSaveService, useValue: autoSaveServiceSpy }],
         }).compileComponents();
     }));
 
@@ -25,8 +25,14 @@ describe('NewDrawingBoxComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it("should call clear canvas of base and preview layer of component's drawing service", () => {
+    it('newDrawing should remove autosave item from localStorage', () => {
+        localStorage.setItem('autosave', 'test string');
         component.newDrawing();
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(localStorage.getItem('autosave')).toBeNull();
+    });
+
+    it('newDrawing should call autoSaveService loadDrawing', () => {
+        component.newDrawing();
+        expect(autoSaveServiceSpy.loadDrawing).toHaveBeenCalled();
     });
 });

@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -35,6 +36,8 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
 import { KeyboardListenerDirective } from './components/selection/selection-directives/keyboard-listener.directive';
 import { SelectionComponent } from './components/selection/selection.component';
+import { ExportCompletePageComponent } from './components/sidebar/export-drawing/export-complete-page/export-complete-page.component';
+import { ExportErrorPageComponent } from './components/sidebar/export-drawing/export-error-page/export-error-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveCompletePageComponent } from './components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
 import { SaveDrawingComponent } from './components/sidebar/save-drawing-page/save-drawing.component';
@@ -46,6 +49,7 @@ import { SidebarAerosolComponent } from './components/sidebar/sidebar-tools-opti
 import { SidebarEllipseSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse-selection/sidebar-ellipse-selection/sidebar-ellipse-selection.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
+import { SidebarGridComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-grid/sidebar-grid.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
 import { SidebarPaintBucketComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-paint-bucket/sidebar-paint-bucket/sidebar-paint-bucket.component';
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
@@ -87,8 +91,11 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarRectangleSelectionComponent,
         SidebarEllipseSelectionComponent,
         SidebarPaintBucketComponent,
+        ExportCompletePageComponent,
+        ExportErrorPageComponent,
+        SidebarGridComponent,
     ],
-    entryComponents: [MainPageCarrouselComponent],
+    entryComponents: [MainPageCarrouselComponent, ExportCompletePageComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -117,8 +124,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatChipsModule,
         MatRadioModule,
         MatProgressSpinnerModule,
+        MatSlideToggleModule,
     ],
-    providers: [],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

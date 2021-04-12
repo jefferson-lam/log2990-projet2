@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { ColorService } from '@app/services/color/color.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SettingsManagerService } from './settings-manager';
@@ -36,7 +37,7 @@ describe('SettingsManagerService', () => {
             ],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService);
+        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService, {} as CanvasGridService);
         editorComponent.currentTool = toolSpy;
     });
 
