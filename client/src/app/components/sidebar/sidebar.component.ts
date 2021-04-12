@@ -13,13 +13,13 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnChanges {
-    @Output() notifyOnToolSelect: EventEmitter<Tool> = new EventEmitter<Tool>();
-    @Output() openExportPopUp: EventEmitter<void> = new EventEmitter<void>();
-    @Output() openNewDrawingPopUp: EventEmitter<void> = new EventEmitter<void>();
-    @Output() openSavePopUp: EventEmitter<void> = new EventEmitter<void>();
+    @Output() notifyOnToolSelect: EventEmitter<Tool>;
+    @Output() openExportPopUp: EventEmitter<void>;
+    @Output() openNewDrawingPopUp: EventEmitter<void>;
+    @Output() openSavePopUp: EventEmitter<void>;
     @Input() currentTool: Tool;
-    @Input() isUndoPossible: boolean = false;
-    @Input() isRedoPossible: boolean = false;
+    @Input() isUndoPossible: boolean;
+    @Input() isRedoPossible: boolean;
     @Input() selectedTool: SidebarToolButton;
     @Input() isCanvasEmpty: boolean;
     @Input() isGridOptionsDisplayed: boolean;
@@ -44,6 +44,12 @@ export class SidebarComponent implements OnChanges {
     ];
 
     constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService) {
+        this.notifyOnToolSelect = new EventEmitter<Tool>();
+        this.openExportPopUp = new EventEmitter<void>();
+        this.openNewDrawingPopUp = new EventEmitter<void>();
+        this.openSavePopUp = new EventEmitter<void>();
+        this.isUndoPossible = false;
+        this.isRedoPossible = false;
         this.shouldRun = false;
         this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
