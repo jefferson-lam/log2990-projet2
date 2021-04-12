@@ -13,14 +13,16 @@ import { BehaviorSubject } from 'rxjs';
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent implements OnInit {
-    readonly title: string = 'LOG2990';
-    message: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
+    readonly title: string;
+    message: BehaviorSubject<string>;
     ongoingDrawing: boolean;
+    isPopUpOpen: boolean;
 
-    isPopUpOpen: boolean = false;
-
-    constructor(public dialog: MatDialog, public router: Router, public drawingService: DrawingService, public undoRedoService: UndoRedoService) {}
+    constructor(public dialog: MatDialog, public router: Router, public drawingService: DrawingService, public undoRedoService: UndoRedoService) {
+        this.title = 'LOG2990';
+        this.message = new BehaviorSubject<string>('');
+        this.isPopUpOpen = false;
+    }
 
     ngOnInit(): void {
         this.ongoingDrawing = false;

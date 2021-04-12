@@ -13,19 +13,26 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
-    cornerCoords: Vec2[] = new Array<Vec2>(2);
-    isSquare: boolean = false;
-    isShiftDown: boolean = false;
-    lineWidth: number = 30;
-    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
-    primaryColor: string = 'red';
-    secondaryColor: string = 'grey';
+    cornerCoords: Vec2[];
+    isSquare: boolean;
+    isShiftDown: boolean;
+    lineWidth: number;
+    fillMode: ToolConstants.FillMode;
+    primaryColor: string;
+    secondaryColor: string;
     mousePosition: Vec2;
 
     previewCommand: RectangleCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
+        this.cornerCoords = new Array<Vec2>(RectangleConstants.DIMENSION);
+        this.isSquare = false;
+        this.isShiftDown = false;
+        this.lineWidth = RectangleConstants.INITIAL_LINE_WIDTH;
+        this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
+        this.primaryColor = 'red';
+        this.secondaryColor = 'grey';
         this.clearCorners();
         this.previewCommand = new RectangleCommand(drawingService.previewCtx, this);
     }

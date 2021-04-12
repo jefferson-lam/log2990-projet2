@@ -8,7 +8,7 @@ export class EllipseSelectionCommand extends Command {
     selectionHeight: number;
     transformValues: Vec2;
     isCircle: boolean;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
     selectionCanvas: HTMLCanvasElement;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, ellipseSelectionService: EllipseSelectionService) {
@@ -17,6 +17,7 @@ export class EllipseSelectionCommand extends Command {
     }
     setValues(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, ellipseSelectionService: EllipseSelectionService): void {
         this.ctx = canvasContext;
+        this.cornerCoords = [];
         this.cornerCoords = Object.assign([], ellipseSelectionService.cornerCoords);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
         this.selectionHeight = selectionCanvas.height;

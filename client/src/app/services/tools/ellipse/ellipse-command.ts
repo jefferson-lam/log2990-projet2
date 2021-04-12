@@ -10,10 +10,11 @@ export class EllipseCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
 
     constructor(canvasContext: CanvasRenderingContext2D, ellipseService: EllipseService) {
         super();
+        this.cornerCoords = [];
         this.setValues(canvasContext, ellipseService);
     }
 

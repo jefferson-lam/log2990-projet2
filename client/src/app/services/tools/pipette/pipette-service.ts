@@ -18,16 +18,22 @@ export class PipetteService extends Tool {
     ctx: CanvasRenderingContext2D;
     toolManager: ToolManagerService;
 
-    inBound: boolean = false;
-    inBoundSource: Subject<boolean> = new BehaviorSubject<boolean>(this.inBound);
-    inBoundObservable: Observable<boolean> = this.inBoundSource.asObservable();
+    inBound: boolean;
+    inBoundSource: Subject<boolean>;
+    inBoundObservable: Observable<boolean>;
 
-    previewData: ImageData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-    previewDataSource: Subject<ImageData> = new BehaviorSubject<ImageData>(this.previewData);
-    previewDataObservable: Observable<ImageData> = this.previewDataSource.asObservable();
+    previewData: ImageData;
+    previewDataSource: Subject<ImageData>;
+    previewDataObservable: Observable<ImageData>;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public colorService: ColorService) {
         super(drawingService, undoRedoService);
+        this.inBound = false;
+        this.inBoundSource = new BehaviorSubject<boolean>(this.inBound);
+        this.inBoundObservable = this.inBoundSource.asObservable();
+        this.previewData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
+        this.previewDataSource = new BehaviorSubject<ImageData>(this.previewData);
+        this.previewDataObservable = this.previewDataSource.asObservable();
     }
 
     onMouseMove(event: MouseEvent): void {

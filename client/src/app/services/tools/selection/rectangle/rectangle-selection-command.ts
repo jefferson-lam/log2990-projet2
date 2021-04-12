@@ -9,11 +9,12 @@ export class RectangleSelectionCommand extends Command {
     selectionHeight: number;
     transformValues: Vec2;
     isSquare: boolean;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
     selectionCanvas: HTMLCanvasElement;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, rectangleSelectionService: RectangleSelectionService) {
         super();
+        this.cornerCoords = [];
         this.setValues(canvasContext, selectionCanvas, rectangleSelectionService);
     }
 

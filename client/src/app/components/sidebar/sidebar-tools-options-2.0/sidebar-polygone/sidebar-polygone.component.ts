@@ -9,21 +9,32 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
     styleUrls: ['./sidebar-polygone.component.scss'],
 })
 export class SidebarPolygoneComponent implements OnInit {
-    max: number = PolygoneConstants.MAX_LINE_WIDTH;
-    min: number = PolygoneConstants.MIN_LINE_WIDTH;
-    minPolygone: number = PolygoneConstants.MIN_SIDES_COUNT;
-    maxPolygone: number = PolygoneConstants.MAX_SIDES_COUNT;
-    tickInterval: number = PolygoneConstants.TICK_INTERVAL;
-    toolSize: number = PolygoneConstants.INIT_TOOL_SIZE;
-    polygoneSidesCount: number = PolygoneConstants.INIT_SIDES_COUNT;
+    max: number;
+    min: number;
+    minPolygone: number;
+    maxPolygone: number;
+    tickInterval: number;
+    toolSize: number;
+    polygoneSidesCount: number;
     fillMode: number | undefined;
     currentTool: Tool;
 
-    @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() fillModeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() numberOfPolySides: EventEmitter<number> = new EventEmitter();
+    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() fillModeChanged: EventEmitter<number>;
+    @Output() numberOfPolySides: EventEmitter<number>;
 
-    constructor(public settingsManager: SettingsManagerService) {}
+    constructor(public settingsManager: SettingsManagerService) {
+        this.max = PolygoneConstants.MAX_LINE_WIDTH;
+        this.min = PolygoneConstants.MIN_LINE_WIDTH;
+        this.minPolygone = PolygoneConstants.MIN_SIDES_COUNT;
+        this.maxPolygone = PolygoneConstants.MAX_SIDES_COUNT;
+        this.tickInterval = PolygoneConstants.TICK_INTERVAL;
+        this.toolSize = PolygoneConstants.INIT_TOOL_SIZE;
+        this.polygoneSidesCount = PolygoneConstants.INIT_SIDES_COUNT;
+        this.toolSizeChanged = new EventEmitter();
+        this.fillModeChanged = new EventEmitter();
+        this.numberOfPolySides = new EventEmitter();
+    }
 
     ngOnInit(): void {
         this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));

@@ -35,3 +35,5 @@ export const INIT_LINE_WIDTH = 7;
 export const ANGLE_ODD = 90;
 
 export const ANGLE_LONG = 180;
+
+export const MAX_PATH_DATA_SIZE = 2;

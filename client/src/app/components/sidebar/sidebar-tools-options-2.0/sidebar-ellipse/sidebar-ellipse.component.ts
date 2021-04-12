@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import * as EllipseConstants from '@app/constants/ellipse-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
@@ -8,17 +9,23 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
     styleUrls: ['./sidebar-ellipse.component.scss'],
 })
 export class SidebarEllipseComponent implements OnInit {
-    max: number = 200;
-    min: number = 1;
-    tickInterval: number = 1;
+    max: number;
+    min: number;
+    tickInterval: number;
     toolSize: number | undefined;
     fillMode: number | undefined;
     currentTool: Tool;
 
-    @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() fillModeChanged: EventEmitter<number> = new EventEmitter();
+    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() fillModeChanged: EventEmitter<number>;
 
-    constructor(public settingsManager: SettingsManagerService) {}
+    constructor(public settingsManager: SettingsManagerService) {
+        this.max = EllipseConstants.MAX_LINE_WIDTH;
+        this.min = EllipseConstants.MIN_LINE_WIDTH;
+        this.tickInterval = EllipseConstants.TICK_INTERVAL;
+        this.toolSizeChanged = new EventEmitter();
+        this.fillModeChanged = new EventEmitter();
+    }
 
     ngOnInit(): void {
         this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));

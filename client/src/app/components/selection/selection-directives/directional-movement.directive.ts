@@ -7,11 +7,15 @@ const CONTINUOUS_PRESS_DELAY_MS = 100;
     selector: '[appDirectionalMovement]',
 })
 export class DirectionalMovementDirective {
-    keyPressed: Map<string, number> = new Map();
-    private hasMovedOnce: boolean = false;
-    @Output() canvasMovement: EventEmitter<boolean> = new EventEmitter();
+    keyPressed: Map<string, number>;
+    private hasMovedOnce: boolean;
+    @Output() canvasMovement: EventEmitter<boolean>;
 
-    constructor(private element: ElementRef) {}
+    constructor(private element: ElementRef) {
+        this.keyPressed = new Map();
+        this.hasMovedOnce = false;
+        this.canvasMovement = new EventEmitter();
+    }
 
     @HostListener('keydown.ArrowLeft', ['$event'])
     @HostListener('keydown.ArrowDown', ['$event'])

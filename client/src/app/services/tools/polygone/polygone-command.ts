@@ -11,10 +11,11 @@ export class PolygoneCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
 
     constructor(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService) {
         super();
+        this.cornerCoords = [];
         this.setValues(canvasContext, polygoneService);
     }
 

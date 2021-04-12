@@ -10,25 +10,36 @@ import * as DatabaseConstants from '@common/validation/database-constants';
 export class TagInputComponent {
     @ViewChild('tagInput') tagInput: ElementRef;
     currentTag: string;
-    tags: string[] = new Array();
+    tags: string[];
 
-    isSavePossible: boolean = false;
-    @Output() areTagsValidEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+    isSavePossible: boolean;
+    @Output() areTagsValidEvent: EventEmitter<boolean>;
 
-    distinctTagsRequirement: string = 'Ne peut pas avoir deux étiquettes identiques.';
+    distinctTagsRequirement: string;
     distinctTagsDivClass: string;
 
-    minLengthRequirement: string = `Doit avoir au moins ${DatabaseConstants.MIN_TAG_LENGTH} caractère.`;
+    minLengthRequirement: string;
     minLengthDivClass: string;
 
-    maxLengthRequirement: string = `Doit avoir moins de ${DatabaseConstants.MAX_TAG_LENGTH} caractères.`;
+    maxLengthRequirement: string;
     maxLengthDivClass: string;
 
-    noSpecialCharacterRequirement: string = 'Ne peut pas contenir de caractères spéciaux.';
+    noSpecialCharacterRequirement: string;
     noSpecialCharacterDivClass: string;
 
-    maxTagsCountRequirement: string = `Ne peut pas avoir plus que ${DatabaseConstants.MAX_TAGS_COUNT} étiquettes.`;
+    maxTagsCountRequirement: string;
     maxTagsCountDivClass: string;
+
+    constructor() {
+        this.tags = new Array();
+        this.isSavePossible = false;
+        this.areTagsValidEvent = new EventEmitter<boolean>();
+        this.distinctTagsRequirement = 'Ne peut pas avoir deux étiquettes identiques.';
+        this.minLengthRequirement = `Doit avoir au moins ${DatabaseConstants.MIN_TAG_LENGTH} caractère.`;
+        this.maxLengthRequirement = `Doit avoir moins de ${DatabaseConstants.MAX_TAG_LENGTH} caractères.`;
+        this.noSpecialCharacterRequirement = 'Ne peut pas contenir de caractères spéciaux.';
+        this.maxTagsCountRequirement = `Ne peut pas avoir plus que ${DatabaseConstants.MAX_TAGS_COUNT} étiquettes.`;
+    }
 
     addTag(tag: string): void {
         tag = tag.trim();

@@ -14,19 +14,23 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class PolygoneService extends Tool {
-    initNumberSides: number = PolygoneConstants.INIT_SIDES_COUNT;
+    initNumberSides: number;
     cornerCoords: Vec2[];
-    lineWidth: number = PolygoneConstants.INIT_LINE_WIDTH;
-    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
-    primaryColor: string = '#b5cf60';
-    secondaryColor: string = '#2F2A36';
+    lineWidth: number;
+    fillMode: ToolConstants.FillMode;
+    primaryColor: string;
+    secondaryColor: string;
 
     previewCommand: PolygoneCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
-        const MAX_PATH_DATA_SIZE = 2;
-        this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
+        this.initNumberSides = PolygoneConstants.INIT_SIDES_COUNT;
+        this.lineWidth = PolygoneConstants.INIT_LINE_WIDTH;
+        this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
+        this.primaryColor = '#b5cf60';
+        this.secondaryColor = '#2F2A36';
+        this.cornerCoords = new Array<Vec2>(PolygoneConstants.MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
         this.previewCommand = new PolygoneCommand(this.drawingService.previewCtx, this);
     }
