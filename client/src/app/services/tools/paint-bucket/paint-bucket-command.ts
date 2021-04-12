@@ -31,10 +31,13 @@ export class PaintBucketCommand extends Command {
     }
 
     execute(): void {
-        if (this.mouseButtonClicked === MouseButton.Left) {
-            this.floodFill(this.ctx);
-        } else if (this.mouseButtonClicked === MouseButton.Right) {
-            this.fill(this.ctx);
+        switch (this.mouseButtonClicked) {
+            case MouseButton.Left:
+                this.floodFill(this.ctx);
+                break;
+            case MouseButton.Right:
+                this.fill(this.ctx);
+                break;
         }
     }
 
@@ -85,7 +88,6 @@ export class PaintBucketCommand extends Command {
         const targetColor = pixelData.data[stack[0]];
         // Convert fillColor into its decimal form as ABGR
         const newColor = this.rgba2number(this.primaryColorRgba);
-        console.log(newColor);
         if (targetColor === newColor || targetColor === undefined) {
             return;
         }
