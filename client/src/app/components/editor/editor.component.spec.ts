@@ -14,6 +14,7 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subject } from 'rxjs';
 import { EditorComponent } from './editor.component';
@@ -29,6 +30,7 @@ describe('EditorComponent', () => {
     let fixture: ComponentFixture<EditorComponent>;
     let toolStub: ToolStub;
     let rectangleSelectionService: RectangleSelectionService;
+    let textService: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let keyboardEventSpy: jasmine.Spy;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
@@ -69,6 +71,7 @@ describe('EditorComponent', () => {
         fixture = TestBed.createComponent(EditorComponent);
         component = fixture.componentInstance;
         component.newDialog = dialogSpy;
+
         drawServiceSpy.imageURL = '';
         fixture.detectChanges();
         keyboardEventSpy = spyOn(component, 'onKeyboardDown').and.callThrough();
@@ -79,6 +82,11 @@ describe('EditorComponent', () => {
             {} as ResizerHandlerService,
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
+        textService = new TextService({} as DrawingService, {} as UndoRedoService);
+
+        textService.placeHolderSpan = document.createElement('span');
+        textService.placeHolderSpan.id = 'placeHolderSpan';
+        document.body.append(textService.placeHolderSpan);
 
         undoSpy = spyOn(component.undoRedoService, 'undo');
         redoSpy = spyOn(component.undoRedoService, 'redo');
@@ -521,5 +529,14 @@ describe('EditorComponent', () => {
         component.newDialog._getAfterAllClosed().next();
 
         expect(component.isPopUpOpen).toBeFalse();
+    });
+
+    it('on escape keydown should change textService variables', () => {
+        const onToolChangeSpy = spyOn(textService, 'onToolChange');
+        component.currentTool = textService;
+        component.clearTextServiceInput();
+        expect(onToolChangeSpy).toHaveBeenCalled();
+        expect(component.textService.escapeKeyUsed).toEqual(true);
+        expect(component.textService.placeHolderSpan.style.display).toEqual('none');
     });
 });

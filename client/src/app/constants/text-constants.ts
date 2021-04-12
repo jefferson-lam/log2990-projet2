@@ -12,10 +12,6 @@ export const TICK_INTERVALS = 1;
 
 export const TEXT_HEIGHT_FACTOR = 6;
 
-export const TEXT_LINE_HEIGHT_FACTOR = 3;
+export const TEXT_LINE_HEIGHT_FACTOR = 3.1;
 
-export const LINE_HEIGHT_NUM = 6;
-
-export const LINE_HEIGHT_DEN = 5;
-
-export const LINE_HEIGHT_CONVERSION = LINE_HEIGHT_NUM / LINE_HEIGHT_DEN;
+export const LINE_HEIGHT_CONVERSION = 1.2;

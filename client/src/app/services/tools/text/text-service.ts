@@ -13,13 +13,9 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class TextService extends Tool {
     primaryColor: string;
-    inputFromKeyboard: string;
-
     fontSize: number;
     textWidth: number;
     textHeight: number;
-
-    mouseLeftCanvas: boolean;
     escapeKeyUsed: boolean;
     lockKeyboard: boolean;
 
@@ -32,8 +28,6 @@ export class TextService extends Tool {
         const MAX_PATH_DATA_SIZE = 2;
         this.primaryColor = '#b5cf60';
         this.fontSize = TextConstants.INIT_FONT_SIZE;
-        this.inputFromKeyboard = '';
-        this.mouseLeftCanvas = false;
         this.escapeKeyUsed = false;
         this.lockKeyboard = false;
         this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
@@ -47,14 +41,14 @@ export class TextService extends Tool {
             this.textWidth = this.cornerCoords[TextConstants.START_INDEX].x;
             this.textHeight = this.cornerCoords[TextConstants.START_INDEX].y;
         }
-        if (this.lockKeyboard && this.placeHolderSpan.style.zIndex === '2' && !this.escapeKeyUsed) {
+        if (this.lockKeyboard && !this.escapeKeyUsed) {
             this.drawTextOnCanvas();
             this.lockKeyboard = false;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.inUse && !this.lockKeyboard) {
+        if (this.inUse && (!this.lockKeyboard || this.escapeKeyUsed)) {
             this.placeHolderSpan.style.display = 'block';
             this.placeHolderSpan.id = 'placeHolderSpan';
             this.placeHolderSpan.style.zIndex = '2';
@@ -71,28 +65,19 @@ export class TextService extends Tool {
     }
 
     onMouseLeave(event: MouseEvent): void {
-        this.mouseLeftCanvas = true;
         if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
-        if ((event.buttons === MouseConstants.PRIMARY_BUTTON && this.inUse) || this.mouseLeftCanvas) {
+        if (event.buttons === MouseConstants.PRIMARY_BUTTON && this.inUse) {
             this.inUse = event.button === MouseConstants.MouseButton.Left;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.inUse = false;
         }
         this.placeHolderSpan.style.color = this.primaryColor;
-        this.mouseLeftCanvas = false;
-    }
-
-    onKeyboardDown(event: KeyboardEvent): void {
-        if (event.key === 'Escape') {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.placeHolderSpan.style.display = 'none';
-        }
     }
 
     drawTextOnCanvas(): void {
@@ -134,10 +119,6 @@ export class TextService extends Tool {
 
     setTextItalic(textItalic: string): void {
         this.placeHolderSpan.style.fontStyle = textItalic;
-    }
-
-    setInputFromKeyboard(inputFromKeyboard: string): void {
-        this.inputFromKeyboard = inputFromKeyboard;
     }
 
     setPrimaryColor(newColor: string): void {

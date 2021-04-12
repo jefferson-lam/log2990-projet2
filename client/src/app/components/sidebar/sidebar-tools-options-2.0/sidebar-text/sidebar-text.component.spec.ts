@@ -12,11 +12,9 @@ describe('SidebarTextComponent', () => {
     let fontFamilyChangedSubscribeSpy: jasmine.Spy;
     let textAlignChangedSubscribeSpy: jasmine.Spy;
     let fontSizeChangedSubscribeSpy: jasmine.Spy;
-    let inputFromKeyboardChangedSpy: jasmine.Spy;
     let textBoldChangedSubscribeSpy: jasmine.Spy;
     let textItalicChangedSpy: jasmine.Spy;
     const TEST_FONT_FAMILY = 'Arial';
-    const TEST_TEXT_INPUT = 'HELLO WORLD';
     const TEST_FONT_WEIGHT = 'bold';
     const TEST_FONT_SIZE = 50;
     const TEST_TEXT_ALIGN = 'center';
@@ -45,7 +43,6 @@ describe('SidebarTextComponent', () => {
         service.placeHolderSpan.style.fontFamily = TEST_FONT_FAMILY;
         service.placeHolderSpan.style.fontSize = TEST_FONT_SIZE + 'px';
         service.placeHolderSpan.style.fontWeight = TEST_FONT_WEIGHT;
-        service.inputFromKeyboard = TEST_TEXT_INPUT;
         service.placeHolderSpan.style.fontStyle = 'normal';
         service.placeHolderSpan.style.visibility = 'hidden';
         service.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
@@ -60,7 +57,6 @@ describe('SidebarTextComponent', () => {
         fontFamilyChangedSubscribeSpy = spyOn(textComponent.fontFamilyChanged, 'subscribe');
         fontSizeChangedSubscribeSpy = spyOn(textComponent.fontSizeChanged, 'subscribe');
         textAlignChangedSubscribeSpy = spyOn(textComponent.textAlignChanged, 'subscribe');
-        inputFromKeyboardChangedSpy = spyOn(textComponent.inputFromKeyboardChanged, 'subscribe');
         textBoldChangedSubscribeSpy = spyOn(textComponent.textBoldChanged, 'subscribe');
         textItalicChangedSpy = spyOn(textComponent.textItalicChanged, 'subscribe');
     });
@@ -74,7 +70,6 @@ describe('SidebarTextComponent', () => {
         expect(fontFamilyChangedSubscribeSpy).toHaveBeenCalled();
         expect(fontSizeChangedSubscribeSpy).toHaveBeenCalled();
         expect(textAlignChangedSubscribeSpy).toHaveBeenCalled();
-        expect(inputFromKeyboardChangedSpy).toHaveBeenCalled();
         expect(textBoldChangedSubscribeSpy).toHaveBeenCalled();
         expect(textItalicChangedSpy).toHaveBeenCalled();
     });
@@ -168,13 +163,6 @@ describe('SidebarTextComponent', () => {
         expect(textComponent.fontStyle).toEqual('normal');
     });
 
-    it('emitInputFromKeyboard should emit text input', () => {
-        const emitSpy = spyOn(textComponent.inputFromKeyboardChanged, 'emit');
-        textComponent.inputFromKeyboard = TEST_TEXT_INPUT;
-        textComponent.emitInputFromKeyboard();
-        expect(emitSpy).toHaveBeenCalled();
-    });
-
     it('should call setFontFamily() from settingsManager after font family change', () => {
         const setFontFamilySpy = spyOn(settingsManagerService, 'setFontFamily');
         textComponent.ngOnInit();
@@ -226,12 +214,5 @@ describe('SidebarTextComponent', () => {
         textComponent.ngOnInit();
         textComponent.emitFontStyle();
         expect(setTextItalicSpy).toHaveBeenCalled();
-    });
-
-    it('should call setInputFromKeyboard() from settingsManager after text input change', () => {
-        const setInputSpy = spyOn(settingsManagerService, 'setInputFromKeyboard');
-        textComponent.ngOnInit();
-        textComponent.emitInputFromKeyboard();
-        expect(setInputSpy).toHaveBeenCalled();
     });
 });

@@ -23,16 +23,14 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     fontOptions: string;
     textBold: boolean;
     textItalic: boolean;
-    inputFromKeyboard: string;
 
     currentTool: Tool;
 
-    @Output() fontFamilyChanged: EventEmitter<string> = new EventEmitter();
-    @Output() fontSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() textAlignChanged: EventEmitter<string> = new EventEmitter();
-    @Output() inputFromKeyboardChanged: EventEmitter<string> = new EventEmitter();
-    @Output() textBoldChanged: EventEmitter<string> = new EventEmitter();
-    @Output() textItalicChanged: EventEmitter<string> = new EventEmitter();
+    @Output() fontFamilyChanged: EventEmitter<string>;
+    @Output() fontSizeChanged: EventEmitter<number>;
+    @Output() textAlignChanged: EventEmitter<string>;
+    @Output() textBoldChanged: EventEmitter<string>;
+    @Output() textItalicChanged: EventEmitter<string>;
 
     constructor(public settingsManager: SettingsManagerService, public toolManagerService: ToolManagerService, private textService: TextService) {
         this.max = TextConstants.MAX_FONT_SIZE;
@@ -46,13 +44,17 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.fontOptions = 'normal';
         this.textBold = false;
         this.textItalic = false;
+        this.fontFamilyChanged = new EventEmitter();
+        this.fontSizeChanged = new EventEmitter();
+        this.textAlignChanged = new EventEmitter();
+        this.textBoldChanged = new EventEmitter();
+        this.textItalicChanged = new EventEmitter();
     }
 
     ngOnInit(): void {
         this.fontFamilyChanged.subscribe((newFont: string) => this.settingsManager.setFontFamily(newFont));
         this.fontSizeChanged.subscribe((newSize: number) => this.settingsManager.setFontSize(newSize));
         this.textAlignChanged.subscribe((newAlign: string) => this.settingsManager.setTextAlign(newAlign));
-        this.inputFromKeyboardChanged.subscribe((newInput: string) => this.settingsManager.setInputFromKeyboard(newInput));
         this.textBoldChanged.subscribe((newBoldStyle: string) => this.settingsManager.setTextBold(newBoldStyle));
         this.textItalicChanged.subscribe((newItalicStyle: string) => this.settingsManager.setTextItalic(newItalicStyle));
     }
@@ -74,7 +76,6 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.lineHeight = this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION + 'px';
         this.textService.placeHolderSpan.style.color = this.textService.primaryColor;
         this.textService.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
-        this.textService.inputFromKeyboard = this.textService.placeHolderSpan.innerText;
         this.textService.placeHolderSpan.style.zIndex = '2';
         this.textService.placeHolderSpan.style.color = this.textService.primaryColor;
         this.textService.placeHolderSpan.style.border = '1px solid black';
@@ -118,9 +119,5 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
             this.fontStyle = 'normal';
             this.textItalicChanged.emit(this.fontStyle);
         }
-    }
-
-    emitInputFromKeyboard(): void {
-        this.inputFromKeyboardChanged.emit(this.inputFromKeyboard);
     }
 }

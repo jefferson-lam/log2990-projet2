@@ -68,10 +68,6 @@ export class SettingsManagerService {
         this.editorComponent.currentTool.setTextItalic(fontStyle);
     }
 
-    setInputFromKeyboard(inputFromKeyboard: string): void {
-        this.editorComponent.currentTool.setInputFromKeyboard(inputFromKeyboard);
-    }
-
     setPrimaryColorTools(color: string): void {
         this.toolManagerService.setPrimaryColorTools(color);
     }

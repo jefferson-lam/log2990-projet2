@@ -379,6 +379,5 @@ describe('SidebarComponent', () => {
             helpShortcut: '(Touche T)',
         });
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(textStub);
-        expect(component.textService.lockKeyboard).toEqual(false);
     });
 });

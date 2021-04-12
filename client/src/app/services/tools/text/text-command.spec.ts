@@ -12,7 +12,6 @@ describe('TextCommand', () => {
     let testCtx: CanvasRenderingContext2D;
 
     const TEST_FONT_FAMILY = 'Arial';
-    const TEST_TEXT_INPUT = 'HELLO WORLD';
     const TEST_FONT_WEIGHT = 'bold';
     const TEST_FONT_SIZE = 50;
     const TEST_TEXT_ALIGN = 'center';
@@ -31,19 +30,21 @@ describe('TextCommand', () => {
         TestBed.configureTestingModule({});
         textService = TestBed.inject(TextService);
 
+        textService.placeHolderSpan = document.createElement('span');
+        textService.placeHolderSpan.id = 'placeHolderSpan';
+        document.body.append(textService.placeHolderSpan);
+
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         testCanvas = document.createElement('canvas');
         testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-        textService.placeHolderSpan = document.createElement('span');
         textService.setPrimaryColor(TEST_PRIM_COLOR);
         textService.setFontFamily(TEST_FONT_FAMILY);
         textService.setFontSize(TEST_FONT_SIZE);
         textService.setTextAlign(TEST_TEXT_ALIGN);
         textService.setTextBold(TEST_FONT_WEIGHT);
         textService.setTextItalic(TEST_ITALIC);
-        textService.setInputFromKeyboard(TEST_TEXT_INPUT);
 
         textService.cornerCoords[0] = { x: 0, y: 0 };
         textService.cornerCoords[1] = { x: END_X, y: END_Y };

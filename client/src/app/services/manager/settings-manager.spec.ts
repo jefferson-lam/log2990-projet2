@@ -123,11 +123,7 @@ describe('SettingsManagerService', () => {
         service.setTextBold(EXPECTED_BOLD);
         expect(toolSpy.setTextBold).toHaveBeenCalled();
     });
-    it('setInputFromKeyboard should call setInputFromKeyboard of toolManager', () => {
-        const EXPECTED_INPUT = 'Hello World';
-        service.setInputFromKeyboard(EXPECTED_INPUT);
-        expect(toolSpy.setInputFromKeyboard).toHaveBeenCalled();
-    });
+
     it('setTextItalic should call setTextItalic of toolManager', () => {
         const EXPECTED_ITALIC = 'italic';
         service.setTextItalic(EXPECTED_ITALIC);

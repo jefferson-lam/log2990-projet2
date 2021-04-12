@@ -66,10 +66,7 @@ export class TextCommand extends Command {
             ctx.fillText(
                 this.splitText[i],
                 this.textWidth + this.adjustWidthWithTextAlign(this.textAlign),
-                this.textHeight +
-                    this.fontSize / 2 +
-                    (this.spanTopPosition / this.splitText.length) * i +
-                    (this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION) / TextConstants.TEXT_LINE_HEIGHT_FACTOR,
+                this.textHeight + this.fontSize + (this.spanTopPosition / (this.splitText.length / i) + 1) - TextConstants.LINE_HEIGHT_CONVERSION * 2,
             );
         }
     }

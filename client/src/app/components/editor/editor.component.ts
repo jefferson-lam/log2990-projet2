@@ -101,13 +101,6 @@ export class EditorComponent implements OnInit {
         }
     }
 
-    // @HostListener('window:mousedown', ['$event'])
-    // drawTextOnCanvas(): void {
-    //     if (this.textService.mouseLeftCanvas) {
-    //         this.textService.drawTextOnCanvas();
-    //     }
-    // }
-
     @HostListener('window:keydown.control.a', ['$event'])
     onCtrlAKeyDown(event: KeyboardEvent): void {
         event.preventDefault();

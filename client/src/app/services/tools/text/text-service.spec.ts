@@ -20,7 +20,6 @@ describe('TextService', () => {
     let undoRedoService: UndoRedoService;
 
     const TEST_FONT_FAMILY = 'Arial';
-    const TEST_TEXT_INPUT = 'HELLO WORLD';
     const TEST_FONT_WEIGHT = 'bold';
     const TEST_FONT_SIZE = 50;
     const TEST_TEXT_ALIGN = 'center';
@@ -90,8 +89,50 @@ describe('TextService', () => {
         expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp should set placeholder attributes if inUse is true', () => {
+    it('onMouseUp should not call executeCommand if escape false', () => {
+        service.escapeKeyUsed = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(executeSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseUp should not call executeCommand lock true', () => {
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = false;
+        service.inUse = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(executeSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseUp should not call executeCommand', () => {
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = true;
         service.inUse = true;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(executeSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseUp should set placeholder attributes if lock is false', () => {
+        service.inUse = true;
+        service.escapeKeyUsed = true;
+        service.lockKeyboard = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+
+        expect(service.placeHolderSpan.style.zIndex).toEqual('2');
+        expect(service.placeHolderSpan.style.visibility).toEqual('visible');
+        expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
+        expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords[0].x + 'px');
+        expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords[0].y + 'px');
+        expect(service.lockKeyboard).toEqual(true);
+        expect(service.escapeKeyUsed).toEqual(false);
+    });
+
+    it('onMouseUp should set placeholder attributes if escaped is true', () => {
+        service.inUse = true;
+        service.escapeKeyUsed = true;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
 
@@ -125,7 +166,7 @@ describe('TextService', () => {
         } as MouseEvent;
         service.inUse = true;
         service.onMouseEnter(mouseEnterEvent);
-        expect(service.inUse).toEqual(true);
+        expect(service.inUse).toEqual(false);
     });
 
     it('onMouseEnter should make service.mouseDown false if left mouse was pressed and mouse was not pressed before leaving', () => {
@@ -148,19 +189,6 @@ describe('TextService', () => {
         service.inUse = false;
         service.onMouseEnter(mouseEnterEvent);
         expect(service.inUse).toEqual(false);
-    });
-
-    it(' onKeyboardDown of escape keypress should call clearCanvas', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-
-        const keyEvent = {
-            key: 'Escape',
-        } as KeyboardEvent;
-
-        service.onKeyboardDown(keyEvent);
-        expect(service.inUse).toEqual(false);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(service.placeHolderSpan.style.visibility).toEqual('hidden');
     });
 
     it(' onKeyboardDown of wrong keypress should not call clearCanvas', () => {
@@ -195,11 +223,6 @@ describe('TextService', () => {
     it('setTextAlign should change alignment of text', () => {
         service.setTextAlign(TEST_TEXT_ALIGN);
         expect(service.placeHolderSpan.style.textAlign).toEqual(TEST_TEXT_ALIGN);
-    });
-
-    it('setInputFromKeyboard should set input text value', () => {
-        service.setInputFromKeyboard(TEST_TEXT_INPUT);
-        expect(service.inputFromKeyboard).toEqual(TEST_TEXT_INPUT);
     });
 
     it('setTextBold should change style of text to bold', () => {
