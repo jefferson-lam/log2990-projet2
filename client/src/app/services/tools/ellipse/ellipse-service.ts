@@ -13,20 +13,24 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    cornerCoords: Vec2[] = [];
-    isCircle: boolean = false;
-    lineWidth: number = 20;
-    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
-    primaryColor: string = '#B5CF60';
-    secondaryColor: string = '#2F2A36';
+    cornerCoords: Vec2[];
+    isCircle: boolean;
+    lineWidth: number;
+    fillMode: ToolConstants.FillMode;
+    primaryColor: string;
+    secondaryColor: string;
     mousePosition: Vec2;
 
     previewCommand: EllipseCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
-        const MAX_PATH_DATA_SIZE = 2;
-        this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
+        this.isCircle = false;
+        this.lineWidth = EllipseConstants.INITIAL_LINE_WIDTH;
+        this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
+        this.primaryColor = '#B5CF60';
+        this.secondaryColor = '#2F2A36';
+        this.cornerCoords = new Array<Vec2>(EllipseConstants.MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
         this.previewCommand = new EllipseCommand(this.drawingService.previewCtx, this);
     }
