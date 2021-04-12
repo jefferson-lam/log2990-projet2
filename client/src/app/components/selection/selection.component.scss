@@ -2,21 +2,21 @@
     position: absolute;
     z-index: 12;
     border: 1px dashed black;
-    outline: none;
+    outline: black;
 }
 
 #previewSelectionLayer {
     position: absolute;
     z-index: 13;
-    border: 1px dashed black;
+    border: none;
     outline: none;
     background: transparent;
 }
 
-#previewSelectionLayer:focus {
-    border: 1px solid black;
-    outline: none;
-}
+// #previewSelectionLayer:focus {
+//     border: 1px solid black;
+//     outline: none;
+// }
 
 #selectionContainer {
     position: relative;

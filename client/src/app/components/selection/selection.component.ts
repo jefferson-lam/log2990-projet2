@@ -82,15 +82,11 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     setCanvasPosition(): void {
-        this.magnetismService.printMessage();
         const transformValues = this.getTransformValues(this.previewSelectionCanvas);
         if (this.magnetismService.isMagnetismOn) {
             const magnetizedCoords: Vec2 = this.magnetismService.magnetizeSelection(this.previewSelectionCanvas, transformValues);
             this.selectionCanvas.style.left = magnetizedCoords.x + 'px';
             this.selectionCanvas.style.top = magnetizedCoords.y + 'px';
-            // this.selectionCanvas.style.left =
-            //     Math.round(parseInt(this.previewSelectionCanvas.style.left, 10) /*+ transformValues.x*/ / 50) * 50 + 'px';
-            // this.selectionCanvas.style.top = Math.round(parseInt(this.previewSelectionCanvas.style.top, 10) /*+ transformValues.y*/ / 50) * 50 + 'px';
         } else {
             this.selectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) + transformValues.x + 'px';
             this.selectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + transformValues.y + 'px';
@@ -196,6 +192,15 @@ export class SelectionComponent implements AfterViewInit {
             y: this.initialPosition.y + this.previewSelectionCanvas.height,
         };
         this.resizerHandlerService.setResizeStrategy(this.resizerDown);
+    }
+
+    applyFocusPreviewStyle(): void {
+        this.selectionCanvas.style.border = '1px solid black';
+        this.previewSelectionCanvas.style.border = 'none';
+    }
+
+    applyFocusOutPreviewStyle(): void {
+        this.previewSelectionCanvas.style.border = '1px dashed black';
     }
 
     @HostListener('window:keydown.shift', ['$event'])

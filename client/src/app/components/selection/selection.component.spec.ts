@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { SelectionComponent } from './selection.component';
 
@@ -18,6 +19,7 @@ describe('SelectionComponent', () => {
     let drawScaledSpy: jasmine.Spy;
     let drawSelectionSpy: jasmine.Spy;
     let drawImagePreviewSpy: jasmine.Spy;
+    let magnetismServiceSpy: jasmine.SpyObj<MagnetismService>;
     let resizeSpy: jasmine.Spy;
     let resetDragSpy: jasmine.Spy;
     const drawingService: DrawingService = new DrawingService();
@@ -27,9 +29,15 @@ describe('SelectionComponent', () => {
     const MOCK_POSITION = { x: 10, y: 10 };
 
     beforeEach(async(() => {
+        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['magnetizeSelection'], ['isMagnetismOn']);
+        magnetismServiceSpy.magnetizeSelection.and.returnValue({ x: 0, y: 0 });
+        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'isMagnetismOn')?.get as jasmine.Spy<() => boolean>).and.returnValue(false);
         TestBed.configureTestingModule({
             declarations: [SelectionComponent],
-            providers: [{ provide: DrawingService, useValue: drawingService }],
+            providers: [
+                { provide: DrawingService, useValue: drawingService },
+                { provide: MagnetismService, useValue: magnetismServiceSpy },
+            ],
         }).compileComponents();
     }));
 
@@ -121,6 +129,13 @@ describe('SelectionComponent', () => {
         expect(component.previewSelectionCanvas.style.top).toEqual(component.selectionCanvas.style.top);
         expect(component.previewSelectionCanvas.style.left).toEqual(component.selectionCanvas.style.left);
         expect(resetDragSpy).toHaveBeenCalled();
+    });
+
+    it('setCanvasPosition should call magnetismService.magnetizeSelection if magnetismService.isMagnetisOn is true', () => {
+        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'isMagnetismOn')?.get as jasmine.Spy<() => boolean>).and.returnValue(true);
+        component.setCanvasPosition();
+        expect(magnetismServiceSpy.magnetizeSelection).toHaveBeenCalled();
+        expect(setResizerPositionsSpy).toHaveBeenCalled();
     });
 
     it('getTransformValues returns the correct transform values', () => {
@@ -356,6 +371,17 @@ describe('SelectionComponent', () => {
         component.setInitialValues(ResizerDown.TopLeft);
         expect(setResizeStrategySpy).toHaveBeenCalled();
         expect(setResizeStrategySpy).toHaveBeenCalledWith(ResizerDown.TopLeft);
+    });
+
+    it('applyFocusPreviewStyle should apply correct css changes to both selection and preview layers', () => {
+        component.applyFocusPreviewStyle();
+        expect(component.selectionCanvas.style.border).toEqual('1px solid black');
+        expect(component.previewSelectionCanvas.style.border).toEqual('none');
+    });
+
+    it('applyfocusOutPreviewStyle should apply correct css change to previewSelectionCanvas', () => {
+        component.applyFocusOutPreviewStyle();
+        expect(component.previewSelectionCanvas.style.border).toEqual('1px dashed black');
     });
 
     it('onShiftKeyDown should set resizerHandlerService.isShiftDown to true', () => {
