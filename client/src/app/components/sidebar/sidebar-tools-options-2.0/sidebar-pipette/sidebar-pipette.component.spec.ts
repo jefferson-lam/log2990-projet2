@@ -111,7 +111,7 @@ describe('SidebarPipetteComponent', () => {
         const arcSpy = spyOn(component.ctx, 'arc');
         const clipSpy = spyOn(component.ctx, 'clip');
         const closePathSpy = spyOn(component.ctx, 'closePath');
-        component.clipPreview(component.ctx);
+        component.clipPreview();
         expect(beginPathSpy).toHaveBeenCalled();
         expect(arcSpy).toHaveBeenCalled();
         expect(clipSpy).toHaveBeenCalled();
@@ -120,13 +120,13 @@ describe('SidebarPipetteComponent', () => {
 
     it('zoomPreview should call drawImage()', () => {
         const drawImageSpy = spyOn(component.ctx, 'drawImage');
-        component.zoomPreview(component.ctx);
+        component.zoomPreview();
         expect(drawImageSpy).toHaveBeenCalled();
     });
 
     it('centerPixelStroke should call strokeRect()', () => {
         const strokeRectSpy = spyOn(component.ctx, 'strokeRect');
-        component.centerPixelStroke(component.ctx);
+        component.centerPixelStroke();
         expect(strokeRectSpy).toHaveBeenCalled();
     });
 
@@ -135,7 +135,7 @@ describe('SidebarPipetteComponent', () => {
         const arcSpy = spyOn(component.ctx, 'arc');
         const strokeSpy = spyOn(component.ctx, 'stroke');
         const closePathSpy = spyOn(component.ctx, 'closePath');
-        component.previewStroke(component.ctx);
+        component.previewStroke();
         expect(beginPathSpy).toHaveBeenCalled();
         expect(arcSpy).toHaveBeenCalled();
         expect(strokeSpy).toHaveBeenCalled();
