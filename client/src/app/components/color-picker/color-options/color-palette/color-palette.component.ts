@@ -66,11 +66,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         const width = this.canvas.nativeElement.width;
         const height = this.canvas.nativeElement.height;
 
-        if (this.hue !== undefined) {
-            this.ctx.fillStyle = this.colorService.convertRgbaToString(this.hue);
-        } else {
-            this.ctx.fillStyle = 'white';
-        }
+        this.ctx.fillStyle = this.hue !== undefined ? this.colorService.convertRgbaToString(this.hue) : 'white';
         this.ctx.fillRect(0, 0, width, height);
 
         const whiteGrad = this.ctx.createLinearGradient(0, 0, width, 0);
