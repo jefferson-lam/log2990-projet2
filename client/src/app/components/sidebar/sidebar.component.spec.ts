@@ -4,12 +4,17 @@ import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PipetteService } from '@app/services/tools/pipette/pipette-service';
+import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
+import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -25,6 +30,8 @@ describe('SidebarComponent', () => {
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
     let rectangleSelectionServiceStub: RectangleSelectionService;
+    let ellipseSelectionServiceStub: EllipseSelectionService;
+    let clipboardServiceStub: ClipboardService;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let undoRedoService: UndoRedoService;
@@ -45,7 +52,7 @@ describe('SidebarComponent', () => {
     // tslint:disable:no-any
     // tslint:disable:max-file-line-count
     beforeEach(async(() => {
-        toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool']);
+        toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool'], ['currentToolSubject']);
         pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService);
         eraserStub = new EraserService({} as DrawingService, {} as UndoRedoService);
         lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
@@ -57,6 +64,29 @@ describe('SidebarComponent', () => {
             {} as ResizerHandlerService,
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
+        ellipseSelectionServiceStub = new EllipseSelectionService(
+            {} as DrawingService,
+            {} as UndoRedoService,
+            {} as ResizerHandlerService,
+            new EllipseService({} as DrawingService, {} as UndoRedoService),
+        );
+        clipboardServiceStub = new ClipboardService(
+            {} as DrawingService,
+            new ToolManagerService(
+                {} as PencilService,
+                {} as EraserService,
+                {} as LineService,
+                {} as RectangleService,
+                {} as EllipseService,
+                {} as DrawingService,
+                {} as RectangleSelectionService,
+                {} as EllipseSelectionService,
+                {} as PolygoneService,
+                {} as AerosolService,
+                {} as PipetteService,
+            ),
+            {} as UndoRedoService,
+        );
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -66,6 +96,7 @@ describe('SidebarComponent', () => {
                 { provide: RectangleService, useValue: rectangleStub },
                 { provide: EllipseService, useValue: ellipseStub },
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
+                { provide: ClipboardService, useValue: clipboardServiceStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -212,6 +243,14 @@ describe('SidebarComponent', () => {
         });
     });
 
+    it('when changing tool from editor, selected tool should correctly retrieve tool', () => {
+        const findSpy = spyOn(component.sidebarToolButtons, 'find');
+        component.ngOnChanges({
+            currentTool: {} as SimpleChange,
+        });
+        expect(findSpy).not.toHaveBeenCalled();
+    });
+
     it('pressing on newDrawing should emit to editor', () => {
         const newDrawingButton = fixture.debugElement.nativeElement.querySelector('#new-drawing-button');
         newDrawingButton.click();
@@ -322,34 +361,22 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on selectAll should change the currentTool to rectangleSelectionService and call its selectAll method', () => {
-        const rectangleSelectionService = new RectangleSelectionService(
-            {} as DrawingService,
-            {} as UndoRedoService,
-            {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
-        );
         toolManagerServiceSpy.getTool.and.callFake(() => {
-            return rectangleSelectionService;
+            return rectangleSelectionServiceStub;
         });
-        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+        const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
             return;
         });
         component.selectAll();
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleSelectionService);
+        expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleSelectionServiceStub);
         expect(selectAllSpy).toHaveBeenCalled();
     });
 
     it('clicking on selectAll should not call selectAll if the tool is not rectangleSelectionService', () => {
-        const rectangleSelectionService = new RectangleSelectionService(
-            {} as DrawingService,
-            {} as UndoRedoService,
-            {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
-        );
         toolManagerServiceSpy.getTool.and.callFake(() => {
             return ellipseStub;
         });
-        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+        const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
             return;
         });
         component.selectAll();
