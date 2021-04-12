@@ -10,7 +10,7 @@ export class RectangleCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
 
     constructor(canvasContext: CanvasRenderingContext2D, rectangleService: RectangleService) {
         super();
@@ -24,6 +24,7 @@ export class RectangleCommand extends Command {
         this.primaryColor = rectangleService.primaryColor;
         this.secondaryColor = rectangleService.secondaryColor;
         this.lineWidth = rectangleService.lineWidth;
+        this.cornerCoords = [];
         this.cornerCoords = Object.assign([], rectangleService.cornerCoords);
     }
 
