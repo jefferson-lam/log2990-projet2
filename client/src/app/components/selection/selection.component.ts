@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { Vec2 } from '@app/classes/vec2';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 
 @Component({
@@ -32,7 +33,11 @@ export class SelectionComponent implements AfterViewInit {
     initialPosition: Vec2;
     bottomRight: Vec2;
 
-    constructor(private drawingService: DrawingService, public resizerHandlerService: ResizerHandlerService) {
+    constructor(
+        public resizerHandlerService: ResizerHandlerService,
+        private drawingService: DrawingService,
+        private magnetismService: MagnetismService,
+    ) {
         this.initialPosition = { x: 0, y: 0 };
         this.bottomRight = { x: 0, y: 0 };
     }
@@ -77,9 +82,19 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     setCanvasPosition(): void {
+        this.magnetismService.printMessage();
         const transformValues = this.getTransformValues(this.previewSelectionCanvas);
-        this.selectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) + transformValues.x + 'px';
-        this.selectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + transformValues.y + 'px';
+        if (this.magnetismService.isMagnetismOn) {
+            const magnetizedCoords: Vec2 = this.magnetismService.magnetizeSelection(this.previewSelectionCanvas, transformValues);
+            this.selectionCanvas.style.left = magnetizedCoords.x + 'px';
+            this.selectionCanvas.style.top = magnetizedCoords.y + 'px';
+            // this.selectionCanvas.style.left =
+            //     Math.round(parseInt(this.previewSelectionCanvas.style.left, 10) /*+ transformValues.x*/ / 50) * 50 + 'px';
+            // this.selectionCanvas.style.top = Math.round(parseInt(this.previewSelectionCanvas.style.top, 10) /*+ transformValues.y*/ / 50) * 50 + 'px';
+        } else {
+            this.selectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) + transformValues.x + 'px';
+            this.selectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + transformValues.y + 'px';
+        }
         this.resizerHandlerService.setResizerPositions(this.selectionCanvas);
     }
 
