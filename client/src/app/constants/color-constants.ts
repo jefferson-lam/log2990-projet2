@@ -6,3 +6,5 @@ export const PICKER_POINTER_SIZE = 10;
 export const SLIDER_HEIGHT = 200;
 export const MAX_RGB_VALUE = 255;
 export const WHITE_RGBA_DECIMAL = 4294967295;
+export const INITIAL_COLOR = { red: '255', green: '255', blue: '255', alpha: 1 };
+export const STEP = 0.1;
