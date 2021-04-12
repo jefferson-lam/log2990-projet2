@@ -18,9 +18,9 @@ import { Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class ToolManagerService {
-    keyBindings: Map<string, Tool> = new Map();
+    keyBindings: Map<string, Tool>;
     currentTool: Tool;
-    currentToolSubject: Subject<Tool> = new Subject<Tool>();
+    currentToolSubject: Subject<Tool>;
 
     constructor(
         public pencilService: PencilService,
@@ -35,6 +35,8 @@ export class ToolManagerService {
         public aerosolService: AerosolService,
         public pipetteService: PipetteService,
     ) {
+        this.keyBindings = new Map();
+        this.currentToolSubject = new Subject<Tool>();
         this.bindKeys();
         this.currentTool = this.pencilService;
     }
