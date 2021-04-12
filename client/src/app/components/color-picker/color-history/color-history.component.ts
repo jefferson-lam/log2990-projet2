@@ -36,7 +36,16 @@ export class ColorHistoryComponent implements AfterViewInit, OnInit {
         this.drawHistory();
     }
 
-    drawHistory(): void {
+    onLeftClick(evt: MouseEvent): void {
+        this.colorService.setPrimaryColor(this.colorService.getColorAtPosition(this.ctx, evt.offsetX, evt.offsetY, this.primary.alpha));
+    }
+
+    onRightClick(evt: MouseEvent): boolean {
+        this.colorService.setSecondaryColor(this.colorService.getColorAtPosition(this.ctx, evt.offsetX, evt.offsetY, this.secondary.alpha));
+        return false;
+    }
+
+    private drawHistory(): void {
         if (!this.ctx) {
             this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         }
@@ -50,22 +59,9 @@ export class ColorHistoryComponent implements AfterViewInit, OnInit {
             for (let j = 0; j < ColorConstants.COLOR_HISTORY_COLUMNS; ++j) {
                 x = (width / ColorConstants.COLOR_HISTORY_COLUMNS) * j;
                 y = (height / ColorConstants.COLOR_HISTORY_ROWS) * i;
-                if (idx < this.savedColors.length) {
-                    this.ctx.fillStyle = this.colorService.convertRgbaToString(this.savedColors[idx++]);
-                } else {
-                    this.ctx.fillStyle = 'white';
-                }
+                this.ctx.fillStyle = idx < this.savedColors.length ? this.colorService.convertRgbaToString(this.savedColors[idx++]) : 'white';
                 this.ctx.fillRect(x, y, x + width / ColorConstants.COLOR_HISTORY_COLUMNS, y + height / ColorConstants.COLOR_HISTORY_ROWS);
             }
         }
-    }
-
-    onLeftClick(evt: MouseEvent): void {
-        this.colorService.setPrimaryColor(this.colorService.getColorAtPosition(this.ctx, evt.offsetX, evt.offsetY, this.primary.alpha));
-    }
-
-    onRightClick(evt: MouseEvent): boolean {
-        this.colorService.setSecondaryColor(this.colorService.getColorAtPosition(this.ctx, evt.offsetX, evt.offsetY, this.secondary.alpha));
-        return false;
     }
 }

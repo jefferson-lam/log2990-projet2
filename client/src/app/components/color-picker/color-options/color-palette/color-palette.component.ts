@@ -28,7 +28,38 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.draw();
     }
 
-    draw(): void {
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.hue) {
+            this.draw();
+            const pos = this.selectedPosition;
+            this.draw();
+            if (pos) {
+                this.setColorAtPosition(pos.x, pos.y);
+            }
+        }
+    }
+
+    @HostListener('window:mouseup', ['$event'])
+    onMouseUp(evt: MouseEvent): void {
+        this.mousedown = false;
+    }
+
+    onMouseDown(evt: MouseEvent): void {
+        this.mousedown = true;
+        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
+        this.draw();
+        this.setColorAtPosition(evt.offsetX, evt.offsetY);
+    }
+
+    onMouseMove(evt: MouseEvent): void {
+        if (this.mousedown) {
+            this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
+            this.draw();
+            this.setColorAtPosition(evt.offsetX, evt.offsetY);
+        }
+    }
+
+    private draw(): void {
         if (!this.ctx) {
             this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         }
@@ -67,38 +98,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         }
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.hue) {
-            this.draw();
-            const pos = this.selectedPosition;
-            this.draw();
-            if (pos) {
-                this.setColorAtPosition(pos.x, pos.y);
-            }
-        }
-    }
-
-    @HostListener('window:mouseup', ['$event'])
-    onMouseUp(evt: MouseEvent): void {
-        this.mousedown = false;
-    }
-
-    onMouseDown(evt: MouseEvent): void {
-        this.mousedown = true;
-        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
-        this.draw();
-        this.setColorAtPosition(evt.offsetX, evt.offsetY);
-    }
-
-    onMouseMove(evt: MouseEvent): void {
-        if (this.mousedown) {
-            this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
-            this.draw();
-            this.setColorAtPosition(evt.offsetX, evt.offsetY);
-        }
-    }
-
-    setColorAtPosition(x: number, y: number): void {
+    private setColorAtPosition(x: number, y: number): void {
         const rgbaColor = this.colorService.getColorAtPosition(this.ctx, x, y, this.currentOpacity);
         this.color.emit(rgbaColor);
     }
