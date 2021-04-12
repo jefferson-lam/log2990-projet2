@@ -219,9 +219,10 @@ describe('StampService', () => {
     });
 
     it('setAngleRotation should change rotation angle', () => {
-        const EXPECTED_ANGLE = 36;
-        service.setAngleRotation(EXPECTED_ANGLE);
-        expect(service.rotationAngle).toEqual(EXPECTED_ANGLE);
+        const DEGREES_ANGLE = 36;
+        const RAD_ANGLE = 0.6283185307179586;
+        service.setAngleRotation(DEGREES_ANGLE);
+        expect(service.rotationAngle).toEqual(RAD_ANGLE);
     });
 
     it('onToolChange should call onMouseUp', () => {
