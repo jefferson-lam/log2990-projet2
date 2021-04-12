@@ -1,14 +1,21 @@
 #selectionLayer {
     position: absolute;
     z-index: 12;
-    border: 1px dashed #000000;
+    border: 1px dashed black;
+    outline: none;
 }
 
 #previewSelectionLayer {
     position: absolute;
     z-index: 13;
-    border: 1px dashed #000000;
+    border: 1px dashed black;
+    outline: none;
     background: transparent;
+}
+
+#previewSelectionLayer:focus {
+    border: 1px solid black;
+    outline: none;
 }
 
 #selectionContainer {
