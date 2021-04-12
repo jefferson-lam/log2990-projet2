@@ -36,6 +36,8 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
 import { KeyboardListenerDirective } from './components/selection/selection-directives/keyboard-listener.directive';
 import { SelectionComponent } from './components/selection/selection.component';
+import { ExportCompletePageComponent } from './components/sidebar/export-drawing/export-complete-page/export-complete-page.component';
+import { ExportErrorPageComponent } from './components/sidebar/export-drawing/export-error-page/export-error-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveCompletePageComponent } from './components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
 import { SaveDrawingComponent } from './components/sidebar/save-drawing-page/save-drawing.component';
@@ -87,9 +89,11 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         DirectionalMovementDirective,
         SidebarRectangleSelectionComponent,
         SidebarEllipseSelectionComponent,
+        ExportCompletePageComponent,
+        ExportErrorPageComponent,
         SidebarGridComponent,
     ],
-    entryComponents: [MainPageCarrouselComponent],
+    entryComponents: [MainPageCarrouselComponent, ExportCompletePageComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -120,7 +124,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatProgressSpinnerModule,
         MatSlideToggleModule,
     ],
-    providers: [],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
