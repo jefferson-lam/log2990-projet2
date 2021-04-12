@@ -66,6 +66,6 @@ export class EditorComponent {
 
     @HostListener('window:keydown', ['$event'])
     onKeyboardDown(event: KeyboardEvent): void {
-        this.shortcutManager.onKeyboardDown(event);
+        if (!event.ctrlKey) this.shortcutManager.onKeyboardDown(event);
     }
 }

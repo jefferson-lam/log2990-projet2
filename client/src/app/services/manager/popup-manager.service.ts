@@ -27,7 +27,7 @@ export class PopupManagerService {
         });
     }
 
-    openCarouselPopUp(): void {
+    openCarrouselPopUp(): void {
         if (!this.isPopUpOpen) {
             const dialogRef = this.dialog.open(MainPageCarrouselComponent, {
                 height: '700px',

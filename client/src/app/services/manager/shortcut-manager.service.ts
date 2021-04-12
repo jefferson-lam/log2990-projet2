@@ -14,7 +14,6 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class ShortcutManagerService {
-    isUndoSelection: boolean;
     isTextInput: boolean;
 
     constructor(
@@ -24,16 +23,14 @@ export class ShortcutManagerService {
         public toolManager: ToolManagerService,
     ) {
         this.isTextInput = false;
-        this.isUndoSelection = false;
     }
 
     isShortcutAllowed(): boolean {
-        console.log(!this.isTextInput && !this.popupManager.isPopUpOpen);
         return !this.isTextInput && !this.popupManager.isPopUpOpen;
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.isShortcutAllowed() && event.key.match(/^(1|2|c|l|e|r|s|a|3|i)$/)) {
+        if (this.isShortcutAllowed() && event.key.match(/^(1|2|3|a|c|e|i|l|r|s)$/)) {
             this.toolManager.selectTool(event.key);
         }
     }
@@ -43,25 +40,21 @@ export class ShortcutManagerService {
     }
 
     selectionOnShiftKeyDown(selectionComponent: SelectionComponent): void {
-        if (this.isShortcutAllowed()) {
-            if (selectionComponent.resizerHandlerService.inUse) {
-                selectionComponent.resizerHandlerService.resizeSquare();
-                selectionComponent.resizerHandlerService.setResizerPositions(selectionComponent.previewSelectionCanvas);
-                selectionComponent.drawWithScalingFactors(selectionComponent.previewSelectionCtx, selectionComponent.selectionCanvas);
-            }
-            selectionComponent.resizerHandlerService.isShiftDown = true;
+        if (this.isShortcutAllowed() && selectionComponent.resizerHandlerService.inUse) {
+            selectionComponent.resizerHandlerService.resizeSquare();
+            selectionComponent.resizerHandlerService.setResizerPositions(selectionComponent.previewSelectionCanvas);
+            selectionComponent.drawWithScalingFactors(selectionComponent.previewSelectionCtx, selectionComponent.selectionCanvas);
         }
+        selectionComponent.resizerHandlerService.isShiftDown = true;
     }
 
     selectionOnShiftKeyUp(selectionComponent: SelectionComponent): void {
-        if (this.isShortcutAllowed()) {
-            if (selectionComponent.resizerHandlerService.inUse) {
-                selectionComponent.resizerHandlerService.restoreLastDimensions();
-                selectionComponent.resizerHandlerService.setResizerPositions(selectionComponent.previewSelectionCanvas);
-                selectionComponent.drawWithScalingFactors(selectionComponent.previewSelectionCtx, selectionComponent.selectionCanvas);
-            }
-            selectionComponent.resizerHandlerService.isShiftDown = false;
+        if (this.isShortcutAllowed() && selectionComponent.resizerHandlerService.inUse) {
+            selectionComponent.resizerHandlerService.restoreLastDimensions();
+            selectionComponent.resizerHandlerService.setResizerPositions(selectionComponent.previewSelectionCanvas);
+            selectionComponent.drawWithScalingFactors(selectionComponent.previewSelectionCtx, selectionComponent.selectionCanvas);
         }
+        selectionComponent.resizerHandlerService.isShiftDown = false;
     }
 
     onCtrlAKeyDown(event: KeyboardEvent): void {
@@ -81,29 +74,23 @@ export class ShortcutManagerService {
 
     onCtrlGKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) this.popupManager.openCarouselPopUp();
+        if (this.isShortcutAllowed()) this.popupManager.openCarrouselPopUp();
     }
 
     onCtrlOKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) {
-            this.popupManager.openNewDrawingPopUp();
-        }
+        if (this.isShortcutAllowed()) this.popupManager.openNewDrawingPopUp();
     }
 
     onCtrlSKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) {
-            this.popupManager.openSavePopUp();
-        }
+        if (this.isShortcutAllowed()) this.popupManager.openSavePopUp();
     }
 
     onCtrlShiftZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) {
-            if (!this.popupManager.isPopUpOpen && !this.toolManager.currentTool.inUse) {
-                this.undoRedoService.redo();
-            }
+        if (this.isShortcutAllowed() && !this.toolManager.currentTool.inUse) {
+            this.undoRedoService.redo();
         }
     }
 
@@ -111,37 +98,27 @@ export class ShortcutManagerService {
         event.preventDefault();
         if (this.isShortcutAllowed()) {
             if (
-                this.toolManager.currentTool instanceof RectangleSelectionService ||
-                this.toolManager.currentTool instanceof EllipseSelectionService
+                (this.toolManager.currentTool instanceof RectangleSelectionService ||
+                    this.toolManager.currentTool instanceof EllipseSelectionService) &&
+                this.toolManager.currentTool.isManipulating
             ) {
-                if (this.toolManager.currentTool.isManipulating) {
-                    this.toolManager.currentTool.undoSelection();
-                    this.isUndoSelection = true;
-                }
-            }
-            if (!this.popupManager.isPopUpOpen && !this.toolManager.currentTool.inUse && !this.isUndoSelection) {
+                this.toolManager.currentTool.undoSelection();
+            } else if (!this.toolManager.currentTool.inUse) {
                 this.undoRedoService.undo();
             }
-            this.isUndoSelection = false;
         }
     }
 
     onMinusKeyDown(): void {
-        if (this.isShortcutAllowed()) {
-            this.canvasGridService.reduceGridSize();
-        }
+        if (this.isShortcutAllowed()) this.canvasGridService.reduceGridSize();
     }
 
     onEqualKeyDown(): void {
-        if (this.isShortcutAllowed()) {
-            this.canvasGridService.increaseGridSize();
-        }
+        if (this.isShortcutAllowed()) this.canvasGridService.increaseGridSize();
     }
 
     onPlusKeyDown(): void {
-        if (this.isShortcutAllowed()) {
-            this.canvasGridService.increaseGridSize();
-        }
+        if (this.isShortcutAllowed()) this.canvasGridService.increaseGridSize();
     }
 
     async selectionMovementOnArrowDown(event: KeyboardEvent, directive: DirectionalMovementDirective): Promise<void> {
@@ -165,8 +142,6 @@ export class ShortcutManagerService {
     }
 
     selectionMovementOnKeyboardUp(event: KeyboardEvent, directive: DirectionalMovementDirective): void {
-        if (this.isShortcutAllowed()) {
-            directive.keyPressed.set(event.key, 0);
-        }
+        if (this.isShortcutAllowed()) directive.keyPressed.set(event.key, 0);
     }
 }

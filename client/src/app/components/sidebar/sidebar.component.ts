@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
-import { Tool } from '@app/classes/tool';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -47,7 +46,6 @@ export class SidebarComponent {
             this.isRedoPossible = sizes[1] > 0;
         });
         this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
-            this.currentTool = tool;
             this.selectedTool = this.sidebarToolButtons.find((sidebarToolButton) => {
                 return sidebarToolButton.service === tool.constructor.name;
             }) as SidebarToolButton;
@@ -75,29 +73,28 @@ export class SidebarComponent {
     }
 
     undo(): void {
-        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-            if (this.currentTool.isManipulating) {
-                this.currentTool.undoSelection();
+        if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
+            if (this.toolManager.currentTool.isManipulating) {
+                this.toolManager.currentTool.undoSelection();
                 this.isUndoSelection = true;
             }
         }
-        if (!this.currentTool.inUse && !this.isUndoSelection) {
+        if (!this.toolManager.currentTool.inUse && !this.isUndoSelection) {
             this.undoRedoService.undo();
         }
         this.isUndoSelection = false;
     }
 
     redo(): void {
-        if (!this.currentTool.inUse) {
+        if (!this.toolManager.currentTool.inUse) {
             this.undoRedoService.redo();
         }
     }
 
     selectAll(): void {
-        this.currentTool = this.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
-        this.notifyOnToolSelect.emit(this.currentTool);
-        if (this.currentTool instanceof RectangleSelectionService) {
-            this.currentTool.selectAll();
+        this.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
+        if (this.toolManager.currentTool instanceof RectangleSelectionService) {
+            this.toolManager.currentTool.selectAll();
         }
     }
 }

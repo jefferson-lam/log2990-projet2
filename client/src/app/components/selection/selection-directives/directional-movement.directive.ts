@@ -17,7 +17,7 @@ export class DirectionalMovementDirective {
     @HostListener('keydown.ArrowRight', ['$event'])
     @HostListener('keydown.ArrowUp', ['$event'])
     async onKeyboardDown(event: KeyboardEvent): Promise<void> {
-        this.shortcutManager.selectionMovementOnArrowDown(event, this);
+        await this.shortcutManager.selectionMovementOnArrowDown(event, this);
     }
 
     @HostListener('keyup', ['$event'])

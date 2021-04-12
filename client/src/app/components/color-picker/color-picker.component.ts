@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
 import { ColorService } from '@app/services/color/color.service';
-import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 
 @Component({
     selector: 'app-color-picker',
@@ -16,7 +15,7 @@ export class ColorPickerComponent implements OnInit {
     showPrimaryOptions: boolean = false;
     showSecondaryOptions: boolean = false;
 
-    constructor(public colorService: ColorService, public shortcutManager: ShortcutManagerService) {}
+    constructor(public colorService: ColorService) {}
 
     ngOnInit(): void {
         this.colorService.primaryObservable.subscribe((color: Rgba) => {

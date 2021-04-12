@@ -194,7 +194,7 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     @HostListener('window:keyup.shift', ['$event'])
-    onShiftKeyUp(event: KeyboardEvent): void {
+    onShiftKeyUp(): void {
         this.shortcutManager.selectionOnShiftKeyUp(this);
     }
 }
