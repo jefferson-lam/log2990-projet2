@@ -12,22 +12,27 @@ export class SidebarLineComponent implements OnInit {
     minLineWidth: number;
     maxJunctionRadius: number;
     minJunctionRadius: number;
-    tickInterval: number = 1;
+    tickInterval: number;
     toolSize: number | undefined;
     withJunction: boolean;
     junctionRadius: number | undefined;
 
-    currentToolName: string = 'outil selectionné';
+    currentToolName: string;
 
-    @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() withJunctionChanged: EventEmitter<boolean> = new EventEmitter();
-    @Output() junctionRadiusChanged: EventEmitter<number> = new EventEmitter();
+    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() withJunctionChanged: EventEmitter<boolean>;
+    @Output() junctionRadiusChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.minLineWidth = LineConstants.MIN_LINE_WIDTH;
         this.maxLineWidth = LineConstants.MAX_LINE_WIDTH;
         this.minJunctionRadius = LineConstants.MIN_JUNCTION_RADIUS;
         this.maxJunctionRadius = LineConstants.MAX_JUNCTION_RADIUS;
+        this.tickInterval = LineConstants.TICK_INTERVAL;
+        this.currentToolName = 'outil selectionné';
+        this.toolSizeChanged = new EventEmitter();
+        this.withJunctionChanged = new EventEmitter();
+        this.junctionRadiusChanged = new EventEmitter();
     }
 
     ngOnInit(): void {
