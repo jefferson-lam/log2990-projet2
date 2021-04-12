@@ -51,18 +51,17 @@ describe('PaintBucketCommand', () => {
         paintBucketService.mouseButtonClicked = DEFAULT_MOUSE_BUTTON;
         paintBucketService.startX = DEFAULT_START_X;
         paintBucketService.startY = DEFAULT_START_Y;
-
-        command = new PaintBucketCommand(baseCtxStub, paintBucketService);
-
-        floodFillSpy = spyOn(command, 'floodFill').and.callThrough();
-        fillSpy = spyOn(command, 'fill').and.callThrough();
-
         fillColor = {
             red: 190,
             green: 170,
             blue: 70,
             alpha: 255,
         };
+        paintBucketService.primaryColorRgba = fillColor;
+        command = new PaintBucketCommand(baseCtxStub, paintBucketService);
+
+        floodFillSpy = spyOn(command, 'floodFill').and.callThrough();
+        fillSpy = spyOn(command, 'fill').and.callThrough();
     });
 
     it('should be created', () => {
@@ -98,6 +97,12 @@ describe('PaintBucketCommand', () => {
         expect(command.startY).toEqual(paintBucketService.startY);
         expect(command.toleranceValue).toEqual(paintBucketService.toleranceValue);
         expect(command.mouseButtonClicked).toEqual(paintBucketService.mouseButtonClicked);
+    });
+
+    it('rgba2number should correctly convert rgba to decimal', () => {
+        const expectedColor = -12145986;
+        const result = command.rgba2number(fillColor);
+        expect(result).toEqual(expectedColor);
     });
 
     it('number2rgba should correctly convert white hex color into rgba interface', () => {
@@ -500,11 +505,12 @@ describe('PaintBucketCommand', () => {
         const rect1StartY = 25;
         const rect2StartX = 100;
         const rect2StartY = 100;
+        command.toleranceValue = DEFAULT_TOLERANCE_VALUE;
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
 
-        command.fill(baseCtxStub, command.startX, command.startY, fillColor, DEFAULT_TOLERANCE_VALUE);
+        command.fill(baseCtxStub);
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
         for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
@@ -522,20 +528,21 @@ describe('PaintBucketCommand', () => {
         }
     });
 
-    it('fill should correctly fill both rectangles of color of 50 tolerance', () => {
+    it('fill should correctly fill both rectangles of color of 75 tolerance', () => {
         const rectangleHeight = 50;
         const rectangleWidth = 50;
         const rect1StartX = 25;
         const rect1StartY = 25;
         const rect2StartX = 100;
         const rect2StartY = 100;
-        const tolerance = 128; // 50%
+        const tolerance = 192;
+        command.toleranceValue = tolerance;
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillStyle = '#1bc42c'; // dark green
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
 
-        command.fill(baseCtxStub, command.startX, command.startY, fillColor, tolerance);
+        command.fill(baseCtxStub);
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
         for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
@@ -560,13 +567,14 @@ describe('PaintBucketCommand', () => {
         const rect1StartY = 25;
         const rect2StartX = 100;
         const rect2StartY = 100;
-        const tolerance = 255; // 50%
+        const tolerance = 255;
+        command.toleranceValue = tolerance;
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillStyle = '#1bc42c'; // dark green
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
 
-        command.fill(baseCtxStub, command.startX, command.startY, fillColor, tolerance);
+        command.fill(baseCtxStub);
         const imageData = baseCtxStub.getImageData(0, 0, baseCtxStub.canvas.width, baseCtxStub.canvas.height);
         for (let i = 0; i + COLOR_RANGE < imageData.data.length; i += NEXT_COLOR_INCREMENT) {
             expect(imageData.data[i]).toEqual(fillColor.red);
@@ -588,8 +596,9 @@ describe('PaintBucketCommand', () => {
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
+        command.toleranceValue = DEFAULT_TOLERANCE_VALUE;
 
-        command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, DEFAULT_TOLERANCE_VALUE);
+        command.floodFill(baseCtxStub);
 
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
@@ -618,7 +627,8 @@ describe('PaintBucketCommand', () => {
         baseCtxStub.fillStyle = '#1bc42c'; // dark green
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
-        command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, DEFAULT_TOLERANCE_VALUE);
+        command.toleranceValue = DEFAULT_TOLERANCE_VALUE;
+        command.floodFill(baseCtxStub);
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
         for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
@@ -643,12 +653,13 @@ describe('PaintBucketCommand', () => {
         const rect1StartY = 25;
         const rect2StartX = 50;
         const rect2StartY = 50;
-        const tolerance = 50;
+        const tolerance = 128;
         baseCtxStub.fillStyle = '#1bc42c'; // dark green
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
-        command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, tolerance);
+        command.toleranceValue = tolerance;
+        command.floodFill(baseCtxStub);
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
         for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
@@ -667,8 +678,9 @@ describe('PaintBucketCommand', () => {
     });
 
     it('floodfill should fill all connected pixels whose color is close if called with 100 toleranceValue', () => {
-        const tolerance = 100;
-        command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, tolerance);
+        const tolerance = 255;
+        command.toleranceValue = tolerance;
+        command.floodFill(baseCtxStub);
         const imageData = baseCtxStub.getImageData(0, 0, baseCtxStub.canvas.width, baseCtxStub.canvas.height);
         for (let i = 0; i + ALPHA_INDEX < imageData.data.length; i += NEXT_COLOR_INCREMENT) {
             expect(imageData.data[i]).toEqual(fillColor.red);
@@ -682,7 +694,7 @@ describe('PaintBucketCommand', () => {
         baseCtxStub.canvas.width = 1;
         baseCtxStub.canvas.height = 1;
         expect(() => {
-            command.floodFill(baseCtxStub, command.startX, command.startY, fillColor, DEFAULT_TOLERANCE_VALUE);
+            command.floodFill(baseCtxStub);
         }).not.toThrow();
     });
 });

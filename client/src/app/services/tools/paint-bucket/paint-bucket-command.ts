@@ -32,24 +32,24 @@ export class PaintBucketCommand extends Command {
 
     execute(): void {
         if (this.mouseButtonClicked === MouseButton.Left) {
-            this.floodFill(this.ctx, this.startX, this.startY, this.primaryColorRgba, this.toleranceValue);
+            this.floodFill(this.ctx);
         } else if (this.mouseButtonClicked === MouseButton.Right) {
-            this.fill(this.ctx, this.startX, this.startY, this.primaryColorRgba, this.toleranceValue);
+            this.fill(this.ctx);
         }
     }
 
-    fill(ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: ColorRgba, toleranceValue: number): void {
+    fill(ctx: CanvasRenderingContext2D): void {
         const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
         const pixelData: PixelData = {
             width: imageData.width,
             height: imageData.height,
             data: new Uint32Array(imageData.data.buffer),
         };
-        const color = (fillColor.alpha << BIT_24) + (fillColor.blue << BIT_16) + (fillColor.green << BIT_8) + fillColor.red;
+        const color = this.rgba2number(this.primaryColorRgba);
 
         // Normalise tolerance to be able to compare with 4d space
-        const tolerance = Math.sqrt(toleranceValue * toleranceValue * DIMENSION_4D);
-        const targetColor = pixelData.data[startY * pixelData.width + startX];
+        const tolerance = Math.sqrt(this.toleranceValue * this.toleranceValue * DIMENSION_4D);
+        const targetColor = pixelData.data[this.startY * pixelData.width + this.startX];
 
         for (let y = 0; y < pixelData.height; y++) {
             for (let x = 0; x < pixelData.width; x++) {
@@ -65,7 +65,7 @@ export class PaintBucketCommand extends Command {
     // Referenced from:
     // https://stackoverflow.com/questions/65359146/canvas-floodfill-leaves-white-pixels-at-edges-for-png-images-with-transparent
     // Uses the span-fill flood fill algorithm.
-    floodFill(ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: ColorRgba, toleranceValue: number): void {
+    floodFill(ctx: CanvasRenderingContext2D): void {
         let pixelPosition;
         let distance;
         let leftEdge = false;
@@ -73,42 +73,32 @@ export class PaintBucketCommand extends Command {
         const width = ctx.canvas.width;
         const height = ctx.canvas.height;
         const imageData = ctx.getImageData(0, 0, width, height);
-        const pixels = width * height;
+        const numPixels = width * height;
         const data = imageData.data;
         const pixelData = {
             width: { width },
             height: { height },
             data: new Uint32Array(imageData.data.buffer),
         };
-
-        // Add the starting mouse click to the stack. We use a stack to simulate recursion.
-        const stack = [startX + startY * width];
-
-        // Get the color in decimal form
+        // Add the starting mouse click to the stack. We use a stack to simulate recursion
+        const stack = [this.startX + this.startY * width];
         const targetColor = pixelData.data[stack[0]];
-
-        // Convert fillColor into its decimal form as ABGR.
-        const newColor = (fillColor.alpha << BIT_24) + (fillColor.blue << BIT_16) + (fillColor.green << BIT_8) + fillColor.red;
-
+        // Convert fillColor into its decimal form as ABGR
+        const newColor = this.rgba2number(this.primaryColorRgba);
+        console.log(newColor);
         if (targetColor === newColor || targetColor === undefined) {
             return;
         }
-
-        // Shift by 2 allows us to access typical RGBA color from the original data, not the buffer.
+        // Shift by 2 allows us to access typical RGBA color from the original data, not the buffer
         pixelPosition = stack[0] << 2;
-
         // Array of distances will keep track which pixel has been marked as valid to paint on
         // If distance is 0 for that specific pixel, it means that it did not pass the tolerance check
         const distances = new Uint16Array(width * height);
-
-        // Normalise tolerance to account for 4d space
-        const tolerance = Math.sqrt(toleranceValue * toleranceValue * DIMENSION_4D);
-
+        const tolerance = Math.sqrt(this.toleranceValue * this.toleranceValue * DIMENSION_4D);
         const red = data[pixelPosition];
         const green = data[pixelPosition + 1];
         const blue = data[pixelPosition + 2];
         const alpha = data[pixelPosition + ALPHA_INDEX];
-
         // Inline function so we have access to all local variables and to accelerate computation
         const colorDist = (pixelIndex: number) => {
             if (distances[pixelIndex]) {
@@ -148,7 +138,7 @@ export class PaintBucketCommand extends Command {
             }
         }
         pixelPosition = 0;
-        while (pixelPosition < pixels) {
+        while (pixelPosition < numPixels) {
             distance = distances[pixelPosition];
             if (distance !== 0) {
                 pixelData.data[pixelPosition] = newColor;
@@ -157,6 +147,10 @@ export class PaintBucketCommand extends Command {
         }
 
         ctx.putImageData(imageData, 0, 0);
+    }
+
+    rgba2number(fillColor: ColorRgba): number {
+        return (fillColor.alpha << BIT_24) + (fillColor.blue << BIT_16) + (fillColor.green << BIT_8) + fillColor.red;
     }
 
     // This number is stored in #AABBGGRR format, hence the shifting.
