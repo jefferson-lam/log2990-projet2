@@ -7,16 +7,20 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class UndoRedoService {
-    undoPile: Command[] = [];
-    redoPile: Command[] = [];
+    undoPile: Command[];
+    redoPile: Command[];
 
     initialImage: HTMLImageElement;
     resetCanvasSize: Command;
 
-    pileSizeSource: Subject<number[]> = new BehaviorSubject<number[]>([this.undoPile.length, this.redoPile.length]);
-    pileSizeObservable: Observable<number[]> = this.pileSizeSource.asObservable();
+    pileSizeSource: Subject<number[]>;
+    pileSizeObservable: Observable<number[]>;
 
     constructor(private drawingService: DrawingService) {
+        this.undoPile = [];
+        this.redoPile = [];
+        this.pileSizeSource = new BehaviorSubject<number[]>([this.undoPile.length, this.redoPile.length]);
+        this.pileSizeObservable = this.pileSizeSource.asObservable();
         this.reset();
         this.initialImage = new Image();
     }
