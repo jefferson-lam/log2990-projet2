@@ -325,8 +325,8 @@ describe('EditorComponent', () => {
         expect(selectAllSpy).toHaveBeenCalled();
     });
 
-    it("openNewDrawingPopUp should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open and if tool is selection", () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile isn't empty and pop up isn't open and if tool is selection", () => {
+        const emptyUndoPileSpy = spyOn(component.undoRedoService, 'isUndoPileEmpty').and.callFake(() => {
             return false;
         });
         const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
@@ -335,14 +335,14 @@ describe('EditorComponent', () => {
         component.openNewDrawingPopUp();
 
         expect(onToolChangeSpy).toHaveBeenCalled();
-        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(emptyUndoPileSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
         expect(component.isPopUpOpen).toBeTrue();
     });
 
     it("openNewDrawingPopUp should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open", () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+        const emptyUndoPileSpy = spyOn(component.undoRedoService, 'isUndoPileEmpty').and.callFake(() => {
             return false;
         });
         const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
@@ -350,32 +350,32 @@ describe('EditorComponent', () => {
         component.openNewDrawingPopUp();
 
         expect(onToolChangeSpy).not.toHaveBeenCalled();
-        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(emptyUndoPileSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
         expect(component.isPopUpOpen).toBeTrue();
     });
 
     it('openNewDrawingPopUp should not open anything if canvas is empty and pop up is not open', () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+        const emptyUndoPileSpy = spyOn(component.undoRedoService, 'isUndoPileEmpty').and.callFake(() => {
             return true;
         });
         component.isPopUpOpen = false;
         component.openNewDrawingPopUp();
 
-        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(emptyUndoPileSpy).toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
         expect(component.isPopUpOpen).toBeFalse();
     });
 
     it('openNewDrawingPopUp should not open anything if pop up is open and canvas is empty', () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
+        const emptyUndoPileSpy = spyOn(component.undoRedoService, 'isUndoPileEmpty').and.callFake(() => {
             return true;
         });
         component.isPopUpOpen = true;
         component.openNewDrawingPopUp();
 
-        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(emptyUndoPileSpy).toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
         expect(component.isPopUpOpen).toBeTrue();
     });

@@ -57,4 +57,9 @@ export class UndoRedoService {
         this.undoPile.forEach((c) => c.execute());
         this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
     }
+
+    isUndoPileEmpty(): boolean {
+        if (this.undoPile.length) return false;
+        return true;
+    }
 }

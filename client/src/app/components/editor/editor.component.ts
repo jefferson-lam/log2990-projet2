@@ -134,7 +134,7 @@ export class EditorComponent implements OnInit {
     }
 
     openNewDrawingPopUp(): void {
-        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+        if (!this.undoRedoService.isUndoPileEmpty() && !this.isPopUpOpen) {
             if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
                 this.currentTool.onToolChange();
             }

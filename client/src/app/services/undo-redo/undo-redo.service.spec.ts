@@ -183,4 +183,16 @@ describe('UndoRedoService', () => {
 
         expect(drawImageSpy).toHaveBeenCalled();
     });
+
+    it('isUndoPileEmpty should return true if undo pile is empty', () => {
+        service.undoPile = [];
+        const result = service.isUndoPileEmpty();
+        expect(result).toBeTrue();
+    });
+
+    it('isUndoPileEmpty should return false if undo pile is not empty', () => {
+        service.undoPile = [{} as Command];
+        const result = service.isUndoPileEmpty();
+        expect(result).toBeFalse();
+    });
 });
