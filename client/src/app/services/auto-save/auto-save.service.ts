@@ -50,6 +50,7 @@ export class AutoSaveService {
                 CanvasConstants.DEFAULT_HEIGHT,
             );
             this.undoRedoService.resetCanvasSize.execute();
+            this.drawingService.newDrawing();
         }
         this.undoRedoService.reset();
         this.autoSaveDrawing();
