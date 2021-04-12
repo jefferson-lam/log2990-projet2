@@ -146,28 +146,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    undoSelection(): void {
-        if (this.isManipulating) {
-            this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
-                0,
-                0,
-                this.selectionWidth,
-                this.selectionHeight,
-                this.cornerCoords[SelectionConstants.START_INDEX].x,
-                this.cornerCoords[SelectionConstants.START_INDEX].y,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
-            this.resetSelectedToolSettings();
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resizerHandlerService.resetResizers();
-            this.isManipulating = false;
-            this.isEscapeDown = false;
-        }
-    }
-
     selectAll(): void {
         this.selectionWidth = this.drawingService.canvas.width;
         this.selectionHeight = this.drawingService.canvas.height;
@@ -206,9 +184,44 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    fillRectangle(baseCtx: CanvasRenderingContext2D, cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): void {
+    setSelectionCanvasPosition(topLeft: Vec2): void {
+        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+    }
+
+    undoSelection(): void {
+        if (this.isManipulating) {
+            this.drawImageToBaseCtx();
+            this.resetSelectedToolSettings();
+            this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+            this.resizerHandlerService.resetResizers();
+            this.isManipulating = false;
+            this.isEscapeDown = false;
+        }
+    }
+
+    private drawImageToBaseCtx(): void {
+        if (!this.isFromClipboard) {
+            this.drawingService.baseCtx.drawImage(
+                this.drawingService.selectionCanvas,
+                0,
+                0,
+                this.selectionWidth,
+                this.selectionHeight,
+                this.cornerCoords[SelectionConstants.START_INDEX].x,
+                this.cornerCoords[SelectionConstants.START_INDEX].y,
+                this.selectionWidth,
+                this.selectionHeight,
+            );
+        }
+    }
+
+    private fillRectangle(baseCtx: CanvasRenderingContext2D, cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): void {
         // Erase the contents on the base canvas
-        this.isFromClipboard = false;
         baseCtx.fillStyle = 'white';
         baseCtx.fillRect(
             cornerCoords[SelectionConstants.START_INDEX].x,
@@ -216,14 +229,6 @@ export class RectangleSelectionService extends ToolSelectionService {
             selectionWidth,
             selectionHeight,
         );
-    }
-
-    setSelectionCanvasPosition(topLeft: Vec2): void {
-        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
-        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
     }
 
     private validateSelectionHeightAndWidth(): boolean {

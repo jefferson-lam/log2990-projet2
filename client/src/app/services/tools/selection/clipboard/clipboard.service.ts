@@ -3,9 +3,11 @@ import { Vec2 } from '@app/classes/vec2';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { EllipseClipboardCommand } from '@app/services/tools/selection/clipboard/ellipse-clipboard-command';
+import { RectangleClipboardCommand } from '@app/services/tools/selection/clipboard/rectangle-clipboard-command';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -14,15 +16,20 @@ export class ClipboardService {
     clipboard: ImageData = new ImageData(1, 1);
     // TODO: add implementation for lasso polygonal
     currentTool: RectangleSelectionService | EllipseSelectionService;
-    lastSelectionTool: string = '';
-    cornerCoords: Vec2[] = new Array<Vec2>(2);
+    lastSelectionTool: string;
+    cornerCoords: Vec2[];
+    isCircle: boolean;
+    selectionWidth: number;
+    selectionHeight: number;
 
-    constructor(public drawingService: DrawingService, public toolManager: ToolManagerService) {
-        toolManager.currentToolSubject.asObservable().subscribe((currentTool: ToolSelectionService) => {
+    constructor(public drawingService: DrawingService, public toolManager: ToolManagerService, public undoRedoService: UndoRedoService) {
+        toolManager.currentToolSubject.asObservable().subscribe((currentTool) => {
             if (currentTool instanceof RectangleSelectionService || currentTool instanceof EllipseSelectionService) {
                 this.currentTool = currentTool;
             }
         });
+        this.lastSelectionTool = '';
+        this.cornerCoords = new Array<Vec2>(2);
     }
 
     copySelection(): void {
@@ -61,7 +68,7 @@ export class ClipboardService {
     deleteSelection(): void {
         if (this.isSelected(this.drawingService.selectionCanvas)) {
             this.currentTool.undoSelection();
-            // Because there are three selection tools, this if else imbrication is inevitable (switch case doesn't work)
+            this.cornerCoords = this.currentTool.cornerCoords;
             this.deleteEllipse();
             this.deleteRectangle();
         }
@@ -69,18 +76,18 @@ export class ClipboardService {
 
     private deleteEllipse(): void {
         if (this.currentTool instanceof EllipseSelectionService) {
-            this.currentTool.fillEllipse(this.drawingService.baseCtx, this.currentTool.cornerCoords, this.currentTool.isCircle);
+            this.isCircle = this.currentTool.isCircle;
+            const command = new EllipseClipboardCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
         }
     }
 
     private deleteRectangle(): void {
         if (this.currentTool instanceof RectangleSelectionService) {
-            this.currentTool.fillRectangle(
-                this.drawingService.baseCtx,
-                this.currentTool.cornerCoords,
-                this.currentTool.selectionWidth,
-                this.currentTool.selectionHeight,
-            );
+            this.selectionHeight = this.currentTool.selectionHeight;
+            this.selectionWidth = this.currentTool.selectionWidth;
+            const command = new RectangleClipboardCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
         }
     }
 

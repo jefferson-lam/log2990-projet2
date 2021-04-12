@@ -6,6 +6,7 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 describe('ClipboardService', () => {
     let service: ClipboardService;
@@ -16,6 +17,8 @@ describe('ClipboardService', () => {
     let selectionCtxStub: CanvasRenderingContext2D;
     let rectangleSelectionService: RectangleSelectionService;
     let ellipseSelectionService: EllipseSelectionService;
+    let undoRedoService: UndoRedoService;
+    let executeCommandSpy: jasmine.Spy;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -32,7 +35,9 @@ describe('ClipboardService', () => {
         toolManagerService = TestBed.inject(ToolManagerService);
         rectangleSelectionService = TestBed.inject(RectangleSelectionService);
         ellipseSelectionService = TestBed.inject(EllipseSelectionService);
+        undoRedoService = TestBed.inject(UndoRedoService);
 
+        executeCommandSpy = spyOn(undoRedoService, 'executeCommand');
         service.currentTool = rectangleSelectionService;
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
@@ -142,45 +147,32 @@ describe('ClipboardService', () => {
         expect(mouseDownSpy).not.toHaveBeenCalled();
     });
 
-    it('deleteSelection fills active selection using RectangleSelectionService method ', () => {
-        const fillEllipseSpy = spyOn(ellipseSelectionService, 'fillEllipse').and.callFake(() => {
-            return;
-        });
-        const fillRectangleSpy = spyOn(rectangleSelectionService, 'fillRectangle').and.callFake(() => {
-            return;
-        });
+    it('deleteSelection fills active selection using EllipseClipboardCommand ', () => {
+        service.currentTool = ellipseSelectionService;
+        const undoSpy = spyOn(service.currentTool, 'undoSelection');
         canvasTestHelper.selectionCanvas.width = 1;
         canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
-        expect(fillEllipseSpy).not.toHaveBeenCalled();
-        expect(fillRectangleSpy).toHaveBeenCalled();
+        expect(undoSpy).toHaveBeenCalled();
+        expect(service.isCircle).toEqual(service.currentTool.isCircle);
+        expect(executeCommandSpy).toHaveBeenCalled();
     });
 
-    it('deleteSelection fills active selection using EllipseSelectionService method ', () => {
-        service.currentTool = ellipseSelectionService;
-        const fillEllipseSpy = spyOn(ellipseSelectionService, 'fillEllipse').and.callFake(() => {
-            return;
-        });
-        const fillRectangleSpy = spyOn(rectangleSelectionService, 'fillRectangle').and.callFake(() => {
-            return;
-        });
+    it('deleteSelection fills active selection using RectangleClipboardCommand', () => {
+        canvasTestHelper.selectionCanvas.width = 1;
+        canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
-        expect(fillEllipseSpy).toHaveBeenCalled();
-        expect(fillRectangleSpy).not.toHaveBeenCalled();
+        expect(service.selectionHeight).toEqual(service.currentTool.selectionHeight);
+        expect(service.selectionWidth).toEqual(service.currentTool.selectionWidth);
+        expect(executeCommandSpy).toHaveBeenCalled();
     });
 
     it('deleteSelection does nothing when there is no active selection ', () => {
         canvasTestHelper.selectionCanvas.width = 0;
         canvasTestHelper.selectionCanvas.height = 0;
-        const fillEllipseSpy = spyOn(ellipseSelectionService, 'fillEllipse').and.callFake(() => {
-            return;
-        });
-        const fillRectangleSpy = spyOn(rectangleSelectionService, 'fillRectangle').and.callFake(() => {
-            return;
-        });
+        const undoSpy = spyOn(service.currentTool, 'undoSelection');
         service.deleteSelection();
-        expect(fillEllipseSpy).not.toHaveBeenCalled();
-        expect(fillRectangleSpy).not.toHaveBeenCalled();
+        expect(undoSpy).not.toHaveBeenCalled();
     });
 
     it('cutSelection calls copy and delete selection', () => {

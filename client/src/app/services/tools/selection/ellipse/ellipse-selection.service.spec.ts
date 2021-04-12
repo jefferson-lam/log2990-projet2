@@ -363,42 +363,6 @@ describe('EllipseToolSelectionService', () => {
         expect(onKeyboardUpSpy).not.toHaveBeenCalled();
     });
 
-    it('undoSelection should pass if isManipulating is false', () => {
-        service.isManipulating = false;
-        expect(() => {
-            service.undoSelection();
-        }).not.toThrow();
-    });
-
-    it('undoSelection should call appropriate functions to restore state', () => {
-        const sw = 75;
-        const sh = 210;
-        service.isManipulating = true;
-        service.cornerCoords = [
-            { x: 25, y: 40 },
-            { x: 100, y: 250 },
-        ];
-        service.selectionWidth = sw;
-        service.selectionHeight = sh;
-        service.undoSelection();
-        expect(clipEllipseSpy).toHaveBeenCalled();
-        expect(baseCtxDrawImage).toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
-            0,
-            0,
-            service.selectionWidth,
-            service.selectionHeight,
-            service.cornerCoords[0].x,
-            service.cornerCoords[0].y,
-            service.selectionWidth,
-            service.selectionHeight,
-        );
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
-        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
-        expect(service.isManipulating).toBeFalsy();
-        expect(service.isEscapeDown).toBeFalsy();
-    });
-
     it('fillEllipse should fill ellipse on ctx with correct params', () => {
         const expectedStartX = 62.5;
         const expectedStartY = 145;
@@ -468,5 +432,71 @@ describe('EllipseToolSelectionService', () => {
             END_ANGLE,
         );
         expect(selectionCtxStrokeSpy).toHaveBeenCalled();
+    });
+
+    it('undoSelection should pass if isManipulating is false', () => {
+        service.isManipulating = false;
+        expect(() => {
+            service.undoSelection();
+        }).not.toThrow();
+    });
+
+    it('undoSelection should call appropriate functions to restore state', () => {
+        const sw = 75;
+        const sh = 210;
+        service.isManipulating = true;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.undoSelection();
+        expect(clipEllipseSpy).toHaveBeenCalled();
+        expect(baseCtxDrawImage).toHaveBeenCalledWith(
+            selectionCtxStub.canvas,
+            0,
+            0,
+            service.selectionWidth,
+            service.selectionHeight,
+            service.cornerCoords[0].x,
+            service.cornerCoords[0].y,
+            service.selectionWidth,
+            service.selectionHeight,
+        );
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('undoSelection should not draw to base context if isFromClipboard is true', () => {
+        const sw = 75;
+        const sh = 210;
+        service.isFromClipboard = true;
+        service.isManipulating = true;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.undoSelection();
+        expect(clipEllipseSpy).toHaveBeenCalled();
+        expect(baseCtxDrawImage).not.toHaveBeenCalledWith(
+            selectionCtxStub.canvas,
+            0,
+            0,
+            service.selectionWidth,
+            service.selectionHeight,
+            service.cornerCoords[0].x,
+            service.cornerCoords[0].y,
+            service.selectionWidth,
+            service.selectionHeight,
+        );
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
     });
 });

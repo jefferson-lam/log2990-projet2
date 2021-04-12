@@ -85,6 +85,7 @@ describe('SidebarComponent', () => {
                 {} as AerosolService,
                 {} as PipetteService,
             ),
+            {} as UndoRedoService,
         );
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
