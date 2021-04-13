@@ -17,6 +17,9 @@ export class SelectionComponent implements AfterViewInit {
     selectionCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
 
+    // virtualSelectionCanvas
+    // virtualOutlineCanvas
+
     @ViewChild('leftResizer', { static: false }) leftResizer: ElementRef<HTMLElement>;
     @ViewChild('rightResizer', { static: false }) rightResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
@@ -98,11 +101,17 @@ export class SelectionComponent implements AfterViewInit {
         };
     }
 
+    // Scale to virtual -> virtual to preview
     drawPreview(event: CdkDragMove): void {
         if (this.resizerHandlerService.inUse) {
             this.resizerHandlerService.resize(event);
             this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
+            // Set virtual canvas to previewSelectionCanvas size
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+            // this.drawWithScalingFactors(this.virtualBorder, this.borderCanvas);
+            // this.drawWithScalingFactors(this.virtualSelection, this.selectionCanvas);
+            // Draw virtualBorder -> previewSelectionCtx
+            // Draw virtualSelection -> previewSelectionCtx
             this.selectionCanvas.style.visibility = 'hidden';
         }
     }
@@ -136,6 +145,13 @@ export class SelectionComponent implements AfterViewInit {
     drawWithScalingFactors(targetContext: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
         const scalingFactors = this.getScalingFactors();
         targetContext.scale(scalingFactors[0], scalingFactors[1]);
+
+        // BorderCanvas that has outline
+        // selectionCanvas that has drawing
+
+        // We also know that the previewCanvas has a scaling factor applied in relation to its delta size.
+        // We know then that everything drawn on previewCanvas will be scaled appropriately.
+
         targetContext.drawImage(sourceCanvas, 0, 0, scalingFactors[0] * targetContext.canvas.width, scalingFactors[1] * targetContext.canvas.height);
     }
 
