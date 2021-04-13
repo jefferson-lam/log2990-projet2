@@ -48,7 +48,7 @@ export class LassoSelectionCommand extends Command {
         ctx.save();
         ctx.clip();
         ctx.fillStyle = color;
-        ctx.fillRect(this.topLeft.x, this.topLeft.y, this.selectionWidth, this.selectionHeight);
+        ctx.fill();
         ctx.restore();
     }
 }

@@ -20,6 +20,7 @@ export class LassoSelectionService extends ToolSelectionService {
     selectionWidth: number;
     selectionHeight: number;
     topLeft: Vec2;
+    isEscapeDown: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -31,6 +32,7 @@ export class LassoSelectionService extends ToolSelectionService {
         this.isManipulating = false;
         this.isConnected = false;
         this.linePathData = new Array<Vec2>();
+        this.isEscapeDown = false;
         this.lineService.linePathDataSubject.asObservable().subscribe((point) => {
             this.linePathData.push(point);
         });
@@ -49,7 +51,10 @@ export class LassoSelectionService extends ToolSelectionService {
             this.resetCanvasState(this.drawingService.previewSelectionCanvas);
             this.resetSelectedToolSettings();
             this.resizerHandlerService.resetResizers();
+            return;
         }
+        const pos = this.getPositionFromMouse(event);
+        console.log(this.isIntersect(pos, this.linePathData));
         super.onMouseDown(event);
         if (!this.inUse && !this.isManipulating) {
             this.clearPath();
@@ -64,7 +69,6 @@ export class LassoSelectionService extends ToolSelectionService {
                 this.isConnected = true;
             }
         }
-        console.log(this.isConnected);
 
         if (this.isConnected) {
             this.inUse = false;
@@ -81,10 +85,33 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
-    onMouseDoubleClick(event: MouseEvent): void {
-        this.lineService.inUse = false;
-        this.clearPath();
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    onKeyboardDown(event: KeyboardEvent): void {
+        super.onKeyboardDown(event);
+        if (event.key === 'Escape' && !this.isEscapeDown) {
+            this.isEscapeDown = true;
+        }
+    }
+
+    onKeyboardUp(event: KeyboardEvent): void {
+        super.onKeyboardUp(event);
+        console.log('?');
+        if (this.inUse) {
+            if (event.key === 'Escape' && this.isEscapeDown) {
+                // Erase the rectangle drawn as a preview of selection
+                this.clearPath();
+                this.inUse = false;
+                this.isEscapeDown = false;
+            }
+        } else if (this.isManipulating) {
+            if (event.key === 'Escape' && this.isEscapeDown) {
+                console.log('lmfaoooo');
+                this.onMouseDown({} as MouseEvent);
+                this.clearPath();
+                this.lineService.onToolChange();
+                this.inUse = false;
+                this.isEscapeDown = false;
+            }
+        }
     }
 
     undoSelection(): void {
@@ -108,7 +135,52 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
-    isIntersect() {}
+    isIntersect(point: Vec2, pathData: Vec2[]): boolean {
+        const newLine = [pathData[pathData.length - 1], point];
+        let currentLine;
+        console.log(pathData);
+        for (let i = 0; i < pathData.length - 1; i++) {
+            currentLine = [pathData[i], pathData[i + 1]];
+            console.log(currentLine);
+            let isIntersect = this.segmentIntersect(newLine[0], newLine[1], currentLine[0], currentLine[1]);
+            if (isIntersect) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    segmentIntersect(p1: Vec2, p2: Vec2, q1: Vec2, q2: Vec2) {
+        let r = this.substractPoints(p2, p1);
+        let s = this.substractPoints(q2, q1);
+
+        let uNumerator = this.crossProduct(this.substractPoints(q1, p1), r);
+        let denominator = this.crossProduct(r, s);
+
+        if (uNumerator === 0 && denominator === 0) {
+            return false;
+        }
+
+        var u = uNumerator / denominator;
+        var t = this.crossProduct(this.substractPoints(q1, p1), s) / denominator;
+
+        return t >= 0 && t <= 1 && u >= 0 && u <= 1;
+    }
+
+    crossProduct(point1: Vec2, point2: Vec2): number {
+        return Math.abs(point1.x * point2.x - point1.y * point2.y);
+    }
+
+    substractPoints(point1: Vec2, point2: Vec2): Vec2 {
+        return {
+            x: Math.abs(point1.x - point2.x),
+            y: Math.abs(point1.y - point2.y),
+        };
+    }
+
+    arePointsEqual(point1: Vec2, point2: Vec2): boolean {
+        return point1.x === point2.x && point1.y === point2.y;
+    }
 
     computeSelectionSize(pathData: Vec2[]): number[] {
         let minHeight = Number.MAX_VALUE;
@@ -143,12 +215,12 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     clipLassoSelection(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
+        targetCtx.save();
         targetCtx.beginPath();
         targetCtx.moveTo(pathData[0].x - this.topLeft.x, pathData[0].y - this.topLeft.y);
         for (const point of pathData) {
             targetCtx.lineTo(point.x - this.topLeft.x, point.y - this.topLeft.y);
         }
-        targetCtx.save();
         targetCtx.clip();
         targetCtx.drawImage(
             baseCtx.canvas,
@@ -162,6 +234,7 @@ export class LassoSelectionService extends ToolSelectionService {
             this.selectionHeight,
         );
         targetCtx.restore();
+        // this.drawLassoOutline(this.drawingService.previewSelectionCtx, pathData);
         this.drawLassoOutline(targetCtx, pathData);
     }
 
@@ -179,15 +252,15 @@ export class LassoSelectionService extends ToolSelectionService {
         ctx.save();
         ctx.clip();
         ctx.fillStyle = color;
-        ctx.fillRect(this.topLeft.x, this.topLeft.y, this.selectionWidth, this.selectionHeight);
+        ctx.fill();
         ctx.restore();
     }
 
-    private drawLassoOutline(ctx: CanvasRenderingContext2D, linePathData: Vec2[]): void {
+    private drawLassoOutline(ctx: CanvasRenderingContext2D, pathData: Vec2[]): void {
         ctx.beginPath();
         ctx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
-        ctx.moveTo(linePathData[0].x - this.topLeft.x, linePathData[0].y - this.topLeft.y);
-        for (const point of linePathData) {
+        ctx.moveTo(pathData[0].x - this.topLeft.x, pathData[0].y - this.topLeft.y);
+        for (const point of pathData) {
             ctx.lineTo(point.x - this.topLeft.x, point.y - this.topLeft.y);
         }
         ctx.stroke();
