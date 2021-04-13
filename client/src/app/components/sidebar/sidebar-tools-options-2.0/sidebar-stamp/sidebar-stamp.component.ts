@@ -1,5 +1,6 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSlider } from '@angular/material/slider';
+import { Stamp } from '@app/classes/stamp';
 import { Tool } from '@app/classes/tool';
 import * as StampConstants from '@app/constants/stamp-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
@@ -10,7 +11,7 @@ import { StampService } from '@app/services/tools/stamp/stamp-service';
     templateUrl: './sidebar-stamp.component.html',
     styleUrls: ['./sidebar-stamp.component.scss'],
 })
-export class SidebarStampComponent implements OnInit {
+export class SidebarStampComponent implements OnInit, AfterViewInit {
     imageSource: string;
     stampClickState: boolean;
     rotationAngle: number;
@@ -21,6 +22,7 @@ export class SidebarStampComponent implements OnInit {
     zoomFactor: number;
     tickInterval: number;
     currentTool: Tool;
+    stamps: Map<number, Stamp>;
 
     @ViewChild('relaxedEgg', { static: false }) relaxedEgg: ElementRef<HTMLElement>;
     @ViewChild('sleepyEgg', { static: false }) sleepyEgg: ElementRef<HTMLElement>;
@@ -55,57 +57,45 @@ export class SidebarStampComponent implements OnInit {
         });
     }
 
-    changeBorderIndicator(imageIndex: number): void {
+    ngAfterViewInit(): void {
+        this.stamps = new Map<number, Stamp>();
+        this.stamps
+            .set(StampConstants.IMAGE_INDEX_1, { imageSource: 'assets/stamp_1.svg', element: this.relaxedEgg.nativeElement })
+            .set(StampConstants.IMAGE_INDEX_2, { imageSource: 'assets/stamp_2.svg', element: this.sleepyEgg.nativeElement })
+            .set(StampConstants.IMAGE_INDEX_3, { imageSource: 'assets/stamp_3.svg', element: this.hungryEgg.nativeElement })
+            .set(StampConstants.IMAGE_INDEX_4, { imageSource: 'assets/stamp_4.svg', element: this.toastEgg.nativeElement })
+            .set(StampConstants.IMAGE_INDEX_5, { imageSource: 'assets/stamp_5.svg', element: this.huskyPortrait.nativeElement })
+            .set(StampConstants.IMAGE_INDEX_6, { imageSource: 'assets/stamp_6.svg', element: this.corgiPortrait.nativeElement });
+        const stampSelected = Array.from(this.stamps.entries())
+            .filter(([key, stamp]) => stamp.imageSource === this.stampService.imageSource)
+            .map(([key]) => key)[0];
+        this.changeBorderIndicator(stampSelected);
+    }
+
+    setStamp(stampNumber: number): void {
+        this.changeStampSource(stampNumber);
+        this.changeBorderIndicator(stampNumber);
+        this.emitImageSrc();
+        this.emitRotateAngle();
+    }
+
+    resetBorders(): void {
         this.relaxedEgg.nativeElement.style.border = '';
         this.sleepyEgg.nativeElement.style.border = '';
         this.hungryEgg.nativeElement.style.border = '';
         this.toastEgg.nativeElement.style.border = '';
         this.huskyPortrait.nativeElement.style.border = '';
         this.corgiPortrait.nativeElement.style.border = '';
-        switch (imageIndex) {
-            case StampConstants.IMAGE_INDEX_1:
-                this.relaxedEgg.nativeElement.style.border = '2px dashed floralwhite';
-                break;
-            case StampConstants.IMAGE_INDEX_2:
-                this.sleepyEgg.nativeElement.style.border = '2px dashed floralwhite';
-                break;
-            case StampConstants.IMAGE_INDEX_3:
-                this.hungryEgg.nativeElement.style.border = '2px dashed floralwhite';
-                break;
-            case StampConstants.IMAGE_INDEX_4:
-                this.toastEgg.nativeElement.style.border = '2px dashed floralwhite';
-                break;
-            case StampConstants.IMAGE_INDEX_5:
-                this.huskyPortrait.nativeElement.style.border = '2px dashed floralwhite';
-                break;
-            case StampConstants.IMAGE_INDEX_6:
-                this.corgiPortrait.nativeElement.style.border = '2px dashed floralwhite';
-                break;
-        }
+    }
+
+    changeBorderIndicator(imageIndex: number): void {
+        this.resetBorders();
+        (this.stamps.get(imageIndex) as Stamp).element.style.border = '2px dashed floralwhite';
     }
 
     changeStampSource(stampIndex: number): void {
         this.stampClickState = true;
-        switch (stampIndex) {
-            case StampConstants.IMAGE_INDEX_1:
-                this.imageSource = 'assets/stamp_1.svg';
-                break;
-            case StampConstants.IMAGE_INDEX_2:
-                this.imageSource = 'assets/stamp_2.svg';
-                break;
-            case StampConstants.IMAGE_INDEX_3:
-                this.imageSource = 'assets/stamp_3.svg';
-                break;
-            case StampConstants.IMAGE_INDEX_4:
-                this.imageSource = 'assets/stamp_4.svg';
-                break;
-            case StampConstants.IMAGE_INDEX_5:
-                this.imageSource = 'assets/stamp_5.svg';
-                break;
-            case StampConstants.IMAGE_INDEX_6:
-                this.imageSource = 'assets/stamp_6.svg';
-                break;
-        }
+        this.imageSource = (this.stamps.get(stampIndex) as Stamp).imageSource;
     }
 
     emitImageSrc(): void {

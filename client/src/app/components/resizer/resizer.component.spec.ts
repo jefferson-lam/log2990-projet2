@@ -57,6 +57,7 @@ describe('ResizerComponent', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingService.canvas = canvasTestHelper.canvas;
 
         drawingService.previewCtx = previewCtxStub;
         drawingService.baseCtx = baseCtxStub;

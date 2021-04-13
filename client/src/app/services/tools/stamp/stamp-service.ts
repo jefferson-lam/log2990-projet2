@@ -115,10 +115,10 @@ export class StampService extends Tool {
 
     setAngleSliderValue(angle: number): void {
         if (angle > StampConstants.MAX_ANGLE) {
-            this.realRotationValues = angle - StampConstants.MAX_ANGLE;
+            this.realRotationValues = angle - StampConstants.MAX_ANGLE - 1;
         }
         if (angle < StampConstants.MIN_ANGLE) {
-            this.realRotationValues = angle + StampConstants.MAX_ANGLE;
+            this.realRotationValues = angle + StampConstants.MAX_ANGLE + 1;
         }
         this.angleSubject.next(this.realRotationValues);
     }

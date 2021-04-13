@@ -34,6 +34,6 @@ export const INIT_DEGREES_ANGLE_COUNTER = 15;
 
 export const MIN_ANGLE = 0;
 
-export const MAX_ANGLE = 360;
+export const MAX_ANGLE = 359;
 
 export const FORMAT_MATCH = 1.5;

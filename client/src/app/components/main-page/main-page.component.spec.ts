@@ -97,7 +97,6 @@ describe('MainPageComponent', () => {
         expect(resetSpy).toHaveBeenCalled();
         expect(removeSpy).toHaveBeenCalled();
         expect(removeSpy).toHaveBeenCalledWith('autosave');
-        expect(removeSpy).toHaveBeenCalledWith('initialDrawing');
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
@@ -133,14 +132,10 @@ describe('MainPageComponent', () => {
     it('newDrawing should start new drawing if not autosavedrawing', () => {
         const resetSpy = spyOn(component.undoRedoService, 'reset');
         localStorage.clear();
-        const removeSpy = spyOn(localStorage, 'removeItem');
 
         component.newDrawing();
 
         expect(resetSpy).toHaveBeenCalled();
-        expect(removeSpy).toHaveBeenCalled();
-        expect(removeSpy).toHaveBeenCalledWith('initialDrawing');
-        expect(removeSpy).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
@@ -174,15 +169,12 @@ describe('MainPageComponent', () => {
 
     it('continueDrawing should navigate to editor', () => {
         localStorage.setItem('autosave', mockImageURL);
-        const setSpy = spyOn(localStorage, 'setItem');
 
         component.continueDrawing();
         localStorage.removeItem('autosave');
 
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
-        expect(setSpy).toHaveBeenCalled();
-        expect(setSpy).toHaveBeenCalledWith('initialDrawing', mockImageURL);
     });
 
     it('should open Carousel on control+g', () => {

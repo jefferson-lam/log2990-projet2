@@ -36,6 +36,8 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { DirectionalMovementDirective } from './components/selection/selection-directives/directional-movement.directive';
 import { KeyboardListenerDirective } from './components/selection/selection-directives/keyboard-listener.directive';
 import { SelectionComponent } from './components/selection/selection.component';
+import { ExportCompletePageComponent } from './components/sidebar/export-drawing/export-complete-page/export-complete-page.component';
+import { ExportErrorPageComponent } from './components/sidebar/export-drawing/export-error-page/export-error-page.component';
 import { NewDrawingBoxComponent } from './components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveCompletePageComponent } from './components/sidebar/save-drawing-page/save-complete-page/save-complete-page.component';
 import { SaveDrawingComponent } from './components/sidebar/save-drawing-page/save-drawing.component';
@@ -47,6 +49,7 @@ import { SidebarAerosolComponent } from './components/sidebar/sidebar-tools-opti
 import { SidebarEllipseSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse-selection/sidebar-ellipse-selection/sidebar-ellipse-selection.component';
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
+import { SidebarGridComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-grid/sidebar-grid.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
 import { SidebarPipetteComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pipette/sidebar-pipette.component';
@@ -87,9 +90,12 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         DirectionalMovementDirective,
         SidebarRectangleSelectionComponent,
         SidebarEllipseSelectionComponent,
+        ExportCompletePageComponent,
+        ExportErrorPageComponent,
+        SidebarGridComponent,
         SidebarStampComponent,
     ],
-    entryComponents: [MainPageCarrouselComponent],
+    entryComponents: [MainPageCarrouselComponent, ExportCompletePageComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,

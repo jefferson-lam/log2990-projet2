@@ -2,17 +2,17 @@
   <h2 id="title">Options Étampe</h2>
   <div id='imagesContainer'>
     <img #relaxedEgg class='image' src="assets/stamp_1.svg" alt="Image broken" width='100' height='100'
-         (click)='changeStampSource(1); changeBorderIndicator(1);emitImageSrc(); emitRotateAngle()'>
+         (click)='setStamp(1)'>
     <img #sleepyEgg class='image' src="assets/stamp_2.svg" alt="Image broken" width='100' height='100'
-         (click)='changeStampSource(2); changeBorderIndicator(2);emitImageSrc(); emitRotateAngle()'>
+         (click)='setStamp(2)'>
     <img #hungryEgg class='image' src="assets/stamp_3.svg" alt="Image broken" width='100' height='100'
-         (click)='changeStampSource(3); changeBorderIndicator(3);emitImageSrc(); emitRotateAngle()'>
+         (click)='setStamp(3)'>
     <img #toastEgg class='image' src="assets/stamp_4.svg" alt="Image broken" width='100' height='100'
-         (click)='changeStampSource(4); changeBorderIndicator(4);emitImageSrc(); emitRotateAngle()'>
+         (click)='setStamp(4)'>
     <img #huskyPortrait class='image' src="assets/stamp_5.svg" alt="Image broken" width='100' height='100'
-         (click)='changeStampSource(5); changeBorderIndicator(5);emitImageSrc(); emitRotateAngle()'>
+         (click)='setStamp(5)'>
     <img #corgiPortrait class='image' src="assets/stamp_6.svg" alt="Image broken" width='100' height='100'
-         (click)='changeStampSource(6); changeBorderIndicator(6);emitImageSrc(); emitRotateAngle()'>
+         (click)='setStamp(6)'>
   </div>
   <div id="zoomSettings">
     <p> Facteur d'agrandissement : {{ zoomFactor }} </p>

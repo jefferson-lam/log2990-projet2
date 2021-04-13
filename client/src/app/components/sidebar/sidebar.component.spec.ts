@@ -356,4 +356,16 @@ describe('SidebarComponent', () => {
         expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
         expect(selectAllSpy).not.toHaveBeenCalled();
     });
+
+    it('openGridOptions should set isGridOptionsDisplayed to false if initially true', () => {
+        component.isGridOptionsDisplayed = true;
+        component.openGridOptions();
+        expect(component.isGridOptionsDisplayed).toBeFalse();
+    });
+
+    it('openGridOptions should set isGridOptionsDisplayed to true if initially false', () => {
+        component.isGridOptionsDisplayed = false;
+        component.openGridOptions();
+        expect(component.isGridOptionsDisplayed).toBeTrue();
+    });
 });
