@@ -32,9 +32,9 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
     @ViewChild('corgiPortrait', { static: false }) corgiPortrait: ElementRef<HTMLElement>;
     @ViewChild('angleSlider') angleSlider: MatSlider;
 
-    @Output() stampSourceChanged: EventEmitter<string> = new EventEmitter();
-    @Output() zoomFactorChanged: EventEmitter<number> = new EventEmitter();
-    @Output() rotationAngleChanged: EventEmitter<number> = new EventEmitter();
+    @Output() stampSourceChanged: EventEmitter<string>;
+    @Output() zoomFactorChanged: EventEmitter<number>;
+    @Output() rotationAngleChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService, public stampService: StampService) {
         this.rotationAngle = StampConstants.INIT_ROTATION_ANGLE;
@@ -44,6 +44,10 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
         this.maxAngle = StampConstants.MAX_ANGLE;
         this.zoomFactor = StampConstants.INIT_ZOOM_FACTOR;
         this.tickInterval = StampConstants.TICK_INTERVAL;
+
+        this.stampSourceChanged = new EventEmitter();
+        this.zoomFactorChanged = new EventEmitter();
+        this.rotationAngleChanged = new EventEmitter();
     }
 
     ngOnInit(): void {

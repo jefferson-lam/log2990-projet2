@@ -29,19 +29,25 @@ export class StampCommand extends Command {
     }
 
     addStamp(ctx: CanvasRenderingContext2D, path: Vec2[], rotationAngle: number): void {
-        const newStamp = new Image();
-        newStamp.src = this.imageSource;
+        const stamp = new Image();
+        stamp.src = this.imageSource;
         ctx.save();
         ctx.translate(path[RectangleConstants.START_INDEX].x, path[RectangleConstants.START_INDEX].y);
         ctx.rotate(rotationAngle);
-        ctx.drawImage(
-            newStamp,
-            -this.getStampSize(this.imageZoomFactor) / StampConstants.WIDTH_STAMP_FACTOR,
-            -this.getStampSize(this.imageZoomFactor) / 2,
-            this.getStampSize(this.imageZoomFactor) * StampConstants.FORMAT_MATCH,
-            this.getStampSize(this.imageZoomFactor),
-        );
+        this.pasteStamp(ctx, stamp);
         ctx.restore();
+    }
+
+    pasteStamp(ctx: CanvasRenderingContext2D, stamp: HTMLImageElement): void {
+        const startPosition = {
+            x: -this.getStampSize(this.imageZoomFactor) / StampConstants.WIDTH_STAMP_FACTOR,
+            y: -this.getStampSize(this.imageZoomFactor) / 2,
+        };
+        const stampSize = {
+            width: this.getStampSize(this.imageZoomFactor) * StampConstants.FORMAT_MATCH,
+            height: this.getStampSize(this.imageZoomFactor),
+        };
+        ctx.drawImage(stamp, startPosition.x, startPosition.y, stampSize.width, stampSize.height);
     }
 
     getStampSize(zoomFactor: number): number {

@@ -3,8 +3,8 @@ import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as PolygoneConstants from '@app/constants/polygone-constants';
 import * as StampConstants from '@app/constants/stamp-constants';
+import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { StampCommand } from '@app/services/tools/stamp/stamp-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -43,13 +43,13 @@ export class StampService extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
-            this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
             const command: Command = new StampCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
@@ -59,7 +59,7 @@ export class StampService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
+        this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.previewCommand.setValues(this.drawingService.previewCtx, this);
         this.previewCommand.execute();
@@ -68,12 +68,12 @@ export class StampService extends Tool {
     onMouseLeave(event: MouseEvent): void {
         if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ToolConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ToolConstants.END_INDEX] = this.getPositionFromMouse(event);
         }
     }
 
@@ -87,7 +87,7 @@ export class StampService extends Tool {
     }
 
     onMouseWheel(event: WheelEvent): void {
-        this.cornerCoords[PolygoneConstants.START_INDEX] = this.getPositionFromMouse(event);
+        this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.changeRotationAngle(event);
         this.previewCommand.setValues(this.drawingService.previewCtx, this);

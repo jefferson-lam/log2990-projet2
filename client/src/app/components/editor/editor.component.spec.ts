@@ -31,8 +31,8 @@ describe('EditorComponent', () => {
     let fixture: ComponentFixture<EditorComponent>;
     let toolStub: ToolStub;
     let rectangleSelectionService: RectangleSelectionService;
+    let stampService: StampService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let stampServiceSpy: jasmine.SpyObj<StampService>;
     let keyboardEventSpy: jasmine.Spy;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
@@ -44,6 +44,8 @@ describe('EditorComponent', () => {
     let newDrawingPopUpSpy: jasmine.Spy;
     let undoSelectionSpy: jasmine.Spy;
     let selectAllSpy: jasmine.Spy;
+    let changeRotationOnAltSpy: jasmine.Spy;
+    let changeRotationNormalSpy: jasmine.Spy;
 
     beforeEach(async(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -51,7 +53,6 @@ describe('EditorComponent', () => {
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
         canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize']);
-        stampServiceSpy = jasmine.createSpyObj('StampService', ['changeRotationAngleOnAlt', 'changeRotationAngleNormal']);
         (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
             new Subject<any>(),
         );
@@ -67,7 +68,6 @@ describe('EditorComponent', () => {
                 { provide: ToolManagerService, useValue: toolManagerSpy },
                 { provide: Tool, useValue: toolStub },
                 { provide: CanvasGridService, useValue: canvasGridServiceSpy },
-                { provide: StampService, useValue: stampServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -88,6 +88,8 @@ describe('EditorComponent', () => {
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
 
+        stampService = new StampService({} as DrawingService, {} as UndoRedoService);
+
         undoSpy = spyOn(component.undoRedoService, 'undo');
         redoSpy = spyOn(component.undoRedoService, 'redo');
 
@@ -98,6 +100,12 @@ describe('EditorComponent', () => {
             return;
         });
         selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+            return;
+        });
+        changeRotationNormalSpy = spyOn(stampService, 'changeRotationAngleNormal').and.callFake(() => {
+            return;
+        });
+        changeRotationOnAltSpy = spyOn(stampService, 'changeRotationAngleOnAlt').and.callFake(() => {
             return;
         });
     });
@@ -330,14 +338,29 @@ describe('EditorComponent', () => {
     });
 
     it("should call changeRotationAngleOnAlt when 'alt' key is down", () => {
+        component.currentTool = stampService;
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
         component.setStampAngleAlt(eventSpy);
-        expect(stampServiceSpy.changeRotationAngleOnAlt).toHaveBeenCalled();
+        expect(changeRotationOnAltSpy).toHaveBeenCalled();
     });
 
     it("should call changeRotationAngleNormal when 'alt' key is down", () => {
+        component.currentTool = stampService;
         component.setStampAngleNormal();
-        expect(stampServiceSpy.changeRotationAngleNormal).toHaveBeenCalled();
+        expect(changeRotationNormalSpy).toHaveBeenCalled();
+    });
+
+    it("should call changeRotationAngleOnAlt when 'alt' key is down", () => {
+        component.currentTool = rectangleSelectionService;
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
+        component.setStampAngleAlt(eventSpy);
+        expect(changeRotationOnAltSpy).not.toHaveBeenCalled();
+    });
+
+    it("should call changeRotationAngleNormal when 'alt' key is down", () => {
+        component.currentTool = rectangleSelectionService;
+        component.setStampAngleNormal();
+        expect(changeRotationNormalSpy).not.toHaveBeenCalled();
     });
 
     it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile isn't empty and pop up isn't open and if tool is selection", () => {

@@ -105,12 +105,16 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.alt', ['$event'])
     setStampAngleAlt(event: KeyboardEvent): void {
         event.preventDefault();
-        this.stampService.changeRotationAngleOnAlt();
+        if (this.currentTool instanceof StampService) {
+            this.currentTool.changeRotationAngleOnAlt();
+        }
     }
 
     @HostListener('window:keyup.alt', ['$event'])
     setStampAngleNormal(): void {
-        this.stampService.changeRotationAngleNormal();
+        if (this.currentTool instanceof StampService) {
+            this.currentTool.changeRotationAngleNormal();
+        }
     }
 
     @HostListener('window:keydown.g', ['$event'])
