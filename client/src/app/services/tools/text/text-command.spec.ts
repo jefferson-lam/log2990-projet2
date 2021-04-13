@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextService } from '@app/services/tools/text/text-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { TextCommand } from './text-command';
 
 describe('TextCommand', () => {
@@ -27,8 +29,10 @@ describe('TextCommand', () => {
     const END_Y = 15;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
-        textService = TestBed.inject(TextService);
+        textService = new TextService({} as DrawingService, {} as UndoRedoService);
+        TestBed.configureTestingModule({
+            providers: [{ provide: TextService, useValue: textService }],
+        });
 
         textService.placeHolderSpan = document.createElement('span');
         textService.placeHolderSpan.id = 'placeHolderSpan';

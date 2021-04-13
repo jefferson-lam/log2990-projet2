@@ -69,7 +69,6 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.textAlign = this.textAlign;
         this.textService.placeHolderSpan.style.fontFamily = this.fontFamily;
         this.textService.placeHolderSpan.style.fontSize = this.fontSize + 'px';
-        this.textService.placeHolderSpan.style.textAlign = this.textAlign;
         this.textService.placeHolderSpan.style.fontWeight = this.fontWeight;
         this.textService.placeHolderSpan.style.fontStyle = this.fontStyle;
         this.textService.placeHolderSpan.style.visibility = 'hidden';
@@ -77,11 +76,8 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.color = this.textService.primaryColor;
         this.textService.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
         this.textService.placeHolderSpan.style.zIndex = '2';
-        this.textService.placeHolderSpan.style.color = this.textService.primaryColor;
         this.textService.placeHolderSpan.style.border = '1px solid black';
-        this.textService.placeHolderSpan.style.whiteSpace = 'nowrap';
-        this.textService.placeHolderSpan.style.overflow = 'hidden';
-        this.textService.placeHolderSpan.style.textOverflow = '';
+        this.textService.placeHolderSpan.style.whiteSpace = 'pre-line';
     }
 
     emitFontOptions(): void {

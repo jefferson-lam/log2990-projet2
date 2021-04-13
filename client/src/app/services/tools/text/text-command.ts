@@ -63,12 +63,20 @@ export class TextCommand extends Command {
         ctx.textAlign = this.textAlign as CanvasTextAlign;
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < this.splitText.length; i++) {
-            ctx.fillText(
-                this.splitText[i],
-                this.textWidth + this.adjustWidthWithTextAlign(this.textAlign),
-                this.textHeight + this.fontSize + (this.spanTopPosition / (this.splitText.length / i) + 1) - TextConstants.LINE_HEIGHT_CONVERSION * 2,
-            );
+            this.fillTextOnCanvas(ctx, i);
         }
+    }
+
+    fillTextOnCanvas(ctx: CanvasRenderingContext2D, index: number): void {
+        const textPosition = {
+            x: this.textWidth + this.adjustWidthWithTextAlign(this.textAlign),
+            y:
+                this.textHeight +
+                this.fontSize +
+                -TextConstants.LINE_HEIGHT_CONVERSION * 2 +
+                (this.spanTopPosition / (this.splitText.length / index) + 1),
+        };
+        ctx.fillText(this.splitText[index], textPosition.x, textPosition.y);
     }
 
     splitTextString(): void {
