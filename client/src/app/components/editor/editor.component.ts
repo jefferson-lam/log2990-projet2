@@ -11,6 +11,7 @@ import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -72,7 +73,11 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.control.z', ['$event'])
     onCtrlZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+        if (
+            this.currentTool instanceof RectangleSelectionService ||
+            this.currentTool instanceof EllipseSelectionService ||
+            this.currentTool instanceof LassoSelectionService
+        ) {
             if (this.currentTool.isManipulating) {
                 this.currentTool.undoSelection();
                 this.isUndoSelection = true;
