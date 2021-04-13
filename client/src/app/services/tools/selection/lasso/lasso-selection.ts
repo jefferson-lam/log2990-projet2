@@ -94,9 +94,11 @@ export class LassoSelectionService extends ToolSelectionService {
 
     onKeyboardUp(event: KeyboardEvent): void {
         super.onKeyboardUp(event);
-        console.log('?');
         if (this.inUse) {
             if (event.key === 'Escape' && this.isEscapeDown) {
+                this.resetCanvasState(this.drawingService.selectionCanvas);
+                this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+                this.resetSelectedToolSettings();
                 // Erase the rectangle drawn as a preview of selection
                 this.clearPath();
                 this.inUse = false;
@@ -104,7 +106,6 @@ export class LassoSelectionService extends ToolSelectionService {
             }
         } else if (this.isManipulating) {
             if (event.key === 'Escape' && this.isEscapeDown) {
-                console.log('lmfaoooo');
                 this.onMouseDown({} as MouseEvent);
                 this.clearPath();
                 this.lineService.onToolChange();
@@ -211,6 +212,11 @@ export class LassoSelectionService extends ToolSelectionService {
         if (this.isManipulating) {
             this.onMouseDown({} as MouseEvent);
         } else if (this.inUse) {
+            const resetKeyboardEvent: KeyboardEvent = {
+                key: 'Escape',
+            } as KeyboardEvent;
+            this.isEscapeDown = true;
+            this.onKeyboardUp(resetKeyboardEvent);
         }
     }
 
