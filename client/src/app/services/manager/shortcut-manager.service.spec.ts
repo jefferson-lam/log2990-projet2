@@ -54,7 +54,8 @@ describe('ShortcutManagerService', () => {
         });
         service = TestBed.inject(ShortcutManagerService);
 
-        allowShortcutSpy = spyOn(service, 'isShortcutAllowed').and.callThrough();
+        // tslint:disable-next-line:no-any
+        allowShortcutSpy = spyOn<any>(service, 'isShortcutAllowed').and.callThrough();
         rectangleSelectionService = new RectangleSelectionService(
             {} as DrawingService,
             {} as UndoRedoService,
@@ -89,7 +90,8 @@ describe('ShortcutManagerService', () => {
         service.isTextInput = false;
         (Object.getOwnPropertyDescriptor(popupManagerSpy, 'isPopUpOpen')?.get as jasmine.Spy<() => boolean>).and.returnValue(false);
 
-        const result = service.isShortcutAllowed();
+        // tslint:disable-next-line:no-string-literal
+        const result = service['isShortcutAllowed']();
 
         expect(result).toBeTrue();
     });
@@ -98,7 +100,8 @@ describe('ShortcutManagerService', () => {
         service.isTextInput = false;
         (Object.getOwnPropertyDescriptor(popupManagerSpy, 'isPopUpOpen')?.get as jasmine.Spy<() => boolean>).and.returnValue(true);
 
-        const result = service.isShortcutAllowed();
+        // tslint:disable-next-line:no-string-literal
+        const result = service['isShortcutAllowed']();
 
         expect(result).toBeFalse();
     });
@@ -107,7 +110,8 @@ describe('ShortcutManagerService', () => {
         service.isTextInput = true;
         (Object.getOwnPropertyDescriptor(popupManagerSpy, 'isPopUpOpen')?.get as jasmine.Spy<() => boolean>).and.returnValue(false);
 
-        const result = service.isShortcutAllowed();
+        // tslint:disable-next-line:no-string-literal
+        const result = service['isShortcutAllowed']();
 
         expect(result).toBeFalse();
     });

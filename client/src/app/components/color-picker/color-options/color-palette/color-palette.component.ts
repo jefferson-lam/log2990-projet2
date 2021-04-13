@@ -28,45 +28,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.draw();
     }
 
-    draw(): void {
-        if (!this.ctx) {
-            this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        }
-        const width = this.canvas.nativeElement.width;
-        const height = this.canvas.nativeElement.height;
-
-        if (this.hue !== undefined) {
-            this.ctx.fillStyle = this.colorService.convertRgbaToString(this.hue);
-        } else {
-            this.ctx.fillStyle = 'white';
-        }
-        this.ctx.fillRect(0, 0, width, height);
-
-        const whiteGrad = this.ctx.createLinearGradient(0, 0, width, 0);
-        whiteGrad.addColorStop(0, 'rgba(255,255,255,1)');
-        whiteGrad.addColorStop(1, 'rgba(255,255,255,0)');
-
-        this.ctx.fillStyle = whiteGrad;
-        this.ctx.fillRect(0, 0, width, height);
-
-        const blackGrad = this.ctx.createLinearGradient(0, 0, 0, height);
-        blackGrad.addColorStop(0, 'rgba(0,0,0,0)');
-        blackGrad.addColorStop(1, 'rgba(0,0,0,1)');
-
-        this.ctx.fillStyle = blackGrad;
-        this.ctx.fillRect(0, 0, width, height);
-
-        // Cursor position (transparent circle)
-        if (this.selectedPosition) {
-            this.ctx.strokeStyle = 'white';
-            this.ctx.fillStyle = 'white';
-            this.ctx.beginPath();
-            this.ctx.arc(this.selectedPosition.x, this.selectedPosition.y, ColorConstants.PICKER_POINTER_SIZE, 0, 2 * Math.PI);
-            this.ctx.lineWidth = ColorConstants.PICKER_POINTER_LINE_WIDTH;
-            this.ctx.stroke();
-        }
-    }
-
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.hue) {
             this.draw();
@@ -98,7 +59,42 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         }
     }
 
-    setColorAtPosition(x: number, y: number): void {
+    private draw(): void {
+        if (!this.ctx) {
+            this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        }
+        const width = this.canvas.nativeElement.width;
+        const height = this.canvas.nativeElement.height;
+
+        this.ctx.fillStyle = this.hue !== undefined ? this.colorService.convertRgbaToString(this.hue) : 'white';
+        this.ctx.fillRect(0, 0, width, height);
+
+        const whiteGrad = this.ctx.createLinearGradient(0, 0, width, 0);
+        whiteGrad.addColorStop(0, 'rgba(255,255,255,1)');
+        whiteGrad.addColorStop(1, 'rgba(255,255,255,0)');
+
+        this.ctx.fillStyle = whiteGrad;
+        this.ctx.fillRect(0, 0, width, height);
+
+        const blackGrad = this.ctx.createLinearGradient(0, 0, 0, height);
+        blackGrad.addColorStop(0, 'rgba(0,0,0,0)');
+        blackGrad.addColorStop(1, 'rgba(0,0,0,1)');
+
+        this.ctx.fillStyle = blackGrad;
+        this.ctx.fillRect(0, 0, width, height);
+
+        // Cursor position (transparent circle)
+        if (this.selectedPosition) {
+            this.ctx.strokeStyle = 'white';
+            this.ctx.fillStyle = 'white';
+            this.ctx.beginPath();
+            this.ctx.arc(this.selectedPosition.x, this.selectedPosition.y, ColorConstants.PICKER_POINTER_SIZE, 0, 2 * Math.PI);
+            this.ctx.lineWidth = ColorConstants.PICKER_POINTER_LINE_WIDTH;
+            this.ctx.stroke();
+        }
+    }
+
+    private setColorAtPosition(x: number, y: number): void {
         const rgbaColor = this.colorService.getColorAtPosition(this.ctx, x, y, this.currentOpacity);
         this.color.emit(rgbaColor);
     }

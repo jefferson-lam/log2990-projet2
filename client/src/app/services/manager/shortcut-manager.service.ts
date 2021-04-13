@@ -25,7 +25,7 @@ export class ShortcutManagerService {
         this.isTextInput = false;
     }
 
-    isShortcutAllowed(): boolean {
+    private isShortcutAllowed(): boolean {
         return !this.isTextInput && !this.popupManager.isPopUpOpen;
     }
 

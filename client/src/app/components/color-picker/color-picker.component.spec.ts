@@ -23,9 +23,9 @@ describe('ColorPickerComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         colorService = TestBed.inject(ColorService);
-        component.primaryColor = { red: '1', green: '2', blue: '3', alpha: 0.1 };
-        component.secondaryColor = { red: '100', green: '200', blue: '300', alpha: 0 };
-        newColor = { red: '1', green: '2', blue: '3', alpha: 0.1 };
+        component.primaryColor = { red: 1, green: 2, blue: 3, alpha: 0.1 };
+        component.secondaryColor = { red: 100, green: 200, blue: 300, alpha: 0 };
+        newColor = { red: 1, green: 2, blue: 3, alpha: 0.1 };
     });
 
     it('should create', () => {

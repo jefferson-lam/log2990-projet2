@@ -20,7 +20,7 @@ describe('ResizerCommand', () => {
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
-        drawingServiceSpy = createSpyObj('DrawingService', ['newDrawing'], ['canvasSizeSubject']);
+        drawingServiceSpy = createSpyObj('DrawingService', ['whiteOut'], ['canvasSizeSubject']);
         (Object.getOwnPropertyDescriptor(drawingServiceSpy, 'canvasSizeSubject')?.get as jasmine.Spy<() => Subject<number[]>>).and.returnValue(
             new Subject<number[]>(),
         );
@@ -102,10 +102,11 @@ describe('ResizerCommand', () => {
         expect(resizePreviewSpy).toHaveBeenCalled();
     });
 
-    it('resizeCanvas should call newDrawing', () => {
+    it('resizeCanvas should call whiteOut with baseCtx', () => {
         service.resizeCanvas();
 
-        expect(drawingServiceSpy.newDrawing).toHaveBeenCalled();
+        expect(drawingServiceSpy.whiteOut).toHaveBeenCalled();
+        expect(drawingServiceSpy.whiteOut).toHaveBeenCalledWith(service.baseCtx);
     });
 
     it('resizeCanvas should call placeResizers', () => {

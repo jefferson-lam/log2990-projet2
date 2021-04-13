@@ -320,19 +320,13 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on selectAll should change the currentTool to rectangleSelectionService and call its selectAll method', () => {
-        const rectangleSelectionService = new RectangleSelectionService(
-            {} as DrawingService,
-            {} as UndoRedoService,
-            {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
-        );
         toolManagerServiceSpy.selectTool.and.callFake(() => {
             (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(
-                rectangleSelectionService,
+                rectangleSelectionServiceStub,
             );
-            return rectangleSelectionService;
+            return rectangleSelectionServiceStub;
         });
-        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+        const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
             return;
         });
         component.selectAll();
@@ -340,16 +334,10 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on selectAll should not call selectAll if the tool is not rectangleSelectionService', () => {
-        const rectangleSelectionService = new RectangleSelectionService(
-            {} as DrawingService,
-            {} as UndoRedoService,
-            {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
-        );
         toolManagerServiceSpy.selectTool.and.callFake(() => {
             return ellipseStub;
         });
-        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
+        const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
             return;
         });
         component.selectAll();
