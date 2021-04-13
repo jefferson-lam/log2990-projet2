@@ -387,15 +387,14 @@ describe('SelectionComponent', () => {
         expect(setResizeStrategySpy).toHaveBeenCalledWith(ResizerDown.TopLeft);
     });
 
-    it('applyFocusPreviewStyle should apply correct css changes to both selection and preview layers', () => {
-        component.applyFocusPreviewStyle();
-        expect(component.selectionCanvas.style.border).toEqual('1px solid black');
-        expect(component.previewSelectionCanvas.style.border).toEqual('none');
+    it('applyFocusBorderStyle should apply correct css changes to borderCanvas', () => {
+        component.applyFocusBorderStyle();
+        expect(component.borderCanvas.style.border).toEqual('1px solid black');
     });
 
     it('applyfocusOutPreviewStyle should apply correct css change to previewSelectionCanvas', () => {
-        component.applyFocusOutPreviewStyle();
-        expect(component.previewSelectionCanvas.style.border).toEqual('1px dashed black');
+        component.applyFocusOutBorderStyle();
+        expect(component.borderCanvas.style.border).toEqual('1px dashed black');
     });
 
     it('onShiftKeyDown should set resizerHandlerService.isShiftDown to true', () => {

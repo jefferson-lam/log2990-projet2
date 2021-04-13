@@ -12,6 +12,8 @@
     (canvasMovement)="this.onCanvasMove($event)"
     (cdkDragMoved)="this.setCanvasPosition()"
     (cdkDragEnded)="this.resetPreviewSelectionCanvas($event)"
+    (focus)="applyFocusBorderStyle()"
+    (focusout)="applyFocusOutBorderStyle()"
     [attr.width]="0"
     [attr.height]="0"
 ></canvas>

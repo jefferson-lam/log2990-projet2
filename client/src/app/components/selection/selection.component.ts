@@ -208,13 +208,12 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.setResizeStrategy(this.resizerDown);
     }
 
-    applyFocusPreviewStyle(): void {
-        this.selectionCanvas.style.border = '1px solid black';
-        this.previewSelectionCanvas.style.border = 'none';
+    applyFocusBorderStyle(): void {
+        this.borderCanvas.style.border = '1px solid black';
     }
 
-    applyFocusOutPreviewStyle(): void {
-        this.previewSelectionCanvas.style.border = '1px dashed black';
+    applyFocusOutBorderStyle(): void {
+        this.borderCanvas.style.border = '1px dashed black';
     }
 
     @HostListener('window:keydown.shift', ['$event'])

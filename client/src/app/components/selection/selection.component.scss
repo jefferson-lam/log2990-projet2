@@ -1,7 +1,7 @@
 #selectionLayer {
     position: absolute;
     z-index: 12;
-    border: 1px dashed black;
+    border: none;
 }
 
 #borderLayer {
@@ -10,7 +10,7 @@
     pointer-events: none;
     background: transparent;
     opacity: 0.5;
-    border: 1px solid black;
+    border: 1px dashed black;
 }
 
 #previewSelectionLayer {
