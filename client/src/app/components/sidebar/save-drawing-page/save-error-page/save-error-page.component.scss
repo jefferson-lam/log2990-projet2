@@ -1,10 +1,19 @@
-#saveErrorDiv {
+#wrapper {
+    justify-content: space-between;
+    flex-direction: column;
     display: flex;
-    text-align: center;
 }
 
 #errorDivHeader {
+    display: flex;
+    justify-content: center;
     margin: auto;
+}
+
+#saveErrorDiv {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 #errorDiv {
@@ -23,17 +32,24 @@
 #reason {
     color: red;
     font-size: 15px;
+    display: flex;
+    justify-content: center;
 }
 
 #buttonDiv {
     display: flex;
     justify-content: center;
+    margin-top: 50px;
 }
 
-button {
+#closebutton {
     align-content: center;
     font-size: large;
     background-color: coral;
-    margin: auto;
-    width: 210px;
+    width: 125px;
+}
+
+#closebutton:hover {
+    color: black;
+    background-color: slategrey;
 }
