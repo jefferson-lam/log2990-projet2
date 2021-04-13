@@ -7,9 +7,9 @@ import { Rgba } from '@app/classes/rgba';
     styleUrls: ['./rgb-selector.component.scss'],
 })
 export class RgbSelectorComponent implements OnChanges {
-    red: string = '0';
-    green: string = '0';
-    blue: string = '0';
+    red: number = 0;
+    green: number = 0;
+    blue: number = 0;
     invalidInput: boolean = false;
 
     @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
@@ -17,7 +17,7 @@ export class RgbSelectorComponent implements OnChanges {
     @ViewChild('blueInput', { static: false }) blueInput: ElementRef<HTMLInputElement>;
 
     @Input()
-    initialColor: Rgba = { red: '255', green: '255', blue: '255', alpha: 1 };
+    initialColor: Rgba = { red: 255, green: 255, blue: 255, alpha: 1 };
 
     @Output()
     newColor: EventEmitter<Rgba> = new EventEmitter();
@@ -52,11 +52,11 @@ export class RgbSelectorComponent implements OnChanges {
         return /^[a-fA-F0-9]+$/i.test(code);
     }
 
-    convertHexToDec(hex: string): string {
-        return parseInt(hex, 16).toString();
+    convertHexToDec(hex: string): number {
+        return parseInt(hex, 16);
     }
 
-    printDecToHex(dec: string): string {
-        return parseInt(dec, 10).toString(16).toUpperCase();
+    printDecToHex(dec: number): string {
+        return dec.toString(16).toUpperCase();
     }
 }

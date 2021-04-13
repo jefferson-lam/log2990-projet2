@@ -12,7 +12,7 @@ describe('ColorPaletteComponent', () => {
     let mouseEventMove: MouseEvent;
     const placeholderX = 1;
     const placeholderY = 2;
-    const colorPlaceholderBlack: Rgba = { red: '0', green: '0', blue: '0', alpha: 1 };
+    const colorPlaceholderBlack: Rgba = { red: 0, green: 0, blue: 0, alpha: 1 };
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({

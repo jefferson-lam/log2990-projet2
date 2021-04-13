@@ -20,7 +20,7 @@ describe('ColorHistoryComponent', () => {
         fixture = TestBed.createComponent(ColorHistoryComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        const placeholder = { red: '255', green: '255', blue: '255', alpha: 1 };
+        const placeholder = { red: 255, green: 255, blue: 255, alpha: 1 };
         for (let i = 0; i < ColorConstants.MAX_SAVED_COLORS; i++) {
             component.savedColors.push(placeholder);
         }
