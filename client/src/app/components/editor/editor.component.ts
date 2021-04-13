@@ -8,6 +8,7 @@ import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
+import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
@@ -30,6 +31,7 @@ export class EditorComponent implements OnInit {
         public settingsManager: SettingsManagerService,
         public undoRedoService: UndoRedoService,
         public canvasGridService: CanvasGridService,
+        public magnetismService: MagnetismService,
     ) {
         this.currentTool = toolManager.currentTool;
         this.settingsManager.editorComponent = this;
@@ -114,6 +116,11 @@ export class EditorComponent implements OnInit {
     @HostListener('window:keydown.=', ['$event'])
     increaseGridSize(): void {
         this.canvasGridService.increaseGridSize();
+    }
+
+    @HostListener('window:keydown.m', ['$event'])
+    toggleMagnetism(): void {
+        this.magnetismService.toggleMagnetism();
     }
 
     setTool(newTool: Tool): void {

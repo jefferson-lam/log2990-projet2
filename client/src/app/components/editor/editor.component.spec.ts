@@ -11,6 +11,7 @@ import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants'
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
@@ -35,6 +36,7 @@ describe('EditorComponent', () => {
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
+    let magnetismServiceSpy: jasmine.SpyObj<MagnetismService>;
     let undoSpy: jasmine.Spy;
     let redoSpy: jasmine.Spy;
     let savePopUpSpy: jasmine.Spy;
@@ -49,6 +51,7 @@ describe('EditorComponent', () => {
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
         canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize']);
+        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['toggleMagnetism']);
         (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
             new Subject<any>(),
         );
@@ -64,6 +67,7 @@ describe('EditorComponent', () => {
                 { provide: ToolManagerService, useValue: toolManagerSpy },
                 { provide: Tool, useValue: toolStub },
                 { provide: CanvasGridService, useValue: canvasGridServiceSpy },
+                { provide: MagnetismService, useValue: magnetismServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -179,6 +183,11 @@ describe('EditorComponent', () => {
     it('showGridOnCanvas should set isGridDisplayed to true if initially false and call canvasGridService', () => {
         component.showGridOnCanvas();
         expect(canvasGridServiceSpy.toggleGrid).toHaveBeenCalled();
+    });
+
+    it('toggleMagnetism should call magnetismService.toggleMagnetism', () => {
+        component.toggleMagnetism();
+        expect(magnetismServiceSpy.toggleMagnetism).toHaveBeenCalled();
     });
 
     it('reduceGridSize should call canvasGridService reduceGridSize', () => {
