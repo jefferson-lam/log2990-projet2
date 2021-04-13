@@ -5,6 +5,7 @@ import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { LassoSelectionService } from '../tools/selection/lasso/lasso-selection';
 import { ToolManagerService } from './tool-manager-service';
 
 describe('ToolManagerService', () => {
@@ -15,6 +16,7 @@ describe('ToolManagerService', () => {
     let eraserServiceSpy: jasmine.SpyObj<EraserService>;
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
     let lineServiceSpy: jasmine.SpyObj<LineService>;
+    let lassoSelectionServiceSpy: jasmine.SpyObj<LassoSelectionService>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -23,6 +25,7 @@ describe('ToolManagerService', () => {
         eraserServiceSpy = jasmine.createSpyObj('EraserService', ['setPrimaryColor', 'onMouseUp', 'onToolChange']);
         pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setPrimaryColor', 'onMouseUp', 'onToolChange']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['setPrimaryColor', 'onMouseUp']);
+        lassoSelectionServiceSpy = jasmine.createSpyObj('LassoSelectionService', ['onMouseUp']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
@@ -31,6 +34,7 @@ describe('ToolManagerService', () => {
                 { provide: EraserService, useValue: eraserServiceSpy },
                 { provide: PencilService, useValue: pencilServiceSpy },
                 { provide: LineService, useValue: lineServiceSpy },
+                { provide: LassoSelectionService, useValue: lassoSelectionServiceSpy },
             ],
         });
         service = TestBed.inject(ToolManagerService);
@@ -38,6 +42,7 @@ describe('ToolManagerService', () => {
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+        console.log(lassoSelectionServiceSpy);
     });
 
     it('select tool on 1 keypress should select rectangle', () => {
