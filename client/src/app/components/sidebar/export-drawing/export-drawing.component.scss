@@ -13,7 +13,8 @@
 }
 
 #saveButton,
-#cancelButton {
+#cancelButton,
+#imgurButton {
     align-content: center;
     font-size: large;
     background-color: coral;
@@ -21,13 +22,11 @@
     width: 210px;
 }
 
-#imgurButton {
-    align-content: center;
-    font-size: large;
-    color: #1cb76d;
-    background-color: #34373c;
-    margin: auto;
-    width: 210px;
+#saveButton:hover,
+#cancelButton:hover,
+#imgurButton:hover {
+    color: black;
+    background-color: slategrey;
 }
 
 .modal-dialog {
@@ -38,5 +37,4 @@
 
 .mat-dialog-title {
     text-align: center;
-    font-family: 'Rubik', serif;
 }
