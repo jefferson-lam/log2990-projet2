@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { Tool } from '@app/classes/tool';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
+import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
@@ -14,9 +15,6 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class SidebarComponent implements OnChanges {
     @Output() notifyOnToolSelect: EventEmitter<Tool> = new EventEmitter<Tool>();
-    @Output() openExportPopUp: EventEmitter<void> = new EventEmitter<void>();
-    @Output() openNewDrawingPopUp: EventEmitter<void> = new EventEmitter<void>();
-    @Output() openSavePopUp: EventEmitter<void> = new EventEmitter<void>();
     @Input() currentTool: Tool;
     @Input() isUndoPossible: boolean = false;
     @Input() isRedoPossible: boolean = false;
@@ -43,7 +41,7 @@ export class SidebarComponent implements OnChanges {
         { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' },
     ];
 
-    constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService) {
+    constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService, public popupManager: PopupManagerService) {
         this.shouldRun = false;
         this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
@@ -70,15 +68,15 @@ export class SidebarComponent implements OnChanges {
     }
 
     openNewDrawing(): void {
-        this.openNewDrawingPopUp.emit();
+        this.popupManager.openNewDrawingPopUp();
     }
 
     exportDrawing(): void {
-        this.openExportPopUp.emit();
+        this.popupManager.openExportPopUp();
     }
 
     saveDrawing(): void {
-        this.openSavePopUp.emit();
+        this.popupManager.openSavePopUp();
     }
 
     openGridOptions(): void {

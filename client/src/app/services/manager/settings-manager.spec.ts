@@ -1,5 +1,4 @@
 import { async, TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
@@ -7,6 +6,7 @@ import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service
 import { ColorService } from '@app/services/color/color.service';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 // tslint:disable:no-any
@@ -36,7 +36,13 @@ describe('SettingsManagerService', () => {
             ],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService, {} as CanvasGridService);
+        editorComponent = new EditorComponent(
+            {} as ToolManagerService,
+            service,
+            {} as UndoRedoService,
+            {} as CanvasGridService,
+            {} as PopupManagerService,
+        );
         editorComponent.currentTool = toolSpy;
     });
 

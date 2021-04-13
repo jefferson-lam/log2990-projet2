@@ -1,29 +1,23 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
-import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
-import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
-import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { Observable, Subject } from 'rxjs';
 import { EditorComponent } from './editor.component';
 
 class ToolStub extends Tool {}
 
 // tslint:disable:no-string-literal
 // tslint:disable:no-any
-// tslint:disable:no-string-literal
 // tslint:disable:max-file-line-count
 describe('EditorComponent', () => {
     let component: EditorComponent;
@@ -32,14 +26,11 @@ describe('EditorComponent', () => {
     let rectangleSelectionService: RectangleSelectionService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let keyboardEventSpy: jasmine.Spy;
-    let dialogSpy: jasmine.SpyObj<MatDialog>;
+    let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
     let undoSpy: jasmine.Spy;
     let redoSpy: jasmine.Spy;
-    let savePopUpSpy: jasmine.Spy;
-    let exportPopUpSpy: jasmine.Spy;
-    let newDrawingPopUpSpy: jasmine.Spy;
     let undoSelectionSpy: jasmine.Spy;
     let selectAllSpy: jasmine.Spy;
 
@@ -47,20 +38,14 @@ describe('EditorComponent', () => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService, {} as UndoRedoService);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
-        dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
+        popupManagerSpy = jasmine.createSpyObj('PopupManagerService', ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp'], ['isPopupOpen']);
         canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize']);
-        (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
-            new Subject<any>(),
-        );
-        (Object.getOwnPropertyDescriptor(dialogSpy, 'afterAllClosed')?.get as jasmine.Spy<() => Observable<void>>).and.returnValue(
-            dialogSpy['_afterAllClosedAtThisLevel'].asObservable(),
-        );
 
         TestBed.configureTestingModule({
             declarations: [EditorComponent, DrawingComponent, SidebarComponent],
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: MatDialog, useValue: dialogSpy },
+                { provide: PopupManagerService, useValue: popupManagerSpy },
                 { provide: ToolManagerService, useValue: toolManagerSpy },
                 { provide: Tool, useValue: toolStub },
                 { provide: CanvasGridService, useValue: canvasGridServiceSpy },
@@ -72,7 +57,6 @@ describe('EditorComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(EditorComponent);
         component = fixture.componentInstance;
-        component.newDialog = dialogSpy;
         drawServiceSpy.imageURL = '';
         fixture.detectChanges();
         keyboardEventSpy = spyOn(component, 'onKeyboardDown').and.callThrough();
@@ -87,9 +71,6 @@ describe('EditorComponent', () => {
         undoSpy = spyOn(component.undoRedoService, 'undo');
         redoSpy = spyOn(component.undoRedoService, 'redo');
 
-        savePopUpSpy = spyOn(component, 'openSavePopUp').and.callThrough();
-        exportPopUpSpy = spyOn(component, 'openExportPopUp').and.callThrough();
-        newDrawingPopUpSpy = spyOn(component, 'openNewDrawingPopUp').and.callThrough();
         undoSelectionSpy = spyOn(rectangleSelectionService, 'undoSelection').and.callFake(() => {
             return;
         });
@@ -102,23 +83,14 @@ describe('EditorComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('ngOnInit should call subscribe', () => {
-        const subscribeSpy = spyOn(component.newDialog.afterAllClosed, 'subscribe').and.callThrough();
-        component.ngOnInit();
-
-        expect(subscribeSpy).toHaveBeenCalled();
-    });
-
-    it('should not call select tool,undo,redo, openExportModalPopUp or openNewDrawingPopUp when isPopUpOpen', () => {
-        component.isPopUpOpen = true;
+    it('should not call select tool,undo or redo when popupManager.isPopUpOpen', () => {
+        component.popupManager.isPopUpOpen = true;
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: '1' });
         component.onKeyboardDown(eventSpy);
 
         expect(toolManagerSpy.selectTool).not.toHaveBeenCalled();
         expect(undoSpy).not.toHaveBeenCalled();
         expect(redoSpy).not.toHaveBeenCalled();
-        expect(exportPopUpSpy).not.toHaveBeenCalled();
-        expect(newDrawingPopUpSpy).not.toHaveBeenCalled();
     });
 
     it("should call select tool when '1' key is down", () => {
@@ -206,7 +178,7 @@ describe('EditorComponent', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyO', key: '' });
         component.onCtrlOKeyDown(eventSpy);
 
-        expect(newDrawingPopUpSpy).toHaveBeenCalled();
+        expect(popupManagerSpy.openNewDrawingPopUp).toHaveBeenCalled();
         expect(eventSpy['preventDefault']).toHaveBeenCalled();
     });
 
@@ -238,15 +210,15 @@ describe('EditorComponent', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: '', key: '' });
         component.onKeyboardDown(eventSpy);
 
-        expect(exportPopUpSpy).not.toHaveBeenCalled();
-        expect(newDrawingPopUpSpy).not.toHaveBeenCalled();
+        expect(popupManagerSpy.openExportPopUp).not.toHaveBeenCalled();
+        expect(popupManagerSpy.openNewDrawingPopUp).not.toHaveBeenCalled();
     });
 
     it("should not call openNewDrawingPopUp when only 'o' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'KeyO', key: '' });
         component.onKeyboardDown(eventSpy);
 
-        expect(newDrawingPopUpSpy).not.toHaveBeenCalled();
+        expect(popupManagerSpy.openNewDrawingPopUp).not.toHaveBeenCalled();
     });
 
     it("should call undo when 'ctrl+z' keys are down and tool isn't used and no popups open", () => {
@@ -325,163 +297,20 @@ describe('EditorComponent', () => {
         expect(selectAllSpy).toHaveBeenCalled();
     });
 
-    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile isn't empty and pop up isn't open and if tool is selection", () => {
-        const emptyUndoPileSpy = spyOn(component.undoRedoService, 'isUndoPileEmpty').and.callFake(() => {
-            return false;
-        });
-        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
-        component.currentTool = rectangleSelectionService;
-        component.isPopUpOpen = false;
-        component.openNewDrawingPopUp();
-
-        expect(onToolChangeSpy).toHaveBeenCalled();
-        expect(emptyUndoPileSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
-        expect(component.isPopUpOpen).toBeTrue();
-    });
-
-    it("openNewDrawingPopUp should open NewDrawingBoxComponent if canvas isn't empty and pop up isn't open", () => {
-        const emptyUndoPileSpy = spyOn(component.undoRedoService, 'isUndoPileEmpty').and.callFake(() => {
-            return false;
-        });
-        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
-        component.isPopUpOpen = false;
-        component.openNewDrawingPopUp();
-
-        expect(onToolChangeSpy).not.toHaveBeenCalled();
-        expect(emptyUndoPileSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
-        expect(component.isPopUpOpen).toBeTrue();
-    });
-
-    it('openNewDrawingPopUp should not open anything if canvas is empty and pop up is not open', () => {
-        const emptyUndoPileSpy = spyOn(component.undoRedoService, 'isUndoPileEmpty').and.callFake(() => {
-            return true;
-        });
-        component.isPopUpOpen = false;
-        component.openNewDrawingPopUp();
-
-        expect(emptyUndoPileSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-        expect(component.isPopUpOpen).toBeFalse();
-    });
-
-    it('openNewDrawingPopUp should not open anything if pop up is open and canvas is empty', () => {
-        const emptyUndoPileSpy = spyOn(component.undoRedoService, 'isUndoPileEmpty').and.callFake(() => {
-            return true;
-        });
-        component.isPopUpOpen = true;
-        component.openNewDrawingPopUp();
-
-        expect(emptyUndoPileSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-        expect(component.isPopUpOpen).toBeTrue();
-    });
-
     it("'ctrl+e' should call openExportPopUp", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
         component.onCtrlEKeyDown(eventSpy);
 
-        expect(exportPopUpSpy).toHaveBeenCalled();
+        expect(popupManagerSpy.openExportPopUp).toHaveBeenCalled();
         expect(eventSpy['preventDefault']).toHaveBeenCalled();
-    });
-
-    it('ctrl+e should call selectionServices onToolChange if current tool is selection before export', () => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyE', key: '' });
-        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
-        component.currentTool = rectangleSelectionService;
-        component.onCtrlEKeyDown(eventSpy);
-        expect(onToolChangeSpy).toHaveBeenCalled();
-        expect(exportPopUpSpy).toHaveBeenCalled();
-        expect(eventSpy['preventDefault']).toHaveBeenCalled();
-    });
-
-    it("openExportPopUp should open export pop up if pop up isn't open and selection tool", () => {
-        const mockConfig = { maxWidth: MAX_WIDTH_FORM + 'px', maxHeight: MAX_HEIGHT_FORM + 'px' };
-        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
-        component.currentTool = rectangleSelectionService;
-        component.isPopUpOpen = false;
-        component.openExportPopUp();
-
-        expect(onToolChangeSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
-        expect(component.isPopUpOpen).toBeTrue();
-    });
-
-    it("openExportPopUp should open export pop up if pop up isn't open", () => {
-        const mockConfig = { maxWidth: MAX_WIDTH_FORM + 'px', maxHeight: MAX_HEIGHT_FORM + 'px' };
-        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
-        component.isPopUpOpen = false;
-        component.openExportPopUp();
-
-        expect(onToolChangeSpy).not.toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
-        expect(component.isPopUpOpen).toBeTrue();
-    });
-
-    it('openExportPopUp should not open anything if pop up is open', () => {
-        component.isPopUpOpen = true;
-        component.openExportPopUp();
-
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-        expect(component.isPopUpOpen).toBeTrue();
     });
 
     it("'ctrl+s' should call openSavePopUp", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyS', key: '' });
         component.onCtrlSKeyDown(eventSpy);
 
-        expect(savePopUpSpy).toHaveBeenCalled();
+        expect(popupManagerSpy.openSavePopUp).toHaveBeenCalled();
         expect(eventSpy['preventDefault']).toHaveBeenCalled();
-    });
-
-    it("openSavePopUp should open SaveDrawingComponent if canvas isn't empty and pop up isn't open", () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
-            return false;
-        });
-        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
-        component.currentTool = rectangleSelectionService;
-        component.isPopUpOpen = false;
-        component.openSavePopUp();
-
-        expect(onToolChangeSpy).toHaveBeenCalled();
-        expect(savePopUpSpy).toHaveBeenCalled();
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(SaveDrawingComponent);
-        expect(component.isPopUpOpen).toBeTrue();
-    });
-
-    it("openSavePopUp should open SaveDrawingComponent if canvas isn't empty and pop up isn't open and tool is not selection", () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
-            return false;
-        });
-        const onToolChangeSpy = spyOn(rectangleSelectionService, 'onToolChange');
-        component.isPopUpOpen = false;
-        component.openSavePopUp();
-
-        expect(onToolChangeSpy).not.toHaveBeenCalled();
-        expect(savePopUpSpy).toHaveBeenCalled();
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(SaveDrawingComponent);
-        expect(component.isPopUpOpen).toBeTrue();
-    });
-
-    it('openSavePopUp should not open anything if canvas is empty', () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
-            return true;
-        });
-
-        component.openSavePopUp();
-
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-        expect(component.isPopUpOpen).toBeFalse();
     });
 
     it('ctrl+a should switch the current tool to rectangleSelection and call its selectAll method', () => {
@@ -491,59 +320,10 @@ describe('EditorComponent', () => {
         expect(toolManagerSpy.getTool).toHaveBeenCalledWith(RECTANGLE_SELECTION_KEY);
     });
 
-    it("openSavePopUp should not open anything if pop up is open and canvas isn't empty", () => {
-        const emptyCanvasSpy = spyOn(component, 'isCanvasEmpty').and.callFake(() => {
-            return true;
-        });
-        component.isPopUpOpen = true;
-        component.openSavePopUp();
-
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-        expect(component.isPopUpOpen).toBeTrue();
-    });
-
     it('should not call selectTool if a non tool key is down.', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'u' });
         component.onKeyboardDown(eventSpy);
 
         expect(toolManagerSpy.selectTool).not.toHaveBeenCalled();
-    });
-
-    it('isCanvasEmpty should return true if canvas only white', () => {
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const isCanvasEmptySpy = spyOn(component, 'isCanvasEmpty').and.callThrough();
-
-        const returnValue = component.isCanvasEmpty();
-
-        expect(isCanvasEmptySpy).toHaveBeenCalled();
-        expect(returnValue).toBeTrue();
-    });
-
-    it('isCanvasEmpty should return false if something has been drawn', () => {
-        const isCanvasEmptySpy = spyOn(component, 'isCanvasEmpty').and.callThrough();
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, 1, 1);
-
-        const returnValue = component.isCanvasEmpty();
-
-        expect(isCanvasEmptySpy).toHaveBeenCalled();
-        expect(returnValue).toBeFalse();
-    });
-
-    it('when all popups are closed, isPopUpOpen is set to false', () => {
-        dialogSpy._getAfterAllClosed.and.callFake(() => {
-            return component.newDialog['_afterAllClosedAtThisLevel'];
-        });
-        component.isPopUpOpen = true;
-
-        component.newDialog._getAfterAllClosed().next();
-
-        expect(component.isPopUpOpen).toBeFalse();
     });
 });
