@@ -5,6 +5,7 @@ import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { Subject } from 'rxjs';
 import { SidebarMagnetismComponent } from './sidebar-magnetism.component';
 
+// tslint:disable: no-any
 describe('SidebarMagnetismComponent', () => {
     let component: SidebarMagnetismComponent;
     let fixture: ComponentFixture<SidebarMagnetismComponent>;
