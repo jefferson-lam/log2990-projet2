@@ -22,7 +22,7 @@ describe('MainPageComponent', () => {
     beforeEach(async(() => {
         popupManagerSpy = jasmine.createSpyObj(
             'PopupManagerService',
-            ['openDiscardChangesPopUp', 'openCarouselPopUp', 'openNewDrawingPopUp'],
+            ['openDiscardChangesPopUp', 'openCarrouselPopUp', 'openNewDrawingPopUp'],
             ['isPopupOpen'],
         );
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -141,12 +141,12 @@ describe('MainPageComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
 
-    it('on carousel button click, should open carrousel interface', () => {
+    it('on carrousel button click, should open carrousel interface', () => {
         fixture.detectChanges();
         const btn = fixture.debugElement.nativeElement.querySelector('#carousel-button');
         btn.click();
         fixture.detectChanges();
-        expect(popupManagerSpy.openCarouselPopUp).toHaveBeenCalled();
+        expect(popupManagerSpy.openCarrouselPopUp).toHaveBeenCalled();
     });
 
     it('continue drawing button should not be created if no ongoingDrawing', () => {
@@ -177,11 +177,11 @@ describe('MainPageComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
 
-    it('should call openCarouselPopUp on control+g as well as prevent default', () => {
+    it('should call openCarrouselPopUp on control+g as well as prevent default', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyG', key: '' });
         component.onCtrlGKeyDown(eventSpy);
 
-        expect(popupManagerSpy.openCarouselPopUp).toHaveBeenCalled();
+        expect(popupManagerSpy.openCarrouselPopUp).toHaveBeenCalled();
         expect(eventSpy.preventDefault).toHaveBeenCalled();
     });
 });

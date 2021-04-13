@@ -102,6 +102,7 @@ export class MainPageCarrouselComponent {
         this.showCasedDrawings.pop();
         this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
     }
+
     @HostListener('keydown.ArrowRight', ['$event'])
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;

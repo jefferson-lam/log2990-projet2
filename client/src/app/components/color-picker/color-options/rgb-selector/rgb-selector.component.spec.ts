@@ -1,15 +1,19 @@
 import { SimpleChange, SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { RgbSelectorComponent } from './rgb-selector.component';
 
 describe('RgbSelectorComponent', () => {
     let component: RgbSelectorComponent;
     let fixture: ComponentFixture<RgbSelectorComponent>;
+    let shortcutManagerSpy: jasmine.SpyObj<ShortcutManagerService>;
 
     beforeEach(async(() => {
+        shortcutManagerSpy = jasmine.createSpyObj('ShortcutManagerService', ['']);
         TestBed.configureTestingModule({
             declarations: [RgbSelectorComponent],
+            providers: [{ provide: ShortcutManagerService, useValue: shortcutManagerSpy }],
         }).compileComponents();
     }));
 

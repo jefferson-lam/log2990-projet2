@@ -96,27 +96,27 @@ describe('PopupManagerService', () => {
         expect(service.isPopUpOpen).toBeTrue();
     });
 
-    it('openCarouselPopUp should not open MainPageCarrouselComponent if isPopUpOpen', () => {
+    it('openCarrouselPopUp should not open MainPageCarrouselComponent if isPopUpOpen', () => {
         service.isPopUpOpen = true;
-        service.openCarouselPopUp();
+        service.openCarrouselPopUp();
 
         expect(dialogSpy.open).not.toHaveBeenCalled();
     });
 
-    it('openCarouselPopUp should open MainPageCarrouselComponent if isPopUpOpen false', () => {
+    it('openCarrouselPopUp should open MainPageCarrouselComponent if isPopUpOpen false', () => {
         dialogSpy.open.and.returnValue({ afterClosed: () => EMPTY } as any);
 
-        service.openCarouselPopUp();
+        service.openCarrouselPopUp();
 
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(MainPageCarrouselComponent, { height: '700px', width: '1800px' });
     });
 
-    it('openCarouselPopUp should do nothing if MainPageCarrouselComponent return false for autosave', () => {
+    it('openCarrouselPopUp should do nothing if MainPageCarrouselComponent return false for autosave', () => {
         const discardChangesSpy = spyOn(service, 'openDiscardChangesPopUp');
         dialogSpy.open.and.returnValue({ afterClosed: () => carrousselSubject.asObservable() } as MatDialogRef<MainPageCarrouselComponent>);
 
-        service.openCarouselPopUp();
+        service.openCarrouselPopUp();
         carrousselSubject.next({ autosave: false, data: mockImageURL });
         localStorage.clear();
 
@@ -124,11 +124,11 @@ describe('PopupManagerService', () => {
         expect(discardChangesSpy).not.toHaveBeenCalled();
     });
 
-    it('openCarouselPopUp should open DiscardChangesComponent if MainPageCarrouselComponent return true for autosave', () => {
+    it('openCarrouselPopUp should open DiscardChangesComponent if MainPageCarrouselComponent return true for autosave', () => {
         const discardChangesSpy = spyOn(service, 'openDiscardChangesPopUp');
         dialogSpy.open.and.returnValue({ afterClosed: () => carrousselSubject.asObservable() } as MatDialogRef<MainPageCarrouselComponent>);
 
-        service.openCarouselPopUp();
+        service.openCarrouselPopUp();
         carrousselSubject.next({ autosave: true, data: mockImageURL });
         localStorage.clear();
 
@@ -136,13 +136,13 @@ describe('PopupManagerService', () => {
         expect(discardChangesSpy).toHaveBeenCalled();
     });
 
-    it('openCarouselPopUp should set localStorage autosave if open DiscardChangesComponent returns true for discard', () => {
+    it('openCarrouselPopUp should set localStorage autosave if open DiscardChangesComponent returns true for discard', () => {
         const discardChangesSpy = spyOn(service, 'openDiscardChangesPopUp').and.returnValue({
             afterClosed: () => discardSubject.asObservable(),
         } as MatDialogRef<DiscardChangesPopupComponent>);
         dialogSpy.open.and.returnValue({ afterClosed: () => carrousselSubject.asObservable() } as MatDialogRef<MainPageCarrouselComponent>);
 
-        service.openCarouselPopUp();
+        service.openCarrouselPopUp();
         carrousselSubject.next({ autosave: true, data: mockImageURL });
         discardSubject.next(true);
         localStorage.clear();
@@ -152,13 +152,13 @@ describe('PopupManagerService', () => {
         expect(discardChangesSpy).toHaveBeenCalled();
     });
 
-    it('openCarouselPopUp should not set localStorage autosave if open DiscardChangesComponent returns false for discard', () => {
+    it('openCarrouselPopUp should not set localStorage autosave if open DiscardChangesComponent returns false for discard', () => {
         const discardChangesSpy = spyOn(service, 'openDiscardChangesPopUp').and.returnValue({
             afterClosed: () => discardSubject.asObservable(),
         } as MatDialogRef<DiscardChangesPopupComponent>);
         dialogSpy.open.and.returnValue({ afterClosed: () => carrousselSubject.asObservable() } as MatDialogRef<MainPageCarrouselComponent>);
 
-        service.openCarouselPopUp();
+        service.openCarrouselPopUp();
         carrousselSubject.next({ autosave: true, data: mockImageURL });
         discardSubject.next(false);
         localStorage.clear();

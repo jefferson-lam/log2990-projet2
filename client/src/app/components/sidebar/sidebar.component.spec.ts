@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
@@ -14,6 +14,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle-servic
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { BehaviorSubject } from 'rxjs';
 import { SidebarComponent } from './sidebar.component';
 
 class ToolStub extends Tool {}
@@ -32,7 +33,6 @@ describe('SidebarComponent', () => {
     let undoRedoService: UndoRedoService;
     let mockCommand: Command;
     let commandExecuteSpy: jasmine.Spy;
-    let selectToolEmitterSpy: jasmine.Spy;
     let selectToolSpy: jasmine.Spy;
     let undoServiceSpy: jasmine.Spy;
     let redoServiceSpy: jasmine.Spy;
@@ -45,7 +45,6 @@ describe('SidebarComponent', () => {
     // tslint:disable:max-file-line-count
     beforeEach(async(() => {
         popupManagerSpy = jasmine.createSpyObj('PopupManagerService', ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp'], ['isPopupOpen']);
-        toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['getTool'], ['currentToolSubject']);
         pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService);
         eraserStub = new EraserService({} as DrawingService, {} as UndoRedoService);
         lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
@@ -57,6 +56,11 @@ describe('SidebarComponent', () => {
             {} as ResizerHandlerService,
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
+        toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject']);
+        (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
+        (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<
+            () => BehaviorSubject<Tool>
+        >).and.returnValue(new BehaviorSubject<Tool>(toolManagerServiceSpy.currentTool));
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -80,9 +84,8 @@ describe('SidebarComponent', () => {
         undoRedoService = TestBed.inject(UndoRedoService);
         mockCommand = new PencilCommand({} as CanvasRenderingContext2D, pencilStub as PencilService);
         commandExecuteSpy = spyOn(mockCommand, 'execute');
-        selectToolEmitterSpy = spyOn(component.notifyOnToolSelect, 'emit');
         selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
-        component.currentTool = pencilStub;
+        component.toolManager.currentTool = pencilStub;
         undoServiceSpy = spyOn(undoRedoService, 'undo').and.callThrough();
         redoServiceSpy = spyOn(undoRedoService, 'redo').and.callThrough();
         refreshSpy = spyOn(undoRedoService, 'refresh');
@@ -98,7 +101,7 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on pencil button should select the pencil tool for user', () => {
-        toolManagerServiceSpy.getTool.and.callFake(() => {
+        toolManagerServiceSpy.selectTool.and.callFake(() => {
             return pencilStub;
         });
 
@@ -114,11 +117,10 @@ describe('SidebarComponent', () => {
             keyShortcut: 'c',
             helpShortcut: '(Touche C)',
         });
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(pencilStub);
     });
 
     it('clicking on eraser button should select the eraser tool for user', () => {
-        toolManagerServiceSpy.getTool.and.callFake(() => {
+        toolManagerServiceSpy.selectTool.and.callFake(() => {
             return eraserStub;
         });
 
@@ -134,11 +136,10 @@ describe('SidebarComponent', () => {
             keyShortcut: 'e',
             helpShortcut: '(Touche E)',
         });
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(eraserStub);
     });
 
     it('clicking on line button should select the line tool for user', () => {
-        toolManagerServiceSpy.getTool.and.callFake(() => {
+        toolManagerServiceSpy.selectTool.and.callFake(() => {
             return lineStub;
         });
 
@@ -154,11 +155,10 @@ describe('SidebarComponent', () => {
             keyShortcut: 'l',
             helpShortcut: '(Touche L)',
         });
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(lineStub);
     });
 
     it('clicking on rectangle button should select the rectangle tool for user', () => {
-        toolManagerServiceSpy.getTool.and.callFake(() => {
+        toolManagerServiceSpy.selectTool.and.callFake(() => {
             return rectangleStub;
         });
 
@@ -174,11 +174,10 @@ describe('SidebarComponent', () => {
             keyShortcut: '1',
             helpShortcut: '(Touche 1)',
         });
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleStub);
     });
 
     it('clicking on ellipse button should select the ellipse tool for user', () => {
-        toolManagerServiceSpy.getTool.and.callFake(() => {
+        toolManagerServiceSpy.selectTool.and.callFake(() => {
             return ellipseStub;
         });
 
@@ -194,13 +193,10 @@ describe('SidebarComponent', () => {
             keyShortcut: '2',
             helpShortcut: '(Touche 2)',
         });
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
     });
 
     it('when changing tool from editor, selected tool should correctly retrieve tool', () => {
-        component.ngOnChanges({
-            currentTool: new SimpleChange(null, eraserStub, false),
-        });
+        component.toolManager.currentToolSubject.next(eraserStub);
         expect(component.selectedTool).toEqual({
             service: 'EraserService',
             name: 'Efface',
@@ -208,14 +204,6 @@ describe('SidebarComponent', () => {
             keyShortcut: 'e',
             helpShortcut: '(Touche E)',
         });
-    });
-
-    it('when changing tool from editor, selected tool should correctly retrieve tool', () => {
-        const findSpy = spyOn(component.sidebarToolButtons, 'find');
-        component.ngOnChanges({
-            currentTool: {} as SimpleChange,
-        });
-        expect(findSpy).not.toHaveBeenCalled();
     });
 
     it('pressing on newDrawing should emit to editor', () => {
@@ -241,7 +229,7 @@ describe('SidebarComponent', () => {
 
     it('clicking on undo button when undo pile is not empty and tool is not used should call undoRedoService.undo', () => {
         undoRedoService.executeCommand(mockCommand);
-        component.currentTool.inUse = false;
+        component.toolManager.currentTool.inUse = false;
 
         fixture.detectChanges();
         expect(undoButton).not.toHaveClass('unclickable');
@@ -259,7 +247,7 @@ describe('SidebarComponent', () => {
 
     it('clicking on undo button when undo pile is not empty and tool is used should not call undoRedoService.undo', () => {
         undoRedoService.executeCommand(mockCommand);
-        component.currentTool.inUse = true;
+        component.toolManager.currentTool.inUse = true;
 
         fixture.detectChanges();
         expect(undoButton).not.toHaveClass('unclickable');
@@ -273,14 +261,18 @@ describe('SidebarComponent', () => {
 
     it('clicking on undo button if currentTool is of SelectionService while is manipulating is false should call the undo pile', () => {
         rectangleSelectionServiceStub.isManipulating = false;
-        component.currentTool = rectangleSelectionServiceStub;
+        (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(
+            rectangleSelectionServiceStub,
+        );
         component.undo();
         expect(undoServiceSpy).toHaveBeenCalled();
     });
 
-    it('clicking on undo button if currentTool is of SelectionService while is manipulating is true should call the undo pile', () => {
+    it('clicking on undo button if currentTool is of SelectionService while is manipulating is true should not call the undo pile', () => {
         rectangleSelectionServiceStub.isManipulating = true;
-        component.currentTool = rectangleSelectionServiceStub;
+        (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(
+            rectangleSelectionServiceStub,
+        );
         component.undo();
         expect(selectionUndoSelectionSpy).toHaveBeenCalled();
         expect(component.isUndoSelection).toBeFalsy();
@@ -293,7 +285,7 @@ describe('SidebarComponent', () => {
         });
         undoRedoService.executeCommand(mockCommand);
         undoRedoService.undo();
-        component.currentTool.inUse = false;
+        component.toolManager.currentTool.inUse = false;
 
         fixture.detectChanges();
         expect(redoButton).not.toHaveClass('unclickable');
@@ -315,7 +307,7 @@ describe('SidebarComponent', () => {
         });
         undoRedoService.executeCommand(mockCommand);
         undoRedoService.undo();
-        component.currentTool.inUse = true;
+        component.toolManager.currentTool.inUse = true;
 
         fixture.detectChanges();
         expect(redoButton).not.toHaveClass('unclickable');
@@ -328,26 +320,27 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on selectAll should change the currentTool to rectangleSelectionService and call its selectAll method', () => {
-        toolManagerServiceSpy.getTool.and.callFake(() => {
+        toolManagerServiceSpy.selectTool.and.callFake(() => {
+            (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(
+                rectangleSelectionServiceStub,
+            );
             return rectangleSelectionServiceStub;
         });
         const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
             return;
         });
         component.selectAll();
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(rectangleSelectionServiceStub);
         expect(selectAllSpy).toHaveBeenCalled();
     });
 
     it('clicking on selectAll should not call selectAll if the tool is not rectangleSelectionService', () => {
-        toolManagerServiceSpy.getTool.and.callFake(() => {
+        toolManagerServiceSpy.selectTool.and.callFake(() => {
             return ellipseStub;
         });
         const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
             return;
         });
         component.selectAll();
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(ellipseStub);
         expect(selectAllSpy).not.toHaveBeenCalled();
     });
 
