@@ -17,14 +17,9 @@
     position: absolute;
     z-index: 13;
     border: none;
-    outline: 1px solid red;
+    outline: none;
     background: transparent;
 }
-
-// #previewSelectionLayer:focus {
-//     border: 1px solid black;
-//     outline: none;
-// }
 
 #selectionContainer {
     position: relative;
