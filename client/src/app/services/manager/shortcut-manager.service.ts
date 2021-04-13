@@ -30,7 +30,7 @@ export class ShortcutManagerService {
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.isShortcutAllowed() && event.key.match(/^(1|2|3|a|c|e|i|l|r|s)$/)) {
+        if (this.isShortcutAllowed() && event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b)$/)) {
             this.toolManager.selectTool(event.key);
         }
     }
