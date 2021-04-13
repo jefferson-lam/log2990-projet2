@@ -9,6 +9,7 @@ describe('MagnetismService', () => {
     let service: MagnetismService;
     let canvasTestHelper: CanvasTestHelper;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
+    let magnetismSubjectSpy: jasmine.Spy;
     const transformValues = { x: 0, y: 0 };
 
     beforeEach(() => {
@@ -21,6 +22,7 @@ describe('MagnetismService', () => {
         canvasTestHelper.selectionCanvas.style.top = '0px';
         canvasTestHelper.selectionCanvas.width = 100;
         canvasTestHelper.selectionCanvas.height = 100;
+        magnetismSubjectSpy = spyOn(service.magnetismStateSubject, 'next');
     });
 
     it('should be created', () => {
@@ -88,5 +90,19 @@ describe('MagnetismService', () => {
         const closestCorner = service.magnetizeSelection(canvasTestHelper.selectionCanvas, transformValues);
         const EXPECTED_CORNER = { x: 10, y: 10 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
+    });
+
+    it('toggleMagnetism should set isMagnetismOn to true if isMagnetismOn is initially false', () => {
+        service.isMagnetismOn = false;
+        service.toggleMagnetism();
+        expect(service.isMagnetismOn).toBeTrue();
+        expect(magnetismSubjectSpy).toHaveBeenCalledWith(service.isMagnetismOn);
+    });
+
+    it('toggleMagnetism should set isMagnetismOn to false if isMagnetismOn is initially true', () => {
+        service.isMagnetismOn = true;
+        service.toggleMagnetism();
+        expect(service.isMagnetismOn).toBeFalse();
+        expect(magnetismSubjectSpy).toHaveBeenCalledWith(service.isMagnetismOn);
     });
 });

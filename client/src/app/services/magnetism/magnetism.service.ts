@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import * as MagnestismConstants from '@app/constants/magnetism-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -12,6 +13,7 @@ export class MagnetismService {
     topLeftResizerCoords: Vec2;
     bottomRightResizerCoords: Vec2;
     referenceResizerCoords: Vec2;
+    magnetismStateSubject: Subject<boolean> = new Subject<boolean>();
 
     constructor(private canvasGridService: CanvasGridService) {
         this.isMagnetismOn = true;
@@ -56,6 +58,11 @@ export class MagnetismService {
                 break;
         }
         return this.findClosestCorner(transformValues);
+    }
+
+    toggleMagnetism(): void {
+        this.isMagnetismOn = !this.isMagnetismOn;
+        this.magnetismStateSubject.next(this.isMagnetismOn);
     }
 
     private setCornerCoords(selectionCanvas: HTMLCanvasElement): void {
