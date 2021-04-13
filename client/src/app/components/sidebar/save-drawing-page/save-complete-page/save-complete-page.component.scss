@@ -10,14 +10,16 @@
     color: green;
     justify-content: center;
 }
-#saveCompleteHeader,
+#exportCompleteHeader,
 #buttonDiv {
     display: flex;
     justify-content: center;
 }
 
 button {
+    align-content: center;
     font-size: large;
     background-color: coral;
-    width: 125px;
+    margin: auto;
+    width: 210px;
 }
