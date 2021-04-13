@@ -5,6 +5,7 @@ import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { ColorService } from '@app/services/color/color.service';
+import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
@@ -36,7 +37,14 @@ describe('SettingsManagerService', () => {
             ],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService, {} as CanvasGridService);
+        editorComponent = new EditorComponent(
+            {} as ToolManagerService,
+            {} as MatDialog,
+            service,
+            {} as UndoRedoService,
+            {} as CanvasGridService,
+            {} as MagnetismService,
+        );
         editorComponent.currentTool = toolSpy;
     });
 
