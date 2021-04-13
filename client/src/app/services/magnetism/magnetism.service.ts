@@ -7,16 +7,15 @@ import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service
     providedIn: 'root',
 })
 export class MagnetismService {
-    isMagnetismOn: boolean = false;
-    referenceResizerMode: MagnestismConstants.ResizerIndex = MagnestismConstants.ResizerIndex.TOP_RIGHT_INDEX;
+    isMagnetismOn: boolean;
+    referenceResizerMode: MagnestismConstants.ResizerIndex;
     topLeftResizerCoords: Vec2;
     bottomRightResizerCoords: Vec2;
     referenceResizerCoords: Vec2;
 
-    constructor(private canvasGridService: CanvasGridService) {}
-
-    printMessage(): void {
-        console.log('MOVED!');
+    constructor(private canvasGridService: CanvasGridService) {
+        this.isMagnetismOn = true;
+        this.referenceResizerMode = MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX;
     }
 
     magnetizeSelection(selectionCanvas: HTMLCanvasElement, transformValues: Vec2): Vec2 {
