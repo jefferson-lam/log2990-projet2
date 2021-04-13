@@ -1,4 +1,5 @@
 #saveErrorDiv {
+    display: flex;
     text-align: center;
 }
 
@@ -30,7 +31,9 @@
 }
 
 button {
+    align-content: center;
     font-size: large;
     background-color: coral;
-    width: 125px;
+    margin: auto;
+    width: 210px;
 }
