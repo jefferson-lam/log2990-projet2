@@ -7,7 +7,7 @@ import { ColorService } from './color.service';
 describe('ColorService', () => {
     let service: ColorService;
     let newColor: Rgba;
-    const colorPlaceholderBlack: Rgba = { red: '0', green: '0', blue: '0', alpha: 1 };
+    const colorPlaceholderBlack: Rgba = { red: 0, green: 0, blue: 0, alpha: 1 };
     const colorPlaceholderBlackString = 'rgba(0, 0, 0, 1)';
     let ctx: CanvasRenderingContext2D;
     let canvasTestHelper: CanvasTestHelper;
@@ -15,7 +15,7 @@ describe('ColorService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ColorService);
-        newColor = { red: '100', green: '0', blue: '233', alpha: 0.8 };
+        newColor = { red: 100, green: 0, blue: 233, alpha: 0.8 };
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         ctx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
     });

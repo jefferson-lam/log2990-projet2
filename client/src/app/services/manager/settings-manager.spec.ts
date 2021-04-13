@@ -5,9 +5,9 @@ import { Tool } from '@app/classes/tool';
 import { EditorComponent } from '@app/components/editor/editor.component';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { ColorService } from '@app/services/color/color.service';
+import { SettingsManagerService } from '@app/services/manager/settings-manager';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { SettingsManagerService } from './settings-manager';
-import { ToolManagerService } from './tool-manager-service';
 
 // tslint:disable:no-any
 describe('SettingsManagerService', () => {
@@ -105,9 +105,9 @@ describe('SettingsManagerService', () => {
 
     it('calls setPrimaryColorsTools when size changed', async(() => {
         const mockColor = {
-            red: '255',
-            green: '10',
-            blue: '2',
+            red: 255,
+            green: 10,
+            blue: 2,
             alpha: 1,
         } as Rgba;
         const serviceSetter = spyOn(service, 'setPrimaryColorTools').and.callThrough();
@@ -120,9 +120,9 @@ describe('SettingsManagerService', () => {
 
     it('calls setSecondaryColorsTools when size changed', async(() => {
         const mockColor = {
-            red: '255',
-            green: '10',
-            blue: '2',
+            red: 255,
+            green: 10,
+            blue: 2,
             alpha: 1,
         } as Rgba;
         const serviceSetter = spyOn(service, 'setSecondaryColorTools').and.callThrough();
