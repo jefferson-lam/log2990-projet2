@@ -2,14 +2,22 @@
     position: absolute;
     z-index: 12;
     border: 1px dashed black;
-    outline: black;
+}
+
+#borderLayer {
+    position: absolute;
+    z-index: 14;
+    pointer-events: none;
+    background: transparent;
+    opacity: 0.5;
+    border: 1px solid black;
 }
 
 #previewSelectionLayer {
     position: absolute;
     z-index: 13;
     border: none;
-    outline: none;
+    outline: 1px solid red;
     background: transparent;
 }
 

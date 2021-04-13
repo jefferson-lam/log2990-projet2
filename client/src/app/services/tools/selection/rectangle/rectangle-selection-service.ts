@@ -49,6 +49,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
             this.resetCanvasState(this.drawingService.selectionCanvas);
             this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+            this.resetCanvasState(this.drawingService.borderCanvas);
             this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
             this.resizerHandlerService.resetResizers();
@@ -76,6 +77,8 @@ export class RectangleSelectionService extends ToolSelectionService {
             }
             this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+            this.drawingService.borderCanvas.width = this.selectionWidth;
+            this.drawingService.borderCanvas.height = this.selectionHeight;
             this.selectRectangle(
                 this.drawingService.selectionCtx,
                 this.drawingService.baseCtx,
@@ -208,6 +211,8 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
         this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
     }
 

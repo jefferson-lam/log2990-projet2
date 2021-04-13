@@ -19,6 +19,9 @@ export class ResizeLeft extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.width = this.selectionComponent.bottomRight.x - pointerPosition;
             this.selectionComponent.previewSelectionCanvas.style.left = pointerPosition + 'px';
         }
+        // Modify border canvas in consequence
+        this.selectionComponent.borderCanvas.width = this.selectionComponent.previewSelectionCanvas.width;
+        this.selectionComponent.borderCanvas.style.left = this.selectionComponent.previewSelectionCanvas.style.left;
         this.lastWidth = this.selectionComponent.previewSelectionCanvas.width;
     }
 
@@ -35,19 +38,20 @@ export class ResizeLeft extends ResizeStrategy {
             // Left side resizing
             this.selectionComponent.previewSelectionCanvas.style.left = reference.x - shortestSide + 'px';
         }
+        this.selectionComponent.borderCanvas.style.left = this.selectionComponent.previewSelectionCanvas.style.left;
         this.resizeSquare(false, shortestSide);
     }
 
     resizeSquare(combined: boolean = false, length?: number): void {
         if (length) {
-            this.selectionComponent.previewSelectionCanvas.width = length;
+            this.selectionComponent.previewSelectionCanvas.width = this.selectionComponent.borderCanvas.width = length;
         } else if (combined && this.selectionComponent.bottomRight.x > parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10)) {
             const shortestSide = Math.min(
                 this.selectionComponent.previewSelectionCanvas.width,
                 this.selectionComponent.previewSelectionCanvas.height,
             );
             const difference = this.selectionComponent.previewSelectionCanvas.width - shortestSide;
-            this.selectionComponent.previewSelectionCanvas.style.left =
+            this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10) + difference + 'px';
         }
     }
@@ -55,10 +59,10 @@ export class ResizeLeft extends ResizeStrategy {
     restoreLastDimensions(): void {
         if (this.selectionComponent.bottomRight.x > parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10)) {
             const difference = this.selectionComponent.previewSelectionCanvas.width - this.lastWidth;
-            this.selectionComponent.previewSelectionCanvas.style.left =
+            this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10) + difference + 'px';
         }
 
-        this.selectionComponent.previewSelectionCanvas.width = this.lastWidth;
+        this.selectionComponent.previewSelectionCanvas.width = this.selectionComponent.borderCanvas.width = this.lastWidth;
     }
 }

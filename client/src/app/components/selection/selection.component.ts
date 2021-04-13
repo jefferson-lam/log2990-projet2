@@ -13,9 +13,11 @@ import { ResizerHandlerService } from '@app/services/tools/selection/resizer/res
 })
 export class SelectionComponent implements AfterViewInit {
     @ViewChild('selectionCanvas', { static: false }) selectionCanvasRef: ElementRef<HTMLCanvasElement>;
+    @ViewChild('borderCanvas', { static: false }) borderCanvasRef: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewSelectionCanvas', { static: false }) previewSelectionCanvasRef: ElementRef<HTMLCanvasElement>;
     @ViewChild('selectionBox', { static: false }) selectionContainer: ElementRef<HTMLCanvasElement>;
     selectionCanvas: HTMLCanvasElement;
+    borderCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
 
     @ViewChild('leftResizer', { static: false }) leftResizer: ElementRef<HTMLElement>;
@@ -44,6 +46,7 @@ export class SelectionComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.selectionCanvas = this.selectionCanvasRef.nativeElement;
+        this.borderCanvas = this.borderCanvasRef.nativeElement;
         this.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
 
         this.selectionCtx = this.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -52,6 +55,7 @@ export class SelectionComponent implements AfterViewInit {
         this.drawingService.previewSelectionCtx = this.previewSelectionCtx;
         this.drawingService.selectionCanvas = this.selectionCanvasRef.nativeElement;
         this.drawingService.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
+        this.drawingService.borderCanvas = this.borderCanvas;
 
         this.resizerHandlerService.resizers
             .set(ResizerDown.TopLeft, this.topLeftResizer.nativeElement)
@@ -92,11 +96,13 @@ export class SelectionComponent implements AfterViewInit {
             this.selectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + transformValues.y + 'px';
         }
         this.resizerHandlerService.setResizerPositions(this.selectionCanvas);
+        this.borderCanvas.style.left = this.selectionCanvas.style.left;
+        this.borderCanvas.style.top = this.selectionCanvas.style.top;
     }
 
     resetPreviewSelectionCanvas(event: CdkDragEnd): void {
-        this.previewSelectionCanvas.style.left = this.selectionCanvas.style.left;
-        this.previewSelectionCanvas.style.top = this.selectionCanvas.style.top;
+        this.previewSelectionCanvas.style.left = this.borderCanvas.style.left = this.selectionCanvas.style.left;
+        this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
         event.source._dragRef.reset();
     }
 
@@ -131,9 +137,17 @@ export class SelectionComponent implements AfterViewInit {
             this.selectionCanvas.style.top = this.previewSelectionCanvas.style.top;
             this.selectionCanvas.style.left = this.previewSelectionCanvas.style.left;
 
+            // Replace border canvas
+            this.borderCanvas.style.left = this.selectionCanvas.style.left;
+            this.borderCanvas.style.top = this.selectionCanvas.style.top;
+
             // Resize base canvas
             this.selectionCanvas.width = this.previewSelectionCanvas.width;
             this.selectionCanvas.height = this.previewSelectionCanvas.height;
+
+            // Resize border canvas
+            this.borderCanvas.width = this.previewSelectionCanvas.width;
+            this.borderCanvas.height = this.previewSelectionCanvas.height;
 
             // Clear the contents of the selectionCtx before redrawing the scaled image
             this.selectionCtx.clearRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);

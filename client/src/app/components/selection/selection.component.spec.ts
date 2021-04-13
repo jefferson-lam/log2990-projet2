@@ -118,6 +118,8 @@ describe('SelectionComponent', () => {
         component.setCanvasPosition();
         expect(component.selectionCanvas.style.top).toEqual(expectedTop);
         expect(component.selectionCanvas.style.left).toEqual(expectedLeft);
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
     });
 
     it('resetPreviewSelectionCanvas should correctly set previewSelectionCanvas new position and reset CdkDragEnd event', () => {
@@ -125,9 +127,13 @@ describe('SelectionComponent', () => {
         component.previewSelectionCanvas.style.top = '500px';
         component.selectionCanvas.style.top = '700px';
         component.selectionCanvas.style.left = '800px';
+        component.borderCanvas.style.left = '900px';
+        component.borderCanvas.style.top = '250px';
         component.resetPreviewSelectionCanvas(endEvent);
         expect(component.previewSelectionCanvas.style.top).toEqual(component.selectionCanvas.style.top);
         expect(component.previewSelectionCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
         expect(resetDragSpy).toHaveBeenCalled();
     });
 
@@ -226,6 +232,10 @@ describe('SelectionComponent', () => {
         expect(resizerHandlerService.inUse).toBeFalse();
         expect(resetDragSpy).toHaveBeenCalled();
         expect(component.selectionCanvas.style.visibility).toBe('visible');
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.borderCanvas.width).toEqual(component.selectionCanvas.width);
+        expect(component.borderCanvas.height).toEqual(component.selectionCanvas.height);
     });
 
     it('resizeSelectionCanvas should call drawWithScalingFactors and drawImage if resizerHandlerService.inUse', () => {
@@ -244,6 +254,10 @@ describe('SelectionComponent', () => {
         expect(component.selectionCanvas.style.left).toBe(component.previewSelectionCanvas.style.left);
         expect(component.selectionCanvas.width).toBe(component.previewSelectionCanvas.width);
         expect(component.selectionCanvas.height).toBe(component.previewSelectionCanvas.height);
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.borderCanvas.width).toEqual(component.selectionCanvas.width);
+        expect(component.borderCanvas.height).toEqual(component.selectionCanvas.height);
     });
 
     it('resizeSelectionCanvas should fill selectionCtx with white if resizerHandlerService.inUse', () => {

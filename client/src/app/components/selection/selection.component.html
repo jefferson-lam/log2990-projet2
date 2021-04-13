@@ -1,6 +1,7 @@
 <div #selectionBox id="selectionContainer">
     <canvas id="selectionLayer" #selectionCanvas [attr.width]="0" [attr.height]="0"></canvas>
 </div>
+<canvas id="borderLayer" #borderCanvas [attr.width]="0" [attr.height]="0"></canvas>
 <canvas
     tabindex="0"
     appDirectionalMovement
@@ -11,8 +12,6 @@
     (canvasMovement)="this.onCanvasMove($event)"
     (cdkDragMoved)="this.setCanvasPosition()"
     (cdkDragEnded)="this.resetPreviewSelectionCanvas($event)"
-    (focus)="this.applyFocusPreviewStyle()"
-    (focusout)="this.applyFocusOutPreviewStyle()"
     [attr.width]="0"
     [attr.height]="0"
 ></canvas>
