@@ -56,11 +56,11 @@ describe('RgbSelectorComponent', () => {
 
     it('converts string properly from hex to dec', () => {
         const dec = component.convertHexToDec('FACE01');
-        expect(dec).toEqual('16436737');
+        expect(dec).toEqual(16436737);
     });
 
     it('converts string properly from dec to hex', () => {
-        const hex = component.printDecToHex('1234567');
+        const hex = component.printDecToHex(1234567);
         expect(hex).toEqual('12D687');
     });
 
@@ -169,10 +169,10 @@ describe('RgbSelectorComponent', () => {
     it('onInput changes blue value with valid blue input', async(() => {
         fixture.whenStable().then(() => {
             const input = fixture.debugElement.query(By.css('#blue-input')).nativeElement as HTMLInputElement;
-            expect(input.value).toBe(component.blue);
+            expect(input.value).toBe(component.blue.toString());
             input.value = 'CC';
             input.dispatchEvent(new Event('input'));
-            expect(fixture.componentInstance.blue).toEqual('204');
+            expect(fixture.componentInstance.blue).toEqual(204);
             expect(component.invalidInput).toBeFalsy();
         });
     }));
