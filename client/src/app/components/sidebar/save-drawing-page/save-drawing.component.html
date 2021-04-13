@@ -7,7 +7,7 @@
         </form>
         <div id="buttonDiv">
             <button mat-button mat-dialog-close id="closebutton">Annuler</button>
-            <button mat-button mat-dialog-close #savebutton id="saveButton" [disabled]="!isSavePossible" (click)="saveDrawing()">Confirmer</button>
+            <button mat-button #savebutton id="saveButton" [disabled]="!isSavePossible" (click)="saveDrawing()">Confirmer</button>
         </div>
     </div>
     <app-save-saving-page *ngIf="saveProgress === saveProgressEnum.SAVING"></app-save-saving-page>
