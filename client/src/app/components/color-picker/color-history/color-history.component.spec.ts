@@ -67,21 +67,25 @@ describe('ColorHistoryComponent', () => {
     });
 
     it('should call draw after view init', () => {
-        const drawSpy = spyOn(component, 'drawHistory');
+        const ctxFillRectSpy = spyOn(component.ctx, 'fillRect');
         component.ngAfterViewInit();
-        expect(drawSpy).toHaveBeenCalled();
+        expect(ctxFillRectSpy).toHaveBeenCalled();
     });
 
     it('should fill history with set colors if savedColors is not empty', () => {
+        const ctxFillRectSpy = spyOn(component.ctx, 'fillRect');
         const convertRgbaStringSpy = spyOn(colorService, 'convertRgbaToString');
-        component.drawHistory();
+        component.ngAfterViewInit();
         expect(convertRgbaStringSpy).toHaveBeenCalled();
+        expect(ctxFillRectSpy).toHaveBeenCalled();
     });
 
     it('should fill history with default colors if savedColors is empty', () => {
         component.savedColors = new Array();
+        const ctxFillRectSpy = spyOn(component.ctx, 'fillRect');
         const convertRgbaStringSpy = spyOn(colorService, 'convertRgbaToString');
-        component.drawHistory();
+        component.ngAfterViewInit();
         expect(convertRgbaStringSpy).not.toHaveBeenCalled();
+        expect(ctxFillRectSpy).toHaveBeenCalled();
     });
 });

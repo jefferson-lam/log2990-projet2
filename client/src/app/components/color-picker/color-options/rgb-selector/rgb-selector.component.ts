@@ -44,19 +44,18 @@ export class RgbSelectorComponent implements OnChanges {
         }
     }
 
-    emitColor(newColor: EventEmitter<Rgba>): void {
+    printDecToHex(dec: number): string {
+        return dec.toString(16).toUpperCase();
+    }
+    private emitColor(newColor: EventEmitter<Rgba>): void {
         newColor.emit({ red: this.red, green: this.green, blue: this.blue, alpha: this.initialColor.alpha });
     }
 
-    isValidHexCode(code: string): boolean {
+    private isValidHexCode(code: string): boolean {
         return /^[a-fA-F0-9]+$/i.test(code);
     }
 
-    convertHexToDec(hex: string): number {
+    private convertHexToDec(hex: string): number {
         return parseInt(hex, 16);
-    }
-
-    printDecToHex(dec: number): string {
-        return dec.toString(16).toUpperCase();
     }
 }
