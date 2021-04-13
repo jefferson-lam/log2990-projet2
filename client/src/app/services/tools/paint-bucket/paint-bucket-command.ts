@@ -1,6 +1,6 @@
-import { ColorRgba } from '@app/classes/color-rgb';
 import { Command } from '@app/classes/command';
 import { PixelData } from '@app/classes/pixel-data';
+import { Rgba } from '@app/classes/rgba';
 import { MouseButton } from '@app/constants/mouse-constants';
 import { ALPHA_INDEX, BIT_16, BIT_24, BIT_8, DIMENSION_4D, DISTANCE_MASK, MAX_RGB_VALUE } from '@app/constants/paint-bucket-constants';
 import { PaintBucketService } from './paint-bucket-service';
@@ -8,7 +8,7 @@ import { PaintBucketService } from './paint-bucket-service';
 // tslint:disable:no-bitwise
 // tslint:disable:cyclomatic-complexity
 export class PaintBucketCommand extends Command {
-    primaryColorRgba: ColorRgba;
+    primaryColorRgba: Rgba;
     primaryColor: string;
     toleranceValue: number;
     startX: number;
@@ -156,12 +156,12 @@ export class PaintBucketCommand extends Command {
         return normalisedTolerance;
     }
 
-    rgba2number(fillColor: ColorRgba): number {
+    rgba2number(fillColor: Rgba): number {
         return (fillColor.alpha << BIT_24) + (fillColor.blue << BIT_16) + (fillColor.green << BIT_8) + fillColor.red;
     }
 
     // This number is stored in #AABBGGRR format, hence the shifting.
-    number2rgba(color: number): ColorRgba {
+    number2rgba(color: number): Rgba {
         const rgba = {
             red: color & MAX_RGB_VALUE,
             green: (color >> BIT_8) & MAX_RGB_VALUE,
@@ -171,7 +171,7 @@ export class PaintBucketCommand extends Command {
         return rgba;
     }
 
-    calculateColorDistance(currentColor: ColorRgba, fillColor: ColorRgba): number {
+    calculateColorDistance(currentColor: Rgba, fillColor: Rgba): number {
         const R = currentColor.red - fillColor.red;
         const G = currentColor.green - fillColor.green;
         const B = currentColor.blue - fillColor.blue;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ColorRgba } from '@app/classes/color-rgb';
 import { Command } from '@app/classes/command';
+import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { MouseButton } from '@app/constants/mouse-constants';
 import {
@@ -22,7 +22,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class PaintBucketService extends Tool {
     primaryColor: string;
-    primaryColorRgba: ColorRgba;
+    primaryColorRgba: Rgba;
     toleranceValue: number;
     startX: number;
     startY: number;
@@ -66,7 +66,7 @@ export class PaintBucketService extends Tool {
 
     // regex matches for strings that have format: rgba(r,g,b,a)
     // and extracts into an array of length 4 containing each value
-    getRgba(color: string): ColorRgba {
+    getRgba(color: string): Rgba {
         const match = color.match(/[.?\d]+/g);
         if (match) {
             const rgba = {

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { ColorRgba } from '@app/classes/color-rgb';
+import { Rgba } from '@app/classes/rgba';
 import { MouseButton } from '@app/constants/mouse-constants';
 import { ALPHA_INDEX, DEFAULT_TOLERANCE_VALUE, DIMENSION_4D, MAX_RGB_VALUE } from '@app/constants/paint-bucket-constants';
 import { PaintBucketCommand } from './paint-bucket-command';
@@ -14,7 +14,7 @@ describe('PaintBucketCommand', () => {
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
 
-    let fillColor: ColorRgba;
+    let fillColor: Rgba;
 
     let floodFillSpy: jasmine.Spy;
     let fillSpy: jasmine.Spy;
@@ -173,13 +173,13 @@ describe('PaintBucketCommand', () => {
             green: 0,
             blue: 0,
             alpha: 0,
-        } as ColorRgba;
+        } as Rgba;
         const whiteRgba = {
             red: 255,
             green: 255,
             blue: 255,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const expectedDistance = 510;
         const distance = command.calculateColorDistance(blackRgba, whiteRgba);
         expect(distance).toEqual(expectedDistance);
@@ -191,13 +191,13 @@ describe('PaintBucketCommand', () => {
             green: 0,
             blue: 0,
             alpha: 0,
-        } as ColorRgba;
+        } as Rgba;
         const whiteRgba = {
             red: 255,
             green: 255,
             blue: 255,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const expectedDistance = 510;
         const distance = command.calculateColorDistance(whiteRgba, blackRgba);
         expect(distance).toEqual(expectedDistance);
@@ -209,13 +209,13 @@ describe('PaintBucketCommand', () => {
             green: 0,
             blue: 0,
             alpha: 0,
-        } as ColorRgba;
+        } as Rgba;
         const whiteRgba = {
             red: 0,
             green: 0,
             blue: 0,
             alpha: 0,
-        } as ColorRgba;
+        } as Rgba;
         const expectedDistance = 0;
         const distance = command.calculateColorDistance(whiteRgba, blackRgba);
         expect(distance).toEqual(expectedDistance);
@@ -227,13 +227,13 @@ describe('PaintBucketCommand', () => {
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const whiteRgba = {
             red: 84,
             green: 123,
             blue: 214,
             alpha: 125,
-        } as ColorRgba;
+        } as Rgba;
         const expectedDistance = 150;
         const distance = command.calculateColorDistance(whiteRgba, blackRgba);
         expect(distance).toEqual(expectedDistance);
@@ -253,13 +253,13 @@ describe('PaintBucketCommand', () => {
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
@@ -271,13 +271,13 @@ describe('PaintBucketCommand', () => {
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(false);
     });
@@ -291,13 +291,13 @@ describe('PaintBucketCommand', () => {
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
@@ -311,13 +311,13 @@ describe('PaintBucketCommand', () => {
             green: 72,
             blue: 170,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
@@ -331,13 +331,13 @@ describe('PaintBucketCommand', () => {
             green: 71,
             blue: 170,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(false);
     });
@@ -351,13 +351,13 @@ describe('PaintBucketCommand', () => {
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
@@ -371,13 +371,13 @@ describe('PaintBucketCommand', () => {
             green: 72,
             blue: 95,
             alpha: 84,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
@@ -391,13 +391,13 @@ describe('PaintBucketCommand', () => {
             green: 72,
             blue: 95,
             alpha: 83,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(false);
     });
@@ -411,13 +411,13 @@ describe('PaintBucketCommand', () => {
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
@@ -431,13 +431,13 @@ describe('PaintBucketCommand', () => {
             green: 41,
             blue: 85,
             alpha: 84,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 255,
             green: 255,
             blue: 255,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
@@ -451,13 +451,13 @@ describe('PaintBucketCommand', () => {
             green: 30,
             blue: 85,
             alpha: 84,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 255,
             green: 255,
             blue: 255,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(false);
     });
@@ -471,13 +471,13 @@ describe('PaintBucketCommand', () => {
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 128,
             green: 180,
             blue: 232,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
@@ -491,13 +491,13 @@ describe('PaintBucketCommand', () => {
             green: 0,
             blue: 0,
             alpha: 0,
-        } as ColorRgba;
+        } as Rgba;
         const targetRgba = {
             red: 255,
             green: 255,
             blue: 255,
             alpha: 255,
-        } as ColorRgba;
+        } as Rgba;
         const distance = command.calculateColorDistance(currentRgba, targetRgba);
         expect(distance <= command.toleranceValue).toEqual(true);
     });
