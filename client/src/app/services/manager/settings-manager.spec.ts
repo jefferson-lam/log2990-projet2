@@ -98,9 +98,9 @@ describe('SettingsManagerService', () => {
 
     it('calls setPrimaryColorsTools when size changed', async(() => {
         const mockColor = {
-            red: '255',
-            green: '10',
-            blue: '2',
+            red: 255,
+            green: 10,
+            blue: 2,
             alpha: 1,
         } as Rgba;
         const serviceSetter = spyOn(service, 'setPrimaryColorTools').and.callThrough();
@@ -113,9 +113,9 @@ describe('SettingsManagerService', () => {
 
     it('calls setSecondaryColorsTools when size changed', async(() => {
         const mockColor = {
-            red: '255',
-            green: '10',
-            blue: '2',
+            red: 255,
+            green: 10,
+            blue: 2,
             alpha: 1,
         } as Rgba;
         const serviceSetter = spyOn(service, 'setSecondaryColorTools').and.callThrough();

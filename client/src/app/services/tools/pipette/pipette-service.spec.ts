@@ -16,8 +16,8 @@ describe('PipetteServiceService', () => {
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let newColor: Rgba;
-    const colorPlaceholderBlack: Rgba = { red: '0', green: '0', blue: '0', alpha: 1 };
-    const colorPlaceholderTransparent: Rgba = { red: '0', green: '0', blue: '0', alpha: 0 };
+    const colorPlaceholderBlack: Rgba = { red: 0, green: 0, blue: 0, alpha: 1 };
+    const colorPlaceholderTransparent: Rgba = { red: 0, green: 0, blue: 0, alpha: 0 };
 
     let baseCtxStub: CanvasRenderingContext2D;
 
@@ -31,7 +31,7 @@ describe('PipetteServiceService', () => {
 
         service = TestBed.inject(PipetteService);
         colorService = TestBed.inject(ColorService);
-        newColor = { red: '100', green: '0', blue: '233', alpha: 0.8 };
+        newColor = { red: 100, green: 0, blue: 233, alpha: 0.8 };
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
@@ -179,7 +179,7 @@ describe('PipetteServiceService', () => {
             1,
         ]);
         const pixelData = new ImageData(arrayData, 1, 1);
-        const expectedColor = { red: '255', green: '255', blue: '255', alpha: 1 };
+        const expectedColor = { red: 255, green: 255, blue: 255, alpha: 1 };
 
         const result = service.pixelDataToRgba(pixelData);
         expect(result.red).toEqual(expectedColor.red);

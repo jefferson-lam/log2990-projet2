@@ -1,26 +1,26 @@
 <div
-  #sideResizer
-  id="sideResizer"
-  cdkDrag
-  cdkDragLockAxis="x"
-  (cdkDragEnded)="this.expandCanvas($event)"
-  (cdkDragMoved)="this.setPreviewSize($event)"
-  (mousedown)="this.onSideResizerDown()"
+    #sideResizer
+    id="sideResizer"
+    cdkDrag
+    cdkDragLockAxis="x"
+    (cdkDragEnded)="this.expandCanvas()"
+    (cdkDragMoved)="this.setPreviewSize($event)"
+    (mousedown)="this.onSideResizerDown()"
 ></div>
 <div
-  #cornerResizer
-  id="cornerResizer"
-  cdkDrag
-  (cdkDragEnded)="this.expandCanvas($event)"
-  (cdkDragMoved)="this.setPreviewSize($event)"
-  (mousedown)="this.onCornerResizerDown()"
+    #cornerResizer
+    id="cornerResizer"
+    cdkDrag
+    (cdkDragEnded)="this.expandCanvas()"
+    (cdkDragMoved)="this.setPreviewSize($event)"
+    (mousedown)="this.onCornerResizerDown()"
 ></div>
 <div
-  #bottomResizer
-  id="bottomResizer"
-  cdkDrag
-  cdkDragLockAxis="y"
-  (cdkDragEnded)="this.expandCanvas($event)"
-  (cdkDragMoved)="this.setPreviewSize($event)"
-  (mousedown)="this.onBottomResizerDown()"
+    #bottomResizer
+    id="bottomResizer"
+    cdkDrag
+    cdkDragLockAxis="y"
+    (cdkDragEnded)="this.expandCanvas()"
+    (cdkDragMoved)="this.setPreviewSize($event)"
+    (mousedown)="this.onBottomResizerDown()"
 ></div>
