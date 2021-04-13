@@ -240,8 +240,8 @@ export class LassoSelectionService extends ToolSelectionService {
             this.selectionHeight,
         );
         targetCtx.restore();
-        // this.drawLassoOutline(this.drawingService.previewSelectionCtx, pathData);
-        this.drawLassoOutline(targetCtx, pathData);
+        this.drawLassoOutline(this.drawingService.previewSelectionCtx, pathData);
+        // this.drawLassoOutline(targetCtx, pathData);
     }
 
     private selectLasso(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
