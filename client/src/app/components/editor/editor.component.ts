@@ -22,7 +22,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent implements OnInit {
-    @ViewChild(SidebarComponent) sideBar: SidebarComponent;
+    @ViewChild(SidebarComponent) private sideBar: SidebarComponent;
 
     currentTool: Tool;
     isPopUpOpen: boolean;
