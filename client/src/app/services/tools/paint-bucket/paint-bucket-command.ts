@@ -51,7 +51,7 @@ export class PaintBucketCommand extends Command {
         const color = this.rgba2number(this.primaryColorRgba);
 
         // Normalise tolerance to be able to compare with 4d space
-        const tolerance = Math.sqrt(this.toleranceValue * this.toleranceValue * DIMENSION_4D);
+        const tolerance = this.normaliseTolerance(this.toleranceValue, DIMENSION_4D);
         const targetColor = pixelData.data[this.startY * pixelData.width + this.startX];
 
         for (let y = 0; y < pixelData.height; y++) {
@@ -96,7 +96,7 @@ export class PaintBucketCommand extends Command {
         // Array of distances will keep track which pixel has been marked as valid to paint on
         // If distance is 0 for that specific pixel, it means that it did not pass the tolerance check
         const distances = new Uint16Array(width * height);
-        const tolerance = Math.sqrt(this.toleranceValue * this.toleranceValue * DIMENSION_4D);
+        const tolerance = this.normaliseTolerance(this.toleranceValue, DIMENSION_4D);
         const red = data[pixelPosition];
         const green = data[pixelPosition + 1];
         const blue = data[pixelPosition + 2];
@@ -149,6 +149,11 @@ export class PaintBucketCommand extends Command {
         }
 
         ctx.putImageData(imageData, 0, 0);
+    }
+
+    normaliseTolerance(toleranceValue: number, normalisationFactor: number): number {
+        const normalisedTolerance = Math.sqrt(toleranceValue * toleranceValue * normalisationFactor);
+        return normalisedTolerance;
     }
 
     rgba2number(fillColor: ColorRgba): number {

@@ -105,6 +105,12 @@ describe('PaintBucketCommand', () => {
         expect(result).toEqual(expectedColor);
     });
 
+    it('normaliseTolerance should return correct tolerance value', () => {
+        const expectedTolerance = 256;
+        const result = command.normaliseTolerance(TOLERANCE_50, DIMENSION_4D);
+        expect(result).toEqual(expectedTolerance);
+    });
+
     it('number2rgba should correctly convert white hex color into rgba interface', () => {
         // White -> #FF000000 -> 4278190080
         const hexColor = 4278190080;
