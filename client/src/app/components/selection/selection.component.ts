@@ -236,4 +236,13 @@ export class SelectionComponent implements AfterViewInit {
         }
         this.resizerHandlerService.isShiftDown = false;
     }
+
+    @HostListener('keyup.ArrowLeft', ['$event'])
+    @HostListener('keyup.ArrowDown', ['$event'])
+    @HostListener('keyup.ArrowRight', ['$event'])
+    @HostListener('keyup.ArrowUp', ['$event'])
+    correctPreviewCanvasPosition(): void {
+        this.previewSelectionCanvas.style.left = this.borderCanvas.style.left = this.selectionCanvas.style.left;
+        this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
+    }
 }

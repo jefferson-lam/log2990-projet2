@@ -463,4 +463,18 @@ describe('SelectionComponent', () => {
         expect(drawScaledSpy).toHaveBeenCalled();
         expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
     });
+
+    it('correctPreviewCanvasPosition should set previewCanvas and borderCanvas left and top styles to those of selectionCanvas.', () => {
+        component.selectionCanvas.style.left = '100px';
+        component.selectionCanvas.style.top = '150px';
+        component.borderCanvas.style.left = '300px';
+        component.borderCanvas.style.top = '225px';
+        component.previewSelectionCanvas.style.top = '400px';
+        component.previewSelectionCanvas.style.left = '405px';
+        component.correctPreviewCanvasPosition();
+        expect(component.previewSelectionCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.previewSelectionCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+    });
 });
