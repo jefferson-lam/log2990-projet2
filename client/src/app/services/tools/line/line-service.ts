@@ -148,10 +148,8 @@ export class LineService extends Tool {
     }
 
     finishLine(): void {
-        if (this.inUse) {
-            const command: Command = new LineCommand(this.drawingService.baseCtx, this);
-            this.undoRedoService.executeCommand(command);
-        }
+        const command: Command = new LineCommand(this.drawingService.baseCtx, this);
+        this.undoRedoService.executeCommand(command);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.clearPath();
         this.inUse = false;
