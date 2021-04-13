@@ -1,18 +1,14 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
-import { EditorComponent } from '@app/components/editor/editor.component';
-import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { ColorService } from '@app/services/color/color.service';
-import { SettingsManagerService } from '@app/services/manager/settings-manager';
-import { ToolManagerService } from '@app/services/manager/tool-manager-service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { SettingsManagerService } from './settings-manager';
+import { ToolManagerService } from './tool-manager-service';
 
 // tslint:disable:no-any
 describe('SettingsManagerService', () => {
     let service: SettingsManagerService;
-    let editorComponent: EditorComponent;
     let toolSpy: jasmine.SpyObj<Tool>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
 
@@ -27,18 +23,13 @@ describe('SettingsManagerService', () => {
             'setEmissionCount',
             'setToleranceValue',
         ]);
-        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
+        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools'], ['currentTool']);
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(toolSpy);
         TestBed.configureTestingModule({
-            declarations: [EditorComponent],
-            providers: [
-                { provide: EditorComponent, useValue: editorComponent },
-                { provide: Tool, useValue: toolSpy },
-                { provide: ToolManagerService, useValue: toolManagerSpy },
-            ],
+            providers: [{ provide: ToolManagerService, useValue: toolManagerSpy }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService, {} as CanvasGridService);
-        editorComponent.currentTool = toolSpy;
     });
 
     it('should be created', () => {

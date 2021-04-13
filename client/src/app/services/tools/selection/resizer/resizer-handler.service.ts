@@ -64,6 +64,7 @@ export class ResizerHandlerService {
             resizer.style.left = '0px';
             resizer.style.visibility = 'hidden';
         });
+        this.inUse = false;
     }
 
     setResizerPositions(canvas: HTMLCanvasElement): void {

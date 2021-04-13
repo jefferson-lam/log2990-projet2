@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 
 @Component({
     selector: 'app-rgb-selector',
@@ -21,6 +22,8 @@ export class RgbSelectorComponent implements OnChanges {
 
     @Output()
     newColor: EventEmitter<Rgba> = new EventEmitter();
+
+    constructor(public shortcutManager: ShortcutManagerService) {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.initialColor) {

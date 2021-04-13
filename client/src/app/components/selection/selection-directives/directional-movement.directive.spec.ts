@@ -1,7 +1,12 @@
-import { DebugElement } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { SelectionComponent } from '@app/components/selection/selection.component';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
+import { PopupManagerService } from '@app/services/manager/popup-manager.service';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DirectionalMovementDirective } from './directional-movement.directive';
 
 describe('DirectionalMovementDirective', () => {
@@ -9,18 +14,30 @@ describe('DirectionalMovementDirective', () => {
     let directive: DirectionalMovementDirective;
     let selectionCanvas: DebugElement;
     let delaySpy: jasmine.Spy;
+    let shortcutManager: ShortcutManagerService;
 
     const FIRST_PRESS_DELAY = 500;
     const CONTINUOUS_PRESS_DELAY = 100;
     const NUM_PIXELS = 3;
 
     beforeEach(() => {
+        // shortcutManagerSpy = jasmine.createSpyObj('ShortcutManagerService', ['selectionMovementOnKeyboardUp', 'selectionMovementOnArrowDown']);
+        // shortcutManagerSpy.selectionMovementOnArrowDown.and.callThrough();
+        // shortcutManagerSpy.selectionMovementOnKeyboardUp.and.callThrough();
+        shortcutManager = new ShortcutManagerService(
+            {} as PopupManagerService,
+            {} as UndoRedoService,
+            {} as CanvasGridService,
+            {} as ToolManagerService,
+        );
         fixture = TestBed.configureTestingModule({
             declarations: [DirectionalMovementDirective, SelectionComponent],
+            providers: [{ provide: ShortcutManagerService, useValue: shortcutManager }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).createComponent(SelectionComponent);
         fixture.detectChanges();
         selectionCanvas = fixture.debugElement.query(By.directive(DirectionalMovementDirective));
-        directive = new DirectionalMovementDirective(selectionCanvas);
+        directive = new DirectionalMovementDirective(selectionCanvas, shortcutManager);
         delaySpy = spyOn(directive, 'delay').and.callThrough();
     });
 
