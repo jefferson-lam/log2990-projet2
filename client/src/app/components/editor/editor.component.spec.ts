@@ -320,8 +320,10 @@ describe('EditorComponent', () => {
     });
 
     it('setTool should set current tool', () => {
+        const sideBarCloseMagnetismOptions = spyOn(component.sideBar, 'closeMagnetismeOptions');
         component.setTool(toolStub);
         expect(component.currentTool).toBe(toolStub);
+        expect(sideBarCloseMagnetismOptions).toHaveBeenCalled();
     });
 
     it('ctrl+a should call selectAll and switch to RectangleSelectionService', () => {

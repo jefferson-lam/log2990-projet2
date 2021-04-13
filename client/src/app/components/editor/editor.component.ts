@@ -1,9 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
+import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
@@ -21,6 +22,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent implements OnInit {
+    @ViewChild(SidebarComponent) sideBar: SidebarComponent;
+
     currentTool: Tool;
     isPopUpOpen: boolean;
     isUndoSelection: boolean;
@@ -125,6 +128,7 @@ export class EditorComponent implements OnInit {
 
     setTool(newTool: Tool): void {
         this.currentTool = newTool;
+        this.sideBar.closeMagnetismeOptions();
     }
 
     openExportPopUp(): void {

@@ -90,6 +90,10 @@ export class SidebarComponent implements OnChanges {
         this.isMagnetismOptionsDisplayed = !this.isMagnetismOptionsDisplayed;
     }
 
+    closeMagnetismeOptions(): void {
+        this.isMagnetismOptionsDisplayed = false;
+    }
+
     undo(): void {
         if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
             if (this.currentTool.isManipulating) {
