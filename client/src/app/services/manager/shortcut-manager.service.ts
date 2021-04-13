@@ -30,17 +30,27 @@ export class ShortcutManagerService {
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.isShortcutAllowed() && event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b)$/)) {
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+
+        if (event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b)$/)) {
             this.toolManager.selectTool(event.key);
         }
     }
 
     onGKeyDown(): void {
-        if (this.isShortcutAllowed()) this.canvasGridService.toggleGrid();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.canvasGridService.toggleGrid();
     }
 
     selectionOnShiftKeyDown(selectionComponent: SelectionComponent): void {
-        if (this.isShortcutAllowed() && selectionComponent.resizerHandlerService.inUse) {
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        if (selectionComponent.resizerHandlerService.inUse) {
             selectionComponent.resizerHandlerService.resizeSquare();
             selectionComponent.resizerHandlerService.setResizerPositions(selectionComponent.previewSelectionCanvas);
             selectionComponent.drawWithScalingFactors(selectionComponent.previewSelectionCtx, selectionComponent.selectionCanvas);
@@ -49,7 +59,10 @@ export class ShortcutManagerService {
     }
 
     selectionOnShiftKeyUp(selectionComponent: SelectionComponent): void {
-        if (this.isShortcutAllowed() && selectionComponent.resizerHandlerService.inUse) {
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        if (selectionComponent.resizerHandlerService.inUse) {
             selectionComponent.resizerHandlerService.restoreLastDimensions();
             selectionComponent.resizerHandlerService.setResizerPositions(selectionComponent.previewSelectionCanvas);
             selectionComponent.drawWithScalingFactors(selectionComponent.previewSelectionCtx, selectionComponent.selectionCanvas);
@@ -59,89 +72,119 @@ export class ShortcutManagerService {
 
     onCtrlAKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) {
-            this.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
-            if (this.toolManager.currentTool instanceof RectangleSelectionService) {
-                this.toolManager.currentTool.selectAll();
-            }
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
+        if (this.toolManager.currentTool instanceof RectangleSelectionService) {
+            this.toolManager.currentTool.selectAll();
         }
     }
 
     onCtrlEKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) this.popupManager.openExportPopUp();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.popupManager.openExportPopUp();
     }
 
     onCtrlGKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) this.popupManager.openCarrouselPopUp();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.popupManager.openCarrouselPopUp();
     }
 
     onCtrlOKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) this.popupManager.openNewDrawingPopUp();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.popupManager.openNewDrawingPopUp();
     }
 
     onCtrlSKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) this.popupManager.openSavePopUp();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.popupManager.openSavePopUp();
     }
 
     onCtrlShiftZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed() && !this.toolManager.currentTool.inUse) {
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+
+        if (!this.toolManager.currentTool.inUse) {
             this.undoRedoService.redo();
         }
     }
 
     onCtrlZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isShortcutAllowed()) {
-            if (
-                (this.toolManager.currentTool instanceof RectangleSelectionService ||
-                    this.toolManager.currentTool instanceof EllipseSelectionService) &&
-                this.toolManager.currentTool.isManipulating
-            ) {
-                this.toolManager.currentTool.undoSelection();
-            } else if (!this.toolManager.currentTool.inUse) {
-                this.undoRedoService.undo();
-            }
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        if (
+            (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) &&
+            this.toolManager.currentTool.isManipulating
+        ) {
+            this.toolManager.currentTool.undoSelection();
+        } else if (!this.toolManager.currentTool.inUse) {
+            this.undoRedoService.undo();
         }
     }
 
     onMinusKeyDown(): void {
-        if (this.isShortcutAllowed()) this.canvasGridService.reduceGridSize();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.canvasGridService.reduceGridSize();
     }
 
     onEqualKeyDown(): void {
-        if (this.isShortcutAllowed()) this.canvasGridService.increaseGridSize();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.canvasGridService.increaseGridSize();
     }
 
     onPlusKeyDown(): void {
-        if (this.isShortcutAllowed()) this.canvasGridService.increaseGridSize();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.canvasGridService.increaseGridSize();
     }
 
     async selectionMovementOnArrowDown(event: KeyboardEvent, directive: DirectionalMovementDirective): Promise<void> {
-        if (this.isShortcutAllowed()) {
-            event.preventDefault();
-            if (!directive.keyPressed.get(event.key)) {
-                directive.keyPressed.set(event.key, event.timeStamp);
-                directive.translateSelection();
-                await directive.delay(DirectionalMovementConstants.FIRST_PRESS_DELAY_MS);
-            }
-
-            if (directive.hasMovedOnce) {
-                return;
-            }
-
-            directive.hasMovedOnce = true;
-            await directive.delay(DirectionalMovementConstants.CONTINUOUS_PRESS_DELAY_MS);
-            directive.translateSelection();
-            directive.hasMovedOnce = false;
+        event.preventDefault();
+        if (!this.isShortcutAllowed()) {
+            return;
         }
+        if (!directive.keyPressed.get(event.key)) {
+            directive.keyPressed.set(event.key, event.timeStamp);
+            directive.translateSelection();
+            await directive.delay(DirectionalMovementConstants.FIRST_PRESS_DELAY_MS);
+        }
+
+        if (directive.hasMovedOnce) {
+            return;
+        }
+
+        directive.hasMovedOnce = true;
+        await directive.delay(DirectionalMovementConstants.CONTINUOUS_PRESS_DELAY_MS);
+        directive.translateSelection();
+        directive.hasMovedOnce = false;
     }
 
     selectionMovementOnKeyboardUp(event: KeyboardEvent, directive: DirectionalMovementDirective): void {
-        if (this.isShortcutAllowed()) directive.keyPressed.set(event.key, 0);
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        directive.keyPressed.set(event.key, 0);
     }
 }
