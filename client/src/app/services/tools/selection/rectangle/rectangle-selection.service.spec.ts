@@ -327,42 +327,6 @@ describe('RectangleSelectionService', () => {
         expect(service.isEscapeDown).toBeFalsy();
     });
 
-    it('undoSelection should pass if isManipulating is false', () => {
-        service.isManipulating = false;
-        expect(() => {
-            service.undoSelection();
-        }).not.toThrow();
-    });
-
-    it('undoSelection should call appropriate functions to restore state', () => {
-        const sw = 75;
-        const sh = 210;
-        service.isManipulating = true;
-        service.cornerCoords = [
-            { x: 25, y: 40 },
-            { x: 100, y: 250 },
-        ];
-        service.selectionWidth = sw;
-        service.selectionHeight = sh;
-        service.undoSelection();
-        expect(baseCtxDrawImageSpy).toHaveBeenCalled();
-        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
-            0,
-            0,
-            sw,
-            sh,
-            service.cornerCoords[0].x,
-            service.cornerCoords[0].y,
-            sw,
-            sh,
-        );
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
-        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
-        expect(service.isManipulating).toBeFalsy();
-        expect(service.isEscapeDown).toBeFalsy();
-    });
-
     it('selectAll should correctly set selectionWidth and selectionHeight', () => {
         const expectedWidth = 100;
         const expectedHeight = 100;
@@ -433,5 +397,52 @@ describe('RectangleSelectionService', () => {
         service.onToolChange();
         expect(onMouseDownSpy).not.toHaveBeenCalled();
         expect(onKeyboardUpSpy).not.toHaveBeenCalled();
+    });
+
+    it('undoSelection should pass if isManipulating is false', () => {
+        service.isManipulating = false;
+        expect(() => {
+            service.undoSelection();
+        }).not.toThrow();
+    });
+
+    it('undoSelection should call appropriate functions to restore state', () => {
+        const sw = 75;
+        const sh = 210;
+        service.isManipulating = true;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.undoSelection();
+        expect(baseCtxDrawImageSpy).toHaveBeenCalled();
+        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(
+            selectionCtxStub.canvas,
+            0,
+            0,
+            sw,
+            sh,
+            service.cornerCoords[0].x,
+            service.cornerCoords[0].y,
+            sw,
+            sh,
+        );
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('undoSelection should not draw to base context if isFromClipboard is true', () => {
+        service.isFromClipboard = true;
+        service.isManipulating = true;
+        service.undoSelection();
+        expect(baseCtxDrawImageSpy).not.toHaveBeenCalled();
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
     });
 });
