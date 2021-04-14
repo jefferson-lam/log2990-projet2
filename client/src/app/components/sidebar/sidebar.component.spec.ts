@@ -9,6 +9,7 @@ import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
+import { PaintBucketService } from '@app/services/tools/paint-bucket/paint-bucket-service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
@@ -60,31 +61,14 @@ describe('SidebarComponent', () => {
             {} as DrawingService,
             {} as UndoRedoService,
             {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
-        );
-        clipboardServiceStub = new ClipboardService(
-            {} as DrawingService,
-            new ToolManagerService(
-                {} as PencilService,
-                {} as EraserService,
-                {} as LineService,
-                {} as RectangleService,
-                {} as EllipseService,
-                {} as DrawingService,
-                {} as RectangleSelectionService,
-                {} as EllipseSelectionService,
-                {} as PolygoneService,
-                {} as AerosolService,
-                {} as PipetteService,
-            ),
-            {} as UndoRedoService,
-            {} as ResizerHandlerService,
+            rectangleStub,
         );
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<
             () => BehaviorSubject<Tool>
         >).and.returnValue(new BehaviorSubject<Tool>(toolManagerServiceSpy.currentTool));
+        clipboardServiceStub = new ClipboardService({} as DrawingService, toolManagerServiceSpy, {} as UndoRedoService, {} as ResizerHandlerService);
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
