@@ -34,7 +34,7 @@ export class ShortcutManagerService {
             return;
         }
 
-        if (event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b)$/)) {
+        if (event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b|v)$/)) {
             this.toolManager.selectTool(event.key);
         }
     }
