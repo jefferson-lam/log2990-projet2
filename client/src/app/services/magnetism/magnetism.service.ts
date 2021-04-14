@@ -16,7 +16,7 @@ export class MagnetismService {
     magnetismStateSubject: Subject<boolean> = new Subject<boolean>();
 
     constructor(private canvasGridService: CanvasGridService) {
-        this.isMagnetismOn = true;
+        this.isMagnetismOn = false;
         this.referenceResizerMode = MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX;
     }
 

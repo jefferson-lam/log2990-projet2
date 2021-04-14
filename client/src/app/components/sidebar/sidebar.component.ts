@@ -51,6 +51,8 @@ export class SidebarComponent {
             this.selectedTool = this.sidebarToolButtons.find((sidebarToolButton) => {
                 return sidebarToolButton.service === tool.constructor.name;
             }) as SidebarToolButton;
+            this.isMagnetismOptionsDisplayed = false;
+            this.isGridOptionsDisplayed = false;
         });
     }
 

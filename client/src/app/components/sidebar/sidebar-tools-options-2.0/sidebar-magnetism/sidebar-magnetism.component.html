@@ -7,7 +7,7 @@
                 value="MAGNETISM_CORNERS.TOP_LEFT_INDEX"
                 color="warn"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.TOP_LEFT_INDEX)"
-                checked
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.TOP_LEFT_INDEX"
             >
                 Supérieur gauche
             </mat-radio-button>
@@ -17,6 +17,7 @@
                 value="MAGNETISM_CORNERS.TOP_MIDDLE_INDEX"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.TOP_MIDDLE_INDEX)"
                 color="warn"
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.TOP_MIDDLE_INDEX"
             >
                 Supérieur milieu
             </mat-radio-button>
@@ -26,6 +27,7 @@
                 value="MAGNETISM_CORNERS.TOP_RIGHT_INDEX"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.TOP_RIGHT_INDEX)"
                 color="warn"
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.TOP_RIGHT_INDEX"
             >
                 Supérieur droit </mat-radio-button
             ><br />
@@ -34,6 +36,7 @@
                 value="MAGNETISM_CORNERS.MID_LEFT_INDEX"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.MID_LEFT_INDEX)"
                 color="warn"
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.MID_LEFT_INDEX"
             >
                 Milieu gauche
             </mat-radio-button>
@@ -43,6 +46,7 @@
                 value="MAGNETISM_CORNERS.CENTER_INDEX"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.CENTER_INDEX)"
                 color="warn"
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.CENTER_INDEX"
             >
                 Centre
             </mat-radio-button>
@@ -52,6 +56,7 @@
                 value="MAGNETISM_CORNERS.MID_RIGHT_INDEX"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.MID_RIGHT_INDEX)"
                 color="warn"
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.MID_RIGHT_INDEX"
             >
                 Milieu droite </mat-radio-button
             ><br />
@@ -60,6 +65,7 @@
                 value="MAGNETISM_CORNERS.BOTTOM_LEFT_INDEX"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.BOTTOM_LEFT_INDEX)"
                 color="warn"
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.BOTTOM_LEFT_INDEX"
             >
                 Inférieur gauche
             </mat-radio-button>
@@ -69,6 +75,7 @@
                 value="MAGNETISM_CORNERS.BOTTOM_MIDDLE_INDEX"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.BOTTOM_MIDDLE_INDEX)"
                 color="warn"
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.BOTTOM_MIDDLE_INDEX"
             >
                 Inférieur milieu
             </mat-radio-button>
@@ -78,6 +85,7 @@
                 value="MAGNETISM_CORNERS.BOTTOM_RIGHT_INDEX"
                 (change)="emitReferencePoint(MAGNETISM_CORNERS.BOTTOM_RIGHT_INDEX)"
                 color="warn"
+                [checked]="this.magnetismService.referenceResizerMode === MAGNETISM_CORNERS.BOTTOM_RIGHT_INDEX"
             >
                 Inférieur droit
             </mat-radio-button>

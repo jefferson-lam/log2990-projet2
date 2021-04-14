@@ -10,14 +10,18 @@ import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 })
 export class SidebarMagnetismComponent implements OnInit {
     @ViewChild('toggleMagnetism') magnetismToggle: MatSlideToggle;
+
     isMagnetismOn: boolean;
-    MAGNETISM_CORNERS: typeof MagnestismConstants.ResizerIndex = MagnestismConstants.ResizerIndex;
+    MAGNETISM_CORNERS: typeof MagnestismConstants.ResizerIndex;
+
     @Output() magnetismValueChanged: EventEmitter<boolean> = new EventEmitter();
     @Output() referenceCornerChanged: EventEmitter<MagnestismConstants.ResizerIndex> = new EventEmitter();
-    constructor(private magnetismService: MagnetismService) {}
+
+    constructor(public magnetismService: MagnetismService) {}
 
     ngOnInit(): void {
         this.isMagnetismOn = this.magnetismService.isMagnetismOn;
+        this.MAGNETISM_CORNERS = MagnestismConstants.ResizerIndex;
         this.magnetismValueChanged.subscribe((isMagnetismOn: boolean) => {
             this.magnetismService.isMagnetismOn = isMagnetismOn;
         });
