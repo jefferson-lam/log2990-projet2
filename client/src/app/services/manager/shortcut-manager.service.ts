@@ -6,6 +6,7 @@ import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -21,6 +22,7 @@ export class ShortcutManagerService {
         public undoRedoService: UndoRedoService,
         public canvasGridService: CanvasGridService,
         public toolManager: ToolManagerService,
+        public clipboardService: ClipboardService,
     ) {
         this.isTextInput = false;
     }
@@ -137,6 +139,38 @@ export class ShortcutManagerService {
         } else if (!this.toolManager.currentTool.inUse) {
             this.undoRedoService.undo();
         }
+    }
+
+    onCtrlCKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.clipboardService.copySelection();
+    }
+
+    onCtrlVKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.clipboardService.pasteSelection();
+    }
+
+    onCtrlXKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.clipboardService.cutSelection();
+    }
+
+    onDeleteKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (!this.isShortcutAllowed()) {
+            return;
+        }
+        this.clipboardService.deleteSelection();
     }
 
     onMinusKeyDown(): void {

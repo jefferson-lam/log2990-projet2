@@ -6,6 +6,7 @@ import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DirectionalMovementDirective } from './directional-movement.directive';
 
@@ -21,14 +22,12 @@ describe('DirectionalMovementDirective', () => {
     const NUM_PIXELS = 3;
 
     beforeEach(() => {
-        // shortcutManagerSpy = jasmine.createSpyObj('ShortcutManagerService', ['selectionMovementOnKeyboardUp', 'selectionMovementOnArrowDown']);
-        // shortcutManagerSpy.selectionMovementOnArrowDown.and.callThrough();
-        // shortcutManagerSpy.selectionMovementOnKeyboardUp.and.callThrough();
         shortcutManager = new ShortcutManagerService(
             {} as PopupManagerService,
             {} as UndoRedoService,
             {} as CanvasGridService,
             {} as ToolManagerService,
+            {} as ClipboardService,
         );
         fixture = TestBed.configureTestingModule({
             declarations: [DirectionalMovementDirective, SelectionComponent],
