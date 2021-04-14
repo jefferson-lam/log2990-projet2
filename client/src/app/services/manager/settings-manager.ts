@@ -50,23 +50,23 @@ export class SettingsManagerService {
     }
 
     setFontFamily(fontFamily: string): void {
-        this.editorComponent.currentTool.setFontFamily(fontFamily);
+        this.toolManager.currentTool.setFontFamily(fontFamily);
     }
 
     setFontSize(fontSize: number): void {
-        this.editorComponent.currentTool.setFontSize(fontSize);
+        this.toolManager.currentTool.setFontSize(fontSize);
     }
 
     setTextAlign(textAlign: string): void {
-        this.editorComponent.currentTool.setTextAlign(textAlign);
+        this.toolManager.currentTool.setTextAlign(textAlign);
     }
 
     setTextBold(fontWeight: string): void {
-        this.editorComponent.currentTool.setTextBold(fontWeight);
+        this.toolManager.currentTool.setTextBold(fontWeight);
     }
 
     setTextItalic(fontStyle: string): void {
-        this.editorComponent.currentTool.setTextItalic(fontStyle);
+        this.toolManager.currentTool.setTextItalic(fontStyle);
     }
 
     setPrimaryColorTools(color: string): void {

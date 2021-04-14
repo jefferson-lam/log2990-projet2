@@ -13,8 +13,8 @@ import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { BehaviorSubject, Subject } from 'rxjs';
 import { TextService } from '@app/services/tools/text/text-service';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -57,7 +57,7 @@ export class ToolManagerService {
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
             .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
             .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
-            .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService);
+            .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService)
             .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
             .set(ToolManagerConstants.TEXT_KEY, this.textService);
     }

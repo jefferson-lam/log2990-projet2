@@ -6,7 +6,6 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -45,7 +44,6 @@ export class SidebarComponent {
         public clipboardService: ClipboardService,
         public popupManager: PopupManagerService,
     ) {
-    constructor(public toolManagerService: ToolManagerService, private undoRedoService: UndoRedoService, public textService: TextService) {
         this.shouldRun = false;
         this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
@@ -62,9 +60,9 @@ export class SidebarComponent {
 
     onSelectTool(tool: SidebarToolButton): void {
         this.toolManager.selectTool(tool.keyShortcut);
-        if (tool.service !== 'TextService') {
-            this.textService.drawTextOnCanvas();
-            this.textService.lockKeyboard = false;
+        if (tool.service !== 'TextService' && this.toolManager.textService.lockKeyboard) {
+            this.toolManager.textService.drawTextOnCanvas();
+            this.toolManager.textService.lockKeyboard = false;
         }
     }
 

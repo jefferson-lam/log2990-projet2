@@ -52,31 +52,16 @@ export class EditorComponent {
     @HostListener('window:keydown.control.c', ['$event'])
     onCtrlCKeyDown(event: KeyboardEvent): void {
         this.shortcutManager.onCtrlCKeyDown(event);
-    @HostListener('window:keydown', ['$event'])
-    onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.textService.lockKeyboard && !this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i|t)$/)) {
-            this.setTool(this.toolManager.selectTool(event));
-        }
     }
 
     @HostListener('window:keydown.control.v', ['$event'])
     onCtrlVKeyDown(event: KeyboardEvent): void {
         this.shortcutManager.onCtrlVKeyDown(event);
-    @HostListener('window:keydown.escape', ['$event'])
-    clearTextServiceInput(): void {
-        if (this.currentTool instanceof TextService && !this.isPopUpOpen) {
-            this.textService.placeHolderSpan.style.display = 'none';
-            this.textService.escapeKeyUsed = true;
-        }
     }
 
-    @HostListener('window:keydown.control.a', ['$event'])
-    onCtrlAKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.setTool(this.toolManager.getTool(RECTANGLE_SELECTION_KEY));
-        if (this.currentTool instanceof RectangleSelectionService) {
-            this.currentTool.selectAll();
-        }
+    @HostListener('window:keydown.escape', ['$event'])
+    onEscapeKeyDown(): void {
+        this.shortcutManager.onEscapeKeyDown();
     }
 
     @HostListener('window:keydown.control.x', ['$event'])
