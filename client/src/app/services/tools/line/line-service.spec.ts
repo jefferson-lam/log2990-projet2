@@ -8,7 +8,7 @@ import { LineService } from './line-service';
 
 // tslint:disable:no-any
 // tslint:disable:max-file-line-count
-fdescribe('LineService', () => {
+describe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
