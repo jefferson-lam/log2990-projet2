@@ -95,9 +95,9 @@ describe('ClipboardService', () => {
             service.clipboard.data[i] = 1;
         }
 
-        const mouseDownSpy = spyOn(service.currentTool, 'onMouseDown').and.callThrough();
+        const keyboardUpSpy = spyOn(service.currentTool, 'onKeyboardUp').and.callThrough();
         service.pasteSelection();
-        expect(mouseDownSpy).toHaveBeenCalled();
+        expect(keyboardUpSpy).toHaveBeenCalled();
     });
 
     it('pasteSelection changes to selection tool used during copy', () => {

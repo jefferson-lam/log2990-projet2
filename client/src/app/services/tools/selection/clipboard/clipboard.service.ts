@@ -60,7 +60,8 @@ export class ClipboardService {
             return;
         }
         if (this.isSelected(this.drawingService.selectionCanvas)) {
-            this.currentTool.onMouseDown({} as MouseEvent);
+            this.currentTool.isEscapeDown = true;
+            this.currentTool.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
         }
         this.changeToSelectionTool(this.lastSelectionTool);
         this.setPastedCanvasPosition();
@@ -78,6 +79,7 @@ export class ClipboardService {
             this.cornerCoords = this.currentTool.cornerCoords;
             this.deleteEllipse();
             this.deleteRectangle();
+            this.currentTool.isFromClipboard = false;
         }
     }
 
