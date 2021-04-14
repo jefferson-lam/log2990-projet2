@@ -148,39 +148,13 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
-    doLinesIntersect(line1: Line2, line2: Line2) {
-        let d =
-            Math.abs(line2.end.y - line2.start.y) * Math.abs(line1.end.x - line1.start.x) -
-            Math.abs(line2.end.x - line2.start.x) * Math.abs(line1.end.y - line1.start.y);
-
-        let num_a =
-            Math.abs(line2.end.x - line2.start.x) * Math.abs(line1.start.y - line2.start.y) -
-            Math.abs(line2.end.y - line2.start.y) * Math.abs(line1.start.x - line2.start.x);
-
-        let num_b =
-            Math.abs(line1.end.x - line1.start.x) * Math.abs(line1.start.y - line2.start.y) -
-            Math.abs(line1.end.y - line1.start.y) * Math.abs(line1.start.x - line2.start.x);
-
-        if (d === 0) {
-            return false;
-        }
-
-        let ua = num_a / d;
-        let ub = num_b / d;
-
-        if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
-            return true;
-        }
-        return false;
-    }
-
     isIntersect(point: Vec2, pathData: Vec2[]): boolean {
         const line = { start: pathData[pathData.length - 1], end: point };
         let curLine;
         for (let i = 0; i < pathData.length - 1; i++) {
             // currentLine = [pathData[i], pathData[i + 1]];
             curLine = { start: pathData[i], end: pathData[i + 1] };
-            let isIntersect = this.intersection(line, curLine);
+            const isIntersect = this.intersects(line, curLine);
             if (isIntersect) {
                 return true;
             }
@@ -188,60 +162,52 @@ export class LassoSelectionService extends ToolSelectionService {
         return false;
     }
 
-    segmentIntersect(line1: Line2, line2: Line2) {
-        let r = this.substractPoints(line1.end, line1.start);
-        let s = this.substractPoints(line2.end, line2.start);
-
-        let uNumerator = this.crossProduct(this.substractPoints(line2.start, line1.start), r);
-        let denominator = this.crossProduct(r, s);
-
-        if (uNumerator === 0 && denominator === 0) {
-            if (
-                this.arePointsEqual(line1.start, line2.start) ||
-                this.arePointsEqual(line1.start, line2.end) ||
-                this.arePointsEqual(line1.end, line2.start) ||
-                this.arePointsEqual(line1.end, line2.end)
-            ) {
-                return true;
-            }
-        }
-
-        if (denominator === 0) {
+    // https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
+    private intersects(line1: Line2, line2: Line2): boolean {
+        let det;
+        let gamma;
+        let lambda;
+        det = (line1.end.x - line1.start.x) * (line2.end.y - line2.start.y) - (line2.end.x - line2.start.x) * (line1.end.y - line1.start.y);
+        if (det === 0) {
             return false;
         }
-
-        const u = uNumerator / denominator;
-        const t = this.crossProduct(this.substractPoints(line2.start, line1.start), s) / denominator;
-
-        return t >= 0 && t <= 1 && u >= 0 && u <= 1;
+        if (this.isColinear(line1, line2)) {
+            return true;
+        }
+        lambda =
+            ((line2.end.y - line2.start.y) * (line2.end.x - line1.start.x) + (line2.start.x - line2.end.x) * (line2.end.y - line1.start.y)) / det;
+        gamma = ((line1.start.y - line1.end.y) * (line2.end.x - line1.start.x) + (line1.end.x - line1.start.x) * (line2.end.y - line1.start.y)) / det;
+        return 0 < lambda && lambda < 1 && 0 < gamma && gamma < 1;
     }
 
-    crossProduct(point1: Vec2, point2: Vec2): number {
-        return point1.x * point2.y - point1.y * point2.x;
+    private isColinear(line1: Line2, line2: Line2): boolean {
+        const line3: Line2 = { start: line1.start, end: line2.start };
+        const slopeLine1 = this.calculateSlopeLine(line1);
+        const slopeLine3 = this.calculateSlopeLine(line3);
+        return slopeLine1 === slopeLine3 && this.doLinesShareRange(line1, line2);
     }
 
-    substractPoints(point1: Vec2, point2: Vec2): Vec2 {
-        return {
-            x: point1.x - point2.x,
-            y: point1.y - point2.y,
-        };
+    private doLinesShareRange(line1: Line2, line2: Line2): boolean {
+        return (
+            this.doesDomainIntersect(line1.start.x, line1.end.x, line2.start.x, line2.end.x) &&
+            this.doesDomainIntersect(line1.start.y, line1.end.y, line2.start.y, line2.end.y)
+        );
     }
 
-    arePointsEqual(point1: Vec2, point2: Vec2): boolean {
-        return point1.x === point2.x && point1.y === point2.y;
+    private doesDomainIntersect(line1Start: number, line1End: number, line2Start: number, line2End: number): boolean {
+        const minXLine1 = Math.min(line1Start, line1End);
+        const maxXLine1 = Math.max(line1Start, line1End);
+        const minXLine2 = Math.min(line2Start, line2End);
+        const maxXLine2 = Math.max(line2Start, line2End);
+        return !(maxXLine2 < minXLine1 || maxXLine1 < minXLine2);
     }
 
-    intersection(line1: Line2, line2: Line2): boolean {
-        let s1 = this.substractPoints(line1.end, line1.start);
-        let s2 = this.substractPoints(line2.end, line2.start);
-
-        let s;
-        let t;
-
-        s = (-s1.y * (line1.start.x - line2.start.x) + s1.x * (line1.start.y - line2.start.y)) / (-s2.x * s1.y + s1.x * s2.y);
-        t = (s2.x * (line1.start.y - line2.start.y) - s2.y * (line1.start.x - line2.start.x)) / (-s2.x * s1.y + s1.x * s2.y);
-
-        return s >= 0 && s <= 1 && t >= 0 && t <= 1;
+    private calculateSlopeLine(line: Line2): number {
+        const TOLERANCE = 5;
+        const ROUNDING_FACTOR = 10;
+        return Math.abs(line.end.x - line.start.x) < TOLERANCE
+            ? Number.POSITIVE_INFINITY
+            : Math.round((Math.abs(line.end.y - line.start.y) / Math.abs(line.end.x - line.start.x)) * ROUNDING_FACTOR) / ROUNDING_FACTOR;
     }
 
     computeSelectionSize(pathData: Vec2[]): number[] {
