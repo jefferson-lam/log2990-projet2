@@ -3,7 +3,7 @@
 
     <div id="main-buttons">
         <button id="creation-button" mat-raised-button (click)="newDrawing()">Créer un nouveau dessin</button>
-        <button id="carousel-button" mat-raised-button (click)="openCarousel()">Ouvrir le carrousel de dessins</button>
+        <button id="carousel-button" mat-raised-button (click)="popupManager.openCarrouselPopUp()">Ouvrir le carrousel de dessins</button>
         <button id="continue-button" mat-raised-button (click)="continueDrawing()" *ngIf="ongoingDrawing">Continuer un dessin</button>
     </div>
 

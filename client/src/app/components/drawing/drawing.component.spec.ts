@@ -1,4 +1,4 @@
-import { SimpleChange } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import * as CanvasConstants from '@app/constants/canvas-constants';
@@ -41,6 +41,7 @@ describe('DrawingComponent', () => {
                 { provide: LineService, useValue: lineStub },
                 { provide: LassoSelectionService, useValue: lassoSelectionStub },
             ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
@@ -174,27 +175,21 @@ describe('DrawingComponent', () => {
         expect(eventSpy.preventDefault).toHaveBeenCalled();
     });
 
-    it('ngOnChanges should set cursor to none if eraserService selected', () => {
+    it('changeCursor should set cursor to none if eraserService selected', () => {
         const canvasStyle = document.getElementsByTagName('canvas')[1].style;
-        component.ngOnChanges({
-            currentTool: new SimpleChange(null, eraserStub, false),
-        });
+        component.changeCursor(eraserStub);
         expect(canvasStyle.cursor).toBe('none');
     });
 
-    it('ngOnChanges should set cursor to pencil-icon if pencilService selected', () => {
+    it('changeCursor should set cursor to pencil-icon if pencilService selected', () => {
         const canvasStyle = document.getElementsByTagName('canvas')[1].style;
-        component.ngOnChanges({
-            currentTool: new SimpleChange(null, pencilStub, false),
-        });
+        component.changeCursor(pencilStub);
         expect(canvasStyle.cursor).toBe('url("assets/pencil.png") 0 15, auto');
     });
 
-    it('ngOnChanges should set cursor to crosshair if not eraser or pencil selected', () => {
+    it('changeCursor should set cursor to crosshair if not eraser or pencil selected', () => {
         const canvasStyle = document.getElementsByTagName('canvas')[1].style;
-        component.ngOnChanges({
-            currentTool: new SimpleChange(null, lineStub, false),
-        });
+        component.changeCursor(lineStub);
         expect(canvasStyle.cursor).toBe('crosshair');
     });
 });

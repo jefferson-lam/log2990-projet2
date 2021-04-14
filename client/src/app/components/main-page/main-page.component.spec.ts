@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import SpyObj = jasmine.SpyObj;
 import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
+import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { EMPTY, Observable, Subject } from 'rxjs';
 import { MainPageComponent } from './main-page.component';
 
@@ -13,11 +14,17 @@ import { MainPageComponent } from './main-page.component';
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
+    let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
     let dialogSpy: SpyObj<MatDialog>;
     let routerSpy: Router;
     const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
     beforeEach(async(() => {
+        popupManagerSpy = jasmine.createSpyObj(
+            'PopupManagerService',
+            ['openDiscardChangesPopUp', 'openCarrouselPopUp', 'openNewDrawingPopUp'],
+            ['isPopupOpen'],
+        );
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
         (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
@@ -32,6 +39,7 @@ describe('MainPageComponent', () => {
             providers: [
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: Router, useValue: routerSpy },
+                { provide: PopupManagerService, useValue: popupManagerSpy },
             ],
         }).compileComponents();
     }));
@@ -67,13 +75,6 @@ describe('MainPageComponent', () => {
         expect(component.ongoingDrawing).toBeTrue();
     });
 
-    it('ngOnInit should call subscribe', () => {
-        const subscribeSpy = spyOn(dialogSpy.afterAllClosed, 'subscribe').and.callThrough();
-        component.ngOnInit();
-        fixture.detectChanges();
-        expect(subscribeSpy).toHaveBeenCalled();
-    });
-
     it('on new drawing button click, should call newDrawing', () => {
         const newDrawingSpy = spyOn(component, 'newDrawing').and.callThrough();
         fixture.detectChanges();
@@ -88,7 +89,7 @@ describe('MainPageComponent', () => {
         const removeSpy = spyOn(localStorage, 'removeItem');
         localStorage.setItem('autosave', mockImageURL);
         const discardSubject = new Subject();
-        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
+        popupManagerSpy.openDiscardChangesPopUp.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
 
         component.newDrawing();
         discardSubject.next(true);
@@ -106,7 +107,7 @@ describe('MainPageComponent', () => {
         const removeSpy = spyOn(localStorage, 'removeItem');
         localStorage.setItem('autosave', mockImageURL);
         const discardSubject = new Subject();
-        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
+        popupManagerSpy.openDiscardChangesPopUp.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as any);
 
         component.newDrawing();
         discardSubject.next(false);
@@ -120,13 +121,13 @@ describe('MainPageComponent', () => {
 
     it('newDrawing should open pop up if autosave drawing exists', () => {
         localStorage.setItem('autosave', mockImageURL);
-        dialogSpy.open.and.returnValue({ afterClosed: () => EMPTY } as any);
+        popupManagerSpy.openDiscardChangesPopUp.and.returnValue({ afterClosed: () => EMPTY } as any);
 
         component.newDrawing();
 
         localStorage.clear();
 
-        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(popupManagerSpy.openDiscardChangesPopUp).toHaveBeenCalled();
     });
 
     it('newDrawing should start new drawing if not autosavedrawing', () => {
@@ -140,13 +141,12 @@ describe('MainPageComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
 
-    it('on carousel button click, should open carrousel interface', () => {
-        const backSpy = spyOn(component, 'openCarousel').and.callThrough();
+    it('on carrousel button click, should open carrousel interface', () => {
         fixture.detectChanges();
         const btn = fixture.debugElement.nativeElement.querySelector('#carousel-button');
         btn.click();
         fixture.detectChanges();
-        expect(backSpy).toHaveBeenCalledWith();
+        expect(popupManagerSpy.openCarrouselPopUp).toHaveBeenCalled();
     });
 
     it('continue drawing button should not be created if no ongoingDrawing', () => {
@@ -177,32 +177,11 @@ describe('MainPageComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
 
-    it('should open Carousel on control+g', () => {
-        const carouselSpy = spyOn(component, 'openCarousel');
+    it('should call openCarrouselPopUp on control+g as well as prevent default', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyG', key: '' });
-        component.isPopUpOpen = false;
         component.onCtrlGKeyDown(eventSpy);
 
-        expect(carouselSpy).toHaveBeenCalled();
-    });
-
-    it('should not open Carousel on control+g if pop up is open', () => {
-        const carouselSpy = spyOn(component, 'openCarousel');
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyG', key: '' });
-        component.isPopUpOpen = true;
-        component.onCtrlGKeyDown(eventSpy);
-
-        expect(carouselSpy).not.toHaveBeenCalled();
-    });
-
-    it('when all popups are closed, isPopUpOpen is set to false', () => {
-        dialogSpy._getAfterAllClosed.and.callFake(() => {
-            return component.dialog['_afterAllClosedAtThisLevel'];
-        });
-        component.isPopUpOpen = true;
-
-        component.dialog._getAfterAllClosed().next();
-
-        expect(component.isPopUpOpen).toBeFalse();
+        expect(popupManagerSpy.openCarrouselPopUp).toHaveBeenCalled();
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
     });
 });

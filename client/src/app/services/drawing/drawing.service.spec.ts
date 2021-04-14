@@ -26,11 +26,11 @@ describe('DrawingService', () => {
         expect(hasColoredPixels).toEqual(false);
     });
 
-    it('newDrawing should fillRect on baseCtx canvas', () => {
-        const fillRectSpy = spyOn(service.baseCtx, 'fillRect');
+    it('newDrawing should call whiteOut with baseCtx canvas', () => {
+        const whiteOutSpy = spyOn(service, 'whiteOut');
         service.newDrawing();
-        expect(service.baseCtx.fillStyle).toBe('#ffffff');
-        expect(fillRectSpy).toHaveBeenCalled();
+        expect(whiteOutSpy).toHaveBeenCalled();
+        expect(whiteOutSpy).toHaveBeenCalledWith(service.baseCtx);
     });
 
     it("newDrawing should call clear canvas of preview layer of component's drawing service", () => {
@@ -38,5 +38,12 @@ describe('DrawingService', () => {
         service.newDrawing();
         expect(clearCanvasSpy).toHaveBeenCalled();
         expect(clearCanvasSpy).toHaveBeenCalledWith(service.previewCtx);
+    });
+
+    it('whiteOut should fillRect on context', () => {
+        const fillRectSpy = spyOn(service.baseCtx, 'fillRect');
+        service.whiteOut(service.baseCtx);
+        expect(service.baseCtx.fillStyle).toBe('#ffffff');
+        expect(fillRectSpy).toHaveBeenCalled();
     });
 });

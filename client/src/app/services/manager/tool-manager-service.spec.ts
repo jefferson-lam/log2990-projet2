@@ -50,7 +50,7 @@ describe('ToolManagerService', () => {
             key: '1',
         } as KeyboardEvent;
 
-        expect(service.selectTool(keyboardEvent)).toEqual(service.rectangleService);
+        expect(service.selectTool(keyboardEvent.key)).toEqual(service.rectangleService);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
@@ -59,7 +59,7 @@ describe('ToolManagerService', () => {
             key: '2',
         } as KeyboardEvent;
 
-        expect(service.selectTool(keyboardEvent)).toEqual(service.ellipseService);
+        expect(service.selectTool(keyboardEvent.key)).toEqual(service.ellipseService);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
@@ -68,7 +68,7 @@ describe('ToolManagerService', () => {
             key: 'c',
         } as KeyboardEvent;
 
-        expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
+        expect(service.selectTool(keyboardEvent.key)).toEqual(service.pencilService);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
@@ -78,7 +78,7 @@ describe('ToolManagerService', () => {
             key: 'c',
         } as KeyboardEvent;
 
-        expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
+        expect(service.selectTool(keyboardEvent.key)).toEqual(service.pencilService);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
@@ -87,14 +87,14 @@ describe('ToolManagerService', () => {
             key: ',',
         } as KeyboardEvent;
 
-        expect(service.selectTool(keyboardEvent)).toEqual(service.pencilService);
+        expect(service.selectTool(keyboardEvent.key)).toEqual(service.pencilService);
     });
 
     it('select tool on l keypress should select line', () => {
         const keyboardEvent = {
             key: 'l',
         } as KeyboardEvent;
-        expect(service.selectTool(keyboardEvent)).toEqual(service.lineService);
+        expect(service.selectTool(keyboardEvent.key)).toEqual(service.lineService);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
@@ -102,7 +102,7 @@ describe('ToolManagerService', () => {
         const keyboardEvent = {
             key: 'e',
         } as KeyboardEvent;
-        expect(service.selectTool(keyboardEvent)).toEqual(service.eraserService);
+        expect(service.selectTool(keyboardEvent.key)).toEqual(service.eraserService);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
