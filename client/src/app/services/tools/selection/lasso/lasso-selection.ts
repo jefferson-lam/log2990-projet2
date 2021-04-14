@@ -59,8 +59,7 @@ export class LassoSelectionService extends ToolSelectionService {
             this.resizerHandlerService.resetResizers();
             return;
         }
-        // const pos = this.getPositionFromMouse(event);
-        // console.log(this.isIntersect(pos, this.linePathData));
+
         super.onMouseDown(event);
         if (!this.inUse && !this.isManipulating) {
             this.clearPath();
@@ -171,11 +170,12 @@ export class LassoSelectionService extends ToolSelectionService {
         let gamma;
         let lambda;
         det = (line1.end.x - line1.start.x) * (line2.end.y - line2.start.y) - (line2.end.x - line2.start.x) * (line1.end.y - line1.start.y);
-        if (det === 0) {
-            return false;
-        }
+
         if (this.isColinear(line1, line2)) {
             return true;
+        }
+        if (det === 0) {
+            return false;
         }
         lambda =
             ((line2.end.y - line2.start.y) * (line2.end.x - line1.start.x) + (line2.start.x - line2.end.x) * (line2.end.y - line1.start.y)) / det;
@@ -192,13 +192,14 @@ export class LassoSelectionService extends ToolSelectionService {
 
     private doLinesShareRange(line1: Line2, line2: Line2): boolean {
         return (
-            this.doDomainsOverlap(line1.start.x, line1.end.x, line2.start.x, line2.end.x) &&
-            this.doDomainsOverlap(line1.start.y, line1.end.y, line2.start.y, line2.end.y)
+            (this.doDomainsOverlap(line1.start.x, line1.end.x, line2.start.x, line2.end.x) ||
+                this.areAllPointsAligned(line1.start.x, line1.end.x, line2.start.x, line2.end.x)) &&
+            (this.doDomainsOverlap(line1.start.y, line1.end.y, line2.start.y, line2.end.y) ||
+                this.areAllPointsAligned(line1.start.y, line1.end.y, line2.start.y, line2.end.y))
         );
     }
 
     private doDomainsOverlap(line1Start: number, line1End: number, line2Start: number, line2End: number): boolean {
-        const MINIMUM_THRESHOLD = 5;
         const minLine1 = Math.min(line1Start, line1End);
         const maxLine1 = Math.max(line1Start, line1End);
         const minLine2 = Math.min(line2Start, line2End);
@@ -206,9 +207,13 @@ export class LassoSelectionService extends ToolSelectionService {
         return (
             (minLine1 >= minLine2 && minLine1 < maxLine2) ||
             (maxLine1 > minLine2 && maxLine1 <= maxLine2) ||
-            Math.abs(minLine1 - minLine2) < MINIMUM_THRESHOLD ||
-            Math.abs(maxLine1 - maxLine2) < MINIMUM_THRESHOLD
+            (minLine2 >= minLine1 && minLine2 < maxLine1) ||
+            (maxLine2 > minLine1 && maxLine2 <= maxLine1)
         );
+    }
+
+    private areAllPointsAligned(line1Start: number, line1End: number, line2Start: number, line2End: number): boolean {
+        return line1Start === line1End && line1Start === line2Start && line1Start === line2End;
     }
 
     private calculateSlopeLine(line: Line2): number {
