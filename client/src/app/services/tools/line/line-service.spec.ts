@@ -8,7 +8,7 @@ import { LineService } from './line-service';
 
 // tslint:disable:no-any
 // tslint:disable:max-file-line-count
-describe('LineService', () => {
+fdescribe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -287,13 +287,26 @@ describe('LineService', () => {
             key: 'Backspace',
         } as KeyboardEvent;
         const popSpy = spyOn(service.linePathData, 'pop');
-        const finishLineSpy = spyOn(service, 'finishLine');
+        const drawPreviewSpy = spyOn(service, 'drawPreview');
 
         service.inUse = true;
         service.onKeyboardUp(backspaceKeyboardEvent);
 
         expect(popSpy).toHaveBeenCalled();
-        expect(finishLineSpy).toHaveBeenCalled();
+        expect(drawPreviewSpy).toHaveBeenCalled();
+    });
+
+    it('on backspace keyboard up should return if called on first point', () => {
+        const backspaceKeyboardEvent = {
+            key: 'Backspace',
+        } as KeyboardEvent;
+
+        service.inUse = true;
+        service.linePathData.pop();
+
+        expect(() => {
+            service.onKeyboardUp(backspaceKeyboardEvent);
+        }).not.toThrow();
     });
 
     it('onMouseDown should start drawing if user has not started a drawing yet', () => {
