@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Line2 } from '@app/classes/line2';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LassoSelectionCommand } from '@app/services/tools/selection/lasso/lasso-selection-command';
@@ -42,22 +43,13 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     onMouseDown(event: MouseEvent): void {
-        if (this.isManipulating) {
-            this.transformValues = {
-                x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
-                y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
-            };
-            const command: Command = new LassoSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
-            this.undoRedoService.executeCommand(command);
-            this.isManipulating = false;
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resetSelectedToolSettings();
-            this.resizerHandlerService.resetResizers();
+        if (event.button != MouseButton.Left) {
             return;
         }
-        // const pos = this.getPositionFromMouse(event);
-        // console.log(this.isIntersect(pos, this.linePathData));
+        if (this.isManipulating) {
+            this.confirmSelection();
+            return;
+        }
         super.onMouseDown(event);
         if (!this.inUse && !this.isManipulating) {
             this.clearPath();
@@ -65,26 +57,10 @@ export class LassoSelectionService extends ToolSelectionService {
             this.linePathData[SelectionConstants.START_INDEX] = this.initialPoint;
             this.inUse = true;
         } else if (this.inUse && !this.isManipulating) {
-            if (
-                this.linePathData[this.linePathData.length - 1].x === this.initialPoint.x &&
-                this.linePathData[this.linePathData.length - 1].y === this.initialPoint.y
-            ) {
-                this.isConnected = true;
-            }
+            this.isConnected = this.arePointsEqual(this.linePathData[this.linePathData.length - 1], this.initialPoint);
         }
-
         if (this.isConnected) {
-            this.inUse = false;
-            this.lineService.onToolChange();
-            this.isConnected = false;
-            // Get selectionWidth and Height
-            const selectionSize = this.computeSelectionSize(this.linePathData);
-            this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = selectionSize[0];
-            this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = selectionSize[1];
-            this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.linePathData);
-            this.setSelectionCanvasPosition(this.topLeft);
-            this.inUse = false;
-            this.isManipulating = true;
+            this.initializeSelection();
         }
     }
 
@@ -108,6 +84,7 @@ export class LassoSelectionService extends ToolSelectionService {
         super.onKeyboardUp(event);
         if (this.inUse) {
             if (event.key === 'Escape' && this.isEscapeDown) {
+                console.log('Escape up');
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetCanvasState(this.drawingService.previewSelectionCanvas);
                 this.resetSelectedToolSettings();
@@ -118,7 +95,10 @@ export class LassoSelectionService extends ToolSelectionService {
             }
         } else if (this.isManipulating) {
             if (event.key === 'Escape' && this.isEscapeDown) {
-                this.onMouseDown({} as MouseEvent);
+                const confirmMouseDown = {
+                    button: MouseButton.Left,
+                } as MouseEvent;
+                this.onMouseDown(confirmMouseDown);
                 this.clearPath();
                 this.lineService.onToolChange();
                 this.inUse = false;
@@ -303,6 +283,34 @@ export class LassoSelectionService extends ToolSelectionService {
         targetCtx.restore();
         this.drawLassoOutline(this.drawingService.previewSelectionCtx, pathData);
         // this.drawLassoOutline(targetCtx, pathData);
+    }
+
+    private confirmSelection(): void {
+        this.transformValues = {
+            x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
+            y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
+        };
+        const command: Command = new LassoSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
+        this.undoRedoService.executeCommand(command);
+        this.isManipulating = false;
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetSelectedToolSettings();
+        this.resizerHandlerService.resetResizers();
+    }
+
+    private initializeSelection(): void {
+        this.inUse = false;
+        this.lineService.onToolChange();
+        this.isConnected = false;
+        // Get selectionWidth and Height
+        const selectionSize = this.computeSelectionSize(this.linePathData);
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = selectionSize[0];
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = selectionSize[1];
+        this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.linePathData);
+        this.setSelectionCanvasPosition(this.topLeft);
+        this.inUse = false;
+        this.isManipulating = true;
     }
 
     private selectLasso(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {

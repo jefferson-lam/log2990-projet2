@@ -9,6 +9,7 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { LassoSelectionService } from '../tools/selection/lasso/lasso-selection';
 
 @Injectable({
     providedIn: 'root',
@@ -130,7 +131,9 @@ export class ShortcutManagerService {
             return;
         }
         if (
-            (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) &&
+            (this.toolManager.currentTool instanceof RectangleSelectionService ||
+                this.toolManager.currentTool instanceof EllipseSelectionService ||
+                this.toolManager.currentTool instanceof LassoSelectionService) &&
             this.toolManager.currentTool.isManipulating
         ) {
             this.toolManager.currentTool.undoSelection();
