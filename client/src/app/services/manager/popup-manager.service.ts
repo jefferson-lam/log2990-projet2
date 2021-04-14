@@ -28,56 +28,54 @@ export class PopupManagerService {
     }
 
     openCarrouselPopUp(): void {
-        if (!this.isPopUpOpen) {
-            const dialogRef = this.dialog.open(MainPageCarrouselComponent, {
-                height: '700px',
-                width: '1800px',
-            });
-            dialogRef.afterClosed().subscribe((imageOpen) => {
-                if (imageOpen.autosave) {
-                    const discardRef = this.openDiscardChangesPopUp();
-                    discardRef?.afterClosed().subscribe((discarded) => {
-                        if (discarded) {
-                            localStorage.setItem('autosave', imageOpen.data);
-                        }
-                    });
-                }
-            });
-        }
+        if (this.isPopUpOpen) return;
+        const dialogRef = this.dialog.open(MainPageCarrouselComponent, {
+            height: '700px',
+            width: '1800px',
+        });
+        dialogRef.afterClosed().subscribe((imageOpen) => {
+            if (imageOpen.autosave) {
+                const discardRef = this.openDiscardChangesPopUp();
+                discardRef?.afterClosed().subscribe((discarded) => {
+                    if (discarded) {
+                        localStorage.setItem('autosave', imageOpen.data);
+                    }
+                });
+            }
+        });
     }
 
     openDiscardChangesPopUp(): MatDialogRef<DiscardChangesPopupComponent> | undefined {
-        if (!this.isPopUpOpen) {
-            const dialogRef = this.dialog.open(DiscardChangesPopupComponent);
-            dialogRef.afterClosed().subscribe((discarded) => {
-                if (discarded) {
-                    this.router.navigate(['/', 'editor']);
-                }
-            });
-            return dialogRef;
-        }
-        return;
+        if (this.isPopUpOpen) return;
+        const dialogRef = this.dialog.open(DiscardChangesPopupComponent);
+        dialogRef.afterClosed().subscribe((discarded) => {
+            if (discarded) {
+                this.router.navigate(['/', 'editor']);
+            }
+        });
+        return dialogRef;
     }
 
     openExportPopUp(): void {
-        if (!this.isPopUpOpen) {
-            this.toolManager.currentTool.onToolChange();
-            this.dialog.open(ExportDrawingComponent, {
-                maxWidth: MAX_WIDTH_FORM + 'px',
-                maxHeight: MAX_HEIGHT_FORM + 'px',
-            });
-        }
+        if (this.isPopUpOpen) return;
+        this.toolManager.currentTool.onToolChange();
+        this.dialog.open(ExportDrawingComponent, {
+            maxWidth: MAX_WIDTH_FORM + 'px',
+            maxHeight: MAX_HEIGHT_FORM + 'px',
+        });
     }
 
     openNewDrawingPopUp(): void {
-        if (!this.undoRedoService.isUndoPileEmpty() && !this.isPopUpOpen) {
+        if (this.isPopUpOpen) return;
+        if (!this.undoRedoService.isUndoPileEmpty() || !this.isCanvasEmpty()) {
             this.toolManager.currentTool.onToolChange();
             this.dialog.open(NewDrawingBoxComponent);
         }
     }
 
     openSavePopUp(): void {
-        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
+        if (this.isPopUpOpen) return;
+        if (!this.isCanvasEmpty()) {
             this.toolManager.currentTool.onToolChange();
             this.dialog.open(SaveDrawingComponent);
         }
