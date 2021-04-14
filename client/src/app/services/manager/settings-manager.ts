@@ -45,6 +45,10 @@ export class SettingsManagerService {
         this.toolManager.currentTool.setEmissionCount(newEmissionCount);
     }
 
+    setToleranceValue(newToleranceValue: number): void {
+        this.toolManager.currentTool.setToleranceValue(newToleranceValue);
+    }
+
     setPrimaryColorTools(color: string): void {
         this.toolManager.setPrimaryColorTools(color);
     }

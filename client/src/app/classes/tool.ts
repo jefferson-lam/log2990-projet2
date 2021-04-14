@@ -62,6 +62,8 @@ export abstract class Tool {
 
     setEmissionCount(newEmissionCount: number): void {}
 
+    setToleranceValue(newToleranceValue: number): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }
