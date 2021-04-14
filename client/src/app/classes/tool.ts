@@ -62,6 +62,8 @@ export abstract class Tool {
 
     setEmissionCount(newEmissionCount: number): void {}
 
+    setToleranceValue(newToleranceValue: number): void {}
+
     setFontFamily(fontFamily: string): void {}
 
     setFontSize(fontSize: number): void {}

@@ -7,11 +7,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DatabaseService } from '@app/services/database/database.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { MainPageCarrouselComponent } from './main-page-carrousel.component';
 
 import SpyObj = jasmine.SpyObj;
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 // tslint:disable: max-file-line-count
 // tslint:disable: no-string-literal
 describe('MainPageCarrouselComponent', () => {
@@ -19,10 +21,15 @@ describe('MainPageCarrouselComponent', () => {
     let fixture: ComponentFixture<MainPageCarrouselComponent>;
     let databaseServiceSpy: SpyObj<DatabaseService>;
     let localServerServiceSpy: SpyObj<LocalServerService>;
+    let matDialogRefSpy: SpyObj<MatDialogRef<DiscardChangesPopupComponent>>;
     let dialogSpy: SpyObj<MatDialog>;
+    let routerSpy: SpyObj<Router>;
+    const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
     const TICK_TIME = 50;
 
     beforeEach(async(() => {
+        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawingsByTags', 'getDrawings', 'dropDrawing']);
         databaseServiceSpy.getDrawingsByTags.and.returnValue(
@@ -70,6 +77,8 @@ describe('MainPageCarrouselComponent', () => {
                 { provide: DatabaseService, useValue: databaseServiceSpy },
                 { provide: LocalServerService, useValue: localServerServiceSpy },
                 { provide: MatDialog, useValue: dialogSpy },
+                { provide: Router, useValue: routerSpy },
+                { provide: MatDialogRef, useValue: matDialogRefSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -289,10 +298,41 @@ describe('MainPageCarrouselComponent', () => {
         expect(popSpy).not.toHaveBeenCalled();
     });
 
-    it('openEditorWithDrawing should call dialog.open', () => {
-        component.openEditorWithDrawing('testingstring');
+    it('openDrawing should close if autosavedrawing', () => {
+        localStorage.setItem('autosave', mockImageURL);
 
-        expect(dialogSpy.open).toHaveBeenCalled();
+        component.openDrawing(mockImageURL);
+        localStorage.clear();
+
+        expect(matDialogRefSpy.close).toHaveBeenCalled();
+        expect(matDialogRefSpy.close).toHaveBeenCalledWith({ autosave: true, data: mockImageURL });
+    });
+
+    it('openDrawing should do nothing if autosavedrawing and pop up returns false', () => {
+        localStorage.setItem('autosave', mockImageURL);
+        const setSpy = spyOn(localStorage, 'setItem');
+        const discardSubject = new Subject();
+        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as MatDialogRef<DiscardChangesPopupComponent>);
+
+        component.openDrawing(mockImageURL);
+        discardSubject.next(false);
+        localStorage.clear();
+
+        expect(setSpy).not.toHaveBeenCalled();
+        expect(routerSpy.navigate).not.toHaveBeenCalled();
+        expect(routerSpy.navigate).not.toHaveBeenCalledWith(['/', 'editor']);
+    });
+
+    it('openDrawing should set drawing if not autosavedrawing', () => {
+        localStorage.clear();
+        const setSpy = spyOn(localStorage, 'setItem');
+
+        component.openDrawing(mockImageURL);
+
+        expect(setSpy).toHaveBeenCalled();
+        expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
+        expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
     });
 
     it('showCaseNextDrawing should not move to any drawing whatsoever if number of drawings in showcase is 0.', () => {

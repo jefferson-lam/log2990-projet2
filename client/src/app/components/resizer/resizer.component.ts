@@ -1,8 +1,9 @@
-import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -23,7 +24,7 @@ export class ResizerComponent implements AfterViewInit {
     @ViewChild('cornerResizer', { static: false }) cornerResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
 
-    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService) {}
+    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, public autoSaveService: AutoSaveService) {}
 
     ngAfterViewInit(): void {
         this.previewCtx = this.drawingService.previewCtx;
@@ -34,16 +35,7 @@ export class ResizerComponent implements AfterViewInit {
         this.cornerResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
         this.bottomResizer.nativeElement.style.left = this.baseCtx.canvas.width / 2 + 'px';
         this.bottomResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
-        if (this.drawingService.imageURL !== '') {
-            const image = new Image();
-            image.src = this.drawingService.imageURL;
-            this.undoRedoService.reset();
-            this.undoRedoService.resetCanvasSize = new ResizerCommand(image.width, image.height);
-            this.undoRedoService.resetCanvasSize.execute();
-            this.baseCtx.drawImage(image, 0, 0, image.width, image.height);
-        } else {
-            this.undoRedoService.resetCanvasSize = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
-        }
+        this.autoSaveService.loadDrawing();
     }
 
     /**
@@ -78,11 +70,9 @@ export class ResizerComponent implements AfterViewInit {
         this.bottomResizer.nativeElement.style.transform = '';
     }
 
-    expandCanvas(event: CdkDragEnd): void {
+    expandCanvas(): void {
         this.lockMinCanvasValue();
-        this.drawingService.canvasHeightObservable.next(this.previewCtx.canvas.height);
-        this.drawingService.canvasWidthObservable.next(this.previewCtx.canvas.width);
-        const command: Command = new ResizerCommand();
+        const command: Command = new ResizerCommand(this.drawingService);
         this.undoRedoService.executeCommand(command);
         this.isSideResizerDown = false;
         this.isCornerResizerDown = false;
@@ -90,11 +80,11 @@ export class ResizerComponent implements AfterViewInit {
     }
 
     lockMinCanvasValue(): void {
-        if (this.previewCtx.canvas.width < CanvasConstants.MIN_LENGTH_CANVAS) {
-            this.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        if (this.previewCtx.canvas.width < CanvasConstants.MIN_WIDTH_CANVAS) {
+            this.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
 
-            this.sideResizer.nativeElement.style.left = CanvasConstants.MIN_LENGTH_CANVAS + 'px';
-            this.cornerResizer.nativeElement.style.left = CanvasConstants.MIN_LENGTH_CANVAS + 'px';
+            this.sideResizer.nativeElement.style.left = CanvasConstants.MIN_WIDTH_CANVAS + 'px';
+            this.cornerResizer.nativeElement.style.left = CanvasConstants.MIN_WIDTH_CANVAS + 'px';
             this.bottomResizer.nativeElement.style.left = this.previewCtx.canvas.width / 2 + 'px';
         }
         if (this.previewCtx.canvas.height < CanvasConstants.MIN_HEIGHT_CANVAS) {

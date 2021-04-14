@@ -48,8 +48,8 @@ describe('EllipseSelectionCommandService', () => {
         ] as Vec2[];
 
         ellipseSelectionService.cornerCoords = Object.assign([], pathStub);
-        ellipseSelectionService.selectionHeight = TEST_SELECTION_HEIGHT;
-        ellipseSelectionService.selectionWidth = TEST_SELECTION_WIDTH;
+        selectionCtxStub.canvas.height = TEST_SELECTION_HEIGHT;
+        selectionCtxStub.canvas.width = TEST_SELECTION_WIDTH;
         ellipseSelectionService.transformValues = TEST_TRANSFORM_VALUES;
         ellipseSelectionService.isCircle = TEST_IS_CIRCLE;
 
@@ -152,5 +152,11 @@ describe('EllipseSelectionCommandService', () => {
 
         expect(radii[0]).toEqual(shortestSide);
         expect(radii[1]).toEqual(shortestSide);
+    });
+
+    it('execute should not fill shape if isFromClipboard is set to true', () => {
+        command.isFromClipboard = true;
+        command.execute();
+        expect(baseCtxFillSpy).not.toHaveBeenCalled();
     });
 });
