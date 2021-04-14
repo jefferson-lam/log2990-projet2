@@ -42,7 +42,6 @@ export class TextCommand extends Command {
         this.spanTopPosition = textService.placeHolderSpan.clientHeight;
 
         this.text = textService.placeHolderSpan.innerText;
-
         Object.assign(this.cornerCoords, textService.cornerCoords);
     }
 
