@@ -3,7 +3,6 @@ import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import { DirectionalMovementDirective } from '@app/components/selection/selection-directives/directional-movement.directive';
 import { SelectionComponent } from '@app/components/selection/selection.component';
-import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
@@ -19,10 +18,10 @@ import { ShortcutManagerService } from './shortcut-manager.service';
 describe('ShortcutManagerService', () => {
     let service: ShortcutManagerService;
     let rectangleSelectionService: RectangleSelectionService;
+    let stampService: StampService;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
-    let stampServiceSpy: jasmine.SpyObj<StampService>;
     let resizerHandlerServiceSpy: jasmine.SpyObj<ResizerHandlerService>;
     let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let undoSelectionSpy: jasmine.Spy;
@@ -46,7 +45,6 @@ describe('ShortcutManagerService', () => {
             ['isPopUpOpen'],
         );
         canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize']);
-        stampServiceSpy = jasmine.createSpyObj('StampService', ['changeRotationAngleOnAlt', 'changeRotationAngleNormal']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -54,7 +52,6 @@ describe('ShortcutManagerService', () => {
                 { provide: ToolManagerService, useValue: toolManagerSpy },
                 { provide: PopupManagerService, useValue: popupManagerSpy },
                 { provide: UndoRedoService, useValue: undoRedoServiceSpy },
-                { provide: StampService, useValue: stampServiceSpy },
             ],
         });
         service = TestBed.inject(ShortcutManagerService);
@@ -68,6 +65,8 @@ describe('ShortcutManagerService', () => {
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
         (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(rectangleSelectionService);
+
+        stampService = new StampService({} as DrawingService, {} as UndoRedoService);
 
         resizerHandlerServiceSpy = jasmine.createSpyObj(
             'ResizerHandlerService',
@@ -171,31 +170,41 @@ describe('ShortcutManagerService', () => {
     });
 
     it('onAltDown should call changeRotationAngleOnAlt() from stampService', () => {
-        service.onAltDown(mockEvent);
-
-        expect(stampServiceSpy.changeRotationAngleOnAlt).not.toHaveBeenCalled();
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(stampService);
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
+        const rotationSpy = spyOn(stampService, 'changeRotationAngleOnAlt').and.callFake(() => {
+            return;
+        });
+        service.onAltDown(eventSpy);
+        expect(rotationSpy).toHaveBeenCalled();
     });
 
     it('onAltUp should call changeRotationAngleNormal() from stampService', () => {
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(stampService);
+        const rotationSpy = spyOn(stampService, 'changeRotationAngleNormal').and.callFake(() => {
+            return;
+        });
         service.onAltUp();
 
-        expect(stampServiceSpy.changeRotationAngleNormal).not.toHaveBeenCalled();
+        expect(rotationSpy).toHaveBeenCalled();
     });
 
     it('onAltDown should not call changeRotationAngleOnAlt() from stampService', () => {
-        allowShortcutSpy.and.returnValue(false);
-        service.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
-        service.onAltDown(mockEvent);
-
-        expect(stampServiceSpy.changeRotationAngleOnAlt).not.toHaveBeenCalled();
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
+        const rotationSpy = spyOn(stampService, 'changeRotationAngleOnAlt').and.callFake(() => {
+            return;
+        });
+        service.onAltDown(eventSpy);
+        expect(rotationSpy).not.toHaveBeenCalled();
     });
 
     it('onAltUp should not call changeRotationAngleNormal() from stampService', () => {
-        allowShortcutSpy.and.returnValue(false);
-        service.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
+        const rotationSpy = spyOn(stampService, 'changeRotationAngleNormal').and.callFake(() => {
+            return;
+        });
         service.onAltUp();
 
-        expect(stampServiceSpy.changeRotationAngleNormal).not.toHaveBeenCalled();
+        expect(rotationSpy).not.toHaveBeenCalled();
     });
 
     it('selectionOnShiftKeyDown should not call resizerHandlerService.functions and component.drawWithScalingFactors if isShortcutAllowed false and resizerHandlerService.inUse false', () => {
