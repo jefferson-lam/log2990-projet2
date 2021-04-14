@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
+import { Line2 } from '@app/classes/line2';
 import { Vec2 } from '@app/classes/vec2';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -14,6 +15,7 @@ import { ToolSelectionService } from '../tool-selection-service';
 export class LassoSelectionService extends ToolSelectionService {
     isManipulating: boolean;
     isConnected: boolean;
+    isValidSegment: boolean;
     linePathData: Vec2[];
     initialPoint: Vec2;
     transformValues: Vec2;
@@ -31,6 +33,7 @@ export class LassoSelectionService extends ToolSelectionService {
         super(drawingService, undoRedoService, resizerHandlerService, lineService);
         this.isManipulating = false;
         this.isConnected = false;
+        this.isValidSegment = true;
         this.linePathData = new Array<Vec2>();
         this.isEscapeDown = false;
         this.lineService.linePathDataSubject.asObservable().subscribe((point) => {
@@ -53,8 +56,8 @@ export class LassoSelectionService extends ToolSelectionService {
             this.resizerHandlerService.resetResizers();
             return;
         }
-        const pos = this.getPositionFromMouse(event);
-        console.log(this.isIntersect(pos, this.linePathData));
+        // const pos = this.getPositionFromMouse(event);
+        // console.log(this.isIntersect(pos, this.linePathData));
         super.onMouseDown(event);
         if (!this.inUse && !this.isManipulating) {
             this.clearPath();
@@ -82,6 +85,15 @@ export class LassoSelectionService extends ToolSelectionService {
             this.setSelectionCanvasPosition(this.topLeft);
             this.inUse = false;
             this.isManipulating = true;
+        }
+    }
+
+    onMouseMove(event: MouseEvent): void {
+        if (this.inUse) {
+            super.onMouseMove(event);
+            const mousePosition = this.getPositionFromMouse(event);
+            this.isValidSegment = this.isIntersect(mousePosition, this.linePathData);
+            console.log(this.isValidSegment);
         }
     }
 
@@ -136,14 +148,39 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
+    doLinesIntersect(line1: Line2, line2: Line2) {
+        let d =
+            Math.abs(line2.end.y - line2.start.y) * Math.abs(line1.end.x - line1.start.x) -
+            Math.abs(line2.end.x - line2.start.x) * Math.abs(line1.end.y - line1.start.y);
+
+        let num_a =
+            Math.abs(line2.end.x - line2.start.x) * Math.abs(line1.start.y - line2.start.y) -
+            Math.abs(line2.end.y - line2.start.y) * Math.abs(line1.start.x - line2.start.x);
+
+        let num_b =
+            Math.abs(line1.end.x - line1.start.x) * Math.abs(line1.start.y - line2.start.y) -
+            Math.abs(line1.end.y - line1.start.y) * Math.abs(line1.start.x - line2.start.x);
+
+        if (d === 0) {
+            return false;
+        }
+
+        let ua = num_a / d;
+        let ub = num_b / d;
+
+        if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
+            return true;
+        }
+        return false;
+    }
+
     isIntersect(point: Vec2, pathData: Vec2[]): boolean {
-        const newLine = [pathData[pathData.length - 1], point];
-        let currentLine;
-        console.log(pathData);
+        const line = { start: pathData[pathData.length - 1], end: point };
+        let curLine;
         for (let i = 0; i < pathData.length - 1; i++) {
-            currentLine = [pathData[i], pathData[i + 1]];
-            console.log(currentLine);
-            let isIntersect = this.segmentIntersect(newLine[0], newLine[1], currentLine[0], currentLine[1]);
+            // currentLine = [pathData[i], pathData[i + 1]];
+            curLine = { start: pathData[i], end: pathData[i + 1] };
+            let isIntersect = this.intersection(line, curLine);
             if (isIntersect) {
                 return true;
             }
@@ -151,36 +188,60 @@ export class LassoSelectionService extends ToolSelectionService {
         return false;
     }
 
-    segmentIntersect(p1: Vec2, p2: Vec2, q1: Vec2, q2: Vec2) {
-        let r = this.substractPoints(p2, p1);
-        let s = this.substractPoints(q2, q1);
+    segmentIntersect(line1: Line2, line2: Line2) {
+        let r = this.substractPoints(line1.end, line1.start);
+        let s = this.substractPoints(line2.end, line2.start);
 
-        let uNumerator = this.crossProduct(this.substractPoints(q1, p1), r);
+        let uNumerator = this.crossProduct(this.substractPoints(line2.start, line1.start), r);
         let denominator = this.crossProduct(r, s);
 
         if (uNumerator === 0 && denominator === 0) {
+            if (
+                this.arePointsEqual(line1.start, line2.start) ||
+                this.arePointsEqual(line1.start, line2.end) ||
+                this.arePointsEqual(line1.end, line2.start) ||
+                this.arePointsEqual(line1.end, line2.end)
+            ) {
+                return true;
+            }
+        }
+
+        if (denominator === 0) {
             return false;
         }
 
-        var u = uNumerator / denominator;
-        var t = this.crossProduct(this.substractPoints(q1, p1), s) / denominator;
+        const u = uNumerator / denominator;
+        const t = this.crossProduct(this.substractPoints(line2.start, line1.start), s) / denominator;
 
         return t >= 0 && t <= 1 && u >= 0 && u <= 1;
     }
 
     crossProduct(point1: Vec2, point2: Vec2): number {
-        return Math.abs(point1.x * point2.x - point1.y * point2.y);
+        return point1.x * point2.y - point1.y * point2.x;
     }
 
     substractPoints(point1: Vec2, point2: Vec2): Vec2 {
         return {
-            x: Math.abs(point1.x - point2.x),
-            y: Math.abs(point1.y - point2.y),
+            x: point1.x - point2.x,
+            y: point1.y - point2.y,
         };
     }
 
     arePointsEqual(point1: Vec2, point2: Vec2): boolean {
         return point1.x === point2.x && point1.y === point2.y;
+    }
+
+    intersection(line1: Line2, line2: Line2): boolean {
+        let s1 = this.substractPoints(line1.end, line1.start);
+        let s2 = this.substractPoints(line2.end, line2.start);
+
+        let s;
+        let t;
+
+        s = (-s1.y * (line1.start.x - line2.start.x) + s1.x * (line1.start.y - line2.start.y)) / (-s2.x * s1.y + s1.x * s2.y);
+        t = (s2.x * (line1.start.y - line2.start.y) - s2.y * (line1.start.x - line2.start.x)) / (-s2.x * s1.y + s1.x * s2.y);
+
+        return s >= 0 && s <= 1 && t >= 0 && t <= 1;
     }
 
     computeSelectionSize(pathData: Vec2[]): number[] {
