@@ -69,7 +69,6 @@ export class LassoSelectionService extends ToolSelectionService {
             super.onMouseMove(event);
             const mousePosition = this.getPositionFromMouse(event);
             this.isValidSegment = this.isIntersect(mousePosition, this.linePathData);
-            console.log(this.isValidSegment);
         }
     }
 
@@ -84,7 +83,6 @@ export class LassoSelectionService extends ToolSelectionService {
         super.onKeyboardUp(event);
         if (this.inUse) {
             if (event.key === 'Escape' && this.isEscapeDown) {
-                console.log('Escape up');
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetCanvasState(this.drawingService.previewSelectionCanvas);
                 this.resetSelectedToolSettings();
