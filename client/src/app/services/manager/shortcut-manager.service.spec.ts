@@ -46,12 +46,6 @@ describe('ShortcutManagerService', () => {
         );
         canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize']);
         magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['toggleMagnetism']);
-        (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
-            new Subject<any>(),
-        );
-        (Object.getOwnPropertyDescriptor(dialogSpy, 'afterAllClosed')?.get as jasmine.Spy<() => Observable<void>>).and.returnValue(
-            dialogSpy['_afterAllClosedAtThisLevel'].asObservable(),
-        );
 
         TestBed.configureTestingModule({
             providers: [
@@ -574,8 +568,14 @@ describe('ShortcutManagerService', () => {
         expect(setSpy).not.toHaveBeenCalled();
     });
 
-    it('toggleMagnetism should call magnetismService.toggleMagnetism', () => {
-        component.onMKeyDown();
+    it('onMKeyDown should call magnetismService.toggleMagnetism', () => {
+        service.onMKeyDown();
         expect(magnetismServiceSpy.toggleMagnetism).toHaveBeenCalled();
+    });
+
+    it('onMKeyDown should not call magnetismService.toggleMagnetism if isShortcutAllowed false', () => {
+        allowShortcutSpy.and.returnValue(false);
+        service.onMKeyDown();
+        expect(magnetismServiceSpy.toggleMagnetism).not.toHaveBeenCalled();
     });
 });

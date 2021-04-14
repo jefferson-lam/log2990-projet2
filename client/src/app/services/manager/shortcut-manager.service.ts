@@ -169,12 +169,6 @@ export class ShortcutManagerService {
         this.magnetismService.toggleMagnetism();
     }
 
-    // TODO: Find a way to close magnetismOptions
-    // setTool(newTool: Tool): void {
-    //     this.currentTool = newTool;
-    //     this.sideBar.closeMagnetismeOptions();
-    // }
-
     async selectionMovementOnArrowDown(event: KeyboardEvent, directive: DirectionalMovementDirective): Promise<void> {
         event.preventDefault();
         if (!this.isShortcutAllowed()) {
