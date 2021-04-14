@@ -11,6 +11,7 @@ import { LineService } from '@app/services/tools/line/line-service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -27,6 +28,7 @@ describe('SidebarComponent', () => {
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
     let rectangleSelectionServiceStub: RectangleSelectionService;
+    let clipboardServiceStub: ClipboardService;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
@@ -54,13 +56,14 @@ describe('SidebarComponent', () => {
             {} as DrawingService,
             {} as UndoRedoService,
             {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
+            rectangleStub as RectangleService,
         );
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<
             () => BehaviorSubject<Tool>
         >).and.returnValue(new BehaviorSubject<Tool>(toolManagerServiceSpy.currentTool));
+        clipboardServiceStub = new ClipboardService({} as DrawingService, toolManagerServiceSpy, {} as UndoRedoService, {} as ResizerHandlerService);
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -71,6 +74,7 @@ describe('SidebarComponent', () => {
                 { provide: EllipseService, useValue: ellipseStub },
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
                 { provide: PopupManagerService, useValue: popupManagerSpy },
+                { provide: ClipboardService, useValue: clipboardServiceStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -354,5 +358,35 @@ describe('SidebarComponent', () => {
         component.isGridOptionsDisplayed = false;
         component.openGridOptions();
         expect(component.isGridOptionsDisplayed).toBeTrue();
+    });
+
+    it('clicking on copySelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        const copySpy = spyOn(clipboardServiceStub, 'copySelection').and.callFake(() => {
+            return;
+        });
+        component.copySelection();
+        expect(copySpy).toHaveBeenCalled();
+    });
+
+    it('clicking on cutSelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        const cutSpy = spyOn(clipboardServiceStub, 'cutSelection').and.callFake(() => {
+            return;
+        });
+        component.cutSelection();
+        expect(cutSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on deleteSelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        const deleteSpy = spyOn(clipboardServiceStub, 'deleteSelection').and.callFake(() => {
+            return;
+        });
+        component.deleteSelection();
+        expect(deleteSpy).toHaveBeenCalled();
+    });
+
+    it('clicking on pasteSelection should call clipboardService method', () => {
+        const pasteSpy = spyOn(clipboardServiceStub, 'pasteSelection');
+        component.pasteSelection();
+        expect(pasteSpy).toHaveBeenCalled();
     });
 });

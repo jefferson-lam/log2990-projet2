@@ -105,8 +105,13 @@ export class LineService extends Tool {
                 this.inUse = false;
                 break;
             case 'Backspace':
+                const lastPoint = this.linePathData[this.linePathData.length - 2];
+                if (lastPoint === this.initialPoint && this.linePathData.length === 2) {
+                    return;
+                }
                 this.linePathData.pop();
-                this.finishLine();
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawPreview();
                 break;
         }
     }

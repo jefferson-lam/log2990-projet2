@@ -11,6 +11,7 @@ export class RectangleSelectionCommand extends Command {
     isSquare: boolean;
     cornerCoords: Vec2[] = [];
     selectionCanvas: HTMLCanvasElement;
+    isFromClipboard: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, rectangleSelectionService: RectangleSelectionService) {
         super();
@@ -31,11 +32,14 @@ export class RectangleSelectionCommand extends Command {
         this.selectionWidth = selectionCanvas.width;
         this.transformValues = rectangleSelectionService.transformValues;
         this.isSquare = rectangleSelectionService.isSquare;
+        this.isFromClipboard = rectangleSelectionService.isFromClipboard;
     }
 
     execute(): void {
-        this.ctx.fillStyle = 'white';
-        this.ctx.fillRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.initialSelectionWidth, this.initialSelectionHeight);
+        if (!this.isFromClipboard) {
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.initialSelectionWidth, this.initialSelectionHeight);
+        }
         // When implementing scaling, we will have to sum selectionWidth and selectionHeight to a
         // the distance scaled by the mouse
         this.ctx.drawImage(

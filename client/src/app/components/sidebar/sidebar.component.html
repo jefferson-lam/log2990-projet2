@@ -26,6 +26,18 @@
             <li id="selectAllButton">
                 <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
             </li>
+            <li id="copyButton">
+                <mat-icon matTooltip="Copier la sélection" [matTooltipPosition]="'right'" (click)="copySelection()">content_copy</mat-icon>
+            </li>
+            <li id="cutButton">
+                <mat-icon matTooltip="Couper la sélection" [matTooltipPosition]="'right'" (click)="cutSelection()">content_cut</mat-icon>
+            </li>
+            <li id="pasteButton">
+                <mat-icon matTooltip="Coller la sélection" [matTooltipPosition]="'right'" (click)="pasteSelection()">content_paste</mat-icon>
+            </li>
+            <li id="deleteButton">
+                <mat-icon matTooltip="Supprimer la sélection" [matTooltipPosition]="'right'" (click)="deleteSelection()">clear</mat-icon>
+            </li>
             <li id="gridButton">
                 <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
             </li>
