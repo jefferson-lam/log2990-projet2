@@ -13,7 +13,7 @@ export class ColorOptionsComponent {
     step: number = 0.1;
     hue: Rgba;
 
-    @Input() color: Rgba = { red: '255', green: '255', blue: '255', alpha: 1 };
+    @Input() color: Rgba = { red: 255, green: 255, blue: 255, alpha: 1 };
 
     @Output() newColor: EventEmitter<Rgba> = new EventEmitter();
     @Output() showOptions: EventEmitter<boolean> = new EventEmitter();

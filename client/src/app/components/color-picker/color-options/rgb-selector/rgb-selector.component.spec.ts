@@ -1,15 +1,19 @@
 import { SimpleChange, SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { RgbSelectorComponent } from './rgb-selector.component';
 
 describe('RgbSelectorComponent', () => {
     let component: RgbSelectorComponent;
     let fixture: ComponentFixture<RgbSelectorComponent>;
+    let shortcutManagerSpy: jasmine.SpyObj<ShortcutManagerService>;
 
     beforeEach(async(() => {
+        shortcutManagerSpy = jasmine.createSpyObj('ShortcutManagerService', ['']);
         TestBed.configureTestingModule({
             declarations: [RgbSelectorComponent],
+            providers: [{ provide: ShortcutManagerService, useValue: shortcutManagerSpy }],
         }).compileComponents();
     }));
 
@@ -44,47 +48,25 @@ describe('RgbSelectorComponent', () => {
         expect(component.blue).toEqual(initialBlue);
     });
 
-    it('returns true with valid hex code', () => {
-        const isValid = component.isValidHexCode('jfkldas1231');
-        expect(isValid).toBeFalsy();
-    });
-
-    it('returns true with valid hex code', () => {
-        const isValid = component.isValidHexCode('1234567890abcef');
-        expect(isValid).toBeTruthy();
-    });
-
-    it('converts string properly from hex to dec', () => {
-        const dec = component.convertHexToDec('FACE01');
-        expect(dec).toEqual('16436737');
-    });
-
     it('converts string properly from dec to hex', () => {
-        const hex = component.printDecToHex('1234567');
+        const mockNumber = 1234567;
+        const hex = component.printDecToHex(mockNumber);
         expect(hex).toEqual('12D687');
     });
 
-    it('should emit color output', () => {
-        const outputEmitSpy = spyOn(component.newColor, 'emit');
-        component.emitColor(component.newColor);
-        expect(outputEmitSpy).toHaveBeenCalled();
-    });
-
     it('onInput sets red value if red field is in focus', () => {
-        const hexToDecSpy = spyOn(component, 'convertHexToDec');
-        const emitSpy = spyOn(component, 'emitColor');
+        const emitSpy = spyOn(component.newColor, 'emit');
 
         const input = fixture.debugElement.query(By.css('#red-input')).nativeElement as HTMLInputElement;
         input.value = 'A';
         const event = { isTrusted: true, target: input as EventTarget } as CustomEvent;
         component.onInput(event);
-        expect(hexToDecSpy).toHaveBeenCalledWith(input.value);
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('onInput only sets invalidInput on true with empty input in red field', async(() => {
         fixture.whenStable().then(() => {
-            const emitSpy = spyOn(component, 'emitColor');
+            const emitSpy = spyOn(component.newColor, 'emit');
             const initialRed = component.red;
             const input = fixture.debugElement.query(By.css('#red-input')).nativeElement as HTMLInputElement;
             input.value = {} as string;
@@ -98,7 +80,7 @@ describe('RgbSelectorComponent', () => {
 
     it('onInput only sets invalidInput on true with invalid hex code input', async(() => {
         fixture.whenStable().then(() => {
-            const emitSpy = spyOn(component, 'emitColor');
+            const emitSpy = spyOn(component.newColor, 'emit');
             const initialRed = component.red;
             const input = fixture.debugElement.query(By.css('#red-input')).nativeElement as HTMLInputElement;
             input.value = 'pp';
@@ -112,23 +94,21 @@ describe('RgbSelectorComponent', () => {
 
     it('onInput emits new color with valid red input', async(() => {
         fixture.whenStable().then(() => {
-            const emitColorSpy = spyOn(component, 'emitColor');
+            const emitSpy = spyOn(component.newColor, 'emit');
             const input = fixture.debugElement.query(By.css('#red-input')).nativeElement as HTMLInputElement;
             input.value = 'AB';
             input.dispatchEvent(new Event('input'));
-            expect(emitColorSpy).toHaveBeenCalled();
+            expect(emitSpy).toHaveBeenCalled();
         });
     }));
 
     it('onInput sets green value if green field is in focus', () => {
-        const hexToDecSpy = spyOn(component, 'convertHexToDec');
-        const emitSpy = spyOn(component, 'emitColor');
+        const emitSpy = spyOn(component.newColor, 'emit');
 
         const input = fixture.debugElement.query(By.css('#green-input')).nativeElement as HTMLInputElement;
         input.value = 'A';
         const event = { isTrusted: true, target: input as EventTarget } as CustomEvent;
         component.onInput(event);
-        expect(hexToDecSpy).toHaveBeenCalledWith(input.value);
         expect(emitSpy).toHaveBeenCalled();
     });
 
@@ -146,11 +126,11 @@ describe('RgbSelectorComponent', () => {
 
     it('onInput emits new color with valid green input', async(() => {
         fixture.whenStable().then(() => {
-            const emitColorSpy = spyOn(component, 'emitColor');
+            const emitSpy = spyOn(component.newColor, 'emit');
             const input = fixture.debugElement.query(By.css('#green-input')).nativeElement as HTMLInputElement;
             input.value = 'CC';
             input.dispatchEvent(new Event('input'));
-            expect(emitColorSpy).toHaveBeenCalled();
+            expect(emitSpy).toHaveBeenCalled();
         });
     }));
 
@@ -168,22 +148,23 @@ describe('RgbSelectorComponent', () => {
 
     it('onInput changes blue value with valid blue input', async(() => {
         fixture.whenStable().then(() => {
+            const CC_DEC = 204;
             const input = fixture.debugElement.query(By.css('#blue-input')).nativeElement as HTMLInputElement;
-            expect(input.value).toBe(component.blue);
+            expect(input.value).toBe(component.blue.toString());
             input.value = 'CC';
             input.dispatchEvent(new Event('input'));
-            expect(fixture.componentInstance.blue).toEqual('204');
+            expect(fixture.componentInstance.blue).toEqual(CC_DEC);
             expect(component.invalidInput).toBeFalsy();
         });
     }));
 
     it('onInput emits new color with valid blue input', async(() => {
         fixture.whenStable().then(() => {
-            const emitColorSpy = spyOn(component, 'emitColor');
+            const emitSpy = spyOn(component.newColor, 'emit');
             const input = fixture.debugElement.query(By.css('#blue-input')).nativeElement as HTMLInputElement;
             input.value = 'CC';
             input.dispatchEvent(new Event('input'));
-            expect(emitColorSpy).toHaveBeenCalled();
+            expect(emitSpy).toHaveBeenCalled();
         });
     }));
 });

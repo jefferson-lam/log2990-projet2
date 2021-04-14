@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/magnetism/magnetism.service';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 
 @Component({
@@ -36,9 +37,10 @@ export class SelectionComponent implements AfterViewInit {
     bottomRight: Vec2;
 
     constructor(
-        public resizerHandlerService: ResizerHandlerService,
-        private drawingService: DrawingService,
         private magnetismService: MagnetismService,
+        private drawingService: DrawingService,
+        public resizerHandlerService: ResizerHandlerService,
+        public shortcutManager: ShortcutManagerService,
     ) {
         this.initialPosition = { x: 0, y: 0 };
         this.bottomRight = { x: 0, y: 0 };
@@ -215,25 +217,14 @@ export class SelectionComponent implements AfterViewInit {
     applyFocusOutBorderStyle(): void {
         this.borderCanvas.style.border = '1px dashed black';
     }
-
-    @HostListener('window:keydown.shift', ['$event'])
-    onShiftKeyDown(event: KeyboardEvent): void {
-        if (this.resizerHandlerService.inUse) {
-            this.resizerHandlerService.resizeSquare();
-            this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
-            this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
-        }
-        this.resizerHandlerService.isShiftDown = true;
+    @HostListener('window:keydown.shift')
+    onShiftKeyDown(): void {
+        this.shortcutManager.selectionOnShiftKeyDown(this);
     }
 
     @HostListener('window:keyup.shift', ['$event'])
-    onShiftKeyUp(event: KeyboardEvent): void {
-        if (this.resizerHandlerService.inUse) {
-            this.resizerHandlerService.restoreLastDimensions();
-            this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
-            this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
-        }
-        this.resizerHandlerService.isShiftDown = false;
+    onShiftKeyUp(): void {
+        this.shortcutManager.selectionOnShiftKeyUp(this);
     }
 
     @HostListener('keyup.ArrowLeft', ['$event'])

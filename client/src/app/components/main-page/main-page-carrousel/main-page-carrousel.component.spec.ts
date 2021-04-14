@@ -21,6 +21,7 @@ describe('MainPageCarrouselComponent', () => {
     let fixture: ComponentFixture<MainPageCarrouselComponent>;
     let databaseServiceSpy: SpyObj<DatabaseService>;
     let localServerServiceSpy: SpyObj<LocalServerService>;
+    let matDialogRefSpy: SpyObj<MatDialogRef<DiscardChangesPopupComponent>>;
     let dialogSpy: SpyObj<MatDialog>;
     let routerSpy: SpyObj<Router>;
     const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
@@ -28,6 +29,7 @@ describe('MainPageCarrouselComponent', () => {
 
     beforeEach(async(() => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
         databaseServiceSpy = jasmine.createSpyObj('DatabaseService', ['getDrawingsByTags', 'getDrawings', 'dropDrawing']);
         databaseServiceSpy.getDrawingsByTags.and.returnValue(
@@ -76,6 +78,7 @@ describe('MainPageCarrouselComponent', () => {
                 { provide: LocalServerService, useValue: localServerServiceSpy },
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: Router, useValue: routerSpy },
+                { provide: MatDialogRef, useValue: matDialogRefSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -295,20 +298,14 @@ describe('MainPageCarrouselComponent', () => {
         expect(popSpy).not.toHaveBeenCalled();
     });
 
-    it('openDrawing should set drawing if autosavedrawing and pop up returns true', () => {
+    it('openDrawing should close if autosavedrawing', () => {
         localStorage.setItem('autosave', mockImageURL);
-        const setSpy = spyOn(localStorage, 'setItem');
-        const discardSubject = new Subject();
-        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as MatDialogRef<DiscardChangesPopupComponent>);
 
         component.openDrawing(mockImageURL);
-        discardSubject.next(true);
         localStorage.clear();
 
-        expect(setSpy).toHaveBeenCalled();
-        expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
-        expect(routerSpy.navigate).toHaveBeenCalled();
-        expect(routerSpy.navigate).toHaveBeenCalledWith(['/', 'editor']);
+        expect(matDialogRefSpy.close).toHaveBeenCalled();
+        expect(matDialogRefSpy.close).toHaveBeenCalledWith({ autosave: true, data: mockImageURL });
     });
 
     it('openDrawing should do nothing if autosavedrawing and pop up returns false', () => {
@@ -324,18 +321,6 @@ describe('MainPageCarrouselComponent', () => {
         expect(setSpy).not.toHaveBeenCalled();
         expect(routerSpy.navigate).not.toHaveBeenCalled();
         expect(routerSpy.navigate).not.toHaveBeenCalledWith(['/', 'editor']);
-    });
-
-    it('openDrawing should open pop up if autosave drawing exists', () => {
-        localStorage.setItem('autosave', mockImageURL);
-        const discardSubject = new Subject();
-        dialogSpy.open.and.returnValue({ afterClosed: () => discardSubject.asObservable() } as MatDialogRef<DiscardChangesPopupComponent>);
-
-        component.openDrawing(mockImageURL);
-
-        localStorage.clear();
-
-        expect(dialogSpy.open).toHaveBeenCalled();
     });
 
     it('openDrawing should set drawing if not autosavedrawing', () => {

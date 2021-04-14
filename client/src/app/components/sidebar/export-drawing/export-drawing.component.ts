@@ -1,14 +1,20 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MAX_RGB_VALUE } from '@app/constants/color-constants';
+import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ImgurService } from '@app/services/imgur/imgur.service';
+import { Message } from '@common/communication/message';
+import { ExportCompletePageComponent } from './export-complete-page/export-complete-page.component';
+import { ExportErrorPageComponent } from './export-error-page/export-error-page.component';
 
 @Component({
     selector: 'app-export-drawing',
     templateUrl: './export-drawing.component.html',
     styleUrls: ['./export-drawing.component.scss'],
 })
-export class ExportDrawingComponent implements AfterViewInit {
+export class ExportDrawingComponent implements AfterViewInit, OnInit {
     @ViewChild('exportImg', { static: false }) exportImg: ElementRef<HTMLImageElement>;
     @ViewChild('exportCanvas', { static: true }) exportCanvasRef: ElementRef<HTMLCanvasElement>;
     exportCanvas: HTMLCanvasElement;
@@ -25,7 +31,12 @@ export class ExportDrawingComponent implements AfterViewInit {
     name: string;
     filter: string;
 
-    constructor(drawingService: DrawingService) {
+    request: Message = { title: 'Error', body: '' };
+
+    url: string;
+    popUpToggle: ExportDrawingConstants.PopUpToggle;
+
+    constructor(drawingService: DrawingService, private imgurService: ImgurService, public newDialog: MatDialog) {
         this.baseCanvas = drawingService.canvas;
         this.baseCtx = this.baseCanvas.getContext('2d') as CanvasRenderingContext2D;
         this.setPopupSizes();
@@ -33,6 +44,14 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.name = 'Image';
         this.filter = 'none';
         this.link = document.createElement('a');
+    }
+
+    ngOnInit(): void {
+        this.imgurService.serviceSettingsObservable.subscribe((serviceSettings: [number, string]) => {
+            this.popUpToggle = serviceSettings[0];
+            this.url = serviceSettings[1];
+            this.openPopUp();
+        });
     }
 
     ngAfterViewInit(): void {
@@ -89,5 +108,27 @@ export class ExportDrawingComponent implements AfterViewInit {
         this.link.download = this.name + '.' + this.type;
         this.link.href = this.exportCanvas.toDataURL('image/' + this.type);
         this.link.click();
+    }
+
+    exportToImgur(): void {
+        this.imgurService.exportDrawing(this.exportCanvas.toDataURL('image/' + this.type), this.name);
+    }
+
+    openPopUp(): void {
+        if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.ERROR && this.imgurService.mutex === 1) {
+            this.openErrorPopUp();
+        } else if (this.imgurService.mutex) {
+            this.openCompletePopUp();
+        }
+    }
+
+    openErrorPopUp(): void {
+        this.newDialog.open(ExportErrorPageComponent);
+        this.imgurService.mutex--;
+    }
+
+    openCompletePopUp(): void {
+        this.newDialog.open(ExportCompletePageComponent);
+        this.imgurService.mutex--;
     }
 }

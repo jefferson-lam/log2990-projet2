@@ -21,4 +21,14 @@ export class DrawingService {
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+
+    newDrawing(): void {
+        this.whiteOut(this.baseCtx);
+        this.clearCanvas(this.previewCtx);
+    }
+
+    whiteOut(context: CanvasRenderingContext2D): void {
+        context.fillStyle = 'white';
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    }
 }
