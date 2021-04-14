@@ -19,6 +19,8 @@ describe('AerosolService', () => {
     let executeSpy: jasmine.Spy;
     let previewExecuteSpy: jasmine.Spy;
     let setPreviewValuesSpy: jasmine.Spy;
+    let setIntervalSpy: jasmine.Spy;
+    let clearIntervalSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
@@ -46,6 +48,9 @@ describe('AerosolService', () => {
             offsetY: 25,
             button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
+
+        setIntervalSpy = spyOn(window, 'setInterval');
+        clearIntervalSpy = spyOn(window, 'clearInterval');
     });
 
     it('should be created', () => {
@@ -132,6 +137,19 @@ describe('AerosolService', () => {
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(setPreviewValuesSpy).not.toHaveBeenCalled();
         expect(previewExecuteSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call setInterval if mouse was already down', () => {
+        service.inUse = true;
+        service.onMouseMove(mouseEvent);
+        expect(setIntervalSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call clearInterval but not setInterval if mouse was not already down', () => {
+        service.inUse = false;
+        service.onMouseMove(mouseEvent);
+        expect(clearIntervalSpy).toHaveBeenCalled();
+        expect(setIntervalSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseLeave should stop calling airBrushCircle', () => {
