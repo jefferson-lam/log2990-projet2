@@ -6,6 +6,8 @@ import { ImgurService } from './imgur.service';
 describe('ImgurService', () => {
     let service: ImgurService;
     let httpMock: HttpTestingController;
+    let response: Response;
+    let fetchSpy: jasmine.Spy;
 
     const STRING_IMG = 'uselessData,thisistheimage';
     const IMG = 'thisistheimage';
@@ -18,6 +20,12 @@ describe('ImgurService', () => {
         });
         service = TestBed.inject(ImgurService);
         httpMock = TestBed.inject(HttpTestingController);
+        response = new Response(
+            JSON.stringify({
+                data: 'fakedata',
+            }),
+        );
+        fetchSpy = spyOn(window, 'fetch').and.returnValue(Promise.resolve(response));
     });
 
     afterEach(() => {
@@ -28,14 +36,32 @@ describe('ImgurService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('exportDrawing should send image to imgur server', () => {
+    it('exportDrawing should call imageStringSplit, createHeaders, createBody and createRequestOptions', () => {
+        const stringSplitSpy = spyOn(service, 'imageStringSplit');
+        const headerSpy = spyOn(service, 'createHeaders');
+        const formDataSpy = spyOn(service, 'createBody');
+        const optionSpy = spyOn(service, 'createRequestOptions');
+        const imageURL = 'empty image url';
+        const imageName = 'name';
+
+        service.exportDrawing(imageURL, imageName);
+
+        expect(stringSplitSpy).toHaveBeenCalled();
+        expect(stringSplitSpy).toHaveBeenCalledWith(imageURL);
+        expect(headerSpy).toHaveBeenCalled();
+        expect(formDataSpy).toHaveBeenCalled();
+        expect(optionSpy).toHaveBeenCalled();
+    });
+
+    it('exportDrawing should send image to imgur server with fetch', () => {
         const canvas = document.createElement('canvas');
         let image = 'data,';
         image += canvas.toDataURL();
         const imageName = 'name';
 
         service.exportDrawing(image, imageName);
-        expect(service.isSendingRequest).toEqual(false);
+
+        expect(fetchSpy).toHaveBeenCalled();
     });
 
     it('createHeaders should create and return correct header', () => {
