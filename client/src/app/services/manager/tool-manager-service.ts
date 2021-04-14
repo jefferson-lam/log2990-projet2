@@ -6,6 +6,7 @@ import { AerosolService } from '@app/services/tools/aerosol/aerosol-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
+import { PaintBucketService } from '@app/services/tools/paint-bucket/paint-bucket-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
@@ -13,15 +14,15 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle-servic
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ToolManagerService {
-    keyBindings: Map<string, Tool> = new Map();
+    keyBindings: Map<string, Tool>;
     currentTool: Tool;
-    currentToolSubject: Subject<Tool> = new Subject<Tool>();
+    currentToolSubject: Subject<Tool>;
 
     constructor(
         public pencilService: PencilService,
@@ -35,13 +36,16 @@ export class ToolManagerService {
         public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
         public pipetteService: PipetteService,
+        public paintBucketService: PaintBucketService,
         public stampService: StampService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
+        this.currentToolSubject = new BehaviorSubject<Tool>(this.currentTool);
     }
 
     private bindKeys(): void {
+        this.keyBindings = new Map<string, Tool>();
         this.keyBindings
             .set(ToolManagerConstants.PENCIL_KEY, this.pencilService)
             .set(ToolManagerConstants.ERASER_KEY, this.eraserService)
@@ -53,18 +57,14 @@ export class ToolManagerService {
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
             .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
             .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
+            .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService)
             .set(ToolManagerConstants.STAMP_KEY, this.stampService);
     }
 
-    selectTool(event: KeyboardEvent): Tool {
-        const tool = this.getTool(event.key);
-        this.currentToolSubject.next(tool);
-        return tool;
-    }
-
-    getTool(keyShortcut: string): Tool {
+    selectTool(keyShortcut: string): Tool {
         if (this.keyBindings.has(keyShortcut)) {
             this.currentTool = this.onToolChange(this.keyBindings.get(keyShortcut) as Tool);
+            this.currentToolSubject.next(this.currentTool);
             return this.currentTool;
         } else {
             return this.currentTool;
@@ -86,6 +86,7 @@ export class ToolManagerService {
         this.pencilService.setPrimaryColor(color);
         this.lineService.setPrimaryColor(color);
         this.aerosolService.setPrimaryColor(color);
+        this.paintBucketService.setPrimaryColor(color);
     }
 
     setSecondaryColorTools(color: string): void {

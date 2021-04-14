@@ -1,19 +1,14 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
-import { EditorComponent } from '@app/components/editor/editor.component';
-import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { ColorService } from '@app/services/color/color.service';
-import { StampService } from '@app/services/tools/stamp/stamp-service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
 
 // tslint:disable:no-any
 describe('SettingsManagerService', () => {
     let service: SettingsManagerService;
-    let editorComponent: EditorComponent;
     let toolSpy: jasmine.SpyObj<Tool>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
 
@@ -26,29 +21,18 @@ describe('SettingsManagerService', () => {
             'setSidesCount',
             'setWaterDropWidth',
             'setEmissionCount',
+            'setToleranceValue',
             'setImageSource',
             'setImageZoomFactor',
             'setAngleRotation',
         ]);
-        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
+        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools'], ['currentTool']);
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(toolSpy);
         TestBed.configureTestingModule({
-            declarations: [EditorComponent],
-            providers: [
-                { provide: EditorComponent, useValue: editorComponent },
-                { provide: Tool, useValue: toolSpy },
-                { provide: ToolManagerService, useValue: toolManagerSpy },
-            ],
+            providers: [{ provide: ToolManagerService, useValue: toolManagerSpy }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent(
-            {} as ToolManagerService,
-            {} as MatDialog,
-            service,
-            {} as UndoRedoService,
-            {} as CanvasGridService,
-            {} as StampService,
-        );
-        editorComponent.currentTool = toolSpy;
     });
 
     it('should be created', () => {
@@ -107,6 +91,12 @@ describe('SettingsManagerService', () => {
         expect(toolSpy.setEmissionCount).toHaveBeenCalled();
     });
 
+    it('setToleranceValue should call setToleranceValue of toolManagers currentTool', () => {
+        const EXPECTED_TOLERANCE_VALUE = 75;
+        service.setToleranceValue(EXPECTED_TOLERANCE_VALUE);
+        expect(toolSpy.setToleranceValue).toHaveBeenCalled();
+    });
+
     it('setImageSource should call setImageSource of toolManager', () => {
         const EXPECTED_IMAGE_SOURCE = 'new_image_svg';
         service.setImageSource(EXPECTED_IMAGE_SOURCE);
@@ -127,9 +117,9 @@ describe('SettingsManagerService', () => {
 
     it('calls setPrimaryColorsTools when size changed', async(() => {
         const mockColor = {
-            red: '255',
-            green: '10',
-            blue: '2',
+            red: 255,
+            green: 10,
+            blue: 2,
             alpha: 1,
         } as Rgba;
         const serviceSetter = spyOn(service, 'setPrimaryColorTools').and.callThrough();
@@ -142,9 +132,9 @@ describe('SettingsManagerService', () => {
 
     it('calls setSecondaryColorsTools when size changed', async(() => {
         const mockColor = {
-            red: '255',
-            green: '10',
-            blue: '2',
+            red: 255,
+            green: 10,
+            blue: 2,
             alpha: 1,
         } as Rgba;
         const serviceSetter = spyOn(service, 'setSecondaryColorTools').and.callThrough();

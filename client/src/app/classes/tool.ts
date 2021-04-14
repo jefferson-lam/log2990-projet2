@@ -64,6 +64,8 @@ export abstract class Tool {
 
     setEmissionCount(newEmissionCount: number): void {}
 
+    setToleranceValue(newToleranceValue: number): void {}
+
     setImageSource(newImageSource: string): void {}
 
     setImageZoomFactor(newFactor: number): void {}

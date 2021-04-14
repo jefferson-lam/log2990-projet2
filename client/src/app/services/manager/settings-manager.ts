@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
-import { EditorComponent } from '@app/components/editor/editor.component';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { ToolManagerService } from './tool-manager-service';
@@ -9,9 +8,7 @@ import { ToolManagerService } from './tool-manager-service';
     providedIn: 'root',
 })
 export class SettingsManagerService {
-    editorComponent: EditorComponent;
-
-    constructor(public toolManagerService: ToolManagerService, colorService: ColorService) {
+    constructor(public toolManager: ToolManagerService, colorService: ColorService) {
         colorService.primaryObservable.subscribe((color: Rgba) => {
             this.setPrimaryColorTools(colorService.convertRgbaToString(color));
         });
@@ -21,50 +18,54 @@ export class SettingsManagerService {
     }
 
     setLineWidth(newWidth: number): void {
-        this.editorComponent.currentTool.setLineWidth(newWidth);
+        this.toolManager.currentTool.setLineWidth(newWidth);
     }
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.editorComponent.currentTool.setFillMode(newFillMode);
+        this.toolManager.currentTool.setFillMode(newFillMode);
     }
 
     setJunctionRadius(newJunctionRadius: number): void {
-        this.editorComponent.currentTool.setJunctionRadius(newJunctionRadius);
+        this.toolManager.currentTool.setJunctionRadius(newJunctionRadius);
     }
 
     setWithJunction(withJunction: boolean): void {
-        this.editorComponent.currentTool.setWithJunction(withJunction);
+        this.toolManager.currentTool.setWithJunction(withJunction);
     }
 
     setSidesCount(newSidesCount: number): void {
-        this.editorComponent.currentTool.setSidesCount(newSidesCount);
+        this.toolManager.currentTool.setSidesCount(newSidesCount);
     }
 
     setWaterDropWidth(newSize: number): void {
-        this.editorComponent.currentTool.setWaterDropWidth(newSize);
+        this.toolManager.currentTool.setWaterDropWidth(newSize);
     }
 
     setEmissionCount(newEmissionCount: number): void {
-        this.editorComponent.currentTool.setEmissionCount(newEmissionCount);
+        this.toolManager.currentTool.setEmissionCount(newEmissionCount);
+    }
+
+    setToleranceValue(newToleranceValue: number): void {
+        this.toolManager.currentTool.setToleranceValue(newToleranceValue);
     }
 
     setImageSource(newSource: string): void {
-        this.editorComponent.currentTool.setImageSource(newSource);
+        this.toolManager.currentTool.setImageSource(newSource);
     }
 
     setImageZoomFactor(newFactor: number): void {
-        this.editorComponent.currentTool.setImageZoomFactor(newFactor);
+        this.toolManager.currentTool.setImageZoomFactor(newFactor);
     }
 
     setAngleRotation(newAngle: number): void {
-        this.editorComponent.currentTool.setAngleRotation(newAngle);
+        this.toolManager.currentTool.setAngleRotation(newAngle);
     }
 
     setPrimaryColorTools(color: string): void {
-        this.toolManagerService.setPrimaryColorTools(color);
+        this.toolManager.setPrimaryColorTools(color);
     }
 
     setSecondaryColorTools(color: string): void {
-        this.toolManagerService.setSecondaryColorTools(color);
+        this.toolManager.setSecondaryColorTools(color);
     }
 }

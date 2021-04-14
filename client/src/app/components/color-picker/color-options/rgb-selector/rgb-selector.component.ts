@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 
 @Component({
     selector: 'app-rgb-selector',
@@ -7,9 +8,9 @@ import { Rgba } from '@app/classes/rgba';
     styleUrls: ['./rgb-selector.component.scss'],
 })
 export class RgbSelectorComponent implements OnChanges {
-    red: string = '0';
-    green: string = '0';
-    blue: string = '0';
+    red: number = 0;
+    green: number = 0;
+    blue: number = 0;
     invalidInput: boolean = false;
 
     @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
@@ -17,10 +18,12 @@ export class RgbSelectorComponent implements OnChanges {
     @ViewChild('blueInput', { static: false }) blueInput: ElementRef<HTMLInputElement>;
 
     @Input()
-    initialColor: Rgba = { red: '255', green: '255', blue: '255', alpha: 1 };
+    initialColor: Rgba = { red: 255, green: 255, blue: 255, alpha: 1 };
 
     @Output()
     newColor: EventEmitter<Rgba> = new EventEmitter();
+
+    constructor(public shortcutManager: ShortcutManagerService) {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.initialColor) {
@@ -44,19 +47,18 @@ export class RgbSelectorComponent implements OnChanges {
         }
     }
 
-    emitColor(newColor: EventEmitter<Rgba>): void {
+    printDecToHex(dec: number): string {
+        return dec.toString(16).toUpperCase();
+    }
+    private emitColor(newColor: EventEmitter<Rgba>): void {
         newColor.emit({ red: this.red, green: this.green, blue: this.blue, alpha: this.initialColor.alpha });
     }
 
-    isValidHexCode(code: string): boolean {
+    private isValidHexCode(code: string): boolean {
         return /^[a-fA-F0-9]+$/i.test(code);
     }
 
-    convertHexToDec(hex: string): string {
-        return parseInt(hex, 16).toString();
-    }
-
-    printDecToHex(dec: string): string {
-        return parseInt(dec, 10).toString(16).toUpperCase();
+    private convertHexToDec(hex: string): number {
+        return parseInt(hex, 16);
     }
 }
