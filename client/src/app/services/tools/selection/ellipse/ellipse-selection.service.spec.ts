@@ -5,7 +5,6 @@ import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constan
 import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
-import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
@@ -341,12 +340,6 @@ describe('EllipseToolSelectionService', () => {
         expect(service.isEscapeDown).toBeFalsy();
     });
 
-    it('onToolChange should call super.onToolChange', () => {
-        const superSpy = spyOn(ToolSelectionService.prototype, 'onToolChange');
-        service.onToolChange();
-        expect(superSpy).toHaveBeenCalled();
-    });
-
     it('onToolChange should call onMouseDown if isManipulating is true', () => {
         service.isManipulating = true;
         const onMouseDownSpy = spyOn(service, 'onMouseDown');
@@ -373,42 +366,6 @@ describe('EllipseToolSelectionService', () => {
         expect(onKeyboardUpSpy).not.toHaveBeenCalled();
     });
 
-    it('undoSelection should pass if isManipulating is false', () => {
-        service.isManipulating = false;
-        expect(() => {
-            service.undoSelection();
-        }).not.toThrow();
-    });
-
-    it('undoSelection should call appropriate functions to restore state', () => {
-        const sw = 75;
-        const sh = 210;
-        service.isManipulating = true;
-        service.cornerCoords = [
-            { x: 25, y: 40 },
-            { x: 100, y: 250 },
-        ];
-        service.selectionWidth = sw;
-        service.selectionHeight = sh;
-        service.undoSelection();
-        expect(clipEllipseSpy).toHaveBeenCalled();
-        expect(baseCtxDrawImage).toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
-            0,
-            0,
-            service.selectionWidth,
-            service.selectionHeight,
-            service.cornerCoords[0].x,
-            service.cornerCoords[0].y,
-            service.selectionWidth,
-            service.selectionHeight,
-        );
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
-        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
-        expect(service.isManipulating).toBeFalsy();
-        expect(service.isEscapeDown).toBeFalsy();
-    });
-
     it('fillEllipse should fill ellipse on ctx with correct params', () => {
         const expectedStartX = 62.5;
         const expectedStartY = 145;
@@ -418,7 +375,7 @@ describe('EllipseToolSelectionService', () => {
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
-        service.fillEllipse(baseCtxStub, service.cornerCoords, false, 'white');
+        service.fillEllipse(baseCtxStub, service.cornerCoords, false);
         expect(baseCtxEllipseSpy).toHaveBeenCalled();
         expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
@@ -478,5 +435,71 @@ describe('EllipseToolSelectionService', () => {
             END_ANGLE,
         );
         expect(selectionCtxStrokeSpy).toHaveBeenCalled();
+    });
+
+    it('undoSelection should pass if isManipulating is false', () => {
+        service.isManipulating = false;
+        expect(() => {
+            service.undoSelection();
+        }).not.toThrow();
+    });
+
+    it('undoSelection should call appropriate functions to restore state', () => {
+        const sw = 75;
+        const sh = 210;
+        service.isManipulating = true;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.undoSelection();
+        expect(clipEllipseSpy).toHaveBeenCalled();
+        expect(baseCtxDrawImage).toHaveBeenCalledWith(
+            selectionCtxStub.canvas,
+            0,
+            0,
+            service.selectionWidth,
+            service.selectionHeight,
+            service.cornerCoords[0].x,
+            service.cornerCoords[0].y,
+            service.selectionWidth,
+            service.selectionHeight,
+        );
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('undoSelection should not draw to base context if isFromClipboard is true', () => {
+        const sw = 75;
+        const sh = 210;
+        service.isFromClipboard = true;
+        service.isManipulating = true;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.undoSelection();
+        expect(clipEllipseSpy).toHaveBeenCalled();
+        expect(baseCtxDrawImage).not.toHaveBeenCalledWith(
+            selectionCtxStub.canvas,
+            0,
+            0,
+            service.selectionWidth,
+            service.selectionHeight,
+            service.cornerCoords[0].x,
+            service.cornerCoords[0].y,
+            service.selectionWidth,
+            service.selectionHeight,
+        );
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
     });
 });

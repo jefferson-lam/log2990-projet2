@@ -24,6 +24,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     cornerCoords: Vec2[] = new Array<Vec2>(2);
     selectionHeight: number = 0;
     selectionWidth: number = 0;
+    isFromClipboard: boolean = false;
 
     constructor(
         drawingService: DrawingService,
@@ -53,6 +54,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
             this.resizerHandlerService.resetResizers();
+            this.isFromClipboard = false;
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
@@ -148,17 +150,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     undoSelection(): void {
         if (this.isManipulating) {
             this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
-            this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
-                0,
-                0,
-                this.selectionWidth,
-                this.selectionHeight,
-                this.cornerCoords[0].x,
-                this.cornerCoords[0].y,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
+            this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
             this.drawingService.baseCtx.restore();
             this.resetSelectedToolSettings();
             this.resetCanvasState(this.drawingService.selectionCanvas);
@@ -171,7 +163,6 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     onToolChange(): void {
-        super.onToolChange();
         if (this.isManipulating) {
             const emptyMouseEvent: MouseEvent = {} as MouseEvent;
             this.onMouseDown(emptyMouseEvent);
@@ -185,7 +176,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean, fillColor: string): void {
+    fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean): void {
         const ellipseCenter = this.getEllipseCenter(
             cornerCoords[SelectionConstants.START_INDEX],
             cornerCoords[SelectionConstants.END_INDEX],
@@ -198,7 +189,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         const yRadius = radiiXAndY[1];
         ctx.beginPath();
         ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
-        ctx.fillStyle = fillColor;
+        ctx.fillStyle = 'white';
         ctx.fill();
     }
 
@@ -225,6 +216,22 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
         ctx.ellipse(startX, startY, radiusX + offset, radiusY + offset, ROTATION, START_ANGLE, END_ANGLE);
         ctx.stroke();
+    }
+
+    private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
+        if (!this.isFromClipboard) {
+            targetCtx.drawImage(
+                sourceCanvas,
+                0,
+                0,
+                this.selectionWidth,
+                this.selectionHeight,
+                this.cornerCoords[0].x,
+                this.cornerCoords[0].y,
+                this.selectionWidth,
+                this.selectionHeight,
+            );
+        }
     }
 
     private validateSelectionHeightAndWidth(): boolean {
@@ -291,7 +298,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         selectionHeight: number,
     ): void {
         this.clipEllipseSelection(selectionCtx, baseCtx, cornerCoords, selectionWidth, selectionHeight);
-        this.fillEllipse(baseCtx, cornerCoords, this.isCircle, 'white');
+        this.fillEllipse(baseCtx, cornerCoords, this.isCircle);
     }
 
     private clipEllipseSelection(

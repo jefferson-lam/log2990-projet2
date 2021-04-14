@@ -21,6 +21,7 @@ describe('SettingsManagerService', () => {
             'setSidesCount',
             'setWaterDropWidth',
             'setEmissionCount',
+            'setToleranceValue',
         ]);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools'], ['currentTool']);
         (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(toolSpy);
@@ -85,6 +86,12 @@ describe('SettingsManagerService', () => {
         const EXPECTED_EMISSION_COUNT = 50;
         service.setEmissionCount(EXPECTED_EMISSION_COUNT);
         expect(toolSpy.setEmissionCount).toHaveBeenCalled();
+    });
+
+    it('setToleranceValue should call setToleranceValue of toolManagers currentTool', () => {
+        const EXPECTED_TOLERANCE_VALUE = 75;
+        service.setToleranceValue(EXPECTED_TOLERANCE_VALUE);
+        expect(toolSpy.setToleranceValue).toHaveBeenCalled();
     });
 
     it('calls setPrimaryColorsTools when size changed', async(() => {

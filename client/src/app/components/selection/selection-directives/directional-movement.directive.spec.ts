@@ -7,6 +7,7 @@ import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DirectionalMovementDirective } from './directional-movement.directive';
 
@@ -28,6 +29,7 @@ describe('DirectionalMovementDirective', () => {
             {} as CanvasGridService,
             {} as ToolManagerService,
             {} as MagnetismService,
+            {} as ClipboardService,
         );
         fixture = TestBed.configureTestingModule({
             declarations: [DirectionalMovementDirective, SelectionComponent],

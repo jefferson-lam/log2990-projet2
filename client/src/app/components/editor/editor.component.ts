@@ -49,6 +49,26 @@ export class EditorComponent {
         this.shortcutManager.onCtrlZKeyDown(event);
     }
 
+    @HostListener('window:keydown.control.c', ['$event'])
+    onCtrlCKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlCKeyDown(event);
+    }
+
+    @HostListener('window:keydown.control.v', ['$event'])
+    onCtrlVKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlVKeyDown(event);
+    }
+
+    @HostListener('window:keydown.control.x', ['$event'])
+    onCtrlXKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlXKeyDown(event);
+    }
+
+    @HostListener('window:keydown.delete', ['$event'])
+    onDeleteKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onDeleteKeyDown(event);
+    }
+
     @HostListener('window:keydown.-', ['$event'])
     onMinusKeyDown(): void {
         this.shortcutManager.onMinusKeyDown();

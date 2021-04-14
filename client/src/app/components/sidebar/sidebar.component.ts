@@ -3,6 +3,7 @@ import { SidebarToolButton } from '@app/classes/sidebar-tool-buttons';
 import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -36,10 +37,15 @@ export class SidebarComponent {
         { service: 'RectangleSelectionService', name: 'Rectangle de Selection', icon: 'blur_linear', keyShortcut: 'r', helpShortcut: '(Touche R)' },
         { service: 'EllipseSelectionService', name: 'Ellipse de selection', icon: 'blur_circular', keyShortcut: 's', helpShortcut: '(Touche S)' },
         { service: 'SelectLassoService', name: 'Lasso polygonal', icon: 'gesture', keyShortcut: 'v', helpShortcut: '(Touche V)' },
-        { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche C)' },
+        { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche B)' },
     ];
 
-    constructor(public toolManager: ToolManagerService, private undoRedoService: UndoRedoService, public popupManager: PopupManagerService) {
+    constructor(
+        public toolManager: ToolManagerService,
+        private undoRedoService: UndoRedoService,
+        public clipboardService: ClipboardService,
+        public popupManager: PopupManagerService,
+    ) {
         this.shouldRun = false;
         this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
@@ -108,5 +114,21 @@ export class SidebarComponent {
         if (this.toolManager.currentTool instanceof RectangleSelectionService) {
             this.toolManager.currentTool.selectAll();
         }
+    }
+
+    copySelection(): void {
+        this.clipboardService.copySelection();
+    }
+
+    cutSelection(): void {
+        this.clipboardService.cutSelection();
+    }
+
+    deleteSelection(): void {
+        this.clipboardService.deleteSelection();
+    }
+
+    pasteSelection(): void {
+        this.clipboardService.pasteSelection();
     }
 }

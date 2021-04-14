@@ -9,6 +9,7 @@ import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -31,6 +32,7 @@ describe('ShortcutManagerService', () => {
     let directiveDelaySpy: jasmine.Spy;
     let directiveTranslateSpy: jasmine.Spy;
     let magnetismServiceSpy: jasmine.SpyObj<MagnetismService>;
+    let clipboardServiceSpy: jasmine.SpyObj<ClipboardService>;
 
     beforeEach(() => {
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['undo', 'redo']);
@@ -46,6 +48,7 @@ describe('ShortcutManagerService', () => {
         );
         canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize']);
         magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['toggleMagnetism']);
+        clipboardServiceSpy = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'pasteSelection', 'deleteSelection']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -54,6 +57,7 @@ describe('ShortcutManagerService', () => {
                 { provide: PopupManagerService, useValue: popupManagerSpy },
                 { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: MagnetismService, useValue: magnetismServiceSpy },
+                { provide: ClipboardService, useValue: clipboardServiceSpy },
             ],
         });
         service = TestBed.inject(ShortcutManagerService);
@@ -436,6 +440,58 @@ describe('ShortcutManagerService', () => {
         service.onCtrlZKeyDown(mockEvent);
 
         expect(undoSelectionSpy).not.toHaveBeenCalled();
+    });
+
+    it('onCtrlCKeyDown should call copySelection from ClipboardService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyC', key: 'c' });
+        service.onCtrlCKeyDown(eventSpy);
+        expect(clipboardServiceSpy.copySelection).toHaveBeenCalled();
+    });
+
+    it('onCtrlCKeyDown should not call copySelection from ClipboardService if isShortcutAllowed is false', () => {
+        allowShortcutSpy.and.returnValue(false);
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyC', key: 'c' });
+        service.onCtrlCKeyDown(eventSpy);
+        expect(clipboardServiceSpy.copySelection).not.toHaveBeenCalled();
+    });
+
+    it('OnCtrlXKeyDown should call cutSelection from ClipboardService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyX', key: 'x' });
+        service.onCtrlXKeyDown(eventSpy);
+        expect(clipboardServiceSpy.cutSelection).toHaveBeenCalled();
+    });
+
+    it('OnCtrlXKeyDown should not call cutSelection from ClipboardService if isShortcutAlled is false', () => {
+        allowShortcutSpy.and.returnValue(false);
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyX', key: 'x' });
+        service.onCtrlXKeyDown(eventSpy);
+        expect(clipboardServiceSpy.cutSelection).not.toHaveBeenCalled();
+    });
+
+    it('OnCtrlVKeyDown should call pasteSelection from ClipboardService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyV', key: 'v' });
+        service.onCtrlVKeyDown(eventSpy);
+        expect(clipboardServiceSpy.pasteSelection).toHaveBeenCalled();
+    });
+
+    it('OnCtrlVKeyDown should not call cutSelection from ClipboardService if isShortcutAlled is false', () => {
+        allowShortcutSpy.and.returnValue(false);
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyV', key: 'v' });
+        service.onCtrlVKeyDown(eventSpy);
+        expect(clipboardServiceSpy.pasteSelection).not.toHaveBeenCalled();
+    });
+
+    it('onDeleteKeyDown should call deleteSelection from ClipboardService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        service.onDeleteKeyDown(eventSpy);
+        expect(clipboardServiceSpy.deleteSelection).toHaveBeenCalled();
+    });
+
+    it('onDeleteKeyDown should not call cutSelection from ClipboardService if isShortcutAlled is false', () => {
+        allowShortcutSpy.and.returnValue(false);
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        service.onDeleteKeyDown(eventSpy);
+        expect(clipboardServiceSpy.deleteSelection).not.toHaveBeenCalled();
     });
 
     it('onMinusKeyDown should call canvasGridService.reduceGridSize if isShortcutAllowed true', () => {
