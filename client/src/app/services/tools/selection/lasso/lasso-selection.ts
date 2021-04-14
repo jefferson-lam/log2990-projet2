@@ -39,6 +39,9 @@ export class LassoSelectionService extends ToolSelectionService {
         this.lineService.linePathDataSubject.asObservable().subscribe((point) => {
             this.linePathData.push(point);
         });
+        const line1: Line2 = { start: { x: 0, y: 0 }, end: { x: 0, y: 10 } };
+        const line2: Line2 = { start: { x: 0, y: 10 }, end: { x: 0, y: 5 } };
+        console.log(this.isColinear(line1, line2));
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -189,17 +192,23 @@ export class LassoSelectionService extends ToolSelectionService {
 
     private doLinesShareRange(line1: Line2, line2: Line2): boolean {
         return (
-            this.doesDomainIntersect(line1.start.x, line1.end.x, line2.start.x, line2.end.x) &&
-            this.doesDomainIntersect(line1.start.y, line1.end.y, line2.start.y, line2.end.y)
+            this.doDomainsOverlap(line1.start.x, line1.end.x, line2.start.x, line2.end.x) &&
+            this.doDomainsOverlap(line1.start.y, line1.end.y, line2.start.y, line2.end.y)
         );
     }
 
-    private doesDomainIntersect(line1Start: number, line1End: number, line2Start: number, line2End: number): boolean {
-        const minXLine1 = Math.min(line1Start, line1End);
-        const maxXLine1 = Math.max(line1Start, line1End);
-        const minXLine2 = Math.min(line2Start, line2End);
-        const maxXLine2 = Math.max(line2Start, line2End);
-        return !(maxXLine2 < minXLine1 || maxXLine1 < minXLine2);
+    private doDomainsOverlap(line1Start: number, line1End: number, line2Start: number, line2End: number): boolean {
+        const MINIMUM_THRESHOLD = 5;
+        const minLine1 = Math.min(line1Start, line1End);
+        const maxLine1 = Math.max(line1Start, line1End);
+        const minLine2 = Math.min(line2Start, line2End);
+        const maxLine2 = Math.max(line2Start, line2End);
+        return (
+            (minLine1 >= minLine2 && minLine1 < maxLine2) ||
+            (maxLine1 > minLine2 && maxLine1 <= maxLine2) ||
+            Math.abs(minLine1 - minLine2) < MINIMUM_THRESHOLD ||
+            Math.abs(maxLine1 - maxLine2) < MINIMUM_THRESHOLD
+        );
     }
 
     private calculateSlopeLine(line: Line2): number {
