@@ -26,6 +26,7 @@ describe('PopupManagerService', () => {
     let carrousselSubject: Subject<any>;
     let discardSubject: Subject<boolean>;
     let setSpy: jasmine.Spy;
+    let emptyCanvasSpy: jasmine.Spy;
     const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
     beforeEach(() => {
@@ -70,6 +71,7 @@ describe('PopupManagerService', () => {
         discardSubject = new Subject();
         setSpy = spyOn(localStorage, 'setItem');
         onToolChangeSpy = spyOn(toolManagerSpy.currentTool, 'onToolChange');
+        emptyCanvasSpy = spyOn(service, 'isCanvasEmpty');
     });
 
     it('should be created', () => {
@@ -227,19 +229,16 @@ describe('PopupManagerService', () => {
     });
 
     it("openNewDrawingPopUp should call onToolChange if undoPile isn't empty and pop up isn't open", () => {
-        undoRedoServiceSpy.isUndoPileEmpty.and.callFake(() => {
-            return false;
-        });
+        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(false);
         service.openNewDrawingPopUp();
 
         expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
         expect(onToolChangeSpy).toHaveBeenCalled();
     });
 
-    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile isn't empty and pop up isn't open", () => {
-        undoRedoServiceSpy.isUndoPileEmpty.and.callFake(() => {
-            return false;
-        });
+    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile isn't empty, canvas is empty and pop up isn't open", () => {
+        emptyCanvasSpy.and.returnValue(true);
+        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(false);
         service.openNewDrawingPopUp();
 
         expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
@@ -247,43 +246,36 @@ describe('PopupManagerService', () => {
         expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
     });
 
-    it('openNewDrawingPopUp should not open anything if undoPile is empty and pop up is not open', () => {
-        undoRedoServiceSpy.isUndoPileEmpty.and.callFake(() => {
-            return true;
-        });
+    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile is empty, canvas is not empty and pop up isn't open", () => {
+        emptyCanvasSpy.and.returnValue(false);
+        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(true);
+        service.openNewDrawingPopUp();
+
+        expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
+    });
+
+    it('openNewDrawingPopUp should not open anything if undoPile is empty, canvas is empty and pop up is not open', () => {
+        emptyCanvasSpy.and.returnValue(true);
+        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(true);
         service.openNewDrawingPopUp();
 
         expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
     });
 
-    it('openNewDrawingPopUp should not open anything if undoPile is not empty and pop up is open', () => {
-        undoRedoServiceSpy.isUndoPileEmpty.and.callFake(() => {
-            return true;
-        });
+    it('openNewDrawingPopUp should not open anything if pop up is open', () => {
         service.isPopUpOpen = true;
         service.openNewDrawingPopUp();
 
-        expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-    });
-
-    it('openNewDrawingPopUp should not open anything if undoPile is empty and pop up is open', () => {
-        undoRedoServiceSpy.isUndoPileEmpty.and.callFake(() => {
-            return true;
-        });
-        service.isPopUpOpen = true;
-        service.openNewDrawingPopUp();
-
-        expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.isUndoPileEmpty).not.toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
         expect(service.isPopUpOpen).toBeTrue();
     });
 
     it("openSavePopUp should open SaveDrawingComponent if canvas isn't empty and pop up isn't open", () => {
-        const emptyCanvasSpy = spyOn(service, 'isCanvasEmpty').and.callFake(() => {
-            return false;
-        });
+        emptyCanvasSpy.and.returnValue(false);
         service.openSavePopUp();
 
         expect(onToolChangeSpy).toHaveBeenCalled();
@@ -293,9 +285,7 @@ describe('PopupManagerService', () => {
     });
 
     it('openSavePopUp should not open anything if canvas is empty', () => {
-        const emptyCanvasSpy = spyOn(service, 'isCanvasEmpty').and.callFake(() => {
-            return true;
-        });
+        emptyCanvasSpy.and.returnValue(true);
         service.openSavePopUp();
 
         expect(emptyCanvasSpy).toHaveBeenCalled();
@@ -303,31 +293,17 @@ describe('PopupManagerService', () => {
         expect(service.isPopUpOpen).toBeFalse();
     });
 
-    it("openSavePopUp should not open anything if pop up is open and canvas isn't empty", () => {
-        const emptyCanvasSpy = spyOn(service, 'isCanvasEmpty').and.callFake(() => {
-            return false;
-        });
+    it('openSavePopUp should not open anything if pop up is open', () => {
         service.isPopUpOpen = true;
         service.openSavePopUp();
 
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-        expect(service.isPopUpOpen).toBeTrue();
-    });
-
-    it('openSavePopUp should not open anything if pop up is open and canvas is empty', () => {
-        const emptyCanvasSpy = spyOn(service, 'isCanvasEmpty').and.callFake(() => {
-            return true;
-        });
-        service.isPopUpOpen = true;
-        service.openSavePopUp();
-
-        expect(emptyCanvasSpy).toHaveBeenCalled();
+        expect(emptyCanvasSpy).not.toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
         expect(service.isPopUpOpen).toBeTrue();
     });
 
     it('isCanvasEmpty should return true if canvas only white', () => {
+        emptyCanvasSpy.and.callThrough();
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         ctx.fillStyle = 'white';
@@ -339,6 +315,7 @@ describe('PopupManagerService', () => {
     });
 
     it('isCanvasEmpty should return false if something has been drawn', () => {
+        emptyCanvasSpy.and.callThrough();
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         ctx.fillStyle = 'black';
