@@ -211,7 +211,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     undoSelection(): void {
         if (this.isManipulating) {
             this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
-            this.drawImageToBaseCtx();
+            this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
             this.drawingService.baseCtx.restore();
             this.resetSelectedToolSettings();
             this.resetCanvasState(this.drawingService.selectionCanvas);
@@ -222,10 +222,10 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    private drawImageToBaseCtx(): void {
+    private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
         if (!this.isFromClipboard) {
-            this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
+            targetCtx.drawImage(
+                sourceCanvas,
                 0,
                 0,
                 this.selectionWidth,

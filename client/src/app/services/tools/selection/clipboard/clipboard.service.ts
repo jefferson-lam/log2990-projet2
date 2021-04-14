@@ -7,6 +7,7 @@ import { EllipseClipboardCommand } from '@app/services/tools/selection/clipboard
 import { RectangleClipboardCommand } from '@app/services/tools/selection/clipboard/rectangle-clipboard-command';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
@@ -21,14 +22,19 @@ export class ClipboardService {
     selectionWidth: number;
     selectionHeight: number;
 
-    constructor(public drawingService: DrawingService, public toolManager: ToolManagerService, public undoRedoService: UndoRedoService) {
+    constructor(
+        public drawingService: DrawingService,
+        public toolManager: ToolManagerService,
+        public undoRedoService: UndoRedoService,
+        public resizerHandlerService: ResizerHandlerService,
+    ) {
         toolManager.currentToolSubject.asObservable().subscribe((currentTool) => {
             if (currentTool instanceof RectangleSelectionService || currentTool instanceof EllipseSelectionService) {
                 this.currentTool = currentTool;
             }
         });
         this.lastSelectionTool = '';
-        this.cornerCoords = new Array<Vec2>(2);
+        this.cornerCoords = new Array<Vec2>();
     }
 
     copySelection(): void {
@@ -50,18 +56,20 @@ export class ClipboardService {
     }
 
     pasteSelection(): void {
-        if (this.clipboard.data.some((pixel) => pixel !== 0)) {
-            if (this.isSelected(this.drawingService.selectionCanvas)) {
-                this.currentTool.onMouseDown({} as MouseEvent);
-            }
-            this.changeToSelectionTool(this.lastSelectionTool);
-            this.setPastedCanvasPosition();
-            this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
-            this.currentTool.cornerCoords = this.cornerCoords;
-            this.currentTool.isManipulating = true;
-            // This boolean is for avoiding behavior of simply moving the previous selection
-            this.currentTool.isFromClipboard = true;
+        if (!this.clipboard.data.some((pixel) => pixel !== 0)) {
+            return;
         }
+        if (this.isSelected(this.drawingService.selectionCanvas)) {
+            this.currentTool.onMouseDown({} as MouseEvent);
+        }
+        this.changeToSelectionTool(this.lastSelectionTool);
+        this.setPastedCanvasPosition();
+        this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+        this.currentTool.cornerCoords = this.cornerCoords;
+        this.currentTool.isManipulating = true;
+        // This boolean is for avoiding behavior of simply moving the previous selection
+        this.currentTool.isFromClipboard = true;
     }
 
     deleteSelection(): void {

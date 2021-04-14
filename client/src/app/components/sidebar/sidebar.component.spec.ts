@@ -78,6 +78,7 @@ describe('SidebarComponent', () => {
                 {} as PipetteService,
             ),
             {} as UndoRedoService,
+            {} as ResizerHandlerService,
         );
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);

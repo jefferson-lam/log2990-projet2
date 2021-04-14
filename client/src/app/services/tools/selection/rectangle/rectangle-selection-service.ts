@@ -194,7 +194,7 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     undoSelection(): void {
         if (this.isManipulating) {
-            this.drawImageToBaseCtx();
+            this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
             this.resetSelectedToolSettings();
             this.resetCanvasState(this.drawingService.selectionCanvas);
             this.resetCanvasState(this.drawingService.previewSelectionCanvas);
@@ -204,10 +204,10 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    private drawImageToBaseCtx(): void {
+    private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
         if (!this.isFromClipboard) {
-            this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
+            targetCtx.drawImage(
+                sourceCanvas,
                 0,
                 0,
                 this.selectionWidth,

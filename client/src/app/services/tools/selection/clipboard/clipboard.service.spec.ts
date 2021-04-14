@@ -6,6 +6,7 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 describe('ClipboardService', () => {
@@ -18,13 +19,18 @@ describe('ClipboardService', () => {
     let rectangleSelectionService: RectangleSelectionService;
     let ellipseSelectionService: EllipseSelectionService;
     let undoRedoService: UndoRedoService;
+    let resizerHandlerServiceSpy: jasmine.SpyObj<ResizerHandlerService>;
     let executeCommandSpy: jasmine.Spy;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['setResizerPositions']);
 
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ResizerHandlerService, useValue: resizerHandlerServiceSpy },
+            ],
         });
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
@@ -126,6 +132,14 @@ describe('ClipboardService', () => {
         expect(canvasTestHelper.previewSelectionCanvas.width).toEqual(service.clipboard.width);
         expect(canvasTestHelper.previewSelectionCanvas.style.left).toEqual('0px');
         expect(canvasTestHelper.previewSelectionCanvas.style.top).toEqual('0px');
+    });
+
+    it('pasteSelection moves resizers along with selection canvas', () => {
+        for (let i = 0; i < service.clipboard.data.length; ++i) {
+            service.clipboard.data[i] = 1;
+        }
+        service.pasteSelection();
+        expect(resizerHandlerServiceSpy.setResizerPositions).toHaveBeenCalled();
     });
 
     it('pasteSelection does nothing if clipboard is empty ', () => {
