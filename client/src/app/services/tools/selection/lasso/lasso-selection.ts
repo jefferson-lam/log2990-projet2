@@ -40,6 +40,9 @@ export class LassoSelectionService extends ToolSelectionService {
         this.lineService.linePathDataSubject.asObservable().subscribe((point) => {
             this.linePathData.push(point);
         });
+        this.lineService.currentPointSubject.asObservable().subscribe((point) => {
+            this.linePathData[this.linePathData.length - 1] = point;
+        });
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -55,6 +58,7 @@ export class LassoSelectionService extends ToolSelectionService {
             this.clearPath();
             this.initialPoint = this.getPositionFromMouse(event);
             this.linePathData[SelectionConstants.START_INDEX] = this.initialPoint;
+            this.linePathData.push(this.initialPoint);
             this.inUse = true;
         } else if (this.inUse && !this.isManipulating) {
             this.isConnected = this.arePointsEqual(this.linePathData[this.linePathData.length - 1], this.initialPoint);
@@ -240,9 +244,6 @@ export class LassoSelectionService extends ToolSelectionService {
             y: minHeight,
         };
 
-        this.selectionHeight = maxHeight - minHeight;
-        this.selectionWidth = maxWidth - minWidth;
-
         return [maxWidth - minWidth, maxHeight - minHeight];
     }
 
@@ -283,7 +284,7 @@ export class LassoSelectionService extends ToolSelectionService {
         // this.drawLassoOutline(targetCtx, pathData);
     }
 
-    private confirmSelection(): void {
+    confirmSelection(): void {
         this.transformValues = {
             x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
             y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
@@ -297,16 +298,16 @@ export class LassoSelectionService extends ToolSelectionService {
         this.resizerHandlerService.resetResizers();
     }
 
-    private initializeSelection(): void {
-        this.inUse = false;
+    initializeSelection(): void {
         this.lineService.onToolChange();
-        this.isConnected = false;
-        // Get selectionWidth and Height
         const selectionSize = this.computeSelectionSize(this.linePathData);
-        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = selectionSize[0];
-        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = selectionSize[1];
+        this.selectionWidth = selectionSize[0];
+        this.selectionHeight = selectionSize[1];
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
         this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.linePathData);
         this.setSelectionCanvasPosition(this.topLeft);
+        this.isConnected = false;
         this.inUse = false;
         this.isManipulating = true;
     }

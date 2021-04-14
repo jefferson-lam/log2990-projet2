@@ -16,6 +16,7 @@ export class LineService extends Tool {
     initialPoint: Vec2;
     linePathData: Vec2[];
     linePathDataSubject: Subject<Vec2>;
+    currentPointSubject: Subject<Vec2>;
 
     previewCommand: LineCommand;
 
@@ -30,6 +31,7 @@ export class LineService extends Tool {
         super(drawingService, undoRedoService);
         this.clearPath();
         this.linePathDataSubject = new Subject<Vec2>();
+        this.currentPointSubject = new Subject<Vec2>();
         this.previewCommand = new LineCommand(drawingService.previewCtx, this);
         this.shiftDown = false;
         this.withJunction = false;
@@ -144,6 +146,7 @@ export class LineService extends Tool {
         } else {
             this.linePathData[this.linePathData.length - 1] = this.mousePosition;
         }
+        this.currentPointSubject.next(this.linePathData[this.linePathData.length - 1]);
         this.drawPreview();
     }
 
