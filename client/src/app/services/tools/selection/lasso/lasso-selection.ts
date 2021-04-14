@@ -16,7 +16,7 @@ import { ToolSelectionService } from '../tool-selection-service';
 export class LassoSelectionService extends ToolSelectionService {
     isManipulating: boolean;
     isConnected: boolean;
-    isValidSegment: boolean;
+    isInvalidSegment: boolean;
     linePathData: Vec2[];
     initialPoint: Vec2;
     transformValues: Vec2;
@@ -24,6 +24,7 @@ export class LassoSelectionService extends ToolSelectionService {
     selectionHeight: number;
     topLeft: Vec2;
     isEscapeDown: boolean;
+    isBackspaceDown: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -34,14 +35,20 @@ export class LassoSelectionService extends ToolSelectionService {
         super(drawingService, undoRedoService, resizerHandlerService, lineService);
         this.isManipulating = false;
         this.isConnected = false;
-        this.isValidSegment = false;
+        this.isInvalidSegment = false;
         this.linePathData = new Array<Vec2>();
         this.isEscapeDown = false;
+        this.isBackspaceDown = false;
         this.lineService.linePathDataSubject.asObservable().subscribe((point) => {
             this.linePathData.push(point);
         });
         this.lineService.currentPointSubject.asObservable().subscribe((point) => {
             this.linePathData[this.linePathData.length - 1] = point;
+        });
+        this.lineService.removePointSubject.asObservable().subscribe((removedPoint) => {
+            if (removedPoint) {
+                this.linePathData.pop();
+            }
         });
     }
 
@@ -49,8 +56,7 @@ export class LassoSelectionService extends ToolSelectionService {
         if (event.button != MouseButton.Left) {
             return;
         }
-
-        if (this.isValidSegment) {
+        if (this.isInvalidSegment) {
             return;
         }
         if (this.isManipulating) {
@@ -58,13 +64,13 @@ export class LassoSelectionService extends ToolSelectionService {
             return;
         }
         super.onMouseDown(event);
-        if (!this.inUse && !this.isManipulating) {
+        if (!this.inUse) {
             this.clearPath();
             this.initialPoint = this.getPositionFromMouse(event);
             this.linePathData[SelectionConstants.START_INDEX] = this.initialPoint;
             this.linePathData.push(this.initialPoint);
             this.inUse = true;
-        } else if (this.inUse && !this.isManipulating) {
+        } else if (this.inUse) {
             this.isConnected = this.arePointsEqual(this.linePathData[this.linePathData.length - 1], this.initialPoint);
         }
         if (this.isConnected) {
@@ -73,67 +79,80 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.inUse) {
-            super.onMouseMove(event);
-            this.isValidSegment = this.isIntersect(this.linePathData[this.linePathData.length - 1], this.linePathData);
+        if (!this.inUse) {
+            return;
+        }
+        super.onMouseMove(event);
+        this.isInvalidSegment = this.isIntersect(this.linePathData[this.linePathData.length - 1], this.linePathData);
+        if (this.isInvalidSegment) {
+            this.drawingService.previewCtx.canvas.style.cursor = 'no-drop';
+        } else {
+            this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
         }
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
+        if (this.isEscapeDown || this.isBackspaceDown) {
+            return;
+        }
         super.onKeyboardDown(event);
-        if (event.key === 'Escape' && !this.isEscapeDown) {
-            this.isEscapeDown = true;
+        switch (event.key) {
+            case 'Escape':
+                this.isEscapeDown = true;
+                break;
+            case 'Backspace':
+                this.isBackspaceDown = true;
+                break;
         }
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
         super.onKeyboardUp(event);
         if (this.inUse) {
-            if (event.key === 'Escape' && this.isEscapeDown) {
-                this.resetCanvasState(this.drawingService.selectionCanvas);
-                this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-                this.resetSelectedToolSettings();
-                // Erase the rectangle drawn as a preview of selection
-                this.clearPath();
-                this.inUse = false;
-                this.isEscapeDown = false;
+            switch (event.key) {
+                case 'Escape':
+                    this.resetSelection();
+                    this.isEscapeDown = false;
+                    break;
             }
         } else if (this.isManipulating) {
-            if (event.key === 'Escape' && this.isEscapeDown) {
-                const confirmMouseDown = {
-                    button: MouseButton.Left,
-                } as MouseEvent;
-                this.onMouseDown(confirmMouseDown);
-                this.clearPath();
-                this.lineService.onToolChange();
-                this.inUse = false;
-                this.isEscapeDown = false;
+            switch (event.key) {
+                case 'Escape':
+                    this.confirmSelection();
+                    this.clearPath();
+                    this.lineService.onToolChange();
+                    this.isEscapeDown = false;
+                    break;
             }
         }
     }
 
     undoSelection(): void {
-        if (this.isManipulating) {
-            this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
-                0,
-                0,
-                this.selectionWidth,
-                this.selectionHeight,
-                this.topLeft.x,
-                this.topLeft.y,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
-            this.resetSelectedToolSettings();
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resizerHandlerService.resetResizers();
-            this.isManipulating = false;
+        if (!this.isManipulating) {
+            return;
         }
+        this.drawingService.baseCtx.drawImage(
+            this.drawingService.selectionCanvas,
+            0,
+            0,
+            this.selectionWidth,
+            this.selectionHeight,
+            this.topLeft.x,
+            this.topLeft.y,
+            this.selectionWidth,
+            this.selectionHeight,
+        );
+        this.resetSelectedToolSettings();
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resizerHandlerService.resetResizers();
+        this.isManipulating = false;
     }
 
     isIntersect(point: Vec2, pathData: Vec2[]): boolean {
+        if (point === this.initialPoint) {
+            return false;
+        }
         const newLine = { start: pathData[pathData.length - 2], end: point };
         let pathLine;
         for (let i = 0; i < pathData.length - 2; i++) {
@@ -147,13 +166,21 @@ export class LassoSelectionService extends ToolSelectionService {
         return false;
     }
 
+    private resetSelection(): void {
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetSelectedToolSettings();
+        // Erase the rectangle drawn as a preview of selection
+        this.clearPath();
+        this.inUse = false;
+    }
+
     // https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
     private intersects(line1: Line2, line2: Line2): boolean {
         let det;
         let gamma;
         let lambda;
         det = (line1.end.x - line1.start.x) * (line2.end.y - line2.start.y) - (line2.end.x - line2.start.x) * (line1.end.y - line1.start.y);
-
         if (this.isColinear(line1, line2)) {
             return true;
         }
@@ -231,13 +258,10 @@ export class LassoSelectionService extends ToolSelectionService {
     onToolChange(): void {
         super.onToolChange();
         if (this.isManipulating) {
-            this.onMouseDown({} as MouseEvent);
+            this.confirmSelection();
         } else if (this.inUse) {
-            const resetKeyboardEvent: KeyboardEvent = {
-                key: 'Escape',
-            } as KeyboardEvent;
-            this.isEscapeDown = true;
-            this.onKeyboardUp(resetKeyboardEvent);
+            this.resetSelection();
+            this.lineService.onToolChange();
         }
     }
 
@@ -272,11 +296,10 @@ export class LassoSelectionService extends ToolSelectionService {
         };
         const command: Command = new LassoSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
         this.undoRedoService.executeCommand(command);
-        this.isManipulating = false;
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetSelectedToolSettings();
+        this.resetSelection();
         this.resizerHandlerService.resetResizers();
+        this.isManipulating = false;
+        this.isInvalidSegment = false;
     }
 
     initializeSelection(): void {

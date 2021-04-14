@@ -17,6 +17,7 @@ export class LineService extends Tool {
     linePathData: Vec2[];
     linePathDataSubject: Subject<Vec2>;
     currentPointSubject: Subject<Vec2>;
+    removePointSubject: Subject<boolean>;
 
     previewCommand: LineCommand;
 
@@ -32,6 +33,7 @@ export class LineService extends Tool {
         this.clearPath();
         this.linePathDataSubject = new Subject<Vec2>();
         this.currentPointSubject = new Subject<Vec2>();
+        this.removePointSubject = new Subject<boolean>();
         this.previewCommand = new LineCommand(drawingService.previewCtx, this);
         this.shiftDown = false;
         this.withJunction = false;
@@ -110,6 +112,7 @@ export class LineService extends Tool {
                     return;
                 }
                 this.linePathData.pop();
+                this.removePointSubject.next(true);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawPreview();
                 break;
