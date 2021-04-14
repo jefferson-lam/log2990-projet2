@@ -34,7 +34,7 @@ export class LassoSelectionService extends ToolSelectionService {
         super(drawingService, undoRedoService, resizerHandlerService, lineService);
         this.isManipulating = false;
         this.isConnected = false;
-        this.isValidSegment = true;
+        this.isValidSegment = false;
         this.linePathData = new Array<Vec2>();
         this.isEscapeDown = false;
         this.lineService.linePathDataSubject.asObservable().subscribe((point) => {
@@ -47,6 +47,10 @@ export class LassoSelectionService extends ToolSelectionService {
 
     onMouseDown(event: MouseEvent): void {
         if (event.button != MouseButton.Left) {
+            return;
+        }
+
+        if (this.isValidSegment) {
             return;
         }
         if (this.isManipulating) {
@@ -72,7 +76,6 @@ export class LassoSelectionService extends ToolSelectionService {
         if (this.inUse) {
             super.onMouseMove(event);
             this.isValidSegment = this.isIntersect(this.linePathData[this.linePathData.length - 1], this.linePathData);
-            console.log(this.isValidSegment);
         }
     }
 
