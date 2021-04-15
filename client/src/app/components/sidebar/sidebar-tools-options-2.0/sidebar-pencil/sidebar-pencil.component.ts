@@ -13,7 +13,6 @@ export class SidebarPencilComponent implements OnInit {
     min: number;
     tickInterval: number;
     toolSize: number | undefined;
-    currentTool: Tool;
 
     @Input() newTool: Tool;
     @Input() selected: number;
@@ -25,6 +24,7 @@ export class SidebarPencilComponent implements OnInit {
         this.min = PencilConstants.MIN_SIZE_PENCIL;
         this.tickInterval = PencilConstants.TICK_INTERVAL;
         this.toolSizeChanged = new EventEmitter();
+        this.toolSize = settingsManager.toolManager.pencilService.lineWidth;
     }
 
     ngOnInit(): void {
