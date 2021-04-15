@@ -65,7 +65,6 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.position = 'absolute';
         this.textService.placeHolderSpan.setAttribute('role', 'textbox');
         this.textService.placeHolderSpan.contentEditable = 'true';
-        (document.getElementById('drawing-container') as HTMLElement).appendChild(this.textService.placeHolderSpan);
         this.textService.placeHolderSpan.style.textAlign = this.textAlign;
         this.textService.placeHolderSpan.style.fontFamily = this.fontFamily;
         this.textService.placeHolderSpan.style.fontSize = this.fontSize + 'px';
@@ -78,6 +77,8 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.zIndex = '2';
         this.textService.placeHolderSpan.style.border = '1px solid black';
         this.textService.placeHolderSpan.style.whiteSpace = 'pre-line';
+
+        (document.getElementById('drawing-container') as HTMLElement).appendChild(this.textService.placeHolderSpan);
     }
 
     emitFontOptions(): void {

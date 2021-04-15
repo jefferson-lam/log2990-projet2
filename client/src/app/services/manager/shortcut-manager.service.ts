@@ -43,7 +43,7 @@ export class ShortcutManagerService {
     }
 
     onGKeyDown(): void {
-        if (!this.isShortcutAllowed()) {
+        if (!this.isShortcutAllowed() || this.toolManager.textService.lockKeyboard) {
             return;
         }
         this.canvasGridService.toggleGrid();

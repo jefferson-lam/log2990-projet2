@@ -14,6 +14,10 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class TextService extends Tool {
     primaryColor: string;
     fontSize: number;
+    fontStyle: string;
+    fontFamily: string;
+    fontWeight: string;
+    textAlign: string;
     textWidth: number;
     textHeight: number;
     escapeKeyUsed: boolean;
@@ -49,13 +53,21 @@ export class TextService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse && (!this.lockKeyboard || this.escapeKeyUsed)) {
-            this.placeHolderSpan.style.display = 'block';
             this.placeHolderSpan.id = 'placeHolderSpan';
-            this.placeHolderSpan.style.zIndex = '2';
-            this.placeHolderSpan.style.visibility = 'visible';
             this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
+
             this.placeHolderSpan.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
             this.placeHolderSpan.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
+            this.placeHolderSpan.style.display = 'block';
+            this.placeHolderSpan.style.zIndex = '2';
+            this.placeHolderSpan.style.visibility = 'visible';
+            this.placeHolderSpan.style.textAlign = this.textAlign;
+            this.placeHolderSpan.style.fontFamily = this.fontFamily;
+            this.placeHolderSpan.style.fontSize = this.fontSize + 'px';
+            this.placeHolderSpan.style.fontWeight = this.fontWeight;
+            this.placeHolderSpan.style.fontStyle = this.fontStyle;
+            this.placeHolderSpan.style.color = this.primaryColor;
+
             this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.lockKeyboard = true;
             this.escapeKeyUsed = false;
@@ -100,6 +112,7 @@ export class TextService extends Tool {
     }
 
     setFontFamily(fontFamily: string): void {
+        this.fontFamily = fontFamily;
         this.placeHolderSpan.style.fontFamily = fontFamily;
     }
 
@@ -110,14 +123,17 @@ export class TextService extends Tool {
     }
 
     setTextAlign(textAlign: string): void {
+        this.textAlign = textAlign;
         this.placeHolderSpan.style.textAlign = textAlign;
     }
 
     setTextBold(textBold: string): void {
+        this.fontWeight = textBold;
         this.placeHolderSpan.style.fontWeight = textBold;
     }
 
     setTextItalic(textItalic: string): void {
+        this.fontStyle = textItalic;
         this.placeHolderSpan.style.fontStyle = textItalic;
     }
 
