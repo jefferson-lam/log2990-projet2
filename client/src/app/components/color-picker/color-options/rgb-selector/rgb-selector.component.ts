@@ -10,7 +10,7 @@ export class RgbSelectorComponent implements OnChanges {
     red: number;
     green: number;
     blue: number;
-    invalidInput: boolean = false;
+    invalidInput: boolean;
 
     @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
     @ViewChild('greenInput', { static: false }) greenInput: ElementRef<HTMLInputElement>;
@@ -27,6 +27,7 @@ export class RgbSelectorComponent implements OnChanges {
         this.invalidInput = false;
         this.initialColor = { red: 255, green: 255, blue: 255, alpha: 1 };
         this.newColor = new EventEmitter();
+        this.invalidInput = false;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
