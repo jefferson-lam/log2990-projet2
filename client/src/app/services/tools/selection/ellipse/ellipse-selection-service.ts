@@ -39,7 +39,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.isCircle = false;
         this.isShiftDown = false;
         this.isEscapeDown = false;
-        this.cornerCoords = new Array<Vec2>(EllipseConstants.DIMENSION);
+        this.cornerCoords = new Array<Vec2>(ShapeConstants.DIMENSION);
         this.selectionHeight = 0;
         this.selectionWidth = 0;
         this.isFromClipboard = false;
@@ -205,8 +205,8 @@ export class EllipseSelectionService extends ToolSelectionService {
             xRadius + offset,
             yRadius + offset,
             EllipseConstants.ROTATION,
-            EllipseConstants.START_ANGLE,
-            EllipseConstants.END_ANGLE,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
         );
         ctx.clip();
     }
@@ -220,8 +220,8 @@ export class EllipseSelectionService extends ToolSelectionService {
             radiusX + offset,
             radiusY + offset,
             EllipseConstants.ROTATION,
-            EllipseConstants.START_ANGLE,
-            EllipseConstants.END_ANGLE,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
         );
         ctx.stroke();
     }

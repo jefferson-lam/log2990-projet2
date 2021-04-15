@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseCommand } from '@app/services/tools/ellipse/ellipse-command';
@@ -26,11 +27,11 @@ export class EllipseService extends Tool {
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.isCircle = false;
-        this.lineWidth = EllipseConstants.INITIAL_LINE_WIDTH;
+        this.lineWidth = ShapeConstants.INITIAL_BORDER_WIDTH;
         this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
         this.primaryColor = '#B5CF60';
         this.secondaryColor = '#2F2A36';
-        this.cornerCoords = new Array<Vec2>(EllipseConstants.MAX_PATH_DATA_SIZE);
+        this.cornerCoords = new Array<Vec2>(ShapeConstants.MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
         this.previewCommand = new EllipseCommand(this.drawingService.previewCtx, this);
     }
@@ -39,13 +40,13 @@ export class EllipseService extends Tool {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.cornerCoords[EllipseConstants.START_INDEX] = this.mouseDownCoord;
+            this.cornerCoords[ShapeConstants.START_INDEX] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[EllipseConstants.END_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ShapeConstants.END_INDEX] = this.getPositionFromMouse(event);
             const command: Command = new EllipseCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
@@ -57,7 +58,7 @@ export class EllipseService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
             this.mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[EllipseConstants.END_INDEX] = this.mousePosition;
+            this.cornerCoords[ShapeConstants.END_INDEX] = this.mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
@@ -71,7 +72,7 @@ export class EllipseService extends Tool {
         if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             const exitCoords = this.getPositionFromMouse(event);
-            this.cornerCoords[EllipseConstants.END_INDEX] = exitCoords;
+            this.cornerCoords[ShapeConstants.END_INDEX] = exitCoords;
 
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();
@@ -120,10 +121,10 @@ export class EllipseService extends Tool {
     }
 
     setLineWidth(width: number): void {
-        if (width < EllipseConstants.MIN_BORDER_WIDTH) {
-            this.lineWidth = EllipseConstants.MIN_BORDER_WIDTH;
-        } else if (width > EllipseConstants.MAX_BORDER_WIDTH) {
-            this.lineWidth = EllipseConstants.MAX_BORDER_WIDTH;
+        if (width < ShapeConstants.MIN_BORDER_WIDTH) {
+            this.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
+        } else if (width > ShapeConstants.MAX_BORDER_WIDTH) {
+            this.lineWidth = ShapeConstants.MAX_BORDER_WIDTH;
         } else {
             this.lineWidth = width;
         }
@@ -142,8 +143,8 @@ export class EllipseService extends Tool {
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {
-        let xRadius = Math.abs(path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x) / 2;
-        let yRadius = Math.abs(path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y) / 2;
+        let xRadius = Math.abs(path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x) / 2;
+        let yRadius = Math.abs(path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y) / 2;
 
         if (this.isCircle) {
             const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
@@ -153,22 +154,22 @@ export class EllipseService extends Tool {
     }
 
     private drawPredictionRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const start = path[EllipseConstants.START_INDEX];
-        const xDifference = path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x;
+        const start = path[ShapeConstants.START_INDEX];
+        const xDifference = path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x;
         const xFactor = Math.sign(xDifference);
-        const yDifference = path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y;
+        const yDifference = path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y;
         const yFactor = Math.sign(yDifference);
 
         const radiiXAndY = this.getRadiiXAndY(path);
-        const xRadius = radiiXAndY[EllipseConstants.X_INDEX];
-        const yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
+        const xRadius = radiiXAndY[ShapeConstants.X_INDEX];
+        const yRadius = radiiXAndY[ShapeConstants.Y_INDEX];
         const width = xRadius * 2 * xFactor;
         const height = yRadius * 2 * yFactor;
 
         ctx.beginPath();
         ctx.strokeStyle = 'black';
         ctx.lineWidth = EllipseConstants.PREDICTION_RECTANGLE_WIDTH;
-        ctx.setLineDash([EllipseConstants.LINE_DISTANCE]);
+        ctx.setLineDash([ShapeConstants.LINE_DISTANCE]);
         ctx.rect(start.x, start.y, width, height);
         ctx.stroke();
         ctx.setLineDash([]);

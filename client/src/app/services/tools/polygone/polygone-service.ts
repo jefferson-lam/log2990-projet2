@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PolygoneConstants from '@app/constants/polygone-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PolygoneCommand } from '@app/services/tools/polygone/polygone-command';
@@ -26,11 +26,11 @@ export class PolygoneService extends Tool {
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.initNumberSides = PolygoneConstants.INIT_SIDES_COUNT;
-        this.lineWidth = PolygoneConstants.INIT_LINE_WIDTH;
+        this.lineWidth = ShapeConstants.INITIAL_BORDER_WIDTH;
         this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
         this.primaryColor = '#b5cf60';
         this.secondaryColor = '#2F2A36';
-        this.cornerCoords = new Array<Vec2>(PolygoneConstants.MAX_PATH_DATA_SIZE);
+        this.cornerCoords = new Array<Vec2>(ShapeConstants.MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
         this.previewCommand = new PolygoneCommand(this.drawingService.previewCtx, this);
     }
@@ -39,13 +39,13 @@ export class PolygoneService extends Tool {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.cornerCoords[PolygoneConstants.START_INDEX] = this.mouseDownCoord;
+            this.cornerCoords[ShapeConstants.START_INDEX] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ShapeConstants.END_INDEX] = this.getPositionFromMouse(event);
             const command: Command = new PolygoneCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
@@ -56,7 +56,7 @@ export class PolygoneService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ShapeConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();
@@ -67,7 +67,7 @@ export class PolygoneService extends Tool {
     onMouseLeave(event: MouseEvent): void {
         if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cornerCoords[PolygoneConstants.END_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ShapeConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();
             this.drawPredictionCircle(this.drawingService.previewCtx, this.cornerCoords);
@@ -112,8 +112,8 @@ export class PolygoneService extends Tool {
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {
-        let xRadius = Math.abs(path[PolygoneConstants.END_INDEX].x - path[PolygoneConstants.START_INDEX].x) / 2;
-        let yRadius = Math.abs(path[PolygoneConstants.END_INDEX].y - path[PolygoneConstants.START_INDEX].y) / 2;
+        let xRadius = Math.abs(path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x) / 2;
+        let yRadius = Math.abs(path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y) / 2;
 
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
         xRadius = yRadius = shortestSide;
@@ -122,15 +122,15 @@ export class PolygoneService extends Tool {
     }
 
     private drawPredictionCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const polygoneCenterX = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]).x;
-        const polygoneCenterY = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]).y;
+        const polygoneCenterX = this.getPolygoneCenter(path[ShapeConstants.START_INDEX], path[ShapeConstants.END_INDEX]).x;
+        const polygoneCenterY = this.getPolygoneCenter(path[ShapeConstants.START_INDEX], path[ShapeConstants.END_INDEX]).y;
         const radiiXAndY = this.getRadiiXAndY(path);
-        const radiusWithin = radiiXAndY[EllipseConstants.X_INDEX];
+        const radiusWithin = radiiXAndY[ShapeConstants.X_INDEX];
 
         ctx.beginPath();
         ctx.strokeStyle = 'black';
         ctx.lineWidth = PolygoneConstants.PREDICTION_CIRCLE_WIDTH;
-        ctx.setLineDash([PolygoneConstants.LINE_DISTANCE]);
+        ctx.setLineDash([ShapeConstants.LINE_DISTANCE]);
         ctx.arc(polygoneCenterX, polygoneCenterY, radiusWithin, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.setLineDash([]);

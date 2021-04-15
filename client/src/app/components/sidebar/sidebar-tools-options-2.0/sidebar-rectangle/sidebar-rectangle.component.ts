@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
@@ -20,11 +20,12 @@ export class SidebarRectangleComponent implements OnInit {
     @Output() fillModeChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
-        this.max = RectangleConstants.MAX_LINE_WIDTH;
-        this.min = RectangleConstants.MIN_LINE_WIDTH;
-        this.tickInterval = RectangleConstants.TICK_INTERVAL;
+        this.max = ShapeConstants.MAX_BORDER_WIDTH;
+        this.min = ShapeConstants.MIN_BORDER_WIDTH;
+        this.tickInterval = ShapeConstants.TICK_INTERVAL;
         this.toolSizeChanged = new EventEmitter();
         this.fillModeChanged = new EventEmitter();
+        console.log('suh dud');
     }
 
     ngOnInit(): void {

@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle/rectangle-selection-command';
@@ -38,7 +38,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.isManipulating = false;
         this.isShiftDown = false;
         this.isEscapeDown = false;
-        this.cornerCoords = new Array<Vec2>(RectangleConstants.DIMENSION);
+        this.cornerCoords = new Array<Vec2>(ShapeConstants.DIMENSION);
         this.selectionHeight = 0;
         this.selectionWidth = 0;
         this.isFromClipboard = false;

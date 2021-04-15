@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import * as PolygoneConstants from '@app/constants/polygone-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
@@ -24,13 +25,11 @@ export class SidebarPolygoneComponent implements OnInit {
     @Output() numberOfPolySides: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
-        this.max = PolygoneConstants.MAX_LINE_WIDTH;
-        this.min = PolygoneConstants.MIN_LINE_WIDTH;
+        this.max = ShapeConstants.MAX_BORDER_WIDTH;
+        this.min = ShapeConstants.MIN_BORDER_WIDTH;
         this.minPolygone = PolygoneConstants.MIN_SIDES_COUNT;
         this.maxPolygone = PolygoneConstants.MAX_SIDES_COUNT;
-        this.tickInterval = PolygoneConstants.TICK_INTERVAL;
-        this.toolSize = PolygoneConstants.INIT_TOOL_SIZE;
-        this.polygoneSidesCount = PolygoneConstants.INIT_SIDES_COUNT;
+        this.tickInterval = ShapeConstants.TICK_INTERVAL;
         this.toolSizeChanged = new EventEmitter();
         this.fillModeChanged = new EventEmitter();
         this.numberOfPolySides = new EventEmitter();

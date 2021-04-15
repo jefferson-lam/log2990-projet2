@@ -1,6 +1,7 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import { END_ANGLE, END_INDEX, ROTATION, START_ANGLE, START_INDEX } from '@app/constants/ellipse-constants';
+import { ROTATION } from '@app/constants/ellipse-constants';
+import { END_ANGLE, END_INDEX, START_ANGLE, START_INDEX } from '@app/constants/shapes-constants';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 
 export class EllipseSelectionCommand extends Command {

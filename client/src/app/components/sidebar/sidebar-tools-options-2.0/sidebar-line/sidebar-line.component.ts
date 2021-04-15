@@ -17,8 +17,6 @@ export class SidebarLineComponent implements OnInit {
     withJunction: boolean;
     junctionRadius: number | undefined;
 
-    currentToolName: string;
-
     @Output() toolSizeChanged: EventEmitter<number>;
     @Output() withJunctionChanged: EventEmitter<boolean>;
     @Output() junctionRadiusChanged: EventEmitter<number>;
@@ -29,7 +27,6 @@ export class SidebarLineComponent implements OnInit {
         this.minJunctionRadius = LineConstants.MIN_JUNCTION_RADIUS;
         this.maxJunctionRadius = LineConstants.MAX_JUNCTION_RADIUS;
         this.tickInterval = LineConstants.TICK_INTERVAL;
-        this.currentToolName = 'outil selectionné';
         this.toolSizeChanged = new EventEmitter();
         this.withJunctionChanged = new EventEmitter();
         this.junctionRadiusChanged = new EventEmitter();

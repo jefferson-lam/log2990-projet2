@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import * as EllipseConstants from '@app/constants/ellipse-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
@@ -20,9 +20,9 @@ export class SidebarEllipseComponent implements OnInit {
     @Output() fillModeChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
-        this.max = EllipseConstants.MAX_BORDER_WIDTH;
-        this.min = EllipseConstants.MIN_BORDER_WIDTH;
-        this.tickInterval = EllipseConstants.TICK_INTERVAL;
+        this.max = ShapeConstants.MAX_BORDER_WIDTH;
+        this.min = ShapeConstants.MIN_BORDER_WIDTH;
+        this.tickInterval = ShapeConstants.TICK_INTERVAL;
         this.toolSizeChanged = new EventEmitter();
         this.fillModeChanged = new EventEmitter();
     }

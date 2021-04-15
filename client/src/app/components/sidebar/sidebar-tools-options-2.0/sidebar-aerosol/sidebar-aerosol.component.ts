@@ -33,9 +33,6 @@ export class SidebarAerosolComponent implements OnInit {
         this.maxEmission = AerosolConstants.MAX_EMISSION;
         this.minEmission = AerosolConstants.MIN_EMISSION;
         this.tickInterval = AerosolConstants.TICK_INTERVAL;
-        this.toolSize = AerosolConstants.INIT_TOOL_SIZE;
-        this.waterDropSize = AerosolConstants.INIT_WATERDROP_WIDTH;
-        this.emissionCount = AerosolConstants.INIT_EMISSION_COUNT;
         this.toolSizeChanged = new EventEmitter();
         this.waterDropSizeChanged = new EventEmitter();
         this.numberOfEmissions = new EventEmitter();
