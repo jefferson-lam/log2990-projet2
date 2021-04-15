@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as AerosolConstants from '@app/constants/aerosol-constants';
@@ -78,6 +78,24 @@ describe('AerosolService', () => {
         expect(service.inUse).toEqual(false);
     });
 
+    it('onMouseDown should call setInterval if mouse is down', () => {
+        service.onMouseDown(mouseEvent);
+        expect(setIntervalSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseDown should call preview functions two times if is down and getEmmisionRate ms has passed', fakeAsync(() => {
+        service.emissionCount = AerosolConstants.INIT_EMISSION_COUNT;
+        const expectedRate = AerosolConstants.EMISSION_RATE / service.emissionCount;
+
+        service.onMouseDown(mouseEvent);
+        tick(expectedRate + 1);
+        window.clearInterval(service.aerosolRefresh);
+
+        expect(setPreviewValuesSpy).toHaveBeenCalledTimes(2);
+        expect(previewExecuteSpy).toHaveBeenCalledTimes(2);
+        flush();
+    }));
+
     it('onMouseUp should set mouseDown to true', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['pathData'].push(service.mouseDownCoord);
@@ -104,6 +122,12 @@ describe('AerosolService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
         expect(service.inUse).toEqual(false);
+    });
+
+    it('onMouseUp should call clearInterval', () => {
+        service.inUse = false;
+        service.onMouseUp(mouseEvent);
+        expect(clearIntervalSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should call executeCommand if mouse was already down', () => {
@@ -134,7 +158,6 @@ describe('AerosolService', () => {
         service.inUse = false;
 
         service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(setPreviewValuesSpy).not.toHaveBeenCalled();
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
@@ -151,6 +174,20 @@ describe('AerosolService', () => {
         expect(clearIntervalSpy).toHaveBeenCalled();
         expect(setIntervalSpy).not.toHaveBeenCalled();
     });
+
+    it('onMouseMove should call preview functions two times if mouse was already down and getEmmisionRate ms has passed', fakeAsync(() => {
+        service.emissionCount = AerosolConstants.INIT_EMISSION_COUNT;
+        const expectedRate = AerosolConstants.EMISSION_RATE / service.emissionCount;
+        service.inUse = true;
+
+        service.onMouseMove(mouseEvent);
+        tick(expectedRate + 1);
+        window.clearInterval(service.aerosolRefresh);
+
+        expect(setPreviewValuesSpy).toHaveBeenCalledTimes(2);
+        expect(previewExecuteSpy).toHaveBeenCalledTimes(2);
+        flush();
+    }));
 
     it('onMouseLeave should stop calling airBrushCircle', () => {
         service.inUse = true;
