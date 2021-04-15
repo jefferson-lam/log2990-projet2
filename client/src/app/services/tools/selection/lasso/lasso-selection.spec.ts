@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Subject } from 'rxjs';
 import { ResizerHandlerService } from '../resizer/resizer-handler.service';
 import { LassoSelectionService } from './lasso-selection';
 
@@ -16,6 +18,7 @@ fdescribe('LassoSelectionService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
+    let previewSelectionCtxStub: CanvasRenderingContext2D;
 
     let executeSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
@@ -36,11 +39,14 @@ fdescribe('LassoSelectionService', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         selectionCtxStub = canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+        previewSelectionCtxStub = canvasTestHelper.previewSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].selectionCtx = selectionCtxStub;
+        service['drawingService'].previewSelectionCtx = previewSelectionCtxStub;
+
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
@@ -49,6 +55,10 @@ fdescribe('LassoSelectionService', () => {
 
         service.initialPoint = { x: 394, y: 432 };
         service.linePathData = [service.initialPoint, { x: 133, y: 256 }, { x: 257, y: 399 }];
+        service.topLeft = {
+            x: 25,
+            y: 60,
+        };
 
         mouseEvent = {
             offsetX: 25,
@@ -70,11 +80,142 @@ fdescribe('LassoSelectionService', () => {
         }).not.toThrow();
     });
 
-    it('onMouseDown should call confirmSelection if isManipulatin', () => {
+    it('onMouseDown should push from observable', () => {
+        const lineMouseDownSpy = spyOn(service.lineService, 'onMouseDown').and.callFake(() => {
+            service.lineService.addPointSubject = new Subject<Vec2>();
+            service.lineService.addPointSubject.next(service.initialPoint);
+        });
+        service.onMouseDown(mouseEvent);
+        expect(lineMouseDownSpy).toHaveBeenCalled();
+        expect(service.linePathData[service.linePathData.length - 1]).toEqual(service.initialPoint);
+    });
+
+    it('onMouseDown should return if invalid segment', () => {
+        service.isInvalidSegment = true;
+        expect(() => {
+            service.onMouseDown(mouseEvent);
+        }).not.toThrow();
+    });
+
+    it('onMouseDown should call confirmSelection if isManipulating', () => {
         const confirmSelectionSpy = spyOn(service, 'confirmSelection');
         service.isManipulating = true;
         service.onMouseDown(mouseEvent);
         expect(confirmSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseDown should start new path if passes initial validation and called first time', () => {
+        service.onMouseDown(mouseEvent);
+        expect(service.initialPoint).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
+        expect(service.linePathData).toEqual([service.initialPoint, service.initialPoint]);
+        expect(service.inUse).toBeTruthy();
+    });
+
+    it('onMouseDown should set isConnected to true if new point is the same as initial', () => {
+        const arePointsEqualSpy = spyOn<any>(service, 'arePointsEqual').and.callThrough();
+        const lineMouseDownSpy = spyOn(service.lineService, 'onMouseDown').and.callFake(() => {
+            service.linePathData[service.linePathData.length - 1] = service.initialPoint;
+        });
+        mouseEvent = {
+            offsetX: service.initialPoint.x,
+            offsetY: service.initialPoint.y,
+            button: MouseButton.Left,
+        } as MouseEvent;
+        service.inUse = true;
+        service.lineService.inUse = true;
+        service.onMouseDown(mouseEvent);
+        expect(lineMouseDownSpy).toHaveBeenCalled();
+        expect(arePointsEqualSpy).toHaveBeenCalledWith(service.linePathData[service.linePathData.length - 1], service.initialPoint);
+    });
+
+    it('onMouseDown should call initializeSelection if isConnected', () => {
+        const initializeSelectionSpy = spyOn(service, 'initializeSelection');
+        service.isConnected = true;
+        service.onMouseDown(mouseEvent);
+        expect(initializeSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should pass if not in use', () => {
+        service.inUse = false;
+        expect(() => {
+            service.onMouseMove(mouseEvent);
+        }).not.toThrow();
+    });
+
+    it('onMouseMove should call isIntersect and set the cursor to crosshair if valid segment', () => {
+        const isIntersectSpy = spyOn(service, 'isIntersect').and.callThrough();
+        service.inUse = true;
+        service.onMouseMove(mouseEvent);
+        expect(isIntersectSpy).toHaveBeenCalled();
+        expect(service.isInvalidSegment).toBeFalsy();
+        expect(previewCtxStub.canvas.style.cursor).toEqual('crosshair');
+    });
+
+    it('onMouseMove should call isIntersect and set the cursor to no-drop if invalid segment', () => {
+        const isIntersectSpy = spyOn(service, 'isIntersect').and.callThrough();
+        service.inUse = true;
+        service.linePathData.push({ x: 133, y: 256 });
+        service.onMouseMove(mouseEvent);
+        expect(isIntersectSpy).toHaveBeenCalled();
+        expect(service.isInvalidSegment).toBeTruthy();
+        expect(previewCtxStub.canvas.style.cursor).toEqual('no-drop');
+    });
+
+    it('onKeyboardDown with escape should set isEscapeDown to true', () => {
+        const escapeKeyboardEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+        service.inUse = true;
+        service.isEscapeDown = true;
+        expect(() => {
+            service.onKeyboardDown(escapeKeyboardEvent);
+        }).not.toThrow();
+    });
+
+    it('onKeyboardDown with escape should set isEscapeDown to true', () => {
+        const escapeKeyboardEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+        service.inUse = true;
+        service.onKeyboardDown(escapeKeyboardEvent);
+        expect(service.isEscapeDown).toBeTruthy();
+    });
+
+    it('onKeyboardUp should call resetSelection if in use and escape', () => {
+        const resetSelectionSpy = spyOn(service, 'resetSelection').and.callThrough();
+        const escapeKeyboardEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+        service.inUse = true;
+        service.onKeyboardUp(escapeKeyboardEvent);
+        expect(resetSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('onKeyboardUp should call confirmSelection if is manipulating', () => {
+        const confirmSelectionSpy = spyOn(service, 'confirmSelection').and.callThrough();
+        const escapeKeyboardEvent = {
+            key: 'Escape',
+        } as KeyboardEvent;
+        service.isManipulating = true;
+        service.onKeyboardUp(escapeKeyboardEvent);
+        expect(confirmSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('undoSelection should pass if not manipulating', () => {
+        service.isManipulating = false;
+        expect(() => {
+            service.undoSelection();
+        }).not.toThrow();
+    });
+
+    it('undoSelection should call procedure if manipulating', () => {
+        const drawImageToCtxSpy = spyOn<any>(service, 'drawImageToCtx');
+        const resetCanvasStateSpy = spyOn(service, 'resetCanvasState');
+        service.isManipulating = true;
+        service.undoSelection();
+        expect(drawImageToCtxSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalled();
+        expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
     });
 
     it('confirmSelection should create a command to confirm the selection', () => {
@@ -92,11 +233,371 @@ fdescribe('LassoSelectionService', () => {
         expect(resetCanvasStateSpy).toHaveBeenCalledWith(canvasTestHelper.previewSelectionCanvas);
     });
 
+    it('initializeSelection should properly set width and height of selectionCanvases', () => {
+        const selectLassoSpy = spyOn<any>(service, 'selectLasso');
+        const setSelectionCanvasPositionSpy = spyOn<any>(service, 'setSelectionCanvasPosition');
+        const expectedWidth = 261;
+        const expectedHeight = 176;
+        service.initializeSelection();
+        expect(selectionCtxStub.canvas.width).toEqual(expectedWidth);
+        expect(selectionCtxStub.canvas.height).toEqual(expectedHeight);
+        expect(selectLassoSpy).toHaveBeenCalled();
+        expect(setSelectionCanvasPositionSpy).toHaveBeenCalled();
+    });
+
+    it('selectLasso should call clip and fill procedures', () => {
+        const clipLassoSelectionSpy = spyOn<any>(service, 'clipLassoSelection');
+        const fillLassoSpy = spyOn<any>(service, 'fillLasso');
+        service['selectLasso'](selectionCtxStub, baseCtxStub, service.linePathData);
+        expect(clipLassoSelectionSpy).toHaveBeenCalled();
+        expect(fillLassoSpy).toHaveBeenCalled();
+    });
+
     it('computeSelectionSize should return correct selectionSize', () => {
         const expectedWidth = 261;
         const expectedHeight = 176;
         const result = service.computeSelectionSize(service.linePathData);
         expect(result[0]).toEqual(expectedWidth);
         expect(result[1]).toEqual(expectedHeight);
+    });
+
+    it('fillLasso should fill correct zone using provided path', () => {
+        const selectionCtxLineToSpy = spyOn(selectionCtxStub, 'lineTo');
+        const selectionCtxMoveToSpy = spyOn(selectionCtxStub, 'moveTo');
+        const selectionCtxFill = spyOn(selectionCtxStub, 'fill');
+        service['fillLasso'](selectionCtxStub, service.linePathData, 'white');
+        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(service.linePathData[0].x, service.linePathData[0].y);
+        for (const point of service.linePathData) {
+            expect(selectionCtxLineToSpy).toHaveBeenCalledWith(point.x, point.y);
+        }
+        expect(selectionCtxStub.fillStyle).toEqual('#000000');
+        expect(selectionCtxFill).toHaveBeenCalled();
+    });
+
+    it('drawLassoOutline should correctly stroke the outline of the shape', () => {
+        const selectionCtxLineToSpy = spyOn(selectionCtxStub, 'lineTo');
+        const selectionCtxMoveToSpy = spyOn(selectionCtxStub, 'moveTo');
+        const selectionCtxStrokeSpy = spyOn(selectionCtxStub, 'stroke');
+        service['drawLassoOutline'](selectionCtxStub, service.linePathData);
+        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(
+            service.linePathData[0].x - service.topLeft.x,
+            service.linePathData[0].y - service.topLeft.y,
+        );
+        for (const point of service.linePathData) {
+            expect(selectionCtxLineToSpy).toHaveBeenCalledWith(point.x - service.topLeft.x, point.y - service.topLeft.y);
+        }
+        expect(selectionCtxStrokeSpy).toHaveBeenCalled();
+    });
+
+    it('clipLassoSelection should correctly clip path passed as parameter', () => {
+        const selectionCtxClipSpy = spyOn(selectionCtxStub, 'clip');
+        const selectionCtxLineToSpy = spyOn(selectionCtxStub, 'lineTo');
+        const selectionCtxMoveToSpy = spyOn(selectionCtxStub, 'moveTo');
+        service['clipLassoSelection'](selectionCtxStub, baseCtxStub, service.linePathData);
+        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(
+            service.linePathData[0].x - service.topLeft.x,
+            service.linePathData[0].y - service.topLeft.y,
+        );
+        for (const point of service.linePathData) {
+            expect(selectionCtxLineToSpy).toHaveBeenCalledWith(point.x - service.topLeft.x, point.y - service.topLeft.y);
+        }
+        expect(selectionCtxClipSpy).toHaveBeenCalled();
+    });
+
+    it('onToolChange should confirmSelection if manipulating the selection', () => {
+        const confirmSelectionSpy = spyOn(service, 'confirmSelection');
+        service.isManipulating = true;
+        service.onToolChange();
+        expect(confirmSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('onToolChange should resetSelection if still use', () => {
+        const resetSelectionSpy = spyOn(service, 'resetSelection');
+        service.inUse = true;
+        service.onToolChange();
+        expect(resetSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('calculateSlopeLine should calculate correct slope with positive dx', () => {
+        const start = { x: 50, y: 50 };
+        const end = { x: 100, y: 100 };
+        const line = {
+            start: start,
+            end: end,
+        };
+
+        const expectedSlope = 1;
+        const slope = service['calculateSlopeLine'](line);
+        expect(slope).toEqual(expectedSlope);
+    });
+
+    it('calculateSlopeLine should calculate correct slope with negative dx', () => {
+        const start = { x: 100, y: 100 };
+        const end = { x: 50, y: 50 };
+        const line = {
+            start: start,
+            end: end,
+        };
+
+        const expectedSlope = 1;
+        const slope = service['calculateSlopeLine'](line);
+        expect(slope).toEqual(expectedSlope);
+    });
+
+    it('calculateSlopeLine should correctly calculate Infinity slope', () => {
+        const start = { x: 50, y: 50 };
+        const end = { x: 50, y: 50 };
+        const line = {
+            start: start,
+            end: end,
+        };
+
+        const expectedSlope = Infinity;
+        const slope = service['calculateSlopeLine'](line);
+        expect(slope).toEqual(expectedSlope);
+    });
+
+    it('calculateSlopeLine should correctly calculate random slope', () => {
+        const start = { x: 50, y: 50 };
+        const end = { x: 50, y: 900 };
+        const line = {
+            start: start,
+            end: end,
+        };
+
+        const expectedSlope = Infinity;
+        const slope = service['calculateSlopeLine'](line);
+        expect(slope).toEqual(expectedSlope);
+    });
+
+    it('areAllPointsAligned should return true if all points are equal', () => {
+        const start1 = { x: 50, y: 50 };
+        const end1 = { x: 50, y: 900 };
+        const start2 = { x: 50, y: 50 };
+        const end2 = { x: 50, y: 900 };
+        const result = service['areAllPointsAligned'](start1.x, end1.x, start2.x, end2.x);
+        expect(result).toBeTruthy();
+    });
+
+    it('areAllPointsAligned should return true if all points are equal', () => {
+        const start1 = { x: 100, y: 50 };
+        const end1 = { x: 50, y: 900 };
+        const start2 = { x: 50, y: 50 };
+        const end2 = { x: 50, y: 900 };
+        const result = service['areAllPointsAligned'](start1.x, end1.x, start2.x, end2.x);
+        expect(result).toBeFalsy();
+    });
+
+    it('doDomainsOverlap should return true if all lines domain overlap', () => {
+        const start1 = { x: 100, y: 50 };
+        const end1 = { x: 50, y: 900 };
+        const start2 = { x: 50, y: 50 };
+        const end2 = { x: 50, y: 900 };
+        const result = service['doDomainsOverlap'](start1.x, end1.x, start2.x, end2.x);
+        expect(result).toBeTruthy();
+    });
+
+    it('doDomainsOverlap should return true if all lines domain overlap', () => {
+        const start1 = { x: 25, y: 50 };
+        const end1 = { x: 50, y: 65 };
+        const start2 = { x: 50, y: 50 };
+        const end2 = { x: 50, y: 90 };
+        const result = service['doDomainsOverlap'](start1.x, end1.x, start2.x, end2.x);
+        expect(result).toBeTruthy();
+    });
+
+    it('doLinesShareRange should call doDomainsOverlap and areAllPointsAligned return true', () => {
+        const doDomainsOverlapSpy = spyOn<any>(service, 'doDomainsOverlap').and.callThrough();
+        const areAllPointsAlignedSpy = spyOn<any>(service, 'areAllPointsAligned').and.callThrough();
+        const start1 = { x: 50, y: 50 };
+        const end1 = { x: 50, y: 900 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 50, y: 50 };
+        const end2 = { x: 50, y: 90 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['doLinesShareRange'](line1, line2);
+        expect(doDomainsOverlapSpy).toHaveBeenCalled();
+        expect(areAllPointsAlignedSpy).toHaveBeenCalled();
+        expect(result).toBeTruthy();
+    });
+
+    it('doLinesShareRange should call doDomainsOverlap and areAllPointsAligned return false', () => {
+        const doDomainsOverlapSpy = spyOn<any>(service, 'doDomainsOverlap').and.callThrough();
+        const areAllPointsAlignedSpy = spyOn<any>(service, 'areAllPointsAligned').and.callThrough();
+        const start1 = { x: 32, y: 50 };
+        const end1 = { x: 120, y: 900 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 121, y: 50 };
+        const end2 = { x: 800, y: 90 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['doLinesShareRange'](line1, line2);
+        expect(doDomainsOverlapSpy).toHaveBeenCalled();
+        expect(areAllPointsAlignedSpy).toHaveBeenCalled();
+        expect(result).toBeFalsy();
+    });
+
+    it('isColinear should return false if both lines are not colinear', () => {
+        const start1 = { x: 32, y: 50 };
+        const end1 = { x: 120, y: 900 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 121, y: 50 };
+        const end2 = { x: 800, y: 90 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['isColinear'](line1, line2);
+        expect(result).toBeFalsy();
+    });
+
+    it('isColinear should return true if both lines are colinear', () => {
+        const start1 = { x: 32, y: 50 };
+        const end1 = { x: 32, y: 900 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 32, y: 50 };
+        const end2 = { x: 32, y: 900 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['isColinear'](line1, line2);
+        expect(result).toBeTruthy();
+    });
+
+    it('intersects should return true if both lines are colinear', () => {
+        const start1 = { x: 32, y: 50 };
+        const end1 = { x: 32, y: 900 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 32, y: 50 };
+        const end2 = { x: 32, y: 900 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['intersects'](line1, line2);
+        expect(result).toBeTruthy();
+    });
+
+    it('intersects should return false if both lines determinant is 0', () => {
+        const start1 = { x: 5, y: 520 };
+        const end1 = { x: 32, y: 50 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 32, y: 50 };
+        const end2 = { x: 25, y: 43 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['intersects'](line1, line2);
+        expect(result).toBeFalsy();
+    });
+
+    it('intersects should return true if both lines intersect', () => {
+        const start1 = { x: 10, y: 25 };
+        const end1 = { x: 100, y: 50 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 250, y: 120 };
+        const end2 = { x: 32, y: 50 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['intersects'](line1, line2);
+        expect(result).toBeFalsy();
+    });
+
+    it('isIntersect should return false if point is initialPoint', () => {
+        const result = service.isIntersect(service.initialPoint, service.linePathData);
+        expect(result).toBeFalsy();
+    });
+
+    it('isIntersect should return false if new line does not intersect with current lines', () => {
+        const result = service.isIntersect(service.linePathData[service.linePathData.length - 1], service.linePathData);
+        expect(result).toBeFalsy();
+    });
+
+    it('isIntersect should return true if new line does intersects with current lines', () => {
+        service.linePathData.push({ x: 133, y: 256 });
+        const result = service.isIntersect(service.linePathData[service.linePathData.length - 1], service.linePathData);
+        expect(result).toBeTruthy();
+    });
+
+    it('setSelectionCanvasPosition should correctly set both selectionCanvas to topLeft specified', () => {
+        service['setSelectionCanvasPosition'](service.topLeft);
+        expect(selectionCtxStub.canvas.style.left).toEqual(service.topLeft.x + 'px');
+        expect(selectionCtxStub.canvas.style.top).toEqual(service.topLeft.y + 'px');
+        expect(previewSelectionCtxStub.canvas.style.left).toEqual(service.topLeft.x + 'px');
+        expect(previewSelectionCtxStub.canvas.style.top).toEqual(service.topLeft.y + 'px');
+        expect(resizerHandlerServiceSpy.setResizerPositions).toHaveBeenCalled();
+    });
+
+    it('drawImageToCtx should return if is from clipboard', () => {
+        service.isFromClipboard = true;
+        expect(() => {
+            service['drawImageToCtx'](baseCtxStub, selectionCtxStub.canvas);
+        }).not.toThrow();
+    });
+
+    it('drawImageToCtx should call targetCtx drawImage with appropriate paramters', () => {
+        const drawImageSpy = spyOn(baseCtxStub, 'drawImage');
+        service['drawImageToCtx'](baseCtxStub, selectionCtxStub.canvas);
+        expect(drawImageSpy).toHaveBeenCalled();
+        expect(drawImageSpy).toHaveBeenCalledWith(
+            selectionCtxStub.canvas,
+            0,
+            0,
+            service.selectionWidth,
+            service.selectionHeight,
+            service.topLeft.x,
+            service.topLeft.y,
+            service.selectionWidth,
+            service.selectionHeight,
+        );
+    });
+
+    it('clearPath should clear the service linePathData attribute', () => {
+        service['clearPath']();
+        expect(service.linePathData).toEqual([]);
+    });
+
+    it('arePointsEqual should return true if points are equal', () => {
+        const point1 = { x: 25, y: 50 };
+        const point2 = { x: 25, y: 50 };
+        const result = service['arePointsEqual'](point1, point2);
+        expect(result).toBeTruthy();
+    });
+
+    it('arePointsEqual should return false if points are not equal', () => {
+        const point1 = { x: 25, y: 50 };
+        const point2 = { x: 25, y: 64 };
+        const result = service['arePointsEqual'](point1, point2);
+        expect(result).toBeFalsy();
     });
 });
