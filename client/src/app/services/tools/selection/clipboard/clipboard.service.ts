@@ -9,13 +9,14 @@ import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/e
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { LassoSelectionService } from '../lasso/lasso-selection';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ClipboardService {
     clipboard: ImageData = new ImageData(1, 1);
-    currentTool: RectangleSelectionService | EllipseSelectionService;
+    currentTool: RectangleSelectionService | EllipseSelectionService | LassoSelectionService;
     lastSelectionTool: string;
     cornerCoords: Vec2[];
     isCircle: boolean;
@@ -29,7 +30,11 @@ export class ClipboardService {
         public resizerHandlerService: ResizerHandlerService,
     ) {
         toolManager.currentToolSubject.asObservable().subscribe((currentTool) => {
-            if (currentTool instanceof RectangleSelectionService || currentTool instanceof EllipseSelectionService) {
+            if (
+                currentTool instanceof RectangleSelectionService ||
+                currentTool instanceof EllipseSelectionService ||
+                currentTool instanceof LassoSelectionService
+            ) {
                 this.currentTool = currentTool;
             }
         });
@@ -45,7 +50,11 @@ export class ClipboardService {
                 this.drawingService.selectionCanvas.width,
                 this.drawingService.selectionCanvas.height,
             );
-            this.cornerCoords = this.currentTool.cornerCoords;
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                this.cornerCoords = this.currentTool.cornerCoords;
+            } else if (this.currentTool instanceof LassoSelectionService) {
+                this.cornerCoords = this.currentTool.linePathData;
+            }
             this.lastSelectionTool = this.getCurrentSelectionToolName();
         }
     }
@@ -60,13 +69,18 @@ export class ClipboardService {
             return;
         }
         if (this.isSelected(this.drawingService.selectionCanvas)) {
-            this.currentTool.onMouseDown({} as MouseEvent);
+            // this.currentTool.onMouseDown({} as MouseEvent);
+            this.currentTool.confirmSelection();
         }
         this.changeToSelectionTool(this.lastSelectionTool);
         this.setPastedCanvasPosition();
         this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
-        this.currentTool.cornerCoords = this.cornerCoords;
+        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+            this.cornerCoords = this.currentTool.cornerCoords;
+        } else if (this.currentTool instanceof LassoSelectionService) {
+            this.cornerCoords = this.currentTool.linePathData;
+        }
         this.currentTool.isManipulating = true;
         // This boolean is for avoiding behavior of simply moving the previous selection
         this.currentTool.isFromClipboard = true;
@@ -75,7 +89,11 @@ export class ClipboardService {
     deleteSelection(): void {
         if (this.isSelected(this.drawingService.selectionCanvas)) {
             this.currentTool.undoSelection();
-            this.cornerCoords = this.currentTool.cornerCoords;
+            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
+                this.cornerCoords = this.currentTool.cornerCoords;
+            } else if (this.currentTool instanceof LassoSelectionService) {
+                this.cornerCoords = this.currentTool.linePathData;
+            }
             this.deleteEllipse();
             this.deleteRectangle();
         }
@@ -116,6 +134,8 @@ export class ClipboardService {
 
     private getCurrentSelectionToolName(): string {
         switch (this.currentTool.constructor) {
+            case LassoSelectionService:
+                return ToolManagerConstants.LASSO_SELECTION_KEY;
             case EllipseSelectionService:
                 return ToolManagerConstants.ELLIPSE_SELECTION_KEY;
             default:
@@ -124,7 +144,10 @@ export class ClipboardService {
     }
 
     private isSelected(selectionCanvas: HTMLCanvasElement): boolean {
-        const isSelectionTool = this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService;
+        const isSelectionTool =
+            this.currentTool instanceof RectangleSelectionService ||
+            this.currentTool instanceof EllipseSelectionService ||
+            this.currentTool instanceof LassoSelectionService;
         return isSelectionTool && selectionCanvas.width !== 0 && selectionCanvas.height !== 0;
     }
 }

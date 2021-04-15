@@ -269,4 +269,24 @@ export class RectangleSelectionService extends ToolSelectionService {
         );
         this.fillRectangle(baseCtx, cornerCoords, selectionWidth, selectionHeight);
     }
+
+    confirmSelection(): void {
+        this.transformValues = {
+            x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
+            y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
+        };
+        const command: Command = new RectangleSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
+        this.undoRedoService.executeCommand(command);
+        this.isManipulating = false;
+        this.isSquare = false;
+        this.isShiftDown = false;
+        this.rectangleService.isShiftDown = false;
+        // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.clearCorners(this.cornerCoords);
+        this.resetSelectedToolSettings();
+        this.resizerHandlerService.resetResizers();
+        this.isFromClipboard = false;
+    }
 }

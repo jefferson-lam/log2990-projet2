@@ -322,4 +322,23 @@ export class EllipseSelectionService extends ToolSelectionService {
         selectionCtx.restore();
         this.drawOutlineEllipse(this.drawingService.selectionCtx, startX, startY, radiusX, radiusY, SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET);
     }
+
+    confirmSelection(): void {
+        this.transformValues = {
+            x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
+            y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
+        };
+        const command: Command = new EllipseSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
+        this.undoRedoService.executeCommand(command);
+        this.isManipulating = false;
+        this.isCircle = false;
+        this.isShiftDown = false;
+        // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.clearCorners(this.cornerCoords);
+        this.resetSelectedToolSettings();
+        this.resizerHandlerService.resetResizers();
+        this.isFromClipboard = false;
+    }
 }

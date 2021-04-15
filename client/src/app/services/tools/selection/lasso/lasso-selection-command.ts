@@ -8,6 +8,7 @@ export class LassoSelectionCommand extends Command {
     topLeft: Vec2;
     linePathData: Vec2[];
     selectionCanvas: HTMLCanvasElement;
+    isFromClipboard: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, lassoSelectionService: LassoSelectionService) {
         super();
@@ -22,10 +23,13 @@ export class LassoSelectionCommand extends Command {
         this.selectionWidth = selectionCanvas.width;
         this.transformValues = lassoSelectionService.transformValues;
         this.topLeft = lassoSelectionService.topLeft;
+        this.isFromClipboard = lassoSelectionService.isFromClipboard;
     }
 
     execute(): void {
-        this.fillLasso(this.ctx, this.linePathData, 'white');
+        if (!this.isFromClipboard) {
+            this.fillLasso(this.ctx, this.linePathData, 'white');
+        }
         this.ctx.drawImage(
             this.selectionCanvas,
             0,
