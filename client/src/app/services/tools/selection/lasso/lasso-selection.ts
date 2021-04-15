@@ -24,7 +24,7 @@ export class LassoSelectionService extends ToolSelectionService {
     selectionHeight: number;
     topLeft: Vec2;
     isEscapeDown: boolean;
-    isBackspaceDown: boolean;
+    isFromClipboard: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -38,8 +38,8 @@ export class LassoSelectionService extends ToolSelectionService {
         this.isInvalidSegment = false;
         this.linePathData = new Array<Vec2>();
         this.isEscapeDown = false;
-        this.isBackspaceDown = false;
-        this.lineService.linePathDataSubject.asObservable().subscribe((point) => {
+        this.isFromClipboard = false;
+        this.lineService.addPointSubject.asObservable().subscribe((point) => {
             this.linePathData.push(point);
         });
         this.lineService.currentPointSubject.asObservable().subscribe((point) => {
@@ -92,16 +92,13 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.isEscapeDown || this.isBackspaceDown) {
+        super.onKeyboardDown(event);
+        if (this.isEscapeDown) {
             return;
         }
-        super.onKeyboardDown(event);
         switch (event.key) {
             case 'Escape':
                 this.isEscapeDown = true;
-                break;
-            case 'Backspace':
-                this.isBackspaceDown = true;
                 break;
         }
     }
@@ -131,22 +128,25 @@ export class LassoSelectionService extends ToolSelectionService {
         if (!this.isManipulating) {
             return;
         }
-        this.drawingService.baseCtx.drawImage(
-            this.drawingService.selectionCanvas,
-            0,
-            0,
-            this.selectionWidth,
-            this.selectionHeight,
-            this.topLeft.x,
-            this.topLeft.y,
-            this.selectionWidth,
-            this.selectionHeight,
-        );
+        this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
         this.resetSelectedToolSettings();
         this.resetCanvasState(this.drawingService.selectionCanvas);
         this.resetCanvasState(this.drawingService.previewSelectionCanvas);
         this.resizerHandlerService.resetResizers();
         this.isManipulating = false;
+        this.isEscapeDown = false;
+        this.isConnected = false;
+    }
+
+    resetSelection(): void {
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetSelectedToolSettings();
+        // Erase the rectangle drawn as a preview of selection
+        this.clearPath();
+        this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
+        this.isInvalidSegment = false;
+        this.inUse = false;
     }
 
     isIntersect(point: Vec2, pathData: Vec2[]): boolean {
@@ -164,15 +164,6 @@ export class LassoSelectionService extends ToolSelectionService {
             }
         }
         return false;
-    }
-
-    private resetSelection(): void {
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetSelectedToolSettings();
-        // Erase the rectangle drawn as a preview of selection
-        this.clearPath();
-        this.inUse = false;
     }
 
     // https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
@@ -265,7 +256,38 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
-    clipLassoSelection(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
+    confirmSelection(): void {
+        this.transformValues = {
+            x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
+            y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
+        };
+        const command: Command = new LassoSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
+        this.undoRedoService.executeCommand(command);
+        this.resetSelection();
+        this.resizerHandlerService.resetResizers();
+        this.isManipulating = false;
+    }
+
+    initializeSelection(): void {
+        this.lineService.onToolChange();
+        const selectionSize = this.computeSelectionSize(this.linePathData);
+        this.selectionWidth = selectionSize[0];
+        this.selectionHeight = selectionSize[1];
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+        this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.linePathData);
+        this.setSelectionCanvasPosition(this.topLeft);
+        this.isConnected = false;
+        this.inUse = false;
+        this.isManipulating = true;
+    }
+
+    private selectLasso(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
+        this.clipLassoSelection(targetCtx, baseCtx, pathData);
+        this.fillLasso(baseCtx, pathData, 'white');
+    }
+
+    private clipLassoSelection(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
         targetCtx.save();
         targetCtx.beginPath();
         targetCtx.moveTo(pathData[0].x - this.topLeft.x, pathData[0].y - this.topLeft.y);
@@ -289,38 +311,6 @@ export class LassoSelectionService extends ToolSelectionService {
         // this.drawLassoOutline(targetCtx, pathData);
     }
 
-    confirmSelection(): void {
-        this.transformValues = {
-            x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
-            y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
-        };
-        const command: Command = new LassoSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
-        this.undoRedoService.executeCommand(command);
-        this.resetSelection();
-        this.resizerHandlerService.resetResizers();
-        this.isManipulating = false;
-        this.isInvalidSegment = false;
-    }
-
-    initializeSelection(): void {
-        this.lineService.onToolChange();
-        const selectionSize = this.computeSelectionSize(this.linePathData);
-        this.selectionWidth = selectionSize[0];
-        this.selectionHeight = selectionSize[1];
-        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
-        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
-        this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.linePathData);
-        this.setSelectionCanvasPosition(this.topLeft);
-        this.isConnected = false;
-        this.inUse = false;
-        this.isManipulating = true;
-    }
-
-    private selectLasso(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
-        this.clipLassoSelection(targetCtx, baseCtx, pathData);
-        this.fillLasso(baseCtx, pathData, 'white');
-    }
-
     private fillLasso(ctx: CanvasRenderingContext2D, pathData: Vec2[], color: string): void {
         ctx.beginPath();
         ctx.moveTo(pathData[0].x, pathData[0].y);
@@ -342,6 +332,23 @@ export class LassoSelectionService extends ToolSelectionService {
             ctx.lineTo(point.x - this.topLeft.x, point.y - this.topLeft.y);
         }
         ctx.stroke();
+    }
+
+    private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
+        if (this.isFromClipboard) {
+            return;
+        }
+        targetCtx.drawImage(
+            sourceCanvas,
+            0,
+            0,
+            this.selectionWidth,
+            this.selectionHeight,
+            this.topLeft.x,
+            this.topLeft.y,
+            this.selectionWidth,
+            this.selectionHeight,
+        );
     }
 
     private setSelectionCanvasPosition(topLeft: Vec2): void {

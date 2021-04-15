@@ -15,7 +15,7 @@ export class LineService extends Tool {
     mousePosition: Vec2;
     initialPoint: Vec2;
     linePathData: Vec2[];
-    linePathDataSubject: Subject<Vec2>;
+    addPointSubject: Subject<Vec2>;
     currentPointSubject: Subject<Vec2>;
     removePointSubject: Subject<boolean>;
 
@@ -31,7 +31,7 @@ export class LineService extends Tool {
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
-        this.linePathDataSubject = new Subject<Vec2>();
+        this.addPointSubject = new Subject<Vec2>();
         this.currentPointSubject = new Subject<Vec2>();
         this.removePointSubject = new Subject<boolean>();
         this.previewCommand = new LineCommand(drawingService.previewCtx, this);
@@ -126,10 +126,10 @@ export class LineService extends Tool {
             this.initialPoint = this.getPositionFromMouse(event);
             this.linePathData[LineConstants.STARTING_POINT] = this.initialPoint;
             this.linePathData.push(this.initialPoint);
-            this.linePathDataSubject.next(this.initialPoint);
+            this.addPointSubject.next(this.initialPoint);
         } else {
             this.linePathData.push(this.linePathData[this.linePathData.length - 1]);
-            this.linePathDataSubject.next(this.linePathData[this.linePathData.length - 1]);
+            this.addPointSubject.next(this.linePathData[this.linePathData.length - 1]);
             this.drawPreview();
         }
     }
