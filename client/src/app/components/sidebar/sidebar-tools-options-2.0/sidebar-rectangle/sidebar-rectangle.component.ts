@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import * as ShapeConstants from '@app/constants/shapes-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
@@ -14,7 +13,6 @@ export class SidebarRectangleComponent implements OnInit {
     tickInterval: number;
     toolSize: number | undefined;
     fillMode: number | undefined;
-    currentTool: Tool;
 
     @Output() toolSizeChanged: EventEmitter<number>;
     @Output() fillModeChanged: EventEmitter<number>;
@@ -25,7 +23,8 @@ export class SidebarRectangleComponent implements OnInit {
         this.tickInterval = ShapeConstants.TICK_INTERVAL;
         this.toolSizeChanged = new EventEmitter();
         this.fillModeChanged = new EventEmitter();
-        console.log('suh dud');
+        this.toolSize = settingsManager.toolManager.rectangleService.lineWidth;
+        this.fillMode = settingsManager.toolManager.rectangleService.fillMode;
     }
 
     ngOnInit(): void {
