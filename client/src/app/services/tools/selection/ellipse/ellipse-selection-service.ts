@@ -11,6 +11,7 @@ import { EllipseSelectionCommand } from '@app/services/tools/selection/ellipse/e
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+// tslint:disable:max-file-line-count
 
 @Injectable({
     providedIn: 'root',
