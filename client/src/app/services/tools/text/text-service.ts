@@ -96,12 +96,10 @@ export class TextService extends Tool {
     }
 
     setSelectedText(): void {
-        const selection = window.getSelection();
+        const selection = window.getSelection() as Selection;
         const range = document.createRange();
         range.selectNodeContents(this.placeHolderSpan);
-        // @ts-ignore
         selection.removeAllRanges();
-        // @ts-ignore
         selection.addRange(range);
     }
 

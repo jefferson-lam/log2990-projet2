@@ -16,7 +16,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ShortcutManagerService } from './shortcut-manager.service';
 
 // tslint:disable:max-file-line-count
-fdescribe('ShortcutManagerService', () => {
+describe('ShortcutManagerService', () => {
     let service: ShortcutManagerService;
     let rectangleSelectionService: RectangleSelectionService;
     let textService: TextService;
@@ -543,6 +543,7 @@ fdescribe('ShortcutManagerService', () => {
     });
 
     it('onEscapeKeyDown should change textService values of input span', () => {
+        textService.placeHolderSpan = document.createElement('div');
         (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(textService);
         textService.inUse = true;
         allowShortcutSpy.and.returnValue(false);
