@@ -1,7 +1,8 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constants';
+import { ROTATION } from '@app/constants/ellipse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
+import { END_ANGLE, START_ANGLE } from '@app/constants/shapes-constants';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 
 export class EllipseClipboardCommand extends Command {
