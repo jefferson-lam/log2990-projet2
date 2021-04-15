@@ -20,8 +20,8 @@ export class SidebarEllipseComponent implements OnInit {
     @Output() fillModeChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
-        this.max = EllipseConstants.MAX_LINE_WIDTH;
-        this.min = EllipseConstants.MIN_LINE_WIDTH;
+        this.max = EllipseConstants.MAX_BORDER_WIDTH;
+        this.min = EllipseConstants.MIN_BORDER_WIDTH;
         this.tickInterval = EllipseConstants.TICK_INTERVAL;
         this.toolSizeChanged = new EventEmitter();
         this.fillModeChanged = new EventEmitter();
