@@ -202,12 +202,22 @@ describe('TextService', () => {
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
-    it('onToolChange should call onMouseUp', () => {
-        const onMouseUpSpy = spyOn(service, 'onMouseUp');
-
+    it('onToolChange should call drawTextOnCanvas', () => {
+        const drawSpy = spyOn(service, 'drawTextOnCanvas');
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = false;
         service.onToolChange();
+        expect(service.lockKeyboard).toBeFalse();
+        expect(drawSpy).toHaveBeenCalled();
+    });
 
-        expect(onMouseUpSpy).toHaveBeenCalled();
+    it('onToolChange should not call drawTextOnCanvas', () => {
+        const drawSpy = spyOn(service, 'drawTextOnCanvas');
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = true;
+        service.onToolChange();
+        expect(service.lockKeyboard).toBeFalse();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('setFontFamily should change family font', () => {

@@ -29,6 +29,7 @@ describe('SidebarComponent', () => {
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
     let textStub: ToolStub;
+    let textService: TextService;
     let rectangleSelectionServiceStub: RectangleSelectionService;
     let clipboardServiceStub: ClipboardService;
     let fixture: ComponentFixture<SidebarComponent>;
@@ -61,12 +62,16 @@ describe('SidebarComponent', () => {
             {} as ResizerHandlerService,
             rectangleStub as RectangleService,
         );
-        toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject']);
+        toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject', 'textService']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<
             () => BehaviorSubject<Tool>
         >).and.returnValue(new BehaviorSubject<Tool>(toolManagerServiceSpy.currentTool));
         clipboardServiceStub = new ClipboardService({} as DrawingService, toolManagerServiceSpy, {} as UndoRedoService, {} as ResizerHandlerService);
+
+        textService = new TextService({} as DrawingService, {} as UndoRedoService);
+        (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'textService')?.get as jasmine.Spy<() => TextService>).and.returnValue(textService);
+
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -79,6 +84,7 @@ describe('SidebarComponent', () => {
                 { provide: PopupManagerService, useValue: popupManagerSpy },
                 { provide: ClipboardService, useValue: clipboardServiceStub },
                 { provide: ToolStub, useValue: toolManagerServiceSpy },
+                { provide: TextService, useValue: textStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -353,12 +359,14 @@ describe('SidebarComponent', () => {
     });
 
     it('openGridOptions should set isGridOptionsDisplayed to false if initially true', () => {
+        component.toolManager.textService.lockKeyboard = true;
         component.isGridOptionsDisplayed = true;
         component.openGridOptions();
         expect(component.isGridOptionsDisplayed).toBeFalse();
     });
 
     it('openGridOptions should set isGridOptionsDisplayed to true if initially false', () => {
+        component.toolManager.textService.lockKeyboard = false;
         component.isGridOptionsDisplayed = false;
         component.openGridOptions();
         expect(component.isGridOptionsDisplayed).toBeTrue();
@@ -392,24 +400,5 @@ describe('SidebarComponent', () => {
         const pasteSpy = spyOn(clipboardServiceStub, 'pasteSelection');
         component.pasteSelection();
         expect(pasteSpy).toHaveBeenCalled();
-    });
-
-    it('clicking on text button should select the text tool for user and change lockKyBoard false', () => {
-        toolManagerServiceSpy.selectTool.and.callFake(() => {
-            return textStub;
-        });
-
-        fixture.detectChanges();
-        const textButton = fixture.debugElement.nativeElement.querySelector('#icon-button-Texte');
-        textButton.click();
-        fixture.detectChanges();
-
-        expect(component.selectedTool).toEqual({
-            service: 'TextService',
-            name: 'Texte',
-            icon: 'text_format',
-            keyShortcut: 't',
-            helpShortcut: '(Touche T)',
-        });
     });
 });

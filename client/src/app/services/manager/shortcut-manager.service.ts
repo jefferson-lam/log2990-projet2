@@ -29,21 +29,16 @@ export class ShortcutManagerService {
     }
 
     private isShortcutAllowed(): boolean {
-        return !this.isTextInput && !this.popupManager.isPopUpOpen;
+        return !this.isTextInput && !this.popupManager.isPopUpOpen && !this.toolManager.textService.lockKeyboard;
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isShortcutAllowed()) {
-            return;
-        }
-
-        if (!this.toolManager.textService.lockKeyboard && event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b|t)$/)) {
-            this.toolManager.selectTool(event.key);
-        }
+        if (!this.isShortcutAllowed()) return;
+        if (event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b|t)$/)) this.toolManager.selectTool(event.key);
     }
 
     onGKeyDown(): void {
-        if (!this.isShortcutAllowed() || this.toolManager.textService.lockKeyboard) {
+        if (!this.isShortcutAllowed()) {
             return;
         }
         this.canvasGridService.toggleGrid();

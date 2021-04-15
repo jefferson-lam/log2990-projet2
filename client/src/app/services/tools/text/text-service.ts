@@ -61,12 +61,6 @@ export class TextService extends Tool {
             this.placeHolderSpan.style.display = 'block';
             this.placeHolderSpan.style.zIndex = '2';
             this.placeHolderSpan.style.visibility = 'visible';
-            this.placeHolderSpan.style.textAlign = this.textAlign;
-            this.placeHolderSpan.style.fontFamily = this.fontFamily;
-            this.placeHolderSpan.style.fontSize = this.fontSize + 'px';
-            this.placeHolderSpan.style.fontWeight = this.fontWeight;
-            this.placeHolderSpan.style.fontStyle = this.fontStyle;
-            this.placeHolderSpan.style.color = this.primaryColor;
 
             this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.lockKeyboard = true;
@@ -146,6 +140,9 @@ export class TextService extends Tool {
     }
 
     onToolChange(): void {
-        this.onMouseUp({} as MouseEvent);
+        if (this.lockKeyboard && !this.escapeKeyUsed) {
+            this.drawTextOnCanvas();
+            this.lockKeyboard = false;
+        }
     }
 }

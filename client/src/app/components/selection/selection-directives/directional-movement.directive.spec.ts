@@ -2,41 +2,35 @@ import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { SelectionComponent } from '@app/components/selection/selection.component';
-import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
-import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
-import { ToolManagerService } from '@app/services/manager/tool-manager-service';
-import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DirectionalMovementDirective } from './directional-movement.directive';
+import createSpyObj = jasmine.createSpyObj;
 
 describe('DirectionalMovementDirective', () => {
     let fixture: ComponentFixture<SelectionComponent>;
     let directive: DirectionalMovementDirective;
     let selectionCanvas: DebugElement;
     let delaySpy: jasmine.Spy;
-    let shortcutManager: ShortcutManagerService;
+    let shortcutManagerSpy: jasmine.SpyObj<ShortcutManagerService>;
 
     const FIRST_PRESS_DELAY = 500;
     const CONTINUOUS_PRESS_DELAY = 100;
     const NUM_PIXELS = 3;
 
     beforeEach(() => {
-        shortcutManager = new ShortcutManagerService(
-            {} as PopupManagerService,
-            {} as UndoRedoService,
-            {} as CanvasGridService,
-            {} as ToolManagerService,
-            {} as ClipboardService,
-        );
+        shortcutManagerSpy = createSpyObj('ShortcutManagerService', [
+            'isShortcutAllowed',
+            'selectionMovementOnArrowDown',
+            'selectionMovementOnKeyboardUp',
+        ]);
         fixture = TestBed.configureTestingModule({
             declarations: [DirectionalMovementDirective, SelectionComponent],
-            providers: [{ provide: ShortcutManagerService, useValue: shortcutManager }],
+            providers: [{ provide: ShortcutManagerService, useValue: shortcutManagerSpy }],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).createComponent(SelectionComponent);
         fixture.detectChanges();
         selectionCanvas = fixture.debugElement.query(By.directive(DirectionalMovementDirective));
-        directive = new DirectionalMovementDirective(selectionCanvas, shortcutManager);
+        directive = new DirectionalMovementDirective(selectionCanvas, shortcutManagerSpy);
         delaySpy = spyOn(directive, 'delay').and.callThrough();
     });
 

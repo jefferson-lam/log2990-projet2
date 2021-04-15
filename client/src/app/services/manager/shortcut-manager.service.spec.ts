@@ -16,7 +16,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ShortcutManagerService } from './shortcut-manager.service';
 
 // tslint:disable:max-file-line-count
-describe('ShortcutManagerService', () => {
+fdescribe('ShortcutManagerService', () => {
     let service: ShortcutManagerService;
     let rectangleSelectionService: RectangleSelectionService;
     let textService: TextService;
@@ -41,6 +41,8 @@ describe('ShortcutManagerService', () => {
             ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools'],
             ['currentTool', 'textService'],
         );
+        textService = new TextService({} as DrawingService, {} as UndoRedoService);
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'textService')?.get as jasmine.Spy<() => TextService>).and.returnValue(textService);
         popupManagerSpy = jasmine.createSpyObj(
             'PopupManagerService',
             ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp', 'openCarrouselPopUp'],
@@ -62,7 +64,6 @@ describe('ShortcutManagerService', () => {
 
         // tslint:disable-next-line:no-any
         allowShortcutSpy = spyOn<any>(service, 'isShortcutAllowed').and.callThrough();
-        textService = new TextService({} as DrawingService, {} as UndoRedoService);
         rectangleSelectionService = new RectangleSelectionService(
             {} as DrawingService,
             {} as UndoRedoService,
@@ -93,8 +94,9 @@ describe('ShortcutManagerService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('isShortcutAllowed should return true if isTextInput false and popupManager.isPopOpen false', () => {
+    it('isShortcutAllowed should return true if isTextInput false,popupManager.isPopOpen false and lockKeyboard false', () => {
         service.isTextInput = false;
+        toolManagerSpy.textService.lockKeyboard = false;
         (Object.getOwnPropertyDescriptor(popupManagerSpy, 'isPopUpOpen')?.get as jasmine.Spy<() => boolean>).and.returnValue(false);
 
         // tslint:disable-next-line:no-string-literal
@@ -157,19 +159,10 @@ describe('ShortcutManagerService', () => {
     });
 
     it('onGKeyDown should call canvasGridService.toggleGrid if isShortcutAllowed true', () => {
-        toolManagerSpy.textService.lockKeyboard = false;
         allowShortcutSpy.and.returnValue(true);
         service.onGKeyDown();
 
         expect(canvasGridServiceSpy.toggleGrid).toHaveBeenCalled();
-    });
-
-    it('onGKeyDown should not call canvasGridService.toggleGrid if lockKeyboard true', () => {
-        toolManagerSpy.textService.lockKeyboard = true;
-        allowShortcutSpy.and.returnValue(true);
-        service.onGKeyDown();
-
-        expect(canvasGridServiceSpy.toggleGrid).not.toHaveBeenCalled();
     });
 
     it('onGKeyDown should not call canvasGridService.toggleGrid if isShortcutAllowed false', () => {
@@ -555,7 +548,7 @@ describe('ShortcutManagerService', () => {
         allowShortcutSpy.and.returnValue(false);
         service.onEscapeKeyDown();
 
-        expect(textService.escapeKeyUsed).toEqual(true);
+        expect(toolManagerSpy.textService.escapeKeyUsed).toBeTrue();
     });
 
     it('onEscapeKeyDown should not change textService values of input span', () => {
@@ -563,7 +556,7 @@ describe('ShortcutManagerService', () => {
         allowShortcutSpy.and.returnValue(true);
         service.onEscapeKeyDown();
 
-        expect(textService.escapeKeyUsed).not.toHaveBeenCalled();
+        expect(toolManagerSpy.textService.escapeKeyUsed).toBeFalse();
     });
 
     it('selectionMovementOnArrowDown should not call delay and translate selection if key already pressed, directive.hasMovedOnce and isShortcutAllowed true', fakeAsync((): void => {

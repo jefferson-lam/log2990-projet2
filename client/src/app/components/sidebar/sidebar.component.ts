@@ -60,10 +60,6 @@ export class SidebarComponent {
 
     onSelectTool(tool: SidebarToolButton): void {
         this.toolManager.selectTool(tool.keyShortcut);
-        if (tool.service !== 'TextService' && this.toolManager.textService.lockKeyboard && !this.toolManager.textService.escapeKeyUsed) {
-            this.toolManager.textService.drawTextOnCanvas();
-            this.toolManager.textService.lockKeyboard = false;
-        }
     }
 
     openNewDrawing(): void {
