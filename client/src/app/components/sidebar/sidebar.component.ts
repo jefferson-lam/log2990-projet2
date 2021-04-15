@@ -39,7 +39,7 @@ export class SidebarComponent {
     ];
 
     constructor(
-        public toolManagerService: ToolManagerService,
+        public toolManager: ToolManagerService,
         private undoRedoService: UndoRedoService,
         public clipboardService: ClipboardService,
         public popupManager: PopupManagerService,
@@ -53,7 +53,7 @@ export class SidebarComponent {
             this.isUndoPossible = sizes[0] > 0;
             this.isRedoPossible = sizes[1] > 0;
         });
-        this.toolManagerService.currentToolSubject.asObservable().subscribe((tool) => {
+        this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
             this.selectedTool = this.sidebarToolButtons.find((sidebarToolButton) => {
                 return sidebarToolButton.service === tool.constructor.name;
             }) as SidebarToolButton;
@@ -61,7 +61,7 @@ export class SidebarComponent {
     }
 
     onSelectTool(tool: SidebarToolButton): void {
-        this.toolManagerService.selectTool(tool.keyShortcut);
+        this.toolManager.selectTool(tool.keyShortcut);
     }
 
     openNewDrawing(): void {
@@ -81,31 +81,28 @@ export class SidebarComponent {
     }
 
     undo(): void {
-        if (
-            this.toolManagerService.currentTool instanceof RectangleSelectionService ||
-            this.toolManagerService.currentTool instanceof EllipseSelectionService
-        ) {
-            if (this.toolManagerService.currentTool.isManipulating) {
-                this.toolManagerService.currentTool.undoSelection();
+        if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
+            if (this.toolManager.currentTool.isManipulating) {
+                this.toolManager.currentTool.undoSelection();
                 this.isUndoSelection = true;
             }
         }
-        if (!this.toolManagerService.currentTool.inUse && !this.isUndoSelection) {
+        if (!this.toolManager.currentTool.inUse && !this.isUndoSelection) {
             this.undoRedoService.undo();
         }
         this.isUndoSelection = false;
     }
 
     redo(): void {
-        if (!this.toolManagerService.currentTool.inUse) {
+        if (!this.toolManager.currentTool.inUse) {
             this.undoRedoService.redo();
         }
     }
 
     selectAll(): void {
-        this.toolManagerService.selectTool(RECTANGLE_SELECTION_KEY);
-        if (this.toolManagerService.currentTool instanceof RectangleSelectionService) {
-            this.toolManagerService.currentTool.selectAll();
+        this.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
+        if (this.toolManager.currentTool instanceof RectangleSelectionService) {
+            this.toolManager.currentTool.selectAll();
         }
     }
 
