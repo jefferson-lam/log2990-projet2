@@ -20,7 +20,6 @@ describe('AutoSaveService', () => {
     let executeSpy: jasmine.Spy;
     let autoSaveSpy: jasmine.Spy;
     let mockSubject: Subject<number[]>;
-    // let mockImage: HTMLImageElement;
 
     const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
@@ -43,27 +42,12 @@ describe('AutoSaveService', () => {
         document.body.append(cornerResizer);
 
         mockSubject = new Subject<number[]>();
-        // mockImage = new Image();
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['reset'], {
             pileSizeSource: mockSubject,
             pileSizeObservable: mockSubject.asObservable(),
             resetCanvasSize: new ResizerCommand(drawServiceSpy),
             initialImage: new Image(),
         });
-        // (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'pileSizeSource')?.get as jasmine.Spy<() => Subject<number[]>>).and.returnValue(
-        //     new Subject<number[]>(),
-        // );
-        // (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'pileSizeObservable')?.get as jasmine.Spy<() => Observable<number[]>>).and.returnValue(
-        //     undoRedoServiceSpy.pileSizeSource.asObservable(),
-        // );
-        // (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'resetCanvasSize')?.get as jasmine.Spy<() => Command>).and.returnValue(
-        //     new ResizerCommand(drawServiceSpy),
-        // );
-        // (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'initialImage')?.get as jasmine.Spy<() => HTMLImageElement>).and.returnValue(
-        //     Object.create(mockImage, { src: { configurable: true } }),
-        //     // new Image(),
-        // );
-        // Object.defineProperty(undoRedoServiceSpy, 'initialImage', { configurable: true });
 
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['newDrawing'], ['canvas', 'baseCtx']);
         TestBed.configureTestingModule({
@@ -147,14 +131,10 @@ describe('AutoSaveService', () => {
     });
 
     it('loadDrawing should execute resetCanvasSize if not autosaved drawing', () => {
-        // const srcSetSpy = spyOnProperty(undoRedoServiceSpy, 'initialImage', 'set');
         localStorage.clear();
         service.loadDrawing();
 
         expect(executeSpy).toHaveBeenCalled();
-        // expect(undoRedoServiceSpy.initialImage).toBeUndefined();
-        // expect(srcSetSpy).toHaveBeenCalled();
-        // expect(srcSetSpy).toHaveBeenCalledWith(undefined);
     });
 
     it('loadDrawing should call drawingService.newDrawing if not autosave', () => {
