@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import * as PolygoneConstants from '@app/constants/polygone-constants';
 import * as ShapeConstants from '@app/constants/shapes-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
@@ -18,7 +17,6 @@ export class SidebarPolygoneComponent implements OnInit {
     toolSize: number;
     polygoneSidesCount: number;
     fillMode: number | undefined;
-    currentTool: Tool;
 
     @Output() toolSizeChanged: EventEmitter<number>;
     @Output() fillModeChanged: EventEmitter<number>;
@@ -33,6 +31,9 @@ export class SidebarPolygoneComponent implements OnInit {
         this.toolSizeChanged = new EventEmitter();
         this.fillModeChanged = new EventEmitter();
         this.numberOfPolySides = new EventEmitter();
+        this.toolSize = settingsManager.toolManager.polygoneService.lineWidth;
+        this.fillMode = settingsManager.toolManager.polygoneService.fillMode;
+        this.polygoneSidesCount = settingsManager.toolManager.polygoneService.numberSides;
     }
 
     ngOnInit(): void {
