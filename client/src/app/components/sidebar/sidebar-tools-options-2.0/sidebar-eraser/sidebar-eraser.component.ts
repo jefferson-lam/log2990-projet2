@@ -13,7 +13,6 @@ export class SidebarEraserComponent implements OnInit {
     min: number;
     tickInterval: number;
     toolSize: number | undefined;
-    currentTool: Tool;
 
     @Input() newTool: Tool;
     @Input() selected: number;
@@ -25,6 +24,7 @@ export class SidebarEraserComponent implements OnInit {
         this.min = EraserConstants.MIN_ERASER_WIDTH;
         this.tickInterval = EraserConstants.TICK_INTERVAL;
         this.toolSizeChanged = new EventEmitter();
+        this.toolSize = settingsManager.toolManager.eraserService.lineWidth;
     }
 
     ngOnInit(): void {
