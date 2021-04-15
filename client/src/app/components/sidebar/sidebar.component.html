@@ -26,6 +26,18 @@
             <li id="selectAllButton">
                 <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
             </li>
+            <li id="copyButton">
+                <mat-icon matTooltip="Copier la sélection" [matTooltipPosition]="'right'" (click)="copySelection()">content_copy</mat-icon>
+            </li>
+            <li id="cutButton">
+                <mat-icon matTooltip="Couper la sélection" [matTooltipPosition]="'right'" (click)="cutSelection()">content_cut</mat-icon>
+            </li>
+            <li id="pasteButton">
+                <mat-icon matTooltip="Coller la sélection" [matTooltipPosition]="'right'" (click)="pasteSelection()">content_paste</mat-icon>
+            </li>
+            <li id="deleteButton">
+                <mat-icon matTooltip="Supprimer la sélection" [matTooltipPosition]="'right'" (click)="deleteSelection()">clear</mat-icon>
+            </li>
             <li id="gridButton">
                 <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
             </li>
@@ -56,8 +68,9 @@
                 <app-sidebar-polygone class="sidebar-tool-options" *ngSwitchCase="'3'"></app-sidebar-polygone>
                 <app-sidebar-aerosol class="sidebar-tool-options" *ngSwitchCase="'a'"></app-sidebar-aerosol>
                 <app-sidebar-pipette class="sidebar-tool-options" *ngSwitchCase="'i'"></app-sidebar-pipette>
-                <app-sidebar-rectangle-selection class="sidebar-tool-options" *ngSwitchCase="'r'"> </app-sidebar-rectangle-selection>
-                <app-sidebar-ellipse-selection class="sidebar-tool-options" *ngSwitchCase="'s'"> </app-sidebar-ellipse-selection>
+                <app-sidebar-rectangle-selection class="sidebar-tool-options" *ngSwitchCase="'r'"></app-sidebar-rectangle-selection>
+                <app-sidebar-ellipse-selection class="sidebar-tool-options" *ngSwitchCase="'s'"></app-sidebar-ellipse-selection>
+                <app-sidebar-paint-bucket class="sidebar-tool-options" *ngSwitchCase="'b'"></app-sidebar-paint-bucket>
                 <app-sidebar-grid class="sidebar-tool-options" *ngIf="isGridOptionsDisplayed"></app-sidebar-grid>
             </mat-drawer-content>
         </mat-drawer>

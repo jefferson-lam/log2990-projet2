@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ImgurService } from '@app/services/imgur/imgur.service';
 import { ExportErrorPageComponent } from './export-error-page.component';
@@ -10,6 +11,7 @@ describe('ExportErrorPageComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ExportErrorPageComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 

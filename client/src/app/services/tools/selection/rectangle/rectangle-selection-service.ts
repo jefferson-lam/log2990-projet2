@@ -24,6 +24,7 @@ export class RectangleSelectionService extends ToolSelectionService {
     isManipulating: boolean;
     selectionHeight: number;
     selectionWidth: number;
+    isFromClipboard: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -40,6 +41,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.cornerCoords = new Array<Vec2>(RectangleConstants.DIMENSION);
         this.selectionHeight = 0;
         this.selectionWidth = 0;
+        this.isFromClipboard = false;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -61,6 +63,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
             this.resizerHandlerService.resetResizers();
+            this.isFromClipboard = false;
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
@@ -85,6 +88,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             }
             this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+
             this.selectRectangle(
                 this.drawingService.selectionCtx,
                 this.drawingService.baseCtx,
@@ -152,28 +156,6 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    undoSelection(): void {
-        if (this.isManipulating) {
-            this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
-                0,
-                0,
-                this.selectionWidth,
-                this.selectionHeight,
-                this.cornerCoords[SelectionConstants.START_INDEX].x,
-                this.cornerCoords[SelectionConstants.START_INDEX].y,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
-            this.resetSelectedToolSettings();
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resizerHandlerService.resetResizers();
-            this.isManipulating = false;
-            this.isEscapeDown = false;
-        }
-    }
-
     selectAll(): void {
         this.selectionWidth = this.drawingService.canvas.width;
         this.selectionHeight = this.drawingService.canvas.height;
@@ -212,12 +194,51 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    private setSelectionCanvasPosition(topLeft: Vec2): void {
+    setSelectionCanvasPosition(topLeft: Vec2): void {
         this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
         this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+    }
+
+    undoSelection(): void {
+        if (this.isManipulating) {
+            this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
+            this.resetSelectedToolSettings();
+            this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+            this.resizerHandlerService.resetResizers();
+            this.isManipulating = false;
+            this.isEscapeDown = false;
+        }
+    }
+
+    private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
+        if (!this.isFromClipboard) {
+            targetCtx.drawImage(
+                sourceCanvas,
+                0,
+                0,
+                this.selectionWidth,
+                this.selectionHeight,
+                this.cornerCoords[SelectionConstants.START_INDEX].x,
+                this.cornerCoords[SelectionConstants.START_INDEX].y,
+                this.selectionWidth,
+                this.selectionHeight,
+            );
+        }
+    }
+
+    private fillRectangle(baseCtx: CanvasRenderingContext2D, cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): void {
+        // Erase the contents on the base canvas
+        baseCtx.fillStyle = 'white';
+        baseCtx.fillRect(
+            cornerCoords[SelectionConstants.START_INDEX].x,
+            cornerCoords[SelectionConstants.START_INDEX].y,
+            selectionWidth,
+            selectionHeight,
+        );
     }
 
     private validateSelectionHeightAndWidth(): boolean {
@@ -256,13 +277,6 @@ export class RectangleSelectionService extends ToolSelectionService {
             selectionWidth,
             selectionHeight,
         );
-        // Erase the contents on the base canvas
-        baseCtx.fillStyle = 'white';
-        baseCtx.fillRect(
-            cornerCoords[SelectionConstants.START_INDEX].x,
-            cornerCoords[SelectionConstants.START_INDEX].y,
-            selectionWidth,
-            selectionHeight,
-        );
+        this.fillRectangle(baseCtx, cornerCoords, selectionWidth, selectionHeight);
     }
 }

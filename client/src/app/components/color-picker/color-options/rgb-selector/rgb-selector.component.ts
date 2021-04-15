@@ -7,10 +7,10 @@ import { Rgba } from '@app/classes/rgba';
     styleUrls: ['./rgb-selector.component.scss'],
 })
 export class RgbSelectorComponent implements OnChanges {
-    red: string;
-    green: string;
-    blue: string;
-    invalidInput: boolean;
+    red: number;
+    green: number;
+    blue: number;
+    invalidInput: boolean = false;
 
     @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
     @ViewChild('greenInput', { static: false }) greenInput: ElementRef<HTMLInputElement>;
@@ -21,11 +21,11 @@ export class RgbSelectorComponent implements OnChanges {
     @Output() newColor: EventEmitter<Rgba>;
 
     constructor() {
-        this.red = '0';
-        this.green = '0';
-        this.blue = '0';
+        this.red = 0;
+        this.green = 0;
+        this.blue = 0;
         this.invalidInput = false;
-        this.initialColor = { red: '255', green: '255', blue: '255', alpha: 1 };
+        this.initialColor = { red: 255, green: 255, blue: 255, alpha: 1 };
         this.newColor = new EventEmitter();
     }
 
@@ -51,19 +51,18 @@ export class RgbSelectorComponent implements OnChanges {
         }
     }
 
-    emitColor(newColor: EventEmitter<Rgba>): void {
+    printDecToHex(dec: number): string {
+        return dec.toString(16).toUpperCase();
+    }
+    private emitColor(newColor: EventEmitter<Rgba>): void {
         newColor.emit({ red: this.red, green: this.green, blue: this.blue, alpha: this.initialColor.alpha });
     }
 
-    isValidHexCode(code: string): boolean {
+    private isValidHexCode(code: string): boolean {
         return /^[a-fA-F0-9]+$/i.test(code);
     }
 
-    convertHexToDec(hex: string): string {
-        return parseInt(hex, 16).toString();
-    }
-
-    printDecToHex(dec: string): string {
-        return parseInt(dec, 10).toString(16).toUpperCase();
+    private convertHexToDec(hex: string): number {
+        return parseInt(hex, 16);
     }
 }

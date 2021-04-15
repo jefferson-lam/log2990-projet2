@@ -1,4 +1,4 @@
-import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ResizerComponent } from '@app/components/resizer/resizer.component';
@@ -20,8 +20,6 @@ describe('ResizerComponent', () => {
     let bottomResizer: HTMLElement;
     const drawingService: DrawingService = new DrawingService();
     const undoRedoService: UndoRedoService = new UndoRedoService(drawingService);
-
-    const cdkDragEndEvent: CdkDragEnd = {} as CdkDragEnd;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -195,7 +193,7 @@ describe('ResizerComponent', () => {
 
     it('if expandCanvas is triggered with no buttons, function should not throw', () => {
         expect((): void => {
-            component.expandCanvas(cdkDragEndEvent);
+            component.expandCanvas();
         }).not.toThrow();
     });
 

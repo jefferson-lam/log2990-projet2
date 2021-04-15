@@ -1,6 +1,6 @@
 export interface Rgba {
-    red: string;
-    green: string;
-    blue: string;
+    red: number;
+    green: number;
+    blue: number;
     alpha: number;
 }

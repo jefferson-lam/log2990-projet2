@@ -1,9 +1,10 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
-import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PopupManagerService } from '@app/services/manager/popup-manager.service';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -18,7 +19,14 @@ export class MainPageComponent implements OnInit {
     ongoingDrawing: boolean;
     isPopUpOpen: boolean;
 
-    constructor(public dialog: MatDialog, public router: Router, public drawingService: DrawingService, public undoRedoService: UndoRedoService) {
+    constructor(
+        public dialog: MatDialog,
+        public router: Router,
+        public drawingService: DrawingService,
+        public undoRedoService: UndoRedoService,
+        public popupManager: PopupManagerService,
+        public shortcutManager: ShortcutManagerService,
+    ) {
         this.title = 'LOG2990';
         this.message = new BehaviorSubject<string>('');
         this.isPopUpOpen = false;
@@ -29,14 +37,11 @@ export class MainPageComponent implements OnInit {
         if (localStorage.getItem('autosave')) {
             this.ongoingDrawing = true;
         }
-        this.dialog.afterAllClosed.subscribe(() => {
-            this.isPopUpOpen = false;
-        });
     }
 
     newDrawing(): void {
         if (localStorage.getItem('autosave')) {
-            const dialogRef = this.dialog.open(DiscardChangesPopupComponent);
+            const dialogRef = this.popupManager.openDiscardChangesPopUp() as MatDialogRef<DiscardChangesPopupComponent>;
             dialogRef.afterClosed().subscribe((discarded) => {
                 if (discarded) {
                     this.undoRedoService.reset();
@@ -50,23 +55,12 @@ export class MainPageComponent implements OnInit {
         }
     }
 
-    openCarousel(): void {
-        this.dialog.open(MainPageCarrouselComponent, {
-            height: '700px',
-            width: '1800px',
-        });
-    }
-
     continueDrawing(): void {
         this.router.navigate(['/', 'editor']);
     }
 
     @HostListener('window:keydown.control.g', ['$event'])
     onCtrlGKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        if (!this.isPopUpOpen) {
-            this.openCarousel();
-            this.isPopUpOpen = true;
-        }
+        this.shortcutManager.onCtrlGKeyDown(event);
     }
 }

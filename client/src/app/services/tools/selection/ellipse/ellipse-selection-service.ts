@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EllipseSelectionCommand } from '@app/services/tools/selection/ellipse/ellipse-selection-command';
@@ -24,6 +25,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     cornerCoords: Vec2[];
     selectionHeight: number;
     selectionWidth: number;
+    isFromClipboard: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -40,6 +42,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.cornerCoords = new Array<Vec2>(EllipseConstants.DIMENSION);
         this.selectionHeight = 0;
         this.selectionWidth = 0;
+        this.isFromClipboard = false;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -60,6 +63,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.clearCorners(this.cornerCoords);
             this.resetSelectedToolSettings();
             this.resizerHandlerService.resetResizers();
+            this.isFromClipboard = false;
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
@@ -150,32 +154,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    undoSelection(): void {
-        if (this.isManipulating) {
-            this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
-            this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
-                0,
-                0,
-                this.selectionWidth,
-                this.selectionHeight,
-                this.cornerCoords[0].x,
-                this.cornerCoords[0].y,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
-            this.drawingService.baseCtx.restore();
-            this.resetSelectedToolSettings();
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resizerHandlerService.resetResizers();
-            this.isManipulating = false;
-            this.isEscapeDown = false;
-        }
-    }
-
     onToolChange(): void {
-        super.onToolChange();
         if (this.isManipulating) {
             const emptyMouseEvent: MouseEvent = {} as MouseEvent;
             this.onMouseDown(emptyMouseEvent);
@@ -189,7 +168,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean, fillColor: string): void {
+    fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean): void {
         const ellipseCenter = this.getEllipseCenter(
             cornerCoords[SelectionConstants.START_INDEX],
             cornerCoords[SelectionConstants.END_INDEX],
@@ -201,8 +180,8 @@ export class EllipseSelectionService extends ToolSelectionService {
         const xRadius = radiiXAndY[0];
         const yRadius = radiiXAndY[1];
         ctx.beginPath();
-        ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, EllipseConstants.START_ANGLE, EllipseConstants.END_ANGLE);
-        ctx.fillStyle = fillColor;
+        ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, ShapeConstants.START_ANGLE, ShapeConstants.END_ANGLE);
+        ctx.fillStyle = 'white';
         ctx.fill();
     }
 
@@ -247,6 +226,44 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.stroke();
     }
 
+    setSelectionCanvasPosition(topLeft: Vec2): void {
+        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+    }
+
+    undoSelection(): void {
+        if (this.isManipulating) {
+            this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
+            this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
+            this.drawingService.baseCtx.restore();
+            this.resetSelectedToolSettings();
+            this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+            this.resizerHandlerService.resetResizers();
+            this.isManipulating = false;
+            this.isEscapeDown = false;
+        }
+    }
+
+    private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
+        if (!this.isFromClipboard) {
+            targetCtx.drawImage(
+                sourceCanvas,
+                0,
+                0,
+                this.selectionWidth,
+                this.selectionHeight,
+                this.cornerCoords[0].x,
+                this.cornerCoords[0].y,
+                this.selectionWidth,
+                this.selectionHeight,
+            );
+        }
+    }
+
     private validateSelectionHeightAndWidth(): boolean {
         if (this.selectionWidth === 0 || this.selectionHeight === 0) {
             this.resetSelectedToolSettings();
@@ -263,15 +280,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.selectionHeight = Math.abs(this.selectionHeight);
         return true;
     }
-
-    private setSelectionCanvasPosition(topLeft: Vec2): void {
-        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
-        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
-    }
-
     private getRadiiXAndY(path: Vec2[]): number[] {
         let xRadius = Math.abs(path[SelectionConstants.END_INDEX].x - path[SelectionConstants.START_INDEX].x) / 2;
         let yRadius = Math.abs(path[SelectionConstants.END_INDEX].y - path[SelectionConstants.START_INDEX].y) / 2;
@@ -309,7 +317,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         selectionHeight: number,
     ): void {
         this.clipEllipseSelection(selectionCtx, baseCtx, cornerCoords, selectionWidth, selectionHeight);
-        this.fillEllipse(baseCtx, cornerCoords, this.isCircle, 'white');
+        this.fillEllipse(baseCtx, cornerCoords, this.isCircle);
     }
 
     private clipEllipseSelection(

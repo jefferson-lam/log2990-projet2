@@ -1,10 +1,9 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ImageFormat } from '@app/classes/image-format';
-import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 import * as CarouselConstants from '@app/constants/carousel-constants';
 import { DatabaseService } from '@app/services/database/database.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
@@ -46,7 +45,12 @@ export class MainPageCarrouselComponent {
     placeHolderDrawing: ImageFormat;
     previewDrawings: ImageFormat[];
 
-    constructor(private database: DatabaseService, private localServerService: LocalServerService, private router: Router, public dialog: MatDialog) {
+    constructor(
+        private database: DatabaseService,
+        private localServerService: LocalServerService,
+        private router: Router,
+        public matDialogRef: MatDialogRef<MainPageCarrouselComponent>,
+    ) {
         this.tagErrorPresent = false;
         this.tagErrorMessage = '';
         this.serverErrorMessage = '';
@@ -62,6 +66,7 @@ export class MainPageCarrouselComponent {
         this.placeHolderDrawing = new ImageFormat();
         this.previewDrawings = [];
         this.resetShowcasedDrawings();
+        this.matDialogRef.disableClose = true;
     }
 
     addTag(event: MatChipInputEvent): void {
@@ -111,6 +116,7 @@ export class MainPageCarrouselComponent {
         this.showCasedDrawings.pop();
         this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
     }
+
     @HostListener('keydown.ArrowRight', ['$event'])
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;
@@ -167,13 +173,7 @@ export class MainPageCarrouselComponent {
 
     openDrawing(dataUrl: string): void {
         if (localStorage.getItem('autosave')) {
-            const dialogRef = this.dialog.open(DiscardChangesPopupComponent);
-            dialogRef.afterClosed().subscribe((discarded) => {
-                if (discarded) {
-                    localStorage.setItem('autosave', dataUrl);
-                    this.router.navigate(['/', 'editor']);
-                }
-            });
+            this.matDialogRef.close({ autosave: true, data: dataUrl });
         } else {
             localStorage.setItem('autosave', dataUrl);
             this.router.navigate(['/', 'editor']);

@@ -1,4 +1,4 @@
-import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { ResizerCommand } from '@app/components/resizer/resizer-command';
@@ -74,7 +74,7 @@ export class ResizerComponent implements AfterViewInit {
         this.bottomResizer.nativeElement.style.transform = '';
     }
 
-    expandCanvas(event: CdkDragEnd): void {
+    expandCanvas(): void {
         this.lockMinCanvasValue();
         const command: Command = new ResizerCommand(this.drawingService);
         this.undoRedoService.executeCommand(command);

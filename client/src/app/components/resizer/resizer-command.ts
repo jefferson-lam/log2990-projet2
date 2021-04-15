@@ -46,7 +46,7 @@ export class ResizerCommand extends Command {
         // Save drawing to preview canvas before drawing is wiped due to resizing
         this.previewCtx.drawImage(this.baseCtx.canvas, 0, 0);
         this.resizeBaseCanvas();
-        this.drawingService.newDrawing();
+        this.drawingService.whiteOut(this.baseCtx);
         this.placeResizers();
 
         // Canvas resize wipes drawing -> copy drawing from preview layer to base layer

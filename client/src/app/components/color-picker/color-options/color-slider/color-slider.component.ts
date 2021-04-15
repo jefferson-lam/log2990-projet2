@@ -28,48 +28,6 @@ export class ColorSliderComponent implements AfterViewInit {
         this.drawSlider();
     }
 
-    drawSlider(): void {
-        if (!this.ctx) {
-            this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        }
-        const width = this.canvas.nativeElement.width;
-        const height = this.canvas.nativeElement.height;
-        this.ctx.clearRect(0, 0, width, height);
-
-        const gradient = this.ctx.createLinearGradient(0, 0, 0, height);
-        const offset1 = 0.17;
-        const offset2 = 0.34;
-        const offset3 = 0.51;
-        const offset4 = 0.68;
-        const offset5 = 0.85;
-        gradient.addColorStop(0, 'rgba(255, 0, 0, 1)');
-        gradient.addColorStop(offset1, 'rgba(255, 255, 0, 1)');
-        gradient.addColorStop(offset2, 'rgba(0, 255, 0, 1)');
-        gradient.addColorStop(offset3, 'rgba(0, 255, 255, 1)');
-        gradient.addColorStop(offset4, 'rgba(0, 0, 255, 1)');
-        gradient.addColorStop(offset5, 'rgba(255, 0, 255, 1)');
-        gradient.addColorStop(1, 'rgba(255, 0, 0, 1)');
-
-        this.ctx.beginPath();
-        this.ctx.rect(0, 0, width, height);
-        this.ctx.fillStyle = gradient;
-        this.ctx.fill();
-        this.ctx.closePath();
-    }
-
-    drawSelection(): void {
-        const width = this.canvas.nativeElement.width;
-        this.drawSlider();
-        if (this.selectedHeight) {
-            this.ctx.beginPath();
-            this.ctx.strokeStyle = 'white';
-            this.ctx.lineWidth = ColorConstants.PICKER_POINTER_LINE_WIDTH;
-            this.ctx.rect(0, this.selectedHeight - ColorConstants.PICKER_POINTER_LINE_WIDTH, width, ColorConstants.PICKER_POINTER_SIZE);
-            this.ctx.stroke();
-            this.ctx.closePath();
-        }
-    }
-
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(evt: MouseEvent): void {
         this.mousedown = false;
@@ -90,8 +48,45 @@ export class ColorSliderComponent implements AfterViewInit {
         }
     }
 
-    emitHue(y: number): void {
+    private emitHue(y: number): void {
         const rgbaColor = this.colorService.getColorAtPosition(this.ctx, this.canvas.nativeElement.width / 2, y, 1);
         this.hue.emit(rgbaColor);
+    }
+
+    private drawSlider(): void {
+        if (!this.ctx) {
+            this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        }
+        const width = this.canvas.nativeElement.width;
+        const height = this.canvas.nativeElement.height;
+        this.ctx.clearRect(0, 0, width, height);
+
+        const gradient = this.ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, 'rgba(255, 0, 0, 1)');
+        gradient.addColorStop(ColorConstants.RED_YELLOW_OFFSET, 'rgba(255, 255, 0, 1)');
+        gradient.addColorStop(ColorConstants.YELLOW_GREEN_OFFSET, 'rgba(0, 255, 0, 1)');
+        gradient.addColorStop(ColorConstants.GREEN_CYAN_OFFSET, 'rgba(0, 255, 255, 1)');
+        gradient.addColorStop(ColorConstants.CYAN_BLUE_OFFSET, 'rgba(0, 0, 255, 1)');
+        gradient.addColorStop(ColorConstants.BLUE_MAGENTA_OFFSET, 'rgba(255, 0, 255, 1)');
+        gradient.addColorStop(1, 'rgba(255, 0, 0, 1)');
+
+        this.ctx.beginPath();
+        this.ctx.rect(0, 0, width, height);
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+        this.ctx.closePath();
+    }
+
+    private drawSelection(): void {
+        const width = this.canvas.nativeElement.width;
+        this.drawSlider();
+        if (this.selectedHeight) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = 'white';
+            this.ctx.lineWidth = ColorConstants.PICKER_POINTER_LINE_WIDTH;
+            this.ctx.rect(0, this.selectedHeight - ColorConstants.PICKER_POINTER_LINE_WIDTH, width, ColorConstants.PICKER_POINTER_SIZE);
+            this.ctx.stroke();
+            this.ctx.closePath();
+        }
     }
 }

@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { SelectionComponent } from './selection.component';
 
@@ -23,13 +24,18 @@ describe('SelectionComponent', () => {
     const drawingService: DrawingService = new DrawingService();
     let moveEvent: CdkDragMove;
     let endEvent: CdkDragEnd;
+    let shortcutManagerSpy: jasmine.SpyObj<ShortcutManagerService>;
 
     const MOCK_POSITION = { x: 10, y: 10 };
 
     beforeEach(async(() => {
+        shortcutManagerSpy = jasmine.createSpyObj('ShortcutManagerService', ['selectionOnShiftKeyDown', 'selectionOnShiftKeyUp']);
         TestBed.configureTestingModule({
             declarations: [SelectionComponent],
-            providers: [{ provide: DrawingService, useValue: drawingService }],
+            providers: [
+                { provide: DrawingService, useValue: drawingService },
+                { provide: ShortcutManagerService, useValue: shortcutManagerSpy },
+            ],
         }).compileComponents();
     }));
 
@@ -358,69 +364,15 @@ describe('SelectionComponent', () => {
         expect(setResizeStrategySpy).toHaveBeenCalledWith(ResizerDown.TopLeft);
     });
 
-    it('onShiftKeyDown should set resizerHandlerService.isShiftDown to true', () => {
-        component.resizerHandlerService.inUse = false;
-        component.resizerHandlerService.isShiftDown = false;
-        const keyEvent = {
-            shiftKey: true,
-        } as KeyboardEvent;
-        component.onShiftKeyDown(keyEvent);
-        expect(component.resizerHandlerService.isShiftDown).toBeTrue();
+    it('onShiftKeyDown should call shortcutManager.selectionOnShiftKeyDown', () => {
+        component.onShiftKeyDown();
+        expect(shortcutManagerSpy.selectionOnShiftKeyDown).toHaveBeenCalled();
+        expect(shortcutManagerSpy.selectionOnShiftKeyDown).toHaveBeenCalledWith(component);
     });
 
-    it('onShiftKeyDown should call resizerHandlerService.resizeSquare, setResizerPositions if resizerHandlerService.inUse', () => {
-        const resizeSquareSpy = spyOn(component.resizerHandlerService, 'resizeSquare');
-        component.resizerHandlerService.inUse = true;
-        const keyEvent = {
-            shiftKey: true,
-        } as KeyboardEvent;
-        component.onShiftKeyDown(keyEvent);
-        expect(resizeSquareSpy).toHaveBeenCalled();
-        expect(setResizerPositionsSpy).toHaveBeenCalled();
-        expect(setResizerPositionsSpy).toHaveBeenCalledWith(component.previewSelectionCanvas);
-    });
-
-    it('onShiftKeyDown should call drawWithScalingFactors if resizerHandlerService.inUse', () => {
-        spyOn(component.resizerHandlerService, 'resizeSquare');
-        component.resizerHandlerService.inUse = true;
-        const keyEvent = {
-            shiftKey: true,
-        } as KeyboardEvent;
-        component.onShiftKeyDown(keyEvent);
-        expect(drawScaledSpy).toHaveBeenCalled();
-        expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
-    });
-
-    it('onShiftKeyUp should set resizerHandlerService.isShiftDown to false', () => {
-        component.resizerHandlerService.inUse = false;
-        component.resizerHandlerService.isShiftDown = true;
-        const keyEvent = {
-            shiftKey: true,
-        } as KeyboardEvent;
-        component.onShiftKeyUp(keyEvent);
-        expect(component.resizerHandlerService.isShiftDown).toBeFalse();
-    });
-
-    it('onShiftKeyUp should call resizerHandlerService.restoreLastDimension, setResizerPositions if resizerHandlerService.inUse', () => {
-        const restoreDimensionsSpy = spyOn(component.resizerHandlerService, 'restoreLastDimensions');
-        component.resizerHandlerService.inUse = true;
-        const keyEvent = {
-            shiftKey: true,
-        } as KeyboardEvent;
-        component.onShiftKeyUp(keyEvent);
-        expect(restoreDimensionsSpy).toHaveBeenCalled();
-        expect(setResizerPositionsSpy).toHaveBeenCalled();
-        expect(setResizerPositionsSpy).toHaveBeenCalledWith(component.previewSelectionCanvas);
-    });
-
-    it('onShiftKeyUp should call drawWithScalingFactors if resizerHandlerService.inUse', () => {
-        spyOn(component.resizerHandlerService, 'restoreLastDimensions');
-        component.resizerHandlerService.inUse = true;
-        const keyEvent = {
-            shiftKey: true,
-        } as KeyboardEvent;
-        component.onShiftKeyUp(keyEvent);
-        expect(drawScaledSpy).toHaveBeenCalled();
-        expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
+    it('onShiftKeyUp should call shortcutManager.selectionOnShiftKeyUp', () => {
+        component.onShiftKeyUp();
+        expect(shortcutManagerSpy.selectionOnShiftKeyUp).toHaveBeenCalled();
+        expect(shortcutManagerSpy.selectionOnShiftKeyUp).toHaveBeenCalledWith(component);
     });
 });
