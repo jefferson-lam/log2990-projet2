@@ -5,7 +5,7 @@ import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
-import { LassoSelectionService } from '../tools/selection/lasso/lasso-selection';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { ToolManagerService } from './tool-manager-service';
 
 describe('ToolManagerService', () => {

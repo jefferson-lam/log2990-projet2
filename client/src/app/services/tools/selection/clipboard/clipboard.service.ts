@@ -6,10 +6,10 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseClipboardCommand } from '@app/services/tools/selection/clipboard/ellipse-clipboard-command';
 import { RectangleClipboardCommand } from '@app/services/tools/selection/clipboard/rectangle-clipboard-command';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { LassoSelectionService } from '../lasso/lasso-selection';
 
 @Injectable({
     providedIn: 'root',

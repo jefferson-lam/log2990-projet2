@@ -3,11 +3,13 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subject } from 'rxjs';
-import { ResizerHandlerService } from '../resizer/resizer-handler.service';
 import { LassoSelectionService } from './lasso-selection';
 
+// tslint:disable:no-any
+// tslint:disable:max-file-line-count
 fdescribe('LassoSelectionService', () => {
     let service: LassoSelectionService;
     let mouseEvent: MouseEvent;
@@ -322,10 +324,9 @@ fdescribe('LassoSelectionService', () => {
         const start = { x: 50, y: 50 };
         const end = { x: 100, y: 100 };
         const line = {
-            start: start,
-            end: end,
+            start,
+            end,
         };
-
         const expectedSlope = 1;
         const slope = service['calculateSlopeLine'](line);
         expect(slope).toEqual(expectedSlope);
@@ -335,8 +336,8 @@ fdescribe('LassoSelectionService', () => {
         const start = { x: 100, y: 100 };
         const end = { x: 50, y: 50 };
         const line = {
-            start: start,
-            end: end,
+            start,
+            end,
         };
 
         const expectedSlope = 1;
@@ -348,8 +349,8 @@ fdescribe('LassoSelectionService', () => {
         const start = { x: 50, y: 50 };
         const end = { x: 50, y: 50 };
         const line = {
-            start: start,
-            end: end,
+            start,
+            end,
         };
 
         const expectedSlope = Infinity;
@@ -361,8 +362,8 @@ fdescribe('LassoSelectionService', () => {
         const start = { x: 50, y: 50 };
         const end = { x: 50, y: 900 };
         const line = {
-            start: start,
-            end: end,
+            start,
+            end,
         };
 
         const expectedSlope = Infinity;

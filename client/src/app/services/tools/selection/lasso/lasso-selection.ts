@@ -5,11 +5,11 @@ import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { LineService } from '@app/services/tools/line/line-service';
 import { LassoSelectionCommand } from '@app/services/tools/selection/lasso/lasso-selection-command';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { LineService } from '../../line/line-service';
-import { ToolSelectionService } from '../tool-selection-service';
 @Injectable({
     providedIn: 'root',
 })
@@ -53,12 +53,8 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     onMouseDown(event: MouseEvent): void {
-        if (event.button != MouseButton.Left) {
-            return;
-        }
-        if (this.isInvalidSegment) {
-            return;
-        }
+        if (event.button !== MouseButton.Left) return;
+        if (this.isInvalidSegment) return;
         if (this.isManipulating) {
             this.confirmSelection();
             return;
@@ -79,9 +75,7 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (!this.inUse) {
-            return;
-        }
+        if (!this.inUse) return;
         super.onMouseMove(event);
         this.isInvalidSegment = this.isIntersect(this.linePathData[this.linePathData.length - 1], this.linePathData);
         if (this.isInvalidSegment) {
@@ -93,9 +87,7 @@ export class LassoSelectionService extends ToolSelectionService {
 
     onKeyboardDown(event: KeyboardEvent): void {
         super.onKeyboardDown(event);
-        if (this.isEscapeDown) {
-            return;
-        }
+        if (this.isEscapeDown) return;
         switch (event.key) {
             case 'Escape':
                 this.isEscapeDown = true;
@@ -125,9 +117,7 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     undoSelection(): void {
-        if (!this.isManipulating) {
-            return;
-        }
+        if (!this.isManipulating) return;
         this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
         this.resetSelectedToolSettings();
         this.resetCanvasState(this.drawingService.selectionCanvas);
@@ -156,7 +146,6 @@ export class LassoSelectionService extends ToolSelectionService {
         const newLine = { start: pathData[pathData.length - 2], end: point };
         let pathLine;
         for (let i = 0; i < pathData.length - 2; i++) {
-            // currentLine = [pathData[i], pathData[i + 1]];
             pathLine = { start: pathData[i], end: pathData[i + 1] };
             const isIntersect = this.intersects(newLine, pathLine);
             if (isIntersect) {
@@ -218,7 +207,7 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     private calculateSlopeLine(line: Line2): number {
-        const TOLERANCE = 5;
+        const TOLERANCE = 2;
         const ROUNDING_FACTOR = 10;
         return Math.abs(line.end.x - line.start.x) < TOLERANCE
             ? Number.POSITIVE_INFINITY
@@ -335,9 +324,7 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
-        if (this.isFromClipboard) {
-            return;
-        }
+        if (this.isFromClipboard) return;
         targetCtx.drawImage(
             sourceCanvas,
             0,

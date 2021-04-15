@@ -8,9 +8,9 @@ import { PopupManagerService } from '@app/services/manager/popup-manager.service
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { LassoSelectionService } from '../tools/selection/lasso/lasso-selection';
 
 @Injectable({
     providedIn: 'root',
