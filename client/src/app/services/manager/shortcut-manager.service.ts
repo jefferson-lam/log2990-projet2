@@ -208,9 +208,15 @@ export class ShortcutManagerService {
         if (!this.isShortcutAllowed()) {
             return;
         }
+
         if (!directive.keyPressed.get(event.key)) {
             directive.keyPressed.set(event.key, event.timeStamp);
-            directive.translateSelection();
+            if (this.magnetismService.isMagnetismOn) {
+                directive.translateSelection(this.canvasGridService.squareWidth / 2 + 1);
+                this.magnetismService.magnetizeSelection();
+            } else {
+                directive.translateSelection();
+            }
             await directive.delay(DirectionalMovementConstants.FIRST_PRESS_DELAY_MS);
         }
 
@@ -220,7 +226,11 @@ export class ShortcutManagerService {
 
         directive.hasMovedOnce = true;
         await directive.delay(DirectionalMovementConstants.CONTINUOUS_PRESS_DELAY_MS);
-        directive.translateSelection();
+        if (directive.keyPressed.get(event.key)) {
+            const numPixels = this.magnetismService.isMagnetismOn ? this.canvasGridService.squareWidth : DirectionalMovementConstants.NUM_PIXELS;
+            directive.translateSelection(numPixels);
+            console.log('continuous');
+        }
         directive.hasMovedOnce = false;
     }
 

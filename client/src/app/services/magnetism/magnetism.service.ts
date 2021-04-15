@@ -14,6 +14,10 @@ export class MagnetismService {
     bottomRightResizerCoords: Vec2;
     referenceResizerCoords: Vec2;
     magnetismStateSubject: Subject<boolean> = new Subject<boolean>();
+    transformValues: Vec2;
+
+    previewSelectionCanvas: HTMLCanvasElement;
+
     private pointOffsets: Vec2[];
 
     constructor(private canvasGridService: CanvasGridService) {
@@ -22,10 +26,10 @@ export class MagnetismService {
         this.pointOffsets = new Array<Vec2>(MagnestismConstants.ResizerIndex.CENTER_INDEX + 1);
     }
 
-    magnetizeSelection(selectionCanvas: HTMLCanvasElement, transformValues: Vec2): Vec2 {
-        this.setPointOffsets(selectionCanvas);
+    magnetizeSelection(): Vec2 {
+        this.setPointOffsets(this.previewSelectionCanvas);
         this.referenceResizerCoords = this.pointOffsets[this.referenceResizerMode];
-        return this.findClosestCorner(transformValues);
+        return this.findClosestCorner(this.transformValues);
     }
 
     toggleMagnetism(): void {
@@ -57,7 +61,6 @@ export class MagnetismService {
 
     private setPointOffsets(selectionCanvas: HTMLCanvasElement): void {
         this.setCornerCoords(selectionCanvas);
-
         this.setTopLeft();
 
         this.setTopMiddle();
