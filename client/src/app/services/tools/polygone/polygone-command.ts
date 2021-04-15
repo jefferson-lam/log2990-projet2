@@ -6,7 +6,7 @@ import * as ToolConstants from '@app/constants/tool-constants';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 
 export class PolygoneCommand extends Command {
-    initNumberSides: number;
+    numberSides: number;
     lineWidth: number;
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
@@ -20,7 +20,7 @@ export class PolygoneCommand extends Command {
     }
 
     execute(): void {
-        this.drawPolygone(this.ctx, this.cornerCoords, this.initNumberSides);
+        this.drawPolygone(this.ctx, this.cornerCoords, this.numberSides);
     }
 
     setValues(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService): void {
@@ -29,7 +29,7 @@ export class PolygoneCommand extends Command {
         this.primaryColor = polygoneService.primaryColor;
         this.secondaryColor = polygoneService.secondaryColor;
         this.lineWidth = polygoneService.lineWidth;
-        this.initNumberSides = polygoneService.initNumberSides;
+        this.numberSides = polygoneService.numberSides;
         Object.assign(this.cornerCoords, polygoneService.cornerCoords);
     }
 

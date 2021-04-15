@@ -84,7 +84,7 @@ describe('PolygoneCommand', () => {
         });
         const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
         // tslint:disable:no-string-literal
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.numberSides);
         expect(drawTypeSpy).not.toHaveBeenCalled();
     });
 
@@ -93,7 +93,7 @@ describe('PolygoneCommand', () => {
         command.primaryColor = 'black';
         command.fillMode = ToolConstants.FillMode.FILL_ONLY;
         const drawPolygoneSpy = spyOn<any>(command, 'drawPolygone');
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.numberSides);
         expect(drawPolygoneSpy).toHaveBeenCalled();
     });
 
@@ -102,7 +102,7 @@ describe('PolygoneCommand', () => {
         command.secondaryColor = 'black';
         command.fillMode = ToolConstants.FillMode.OUTLINE;
         const drawPolygoneSpy = spyOn<any>(command, 'drawPolygone');
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.numberSides);
         expect(drawPolygoneSpy).toHaveBeenCalled();
     });
 
@@ -112,7 +112,7 @@ describe('PolygoneCommand', () => {
         command.secondaryColor = 'black';
         command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
         const drawPolygoneSpy = spyOn<any>(command, 'drawPolygone');
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.numberSides);
         expect(drawPolygoneSpy).toHaveBeenCalled();
     });
 
@@ -121,7 +121,7 @@ describe('PolygoneCommand', () => {
             return mockRadii;
         });
         // tslint:disable:no-string-literal
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.numberSides);
         expect(getRadiiSpy).toHaveBeenCalled();
     });
 
@@ -132,7 +132,7 @@ describe('PolygoneCommand', () => {
         const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
         command.fillMode = ToolConstants.FillMode.FILL_ONLY;
         // tslint:disable:no-string-literal
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.numberSides);
         expect(drawTypeSpy).toHaveBeenCalled();
     });
 
@@ -143,7 +143,7 @@ describe('PolygoneCommand', () => {
         const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
         command.fillMode = ToolConstants.FillMode.OUTLINE;
         // tslint:disable:no-string-literal
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.numberSides);
         expect(drawTypeSpy).toHaveBeenCalled();
     });
 
@@ -155,7 +155,7 @@ describe('PolygoneCommand', () => {
         command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
         command.lineWidth = mockRadii[0];
         // tslint:disable:no-string-literal
-        command['drawPolygone'](command['ctx'], command.cornerCoords, command.initNumberSides);
+        command['drawPolygone'](command['ctx'], command.cornerCoords, command.numberSides);
         expect(drawTypeSpy).toHaveBeenCalled();
     });
 

@@ -202,7 +202,7 @@ describe('PolygoneService', () => {
     it('setSidesCount should change sides count', () => {
         const RANDOM_TEST_COUNT = 10;
         service.setSidesCount(RANDOM_TEST_COUNT);
-        expect(service.initNumberSides).toEqual(RANDOM_TEST_COUNT);
+        expect(service.numberSides).toEqual(RANDOM_TEST_COUNT);
     });
 
     it('setFillMode should change to FILL ONLY mode', () => {
