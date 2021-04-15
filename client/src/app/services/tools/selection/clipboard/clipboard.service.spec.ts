@@ -50,6 +50,7 @@ describe('ClipboardService', () => {
         service['drawingService'].selectionCtx = selectionCtxStub;
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
+        service['drawingService'].borderCanvas = canvasTestHelper.borderCanvas;
     });
 
     it('currenttool should change to Rectangle if toolManagers subject changes', () => {
