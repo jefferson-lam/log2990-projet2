@@ -11,6 +11,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle-servic
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ShortcutManagerService } from './shortcut-manager.service';
 
@@ -18,6 +19,7 @@ import { ShortcutManagerService } from './shortcut-manager.service';
 describe('ShortcutManagerService', () => {
     let service: ShortcutManagerService;
     let rectangleSelectionService: RectangleSelectionService;
+    let textService: TextService;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
@@ -37,7 +39,7 @@ describe('ShortcutManagerService', () => {
         toolManagerSpy = jasmine.createSpyObj(
             'ToolManagerService',
             ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools'],
-            ['currentTool'],
+            ['currentTool', 'textService'],
         );
         popupManagerSpy = jasmine.createSpyObj(
             'PopupManagerService',
@@ -60,6 +62,7 @@ describe('ShortcutManagerService', () => {
 
         // tslint:disable-next-line:no-any
         allowShortcutSpy = spyOn<any>(service, 'isShortcutAllowed').and.callThrough();
+        textService = new TextService({} as DrawingService, {} as UndoRedoService);
         rectangleSelectionService = new RectangleSelectionService(
             {} as DrawingService,
             {} as UndoRedoService,
@@ -120,7 +123,7 @@ describe('ShortcutManagerService', () => {
         expect(result).toBeFalse();
     });
 
-    it('onKeyboardDown should call toolManager.selectTool if isShortcutAllowed and key is associated to tool', () => {
+    it('onKeyboardDown should call toolManager.selectTool if isShortcutAllowed, lockKeyboard and key is associated to tool', () => {
         allowShortcutSpy.and.returnValue(true);
         const event = {
             key: 'e',
@@ -154,16 +157,24 @@ describe('ShortcutManagerService', () => {
     });
 
     it('onGKeyDown should call canvasGridService.toggleGrid if isShortcutAllowed true', () => {
+        toolManagerSpy.textService.lockKeyboard = false;
         allowShortcutSpy.and.returnValue(true);
-
         service.onGKeyDown();
 
         expect(canvasGridServiceSpy.toggleGrid).toHaveBeenCalled();
     });
 
-    it('onGKeyDown should not call canvasGridService.toggleGrid if isShortcutAllowed false', () => {
-        allowShortcutSpy.and.returnValue(false);
+    it('onGKeyDown should not call canvasGridService.toggleGrid if lockKeyboard true', () => {
+        toolManagerSpy.textService.lockKeyboard = true;
+        allowShortcutSpy.and.returnValue(true);
+        service.onGKeyDown();
 
+        expect(canvasGridServiceSpy.toggleGrid).not.toHaveBeenCalled();
+    });
+
+    it('onGKeyDown should not call canvasGridService.toggleGrid if isShortcutAllowed false', () => {
+        toolManagerSpy.textService.lockKeyboard = false;
+        allowShortcutSpy.and.returnValue(false);
         service.onGKeyDown();
 
         expect(canvasGridServiceSpy.toggleGrid).not.toHaveBeenCalled();
@@ -536,6 +547,23 @@ describe('ShortcutManagerService', () => {
         service.onPlusKeyDown();
 
         expect(canvasGridServiceSpy.increaseGridSize).not.toHaveBeenCalled();
+    });
+
+    it('onEscapeKeyDown should change textService values of input span', () => {
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(textService);
+        textService.inUse = true;
+        allowShortcutSpy.and.returnValue(false);
+        service.onEscapeKeyDown();
+
+        expect(textService.escapeKeyUsed).toEqual(true);
+    });
+
+    it('onEscapeKeyDown should not change textService values of input span', () => {
+        rectangleSelectionService.inUse = true;
+        allowShortcutSpy.and.returnValue(true);
+        service.onEscapeKeyDown();
+
+        expect(textService.escapeKeyUsed).not.toHaveBeenCalled();
     });
 
     it('selectionMovementOnArrowDown should not call delay and translate selection if key already pressed, directive.hasMovedOnce and isShortcutAllowed true', fakeAsync((): void => {

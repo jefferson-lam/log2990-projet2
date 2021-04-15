@@ -3,8 +3,6 @@ import { async, TestBed } from '@angular/core/testing';
 import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { ColorService } from '@app/services/color/color.service';
-import { TextService } from '@app/services/tools/text/text-service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
 

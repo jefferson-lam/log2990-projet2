@@ -197,8 +197,8 @@ export class ShortcutManagerService {
 
     onEscapeKeyDown(): void {
         if (this.toolManager.currentTool instanceof TextService && !this.popupManager.isPopUpOpen) {
-            this.toolManager.textService.placeHolderSpan.style.display = 'none';
-            this.toolManager.textService.escapeKeyUsed = true;
+            this.toolManager.currentTool.placeHolderSpan.style.display = 'none';
+            this.toolManager.currentTool.escapeKeyUsed = true;
         }
     }
 

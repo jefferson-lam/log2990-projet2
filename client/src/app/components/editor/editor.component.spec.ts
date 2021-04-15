@@ -42,6 +42,7 @@ describe('EditorComponent', () => {
             'onPlusKeyDown',
             'onEqualKeyDown',
             'onKeyboardDown',
+            'onEscapeKeyDown',
         ]);
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService, {} as UndoRedoService);
@@ -199,6 +200,11 @@ describe('EditorComponent', () => {
         component.onKeyboardDown(eventSpy);
 
         expect(shortcutManagerSpy.onKeyboardDown).not.toHaveBeenCalled();
+    });
+
+    it('onEscapeKeyDown should call shortcutManager.onEscapeKeyDown', () => {
+        component.onEscapeKeyDown();
+        expect(shortcutManagerSpy.onEscapeKeyDown).toHaveBeenCalled();
     });
 
     it('ctrl+c should call copySelection from ClipboardService', () => {

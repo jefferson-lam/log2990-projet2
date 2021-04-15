@@ -395,7 +395,7 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on text button should select the text tool for user and change lockKyBoard false', () => {
-        toolManagerServiceSpy.getTool.and.callFake(() => {
+        toolManagerServiceSpy.selectTool.and.callFake(() => {
             return textStub;
         });
 
@@ -404,13 +404,12 @@ describe('SidebarComponent', () => {
         textButton.click();
         fixture.detectChanges();
 
-        expect(selectToolSpy).toHaveBeenCalledWith({
+        expect(component.selectedTool).toEqual({
             service: 'TextService',
             name: 'Texte',
             icon: 'text_format',
             keyShortcut: 't',
             helpShortcut: '(Touche T)',
         });
-        expect(selectToolEmitterSpy).toHaveBeenCalledWith(textStub);
     });
 });
