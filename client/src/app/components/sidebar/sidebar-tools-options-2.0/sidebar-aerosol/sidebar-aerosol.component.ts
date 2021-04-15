@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import * as AerosolConstants from '@app/constants/aerosol-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
@@ -19,7 +18,6 @@ export class SidebarAerosolComponent implements OnInit {
     toolSize: number;
     waterDropSize: number;
     emissionCount: number;
-    currentTool: Tool;
 
     @Output() toolSizeChanged: EventEmitter<number>;
     @Output() waterDropSizeChanged: EventEmitter<number>;
@@ -36,6 +34,9 @@ export class SidebarAerosolComponent implements OnInit {
         this.toolSizeChanged = new EventEmitter();
         this.waterDropSizeChanged = new EventEmitter();
         this.numberOfEmissions = new EventEmitter();
+        this.toolSize = settingsManager.toolManager.aerosolService.lineWidth;
+        this.waterDropSize = settingsManager.toolManager.aerosolService.waterDropWidth;
+        this.emissionCount = settingsManager.toolManager.aerosolService.emissionCount;
     }
 
     ngOnInit(): void {
