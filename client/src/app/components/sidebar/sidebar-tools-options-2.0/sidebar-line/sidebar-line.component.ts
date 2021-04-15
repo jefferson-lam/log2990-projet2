@@ -30,6 +30,9 @@ export class SidebarLineComponent implements OnInit {
         this.toolSizeChanged = new EventEmitter();
         this.withJunctionChanged = new EventEmitter();
         this.junctionRadiusChanged = new EventEmitter();
+        this.toolSize = settingsManager.toolManager.lineService.lineWidth;
+        this.withJunction = settingsManager.toolManager.lineService.withJunction;
+        this.junctionRadius = settingsManager.toolManager.lineService.junctionRadius;
     }
 
     ngOnInit(): void {
