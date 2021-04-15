@@ -14,6 +14,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class ClipboardService {
+    outlineClipboard: ImageData = new ImageData(1, 1);
     clipboard: ImageData = new ImageData(1, 1);
     currentTool: RectangleSelectionService | EllipseSelectionService;
     lastSelectionTool: string;
@@ -45,6 +46,12 @@ export class ClipboardService {
                 this.drawingService.selectionCanvas.width,
                 this.drawingService.selectionCanvas.height,
             );
+            this.outlineClipboard = this.drawingService.borderCtx.getImageData(
+                0,
+                0,
+                this.drawingService.borderCanvas.width,
+                this.drawingService.borderCanvas.height,
+            );
             this.cornerCoords = this.currentTool.cornerCoords;
             this.lastSelectionTool = this.getCurrentSelectionToolName();
         }
@@ -65,6 +72,7 @@ export class ClipboardService {
         this.changeToSelectionTool(this.lastSelectionTool);
         this.setPastedCanvasPosition();
         this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
+        this.drawingService.borderCtx.putImageData(this.outlineClipboard, 0, 0);
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
         this.currentTool.cornerCoords = this.cornerCoords;
         this.currentTool.isManipulating = true;

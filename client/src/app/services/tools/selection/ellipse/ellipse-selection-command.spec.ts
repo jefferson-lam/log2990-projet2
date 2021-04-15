@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { END_ANGLE, END_INDEX, ROTATION, START_ANGLE, START_INDEX } from '@app/constants/ellipse-constants';
-import { OFFSET_RADIUS } from '@app/constants/selection-constants';
 import { EllipseSelectionCommand } from './ellipse-selection-command';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
@@ -20,7 +19,6 @@ describe('EllipseSelectionCommandService', () => {
     let baseCtxDrawImageSpy: jasmine.Spy;
     let restoreCtxSpy: jasmine.Spy;
     let ellipseCtxSpy: jasmine.Spy;
-    let clipCtxSpy: jasmine.Spy;
 
     const TEST_X_OFFSET = 3;
     const TEST_Y_OFFSET = 3;
@@ -57,7 +55,6 @@ describe('EllipseSelectionCommandService', () => {
         baseCtxDrawImageSpy = spyOn(baseCtxStub, 'drawImage').and.callThrough();
         restoreCtxSpy = spyOn(baseCtxStub, 'restore').and.callThrough();
         ellipseCtxSpy = spyOn(baseCtxStub, 'ellipse').and.callThrough();
-        clipCtxSpy = spyOn(baseCtxStub, 'clip').and.callThrough();
 
         command = new EllipseSelectionCommand(baseCtxStub, selectionCtxStub.canvas, ellipseSelectionService);
     });
@@ -98,25 +95,6 @@ describe('EllipseSelectionCommandService', () => {
     it('cloneCanvas should return a cloned copy of canvas passed in parameter', () => {
         const clonedCanvas: HTMLCanvasElement = command.cloneCanvas(canvasTestHelper.selectionCanvas);
         expect(clonedCanvas).toEqual(canvasTestHelper.selectionCanvas);
-    });
-
-    it('clipEllipse should clip correct path', () => {
-        const size = 250;
-        const expectedStartX = 125;
-        const expectedStartY = 125;
-        const expectedXRadius = 126;
-        const expectedYRadius = 126;
-        command.clipEllipse(baseCtxStub, { x: 0, y: 0 }, size, size, OFFSET_RADIUS);
-        expect(ellipseCtxSpy).toHaveBeenCalledWith(
-            expectedStartX,
-            expectedStartY,
-            expectedXRadius,
-            expectedYRadius,
-            ROTATION,
-            START_ANGLE,
-            END_ANGLE,
-        );
-        expect(clipCtxSpy).toHaveBeenCalled();
     });
 
     it('getEllipseCenter should set displacement to shortest side if isCircle', () => {

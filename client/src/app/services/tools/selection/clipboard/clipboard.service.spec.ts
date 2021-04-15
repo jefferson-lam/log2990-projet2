@@ -16,6 +16,7 @@ describe('ClipboardService', () => {
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
+    let borderCtxStub: CanvasRenderingContext2D;
     let rectangleSelectionService: RectangleSelectionService;
     let ellipseSelectionService: EllipseSelectionService;
     let undoRedoService: UndoRedoService;
@@ -36,6 +37,7 @@ describe('ClipboardService', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         selectionCtxStub = canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+        borderCtxStub = canvasTestHelper.borderCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(ClipboardService);
         toolManagerService = TestBed.inject(ToolManagerService);
@@ -48,6 +50,7 @@ describe('ClipboardService', () => {
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].selectionCtx = selectionCtxStub;
+        service['drawingService'].borderCtx = borderCtxStub;
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
         service['drawingService'].borderCanvas = canvasTestHelper.borderCanvas;

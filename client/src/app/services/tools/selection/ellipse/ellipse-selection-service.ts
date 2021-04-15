@@ -327,6 +327,6 @@ export class EllipseSelectionService extends ToolSelectionService {
             selectionHeight,
         );
         selectionCtx.restore();
-        this.drawOutlineEllipse(this.drawingService.selectionCtx, startX, startY, radiusX, radiusY, SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET);
+        this.drawOutlineEllipse(this.drawingService.borderCtx, startX, startY, radiusX, radiusY, SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET);
     }
 }

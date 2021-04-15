@@ -16,6 +16,7 @@ export class EllipseSelectionCommand extends Command {
         super();
         this.setValues(canvasContext, selectionCanvas, ellipseSelectionService);
     }
+
     setValues(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, ellipseSelectionService: EllipseSelectionService): void {
         this.ctx = canvasContext;
         this.cornerCoords = Object.assign([], ellipseSelectionService.cornerCoords);
@@ -43,7 +44,6 @@ export class EllipseSelectionCommand extends Command {
         }
 
         // Clip the ctx to only fit the what is inside the outline that is offset by 1
-        this.clipEllipse(this.ctx, this.transformValues, this.selectionHeight, this.selectionWidth, 1);
         this.ctx.drawImage(
             this.selectionCanvas,
             0,
@@ -67,24 +67,6 @@ export class EllipseSelectionCommand extends Command {
         // apply the old canvas to the new one
         context.drawImage(selectionCanvas, 0, 0);
         return newCanvas;
-    }
-
-    clipEllipse(ctx: CanvasRenderingContext2D, start: Vec2, height: number, width: number, offset: number): void {
-        const end: Vec2 = {
-            x: start.x + width,
-            y: start.y + height,
-        };
-        const ellipseCenter = this.getEllipseCenter(start, end, this.isCircle);
-        const startX = ellipseCenter.x;
-        const startY = ellipseCenter.y;
-        const radiiXAndY = this.getRadiiXAndY([start, end]);
-        const xRadius = radiiXAndY[0];
-        const yRadius = radiiXAndY[1];
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(this.transformValues.x, this.transformValues.y);
-        ctx.ellipse(startX, startY, xRadius + offset, yRadius + offset, ROTATION, START_ANGLE, END_ANGLE);
-        ctx.clip();
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {
