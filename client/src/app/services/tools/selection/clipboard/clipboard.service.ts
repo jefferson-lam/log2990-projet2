@@ -3,7 +3,8 @@ import { Vec2 } from '@app/classes/vec2';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
-import { ClipboardCommand } from '@app/services/tools/selection/clipboard/clipboard-command';
+import { EllipseClipboardCommand } from '@app/services/tools/selection/clipboard/ellipse-clipboard-command';
+import { RectangleClipboardCommand } from '@app/services/tools/selection/clipboard/rectangle-clipboard-command';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
@@ -17,6 +18,10 @@ export class ClipboardService {
     currentTool: RectangleSelectionService | EllipseSelectionService;
     lastSelectionTool: string;
     cornerCoords: Vec2[];
+    isPasted: boolean;
+    isCircle: boolean;
+    selectionHeight: number;
+    selectionWidth: number;
 
     constructor(
         public drawingService: DrawingService,
@@ -31,6 +36,7 @@ export class ClipboardService {
         });
         this.lastSelectionTool = '';
         this.cornerCoords = new Array<Vec2>();
+        this.isPasted = false;
     }
 
     copySelection(): void {
@@ -43,6 +49,7 @@ export class ClipboardService {
             );
             this.cornerCoords = this.currentTool.cornerCoords;
             this.lastSelectionTool = this.getCurrentSelectionToolName();
+            this.isPasted = false;
         }
     }
 
@@ -66,22 +73,44 @@ export class ClipboardService {
         this.currentTool.isManipulating = true;
         // This boolean is for avoiding behavior of simply moving the previous selection
         this.currentTool.isFromClipboard = true;
+        this.isPasted = true;
     }
 
     deleteSelection(): void {
-        if (this.isSelected(this.drawingService.selectionCanvas)) {
-            const command = new ClipboardCommand(
-                this.drawingService.baseCtx,
-                this.drawingService.selectionCanvas,
-                this.drawingService.previewSelectionCanvas,
-                this,
-            );
+        if (!this.isPasted && this.isSelected(this.drawingService.selectionCanvas)) {
+            this.cornerCoords = Object.assign([], this.currentTool.cornerCoords);
+            this.deleteEllipse();
+            this.deleteRectangle();
+        }
+        this.undoSelection();
+        this.isPasted = false;
+    }
+
+    private undoSelection(): void {
+        this.currentTool.resetSelectedToolSettings();
+        this.currentTool.resetCanvasState(this.drawingService.selectionCanvas);
+        this.currentTool.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.currentTool.resizerHandlerService.resetResizers();
+        this.currentTool.isManipulating = false;
+        this.currentTool.isEscapeDown = false;
+    }
+
+    private deleteEllipse(): void {
+        if (this.currentTool instanceof EllipseSelectionService) {
+            this.isCircle = this.currentTool.isCircle;
+            const command = new EllipseClipboardCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
-            this.currentTool.isManipulating = false;
-            this.currentTool.isEscapeDown = false;
         }
     }
 
+    private deleteRectangle(): void {
+        if (this.currentTool instanceof RectangleSelectionService) {
+            this.selectionHeight = this.currentTool.selectionHeight;
+            this.selectionWidth = this.currentTool.selectionWidth;
+            const command = new RectangleClipboardCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
+        }
+    }
     private setPastedCanvasPosition(): void {
         this.drawingService.previewSelectionCanvas.height = this.clipboard.height;
         this.drawingService.previewSelectionCanvas.width = this.clipboard.width;

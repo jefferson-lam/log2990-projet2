@@ -184,11 +184,28 @@ describe('ClipboardService', () => {
         expect(mouseDownSpy).not.toHaveBeenCalled();
     });
 
-    it('deleteSelection fills active selection using command ', () => {
+    it('deleteSelection undoes active selection', () => {
         service.deleteSelection();
-        expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
         expect(service.currentTool.isManipulating).toBeFalse();
         expect(service.currentTool.isEscapeDown).toBeFalse();
+    });
+
+    it('deleteSelection fills active selection using EllipseClipboardCommand ', () => {
+        service.currentTool = ellipseSelectionServiceStub;
+        canvasTestHelper.selectionCanvas.width = 1;
+        canvasTestHelper.selectionCanvas.height = 1;
+        service.deleteSelection();
+        expect(service.isCircle).toEqual(service.currentTool.isCircle);
+        expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
+    });
+
+    it('deleteSelection fills active selection using RectangleClipboardCommand', () => {
+        canvasTestHelper.selectionCanvas.width = 1;
+        canvasTestHelper.selectionCanvas.height = 1;
+        service.deleteSelection();
+        expect(service.selectionHeight).toEqual(service.currentTool.selectionHeight);
+        expect(service.selectionWidth).toEqual(service.currentTool.selectionWidth);
+        expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
     it('deleteSelection does nothing when there is no active selection ', () => {
