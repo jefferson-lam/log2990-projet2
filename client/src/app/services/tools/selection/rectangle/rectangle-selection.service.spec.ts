@@ -434,15 +434,4 @@ describe('RectangleSelectionService', () => {
         expect(service.isManipulating).toBeFalsy();
         expect(service.isEscapeDown).toBeFalsy();
     });
-
-    it('undoSelection should not draw to base context if isFromClipboard is true', () => {
-        service.isFromClipboard = true;
-        service.isManipulating = true;
-        service.undoSelection();
-        expect(baseCtxDrawImageSpy).not.toHaveBeenCalled();
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
-        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
-        expect(service.isManipulating).toBeFalsy();
-        expect(service.isEscapeDown).toBeFalsy();
-    });
 });

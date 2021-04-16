@@ -18,9 +18,10 @@ export class ClipboardService {
     currentTool: RectangleSelectionService | EllipseSelectionService;
     lastSelectionTool: string;
     cornerCoords: Vec2[];
+    isPasted: boolean;
     isCircle: boolean;
-    selectionWidth: number;
     selectionHeight: number;
+    selectionWidth: number;
 
     constructor(
         public drawingService: DrawingService,
@@ -35,6 +36,7 @@ export class ClipboardService {
         });
         this.lastSelectionTool = '';
         this.cornerCoords = new Array<Vec2>();
+        this.isPasted = false;
     }
 
     copySelection(): void {
@@ -47,6 +49,7 @@ export class ClipboardService {
             );
             this.cornerCoords = this.currentTool.cornerCoords;
             this.lastSelectionTool = this.getCurrentSelectionToolName();
+            this.isPasted = false;
         }
     }
 
@@ -60,7 +63,7 @@ export class ClipboardService {
             return;
         }
         if (this.isSelected(this.drawingService.selectionCanvas)) {
-            this.currentTool.onMouseDown({} as MouseEvent);
+            this.currentTool.confirmSelection();
         }
         this.changeToSelectionTool(this.lastSelectionTool);
         this.setPastedCanvasPosition();
@@ -70,15 +73,26 @@ export class ClipboardService {
         this.currentTool.isManipulating = true;
         // This boolean is for avoiding behavior of simply moving the previous selection
         this.currentTool.isFromClipboard = true;
+        this.isPasted = true;
     }
 
     deleteSelection(): void {
-        if (this.isSelected(this.drawingService.selectionCanvas)) {
-            this.currentTool.undoSelection();
-            this.cornerCoords = this.currentTool.cornerCoords;
+        if (!this.isPasted && this.isSelected(this.drawingService.selectionCanvas)) {
+            this.cornerCoords = Object.assign([], this.currentTool.cornerCoords);
             this.deleteEllipse();
             this.deleteRectangle();
         }
+        this.undoSelection();
+        this.isPasted = false;
+    }
+
+    private undoSelection(): void {
+        this.currentTool.resetSelectedToolSettings();
+        this.currentTool.resetCanvasState(this.drawingService.selectionCanvas);
+        this.currentTool.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.currentTool.resizerHandlerService.resetResizers();
+        this.currentTool.isManipulating = false;
+        this.currentTool.isEscapeDown = false;
     }
 
     private deleteEllipse(): void {
@@ -97,7 +111,6 @@ export class ClipboardService {
             this.undoRedoService.executeCommand(command);
         }
     }
-
     private setPastedCanvasPosition(): void {
         this.drawingService.previewSelectionCanvas.height = this.clipboard.height;
         this.drawingService.previewSelectionCanvas.width = this.clipboard.width;
