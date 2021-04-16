@@ -4,6 +4,7 @@ import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseClipboardCommand } from '@app/services/tools/selection/clipboard/ellipse-clipboard-command';
+import { LassoClipboardCommand } from '@app/services/tools/selection/clipboard/lasso-clipboard-command';
 import { RectangleClipboardCommand } from '@app/services/tools/selection/clipboard/rectangle-clipboard-command';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
@@ -111,6 +112,7 @@ export class ClipboardService {
             }
             this.deleteEllipse();
             this.deleteRectangle();
+            this.deleteLasso();
         }
         this.undoSelection();
         this.isPasted = false;
@@ -139,6 +141,13 @@ export class ClipboardService {
             this.selectionHeight = this.currentTool.selectionHeight;
             this.selectionWidth = this.currentTool.selectionWidth;
             const command = new RectangleClipboardCommand(this.drawingService.baseCtx, this);
+            this.undoRedoService.executeCommand(command);
+        }
+    }
+
+    private deleteLasso(): void {
+        if (this.currentTool instanceof LassoSelectionService) {
+            const command = new LassoClipboardCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
     }
