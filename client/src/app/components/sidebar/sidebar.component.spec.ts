@@ -361,15 +361,15 @@ describe('SidebarComponent', () => {
         expect(component.isGridOptionsDisplayed).toBeTrue();
     });
 
-    it('openMagnetismOptions should set isMagnetismOptionsDisplayed to true if initially false', () => {
+    it('toggleMagnetismOptions should set isMagnetismOptionsDisplayed to true if initially false', () => {
         component.isMagnetismOptionsDisplayed = false;
-        component.openMagnetismOptions();
+        component.toggleMagnetismOptions();
         expect(component.isMagnetismOptionsDisplayed).toBeTrue();
     });
 
-    it('openMagnetismOptions should set isMagnetismOptionsDisplayed to false if initially true', () => {
+    it('toggleMagnetismOptions should set isMagnetismOptionsDisplayed to false if initially true', () => {
         component.isMagnetismOptionsDisplayed = true;
-        component.openMagnetismOptions();
+        component.toggleMagnetismOptions();
         expect(component.isMagnetismOptionsDisplayed).toBeFalse();
     });
 

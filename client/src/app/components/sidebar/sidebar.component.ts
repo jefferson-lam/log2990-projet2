@@ -82,7 +82,7 @@ export class SidebarComponent {
         this.isGridOptionsDisplayed = !this.isGridOptionsDisplayed;
     }
 
-    openMagnetismOptions(): void {
+    toggleMagnetismOptions(): void {
         this.isMagnetismOptionsDisplayed = !this.isMagnetismOptionsDisplayed;
     }
 
