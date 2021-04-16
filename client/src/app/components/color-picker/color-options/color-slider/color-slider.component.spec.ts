@@ -8,7 +8,7 @@ describe('ColorSliderComponent', () => {
     let colorService: ColorService;
     let mouseEventDown: MouseEvent;
     let mouseEventMove: MouseEvent;
-    const placeholderY = 25;
+    let noOffsetMouseEventDown: MouseEvent;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -28,6 +28,12 @@ describe('ColorSliderComponent', () => {
             button: 0,
         } as MouseEvent;
 
+        noOffsetMouseEventDown = {
+            offsetX: 25,
+            offsetY: 0,
+            button: 0,
+        } as MouseEvent;
+
         mouseEventMove = {
             button: 0,
             clientX: 50,
@@ -42,64 +48,56 @@ describe('ColorSliderComponent', () => {
     });
 
     it('AfterViewInit should call drawSlider()', () => {
-        const drawSliderSpy = spyOn(component, 'drawSlider');
+        const fillSpy = spyOn(component.ctx, 'fill');
         component.ngAfterViewInit();
-        expect(drawSliderSpy).toHaveBeenCalled();
+        expect(fillSpy).toHaveBeenCalled();
     });
 
     it('drawSlider should call clearRect()', () => {
         const clearRectSpy = spyOn(component.ctx, 'clearRect');
-        component.drawSlider();
+        component.ngAfterViewInit();
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
     it('drawSlider should call createLinearGradient()', () => {
         const createLinearGradientSpy = spyOn(component.ctx, 'createLinearGradient').and.callThrough();
-        component.drawSlider();
+        component.ngAfterViewInit();
         expect(createLinearGradientSpy).toHaveBeenCalled();
     });
 
     it('drawSlider should call beginPath()', () => {
         const beginPathSpy = spyOn(component.ctx, 'beginPath');
-        component.drawSlider();
+        component.ngAfterViewInit();
         expect(beginPathSpy).toHaveBeenCalled();
     });
 
     it('drawSlider should call rect()', () => {
         const rectSpy = spyOn(component.ctx, 'rect');
-        component.drawSlider();
+        component.ngAfterViewInit();
         expect(rectSpy).toHaveBeenCalled();
     });
 
     it('drawSlider should call fill()', () => {
         const fillSpy = spyOn(component.ctx, 'fill');
-        component.drawSlider();
+        component.ngAfterViewInit();
         expect(fillSpy).toHaveBeenCalled();
     });
 
     it('drawSlider should call closePath()', () => {
         const closePathSpy = spyOn(component.ctx, 'closePath');
-        component.drawSlider();
+        component.ngAfterViewInit();
         expect(closePathSpy).toHaveBeenCalled();
     });
 
-    it('drawSelection should call always drawSlider()', () => {
-        component.selectedHeight = placeholderY;
-        const drawSlider = spyOn(component, 'drawSlider');
-        component.drawSelection();
-        expect(drawSlider).toHaveBeenCalled();
-    });
-
     it('drawSelection should call stroke() if (this.selectedPosition) is true', () => {
-        component.selectedHeight = placeholderY;
         const strokeSpy = spyOn(component.ctx, 'stroke');
-        component.drawSelection();
+        component.onMouseDown(mouseEventDown);
         expect(strokeSpy).toHaveBeenCalled();
     });
 
     it('drawSelection should not call stroke() if (this.selectedPosition) is false', () => {
         const strokeSpy = spyOn(component.ctx, 'stroke');
-        component.drawSelection();
+        component.onMouseDown(noOffsetMouseEventDown);
         expect(strokeSpy).not.toHaveBeenCalled();
     });
 
@@ -118,9 +116,9 @@ describe('ColorSliderComponent', () => {
     });
 
     it('onMouseDown should call drawSelection()', () => {
-        const drawSelectionSpy = spyOn(component, 'drawSelection');
+        const fillSpy = spyOn(component.ctx, 'fill');
         component.onMouseDown(mouseEventDown);
-        expect(drawSelectionSpy).toHaveBeenCalled();
+        expect(fillSpy).toHaveBeenCalled();
     });
 
     it('onMouseDown should set selectedHeight to offSet.Y', () => {
@@ -129,7 +127,7 @@ describe('ColorSliderComponent', () => {
     });
 
     it('onMouseDown should call emitHue()', () => {
-        const emitHueSpy = spyOn(component, 'emitHue');
+        const emitHueSpy = spyOn(colorService, 'getColorAtPosition');
         component.onMouseDown(mouseEventDown);
         expect(emitHueSpy).toHaveBeenCalled();
     });
@@ -142,14 +140,14 @@ describe('ColorSliderComponent', () => {
 
     it('onMouseMove should call drawSelection() if mouseDown is true', () => {
         component.mousedown = true;
-        const drawSelectionSpy = spyOn(component, 'drawSelection');
+        const fillSpy = spyOn(component.ctx, 'fill');
         component.onMouseMove(mouseEventMove);
-        expect(drawSelectionSpy).toHaveBeenCalled();
+        expect(fillSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should call emitHue() if mouseDown is true', () => {
         component.mousedown = true;
-        const emitHueSpy = spyOn(component, 'emitHue');
+        const emitHueSpy = spyOn(colorService, 'getColorAtPosition');
         component.onMouseMove(mouseEventMove);
         expect(emitHueSpy).toHaveBeenCalled();
     });
@@ -162,21 +160,15 @@ describe('ColorSliderComponent', () => {
 
     it('onMouseMove should not call drawSelection() mouseDown is false', () => {
         component.mousedown = false;
-        const drawSelectionSpy = spyOn(component, 'drawSelection');
+        const fillSpy = spyOn(component.ctx, 'fill');
         component.onMouseMove(mouseEventMove);
-        expect(drawSelectionSpy).not.toHaveBeenCalled();
+        expect(fillSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseMove should not call emitHue() mouseDown is false', () => {
         component.mousedown = false;
-        const emitHueSpy = spyOn(component, 'emitHue');
+        const emitHueSpy = spyOn(colorService, 'getColorAtPosition');
         component.onMouseMove(mouseEventMove);
         expect(emitHueSpy).not.toHaveBeenCalled();
-    });
-
-    it('emitHue should call color service method getColorAtPosition()', () => {
-        const getColorSpy = spyOn(colorService, 'getColorAtPosition');
-        component.emitHue(placeholderY);
-        expect(getColorSpy).toHaveBeenCalled();
     });
 });

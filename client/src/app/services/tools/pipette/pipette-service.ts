@@ -68,12 +68,12 @@ export class PipetteService extends Tool {
     }
 
     pixelDataToRgba(data: ImageData): Rgba {
-        const red = data.data[PipetteConstants.RED_POSTITION];
-        const green = data.data[PipetteConstants.GREEN_POSTITION];
-        const blue = data.data[PipetteConstants.BLUE_POSTITION];
-        const alpha = data.data[PipetteConstants.ALPHA_POSTITION];
+        const redPixel = data.data[PipetteConstants.RED_POSTITION];
+        const greenPixel = data.data[PipetteConstants.GREEN_POSTITION];
+        const bluePixel = data.data[PipetteConstants.BLUE_POSTITION];
+        const alphaPixel = data.data[PipetteConstants.ALPHA_POSTITION];
 
-        const color = { red: red.toString(), green: green.toString(), blue: blue.toString(), alpha };
+        const color = { red: redPixel, green: greenPixel, blue: bluePixel, alpha: alphaPixel };
         return color;
     }
 

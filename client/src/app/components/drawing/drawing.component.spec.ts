@@ -1,4 +1,4 @@
-import { SimpleChange } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import * as CanvasConstants from '@app/constants/canvas-constants';
@@ -37,6 +37,7 @@ describe('DrawingComponent', () => {
                 { provide: EraserService, useValue: eraserStub },
                 { provide: LineService, useValue: lineStub },
             ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
@@ -170,27 +171,18 @@ describe('DrawingComponent', () => {
         expect(eventSpy.preventDefault).toHaveBeenCalled();
     });
 
-    it('ngOnChanges should set cursor to none if eraserService selected', () => {
-        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
-        component.ngOnChanges({
-            currentTool: new SimpleChange(null, eraserStub, false),
-        });
-        expect(canvasStyle.cursor).toBe('none');
+    it('changeCursor should set cursor to none if eraserService selected', () => {
+        component.changeCursor(eraserStub);
+        expect(component.previewCanvas.nativeElement.style.cursor).toBe('none');
     });
 
-    it('ngOnChanges should set cursor to pencil-icon if pencilService selected', () => {
-        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
-        component.ngOnChanges({
-            currentTool: new SimpleChange(null, pencilStub, false),
-        });
-        expect(canvasStyle.cursor).toBe('url("assets/pencil.png") 0 15, auto');
+    it('changeCursor should set cursor to pencil-icon if pencilService selected', () => {
+        component.changeCursor(pencilStub);
+        expect(component.previewCanvas.nativeElement.style.cursor).toBe('url("assets/pencil.png") 0 15, auto');
     });
 
-    it('ngOnChanges should set cursor to crosshair if not eraser or pencil selected', () => {
-        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
-        component.ngOnChanges({
-            currentTool: new SimpleChange(null, lineStub, false),
-        });
-        expect(canvasStyle.cursor).toBe('crosshair');
+    it('changeCursor should set cursor to crosshair if not eraser or pencil selected', () => {
+        component.changeCursor(lineStub);
+        expect(component.previewCanvas.nativeElement.style.cursor).toBe('crosshair');
     });
 });

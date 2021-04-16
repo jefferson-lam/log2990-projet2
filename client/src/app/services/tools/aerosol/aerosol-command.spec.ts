@@ -34,9 +34,18 @@ describe('AerosolCommandService', () => {
         expect(command).toBeTruthy();
     });
 
-    it('execute should call sprayAirBrush', () => {
+    it('execute should call sprayAirBrush only one time if preview', () => {
+        // tslint:disable:no-string-literal
+        command['preview'] = true;
         command.execute();
         expect(airBrushSpy).toHaveBeenCalled();
+        expect(airBrushSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('execute should call sprayAirBrush more than once if not preview', () => {
+        command.execute();
+        expect(airBrushSpy).toHaveBeenCalled();
+        expect(airBrushSpy).not.toHaveBeenCalledTimes(1);
     });
 
     it('setValues should set values', () => {

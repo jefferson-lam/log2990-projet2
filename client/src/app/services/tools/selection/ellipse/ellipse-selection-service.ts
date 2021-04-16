@@ -24,6 +24,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     cornerCoords: Vec2[] = new Array<Vec2>(2);
     selectionHeight: number = 0;
     selectionWidth: number = 0;
+    isFromClipboard: boolean = false;
 
     constructor(
         drawingService: DrawingService,
@@ -36,22 +37,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onMouseDown(event: MouseEvent): void {
         if (this.isManipulating) {
-            // transformValues represent where the canvas' topleft corner was moved
-            this.transformValues = {
-                x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
-                y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
-            };
-            const command: Command = new EllipseSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
-            this.undoRedoService.executeCommand(command);
-            this.isManipulating = false;
-            this.isCircle = false;
-            this.isShiftDown = false;
-            // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.clearCorners(this.cornerCoords);
-            this.resetSelectedToolSettings();
-            this.resizerHandlerService.resetResizers();
+            this.confirmSelection();
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
@@ -142,32 +128,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    undoSelection(): void {
-        if (this.isManipulating) {
-            this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
-            this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
-                0,
-                0,
-                this.selectionWidth,
-                this.selectionHeight,
-                this.cornerCoords[0].x,
-                this.cornerCoords[0].y,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
-            this.drawingService.baseCtx.restore();
-            this.resetSelectedToolSettings();
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resizerHandlerService.resetResizers();
-            this.isManipulating = false;
-            this.isEscapeDown = false;
-        }
-    }
-
     onToolChange(): void {
-        super.onToolChange();
         if (this.isManipulating) {
             const emptyMouseEvent: MouseEvent = {} as MouseEvent;
             this.onMouseDown(emptyMouseEvent);
@@ -181,7 +142,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean, fillColor: string): void {
+    fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean): void {
         const ellipseCenter = this.getEllipseCenter(
             cornerCoords[SelectionConstants.START_INDEX],
             cornerCoords[SelectionConstants.END_INDEX],
@@ -194,7 +155,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         const yRadius = radiiXAndY[1];
         ctx.beginPath();
         ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
-        ctx.fillStyle = fillColor;
+        ctx.fillStyle = 'white';
         ctx.fill();
     }
 
@@ -223,6 +184,59 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.stroke();
     }
 
+    setSelectionCanvasPosition(topLeft: Vec2): void {
+        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+    }
+
+    confirmSelection(): void {
+        // transformValues represent where the canvas' topleft corner was moved
+        this.transformValues = {
+            x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
+            y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
+        };
+        const command: Command = new EllipseSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
+        this.undoRedoService.executeCommand(command);
+        this.isManipulating = false;
+        this.isCircle = false;
+        this.isShiftDown = false;
+        // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.clearCorners(this.cornerCoords);
+        this.resetSelectedToolSettings();
+        this.resizerHandlerService.resetResizers();
+        this.isFromClipboard = false;
+    }
+
+    undoSelection(): void {
+        if (!this.isManipulating) return;
+        this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
+        if (!this.isFromClipboard) {
+            this.drawingService.baseCtx.drawImage(
+                this.drawingService.selectionCanvas,
+                0,
+                0,
+                this.selectionWidth,
+                this.selectionHeight,
+                this.cornerCoords[0].x,
+                this.cornerCoords[0].y,
+                this.selectionWidth,
+                this.selectionHeight,
+            );
+        }
+        this.drawingService.baseCtx.restore();
+        this.resetSelectedToolSettings();
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resizerHandlerService.resetResizers();
+        this.isManipulating = false;
+        this.isEscapeDown = false;
+    }
+
     private validateSelectionHeightAndWidth(): boolean {
         if (this.selectionWidth === 0 || this.selectionHeight === 0) {
             this.resetSelectedToolSettings();
@@ -239,15 +253,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.selectionHeight = Math.abs(this.selectionHeight);
         return true;
     }
-
-    private setSelectionCanvasPosition(topLeft: Vec2): void {
-        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
-        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
-    }
-
     private getRadiiXAndY(path: Vec2[]): number[] {
         let xRadius = Math.abs(path[SelectionConstants.END_INDEX].x - path[SelectionConstants.START_INDEX].x) / 2;
         let yRadius = Math.abs(path[SelectionConstants.END_INDEX].y - path[SelectionConstants.START_INDEX].y) / 2;
@@ -285,7 +290,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         selectionHeight: number,
     ): void {
         this.clipEllipseSelection(selectionCtx, baseCtx, cornerCoords, selectionWidth, selectionHeight);
-        this.fillEllipse(baseCtx, cornerCoords, this.isCircle, 'white');
+        this.fillEllipse(baseCtx, cornerCoords, this.isCircle);
     }
 
     private clipEllipseSelection(
