@@ -217,11 +217,11 @@ describe('LassoSelectionService', () => {
     });
 
     it('undoSelection should call procedure if manipulating', () => {
-        const drawImageToCtxSpy = spyOn<any>(service, 'drawImageToCtx');
         const resetCanvasStateSpy = spyOn(service, 'resetCanvasState');
+        const drawImageSpy = spyOn(baseCtxStub, 'drawImage');
         service.isManipulating = true;
         service.undoSelection();
-        expect(drawImageToCtxSpy).toHaveBeenCalled();
+        expect(drawImageSpy).toHaveBeenCalled();
         expect(resetCanvasStateSpy).toHaveBeenCalled();
         expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
     });
@@ -343,30 +343,6 @@ describe('LassoSelectionService', () => {
         expect(previewSelectionCtxStub.canvas.style.left).toEqual(service.topLeft.x + 'px');
         expect(previewSelectionCtxStub.canvas.style.top).toEqual(service.topLeft.y + 'px');
         expect(resizerHandlerServiceSpy.setResizerPositions).toHaveBeenCalled();
-    });
-
-    it('drawImageToCtx should return if is from clipboard', () => {
-        service.isFromClipboard = true;
-        expect(() => {
-            service['drawImageToCtx'](baseCtxStub, selectionCtxStub.canvas);
-        }).not.toThrow();
-    });
-
-    it('drawImageToCtx should call targetCtx drawImage with appropriate paramters', () => {
-        const drawImageSpy = spyOn(baseCtxStub, 'drawImage');
-        service['drawImageToCtx'](baseCtxStub, selectionCtxStub.canvas);
-        expect(drawImageSpy).toHaveBeenCalled();
-        expect(drawImageSpy).toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
-            0,
-            0,
-            service.selectionWidth,
-            service.selectionHeight,
-            service.topLeft.x,
-            service.topLeft.y,
-            service.selectionWidth,
-            service.selectionHeight,
-        );
     });
 
     it('clearPath should clear the service pathData attribute', () => {

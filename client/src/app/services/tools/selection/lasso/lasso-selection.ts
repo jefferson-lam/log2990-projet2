@@ -130,7 +130,17 @@ export class LassoSelectionService extends ToolSelectionService {
 
     undoSelection(): void {
         if (!this.isManipulating) return;
-        this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
+        this.drawingService.baseCtx.drawImage(
+            this.drawingService.selectionCanvas,
+            0,
+            0,
+            this.selectionWidth,
+            this.selectionHeight,
+            this.topLeft.x,
+            this.topLeft.y,
+            this.selectionWidth,
+            this.selectionHeight,
+        );
         this.resetSelectedToolSettings();
         this.resetCanvasState(this.drawingService.selectionCanvas);
         this.resetCanvasState(this.drawingService.previewSelectionCanvas);
@@ -284,21 +294,6 @@ export class LassoSelectionService extends ToolSelectionService {
             ctx.lineTo(point.x - this.topLeft.x, point.y - this.topLeft.y);
         }
         ctx.stroke();
-    }
-
-    private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
-        if (this.isFromClipboard) return;
-        targetCtx.drawImage(
-            sourceCanvas,
-            0,
-            0,
-            this.selectionWidth,
-            this.selectionHeight,
-            this.topLeft.x,
-            this.topLeft.y,
-            this.selectionWidth,
-            this.selectionHeight,
-        );
     }
 
     private setSelectionCanvasPosition(topLeft: Vec2): void {
