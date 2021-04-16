@@ -83,15 +83,11 @@ export class DrawingsDatabaseService {
             const collectionDrawings: Drawing[] = await drawingsCollection.find().toArray();
             const drawingsWithTags: Drawing[] = new Array();
             for (const drawing of collectionDrawings) {
-                let hasAllTags = true;
                 for (const tag of tags) {
-                    if (!drawing.tags.includes(tag)) {
-                        hasAllTags = false;
+                    if (drawing.tags.includes(tag)) {
+                        drawingsWithTags.push(drawing);
                         break;
                     }
-                }
-                if (hasAllTags) {
-                    drawingsWithTags.push(drawing);
                 }
             }
             const successMessage: Message = {

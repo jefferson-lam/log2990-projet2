@@ -67,7 +67,7 @@ export class PopupManagerService {
 
     openNewDrawingPopUp(): void {
         if (this.isPopUpOpen) return;
-        if (!this.undoRedoService.isUndoPileEmpty() || !this.isCanvasEmpty()) {
+        if (!this.undoRedoService.isUndoPileEmpty() || this.undoRedoService.initialImage !== undefined) {
             this.toolManager.currentTool.onToolChange();
             this.dialog.open(NewDrawingBoxComponent);
         }
