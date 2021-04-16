@@ -51,6 +51,7 @@ export class LassoSelectionService extends ToolSelectionService {
         this.lineService.removePointSubject.asObservable().subscribe((removedPoint) => {
             if (removedPoint) {
                 this.linePathData.pop();
+                this.numSides--;
             }
         });
     }
