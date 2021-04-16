@@ -37,24 +37,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onMouseDown(event: MouseEvent): void {
         if (this.isManipulating) {
-            // transformValues represent where the canvas' topleft corner was moved
-            this.transformValues = {
-                x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
-                y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
-            };
-            const command: Command = new EllipseSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
-            this.undoRedoService.executeCommand(command);
-            this.isManipulating = false;
-            this.isCircle = false;
-            this.isShiftDown = false;
-            // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resetCanvasState(this.drawingService.borderCanvas);
-            this.clearCorners(this.cornerCoords);
-            this.resetSelectedToolSettings();
-            this.resizerHandlerService.resetResizers();
-            this.isFromClipboard = false;
+            this.confirmSelection();
         }
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
@@ -147,21 +130,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         }
     }
 
-    undoSelection(): void {
-        if (this.isManipulating) {
-            this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
-            this.drawImageToCtx(this.drawingService.baseCtx, this.drawingService.selectionCanvas);
-            this.drawingService.baseCtx.restore();
-            this.resetSelectedToolSettings();
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resetCanvasState(this.drawingService.borderCanvas);
-            this.resizerHandlerService.resetResizers();
-            this.isManipulating = false;
-            this.isEscapeDown = false;
-        }
-    }
-
     onToolChange(): void {
         if (this.isManipulating) {
             const emptyMouseEvent: MouseEvent = {} as MouseEvent;
@@ -218,10 +186,32 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.stroke();
     }
 
-    private drawImageToCtx(targetCtx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
-        if (!this.isFromClipboard) {
-            targetCtx.drawImage(
-                sourceCanvas,
+    confirmSelection(): void {
+        // transformValues represent where the canvas' topleft corner was moved
+        this.transformValues = {
+            x: parseInt(this.drawingService.selectionCanvas.style.left, 10),
+            y: parseInt(this.drawingService.selectionCanvas.style.top, 10),
+        };
+        const command: Command = new EllipseSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
+        this.undoRedoService.executeCommand(command);
+        this.isManipulating = false;
+        this.isCircle = false;
+        this.isShiftDown = false;
+        // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
+        this.clearCorners(this.cornerCoords);
+        this.resetSelectedToolSettings();
+        this.resizerHandlerService.resetResizers();
+        this.isFromClipboard = false;
+    }
+
+    undoSelection(): void {
+        if (this.isManipulating) {
+            this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
+            this.drawingService.baseCtx.drawImage(
+                this.drawingService.selectionCanvas,
                 0,
                 0,
                 this.selectionWidth,
@@ -231,6 +221,14 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
+            this.drawingService.baseCtx.restore();
+            this.resetSelectedToolSettings();
+            this.resetCanvasState(this.drawingService.selectionCanvas);
+            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+            this.resetCanvasState(this.drawingService.borderCanvas);
+            this.resizerHandlerService.resetResizers();
+            this.isManipulating = false;
+            this.isEscapeDown = false;
         }
     }
 

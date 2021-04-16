@@ -229,7 +229,6 @@ export class ShortcutManagerService {
         if (directive.keyPressed.get(event.key)) {
             const numPixels = this.magnetismService.isMagnetismOn ? this.canvasGridService.squareWidth : DirectionalMovementConstants.NUM_PIXELS;
             directive.translateSelection(numPixels);
-            console.log('continuous');
         }
         directive.hasMovedOnce = false;
     }
