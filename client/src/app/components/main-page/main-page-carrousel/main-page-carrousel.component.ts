@@ -86,7 +86,7 @@ export class MainPageCarrouselComponent {
         this.resetShowcasedDrawings();
     }
 
-    @HostListener('keydown.ArrowLeft', ['$event'])
+    @HostListener('window:keydown.ArrowLeft', ['$event'])
     showcasePreviousDrawing(): void {
         this.noValidDrawing = false;
         if (this.showCasedDrawings.length === 0) {
@@ -103,7 +103,7 @@ export class MainPageCarrouselComponent {
         this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
     }
 
-    @HostListener('keydown.ArrowRight', ['$event'])
+    @HostListener('window:keydown.ArrowRight', ['$event'])
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;
         this.noValidDrawing = false;
