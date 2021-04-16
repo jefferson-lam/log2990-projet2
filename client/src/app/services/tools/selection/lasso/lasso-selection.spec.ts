@@ -62,7 +62,7 @@ describe('LassoSelectionService', () => {
         executeSpy = spyOn(undoRedoService, 'executeCommand');
 
         service.initialPoint = { x: 394, y: 432 };
-        service.linePathData = [service.initialPoint, { x: 133, y: 256 }, { x: 257, y: 399 }];
+        service.pathData = [service.initialPoint, { x: 133, y: 256 }, { x: 257, y: 399 }];
         service.topLeft = {
             x: 25,
             y: 60,
@@ -95,7 +95,7 @@ describe('LassoSelectionService', () => {
         });
         service.onMouseDown(mouseEvent);
         expect(lineMouseDownSpy).toHaveBeenCalled();
-        expect(service.linePathData[service.linePathData.length - 1]).toEqual(service.initialPoint);
+        expect(service.pathData[service.pathData.length - 1]).toEqual(service.initialPoint);
     });
 
     it('onMouseDown should return if invalid segment', () => {
@@ -115,14 +115,14 @@ describe('LassoSelectionService', () => {
     it('onMouseDown should start new path if passes initial validation and called first time', () => {
         service.onMouseDown(mouseEvent);
         expect(service.initialPoint).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
-        expect(service.linePathData).toEqual([service.initialPoint, service.initialPoint]);
+        expect(service.pathData).toEqual([service.initialPoint, service.initialPoint]);
         expect(service.inUse).toBeTruthy();
     });
 
     it('onMouseDown should set isConnected to true if new point is the same as initial', () => {
         const arePointsEqualSpy = spyOn<any>(service, 'arePointsEqual').and.callThrough();
         const lineMouseDownSpy = spyOn(service.lineService, 'onMouseDown').and.callFake(() => {
-            service.linePathData[service.linePathData.length - 1] = service.initialPoint;
+            service.pathData[service.pathData.length - 1] = service.initialPoint;
         });
         mouseEvent = {
             offsetX: service.initialPoint.x,
@@ -133,7 +133,7 @@ describe('LassoSelectionService', () => {
         service.lineService.inUse = true;
         service.onMouseDown(mouseEvent);
         expect(lineMouseDownSpy).toHaveBeenCalled();
-        expect(arePointsEqualSpy).toHaveBeenCalledWith(service.linePathData[service.linePathData.length - 1], service.initialPoint);
+        expect(arePointsEqualSpy).toHaveBeenCalledWith(service.pathData[service.pathData.length - 1], service.initialPoint);
     });
 
     it('onMouseDown should call initializeSelection if isConnected', () => {
@@ -162,7 +162,7 @@ describe('LassoSelectionService', () => {
     it('onMouseMove should call isIntersect and set the cursor to no-drop if invalid segment', () => {
         const isIntersectSpy = spyOn(service, 'isIntersect').and.callThrough();
         service.inUse = true;
-        service.linePathData.push({ x: 133, y: 256 });
+        service.pathData.push({ x: 133, y: 256 });
         service.onMouseMove(mouseEvent);
         expect(isIntersectSpy).toHaveBeenCalled();
         expect(service.isInvalidSegment).toBeTruthy();
@@ -256,7 +256,7 @@ describe('LassoSelectionService', () => {
     it('selectLasso should call clip and fill procedures', () => {
         const clipLassoSelectionSpy = spyOn<any>(service, 'clipLassoSelection');
         const fillLassoSpy = spyOn<any>(service, 'fillLasso');
-        service['selectLasso'](selectionCtxStub, baseCtxStub, service.linePathData);
+        service['selectLasso'](selectionCtxStub, baseCtxStub, service.pathData);
         expect(clipLassoSelectionSpy).toHaveBeenCalled();
         expect(fillLassoSpy).toHaveBeenCalled();
     });
@@ -264,7 +264,7 @@ describe('LassoSelectionService', () => {
     it('computeSelectionSize should return correct selectionSize', () => {
         const expectedWidth = 261;
         const expectedHeight = 176;
-        const result = service.computeSelectionSize(service.linePathData);
+        const result = service.computeSelectionSize(service.pathData);
         expect(result[0]).toEqual(expectedWidth);
         expect(result[1]).toEqual(expectedHeight);
     });
@@ -273,9 +273,9 @@ describe('LassoSelectionService', () => {
         const selectionCtxLineToSpy = spyOn(selectionCtxStub, 'lineTo');
         const selectionCtxMoveToSpy = spyOn(selectionCtxStub, 'moveTo');
         const selectionCtxFill = spyOn(selectionCtxStub, 'fill');
-        service['fillLasso'](selectionCtxStub, service.linePathData, 'white');
-        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(service.linePathData[0].x, service.linePathData[0].y);
-        for (const point of service.linePathData) {
+        service['fillLasso'](selectionCtxStub, service.pathData, 'white');
+        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(service.pathData[0].x, service.pathData[0].y);
+        for (const point of service.pathData) {
             expect(selectionCtxLineToSpy).toHaveBeenCalledWith(point.x, point.y);
         }
         expect(selectionCtxStub.fillStyle).toEqual('#000000');
@@ -286,12 +286,9 @@ describe('LassoSelectionService', () => {
         const selectionCtxLineToSpy = spyOn(selectionCtxStub, 'lineTo');
         const selectionCtxMoveToSpy = spyOn(selectionCtxStub, 'moveTo');
         const selectionCtxStrokeSpy = spyOn(selectionCtxStub, 'stroke');
-        service['drawLassoOutline'](selectionCtxStub, service.linePathData);
-        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(
-            service.linePathData[0].x - service.topLeft.x,
-            service.linePathData[0].y - service.topLeft.y,
-        );
-        for (const point of service.linePathData) {
+        service['drawLassoOutline'](selectionCtxStub, service.pathData);
+        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(service.pathData[0].x - service.topLeft.x, service.pathData[0].y - service.topLeft.y);
+        for (const point of service.pathData) {
             expect(selectionCtxLineToSpy).toHaveBeenCalledWith(point.x - service.topLeft.x, point.y - service.topLeft.y);
         }
         expect(selectionCtxStrokeSpy).toHaveBeenCalled();
@@ -301,12 +298,9 @@ describe('LassoSelectionService', () => {
         const selectionCtxClipSpy = spyOn(selectionCtxStub, 'clip');
         const selectionCtxLineToSpy = spyOn(selectionCtxStub, 'lineTo');
         const selectionCtxMoveToSpy = spyOn(selectionCtxStub, 'moveTo');
-        service['clipLassoSelection'](selectionCtxStub, baseCtxStub, service.linePathData);
-        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(
-            service.linePathData[0].x - service.topLeft.x,
-            service.linePathData[0].y - service.topLeft.y,
-        );
-        for (const point of service.linePathData) {
+        service['clipLassoSelection'](selectionCtxStub, baseCtxStub, service.pathData);
+        expect(selectionCtxMoveToSpy).toHaveBeenCalledWith(service.pathData[0].x - service.topLeft.x, service.pathData[0].y - service.topLeft.y);
+        for (const point of service.pathData) {
             expect(selectionCtxLineToSpy).toHaveBeenCalledWith(point.x - service.topLeft.x, point.y - service.topLeft.y);
         }
         expect(selectionCtxClipSpy).toHaveBeenCalled();
@@ -327,18 +321,18 @@ describe('LassoSelectionService', () => {
     });
 
     it('isIntersect should return false if point is initialPoint', () => {
-        const result = service.isIntersect(service.initialPoint, service.linePathData);
+        const result = service.isIntersect(service.initialPoint, service.pathData);
         expect(result).toBeFalsy();
     });
 
     it('isIntersect should return false if new line does not intersect with current lines', () => {
-        const result = service.isIntersect(service.linePathData[service.linePathData.length - 1], service.linePathData);
+        const result = service.isIntersect(service.pathData[service.pathData.length - 1], service.pathData);
         expect(result).toBeFalsy();
     });
 
     it('isIntersect should return true if new line does intersects with current lines', () => {
-        service.linePathData.push({ x: 133, y: 256 });
-        const result = service.isIntersect(service.linePathData[service.linePathData.length - 1], service.linePathData);
+        service.pathData.push({ x: 133, y: 256 });
+        const result = service.isIntersect(service.pathData[service.pathData.length - 1], service.pathData);
         expect(result).toBeTruthy();
     });
 
@@ -375,9 +369,9 @@ describe('LassoSelectionService', () => {
         );
     });
 
-    it('clearPath should clear the service linePathData attribute', () => {
+    it('clearPath should clear the service pathData attribute', () => {
         service['clearPath']();
-        expect(service.linePathData).toEqual([]);
+        expect(service.pathData).toEqual([]);
     });
 
     it('arePointsEqual should return true if points are equal', () => {

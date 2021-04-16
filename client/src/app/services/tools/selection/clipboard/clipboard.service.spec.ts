@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SegmentIntersectionService } from '@app/services/helper/segment-intersection.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
@@ -10,6 +11,8 @@ import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/e
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { LineService } from '../../line/line-service';
+import { LassoSelectionService } from '../lasso/lasso-selection';
 
 describe('ClipboardService', () => {
     let service: ClipboardService;
@@ -18,6 +21,7 @@ describe('ClipboardService', () => {
     let canvasTestHelper: CanvasTestHelper;
     let rectangleSelectionServiceStub: RectangleSelectionService;
     let ellipseSelectionServiceStub: EllipseSelectionService;
+    let lassoSelectionServiceStub: LassoSelectionService;
     let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let resizerHandlerServiceSpy: jasmine.SpyObj<ResizerHandlerService>;
 
@@ -46,6 +50,14 @@ describe('ClipboardService', () => {
         );
         spyOn(ellipseSelectionServiceStub, 'resetSelectedToolSettings');
 
+        lassoSelectionServiceStub = new LassoSelectionService(
+            drawServiceSpy,
+            undoRedoServiceSpy,
+            resizerHandlerServiceSpy,
+            new SegmentIntersectionService(),
+            new LineService(drawServiceSpy, undoRedoServiceSpy),
+        );
+        spyOn(lassoSelectionServiceStub, 'resetSelectedToolSettings');
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
@@ -92,6 +104,12 @@ describe('ClipboardService', () => {
         toolManagerService.currentToolSubject.next(ellipseSelectionServiceStub);
         expect(service.currentTool).toBeInstanceOf(EllipseSelectionService);
         expect(service.currentTool).toEqual(ellipseSelectionServiceStub);
+    });
+
+    it('currenttool should change to Lasso if toolManagers subject changes', () => {
+        toolManagerService.currentToolSubject.next(lassoSelectionServiceStub);
+        expect(service.currentTool).toBeInstanceOf(LassoSelectionService);
+        expect(service.currentTool).toEqual(lassoSelectionServiceStub);
     });
 
     it('should be created', () => {
@@ -215,6 +233,16 @@ describe('ClipboardService', () => {
         expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
+    it('deleteSelection fills active selection using LassoClipboardCommand', () => {
+        service.currentTool = lassoSelectionServiceStub;
+        canvasTestHelper.selectionCanvas.width = 1;
+        canvasTestHelper.selectionCanvas.height = 1;
+        service.deleteSelection();
+        expect(service.selectionHeight).toEqual(service.currentTool.selectionHeight);
+        expect(service.selectionWidth).toEqual(service.currentTool.selectionWidth);
+        expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
+    });
+
     it('deleteSelection does nothing when there is no active selection ', () => {
         canvasTestHelper.selectionCanvas.width = 0;
         canvasTestHelper.selectionCanvas.height = 0;
@@ -240,5 +268,11 @@ describe('ClipboardService', () => {
         service.currentTool = rectangleSelectionServiceStub;
         service.copySelection();
         expect(service.lastSelectionTool).toEqual(ToolManagerConstants.RECTANGLE_SELECTION_KEY);
+    });
+
+    it('getCurrentSelectionToolName should return correct name with Lasso', () => {
+        service.currentTool = lassoSelectionServiceStub;
+        const result = service['getCurrentSelectionToolName']();
+        expect(result).toEqual(ToolManagerConstants.LASSO_SELECTION_KEY);
     });
 });

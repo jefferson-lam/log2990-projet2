@@ -6,7 +6,7 @@ export class LassoSelectionCommand extends Command {
     selectionHeight: number;
     transformValues: Vec2;
     topLeft: Vec2;
-    linePathData: Vec2[];
+    pathData: Vec2[];
     selectionCanvas: HTMLCanvasElement;
     isFromClipboard: boolean;
 
@@ -18,7 +18,7 @@ export class LassoSelectionCommand extends Command {
     setValues(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, lassoSelectionService: LassoSelectionService): void {
         this.ctx = canvasContext;
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
-        this.linePathData = Object.assign([], lassoSelectionService.linePathData);
+        this.pathData = Object.assign([], lassoSelectionService.pathData);
         this.selectionHeight = selectionCanvas.height;
         this.selectionWidth = selectionCanvas.width;
         this.transformValues = lassoSelectionService.transformValues;
@@ -28,7 +28,7 @@ export class LassoSelectionCommand extends Command {
 
     execute(): void {
         if (!this.isFromClipboard) {
-            this.fillLasso(this.ctx, this.linePathData, 'white');
+            this.fillLasso(this.ctx, this.pathData, 'white');
         }
         this.ctx.drawImage(
             this.selectionCanvas,

@@ -44,7 +44,7 @@ describe('RectangleSelectionCommandService', () => {
             { x: TEST_X_OFFSET, y: TEST_Y_OFFSET },
         ] as Vec2[];
 
-        rectangleSelectionService.cornerCoords = Object.assign([], pathStub);
+        rectangleSelectionService.pathData = Object.assign([], pathStub);
         selectionCtxStub.canvas.height = TEST_SELECTION_HEIGHT;
         selectionCtxStub.canvas.width = TEST_SELECTION_WIDTH;
         rectangleSelectionService.transformValues = TEST_TRANSFORM_VALUES;
@@ -77,8 +77,8 @@ describe('RectangleSelectionCommandService', () => {
         command.execute();
         expect(baseCtxFillRectSpy).toHaveBeenCalled();
         expect(baseCtxFillRectSpy).toHaveBeenCalledWith(
-            command.cornerCoords[START_INDEX].x,
-            command.cornerCoords[START_INDEX].y,
+            command.pathData[START_INDEX].x,
+            command.pathData[START_INDEX].y,
             command.initialSelectionWidth,
             command.initialSelectionHeight,
         );

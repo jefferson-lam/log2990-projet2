@@ -20,7 +20,7 @@ export class ClipboardService {
     clipboard: ImageData = new ImageData(1, 1);
     currentTool: RectangleSelectionService | EllipseSelectionService | LassoSelectionService;
     lastSelectionTool: string;
-    cornerCoords: Vec2[];
+    pathData: Vec2[];
     isPasted: boolean;
     isCircle: boolean;
     selectionHeight: number;
@@ -42,7 +42,7 @@ export class ClipboardService {
             }
         });
         this.lastSelectionTool = '';
-        this.cornerCoords = new Array<Vec2>();
+        this.pathData = new Array<Vec2>();
         this.isPasted = false;
     }
 
@@ -54,22 +54,13 @@ export class ClipboardService {
                 this.drawingService.selectionCanvas.width,
                 this.drawingService.selectionCanvas.height,
             );
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.cornerCoords = this.currentTool.cornerCoords;
-            } else if (this.currentTool instanceof LassoSelectionService) {
-                this.cornerCoords = this.currentTool.linePathData;
-            }
             this.outlineClipboard = this.drawingService.borderCtx.getImageData(
                 0,
                 0,
                 this.drawingService.borderCanvas.width,
                 this.drawingService.borderCanvas.height,
             );
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.cornerCoords = this.currentTool.cornerCoords;
-            } else if (this.currentTool instanceof LassoSelectionService) {
-                this.cornerCoords = this.currentTool.linePathData;
-            }
+            this.pathData = Object.assign([], this.currentTool.pathData);
             this.lastSelectionTool = this.getCurrentSelectionToolName();
             this.isPasted = false;
         }
@@ -92,11 +83,7 @@ export class ClipboardService {
         this.drawingService.selectionCtx.putImageData(this.clipboard, 0, 0);
         this.drawingService.borderCtx.putImageData(this.outlineClipboard, 0, 0);
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
-        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-            this.cornerCoords = Object.assign([], this.currentTool.cornerCoords);
-        } else if (this.currentTool instanceof LassoSelectionService) {
-            this.cornerCoords = Object.assign([], this.currentTool.linePathData);
-        }
+        this.pathData = Object.assign([], this.currentTool.pathData);
         this.currentTool.isManipulating = true;
         // This boolean is for avoiding behavior of simply moving the previous selection
         this.currentTool.isFromClipboard = true;
@@ -105,11 +92,7 @@ export class ClipboardService {
 
     deleteSelection(): void {
         if (!this.isPasted && this.isSelected(this.drawingService.selectionCanvas)) {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.cornerCoords = Object.assign([], this.currentTool.cornerCoords);
-            } else if (this.currentTool instanceof LassoSelectionService) {
-                this.cornerCoords = Object.assign([], this.currentTool.linePathData);
-            }
+            this.pathData = Object.assign([], this.currentTool.pathData);
             this.deleteEllipse();
             this.deleteRectangle();
             this.deleteLasso();

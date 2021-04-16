@@ -8,7 +8,7 @@ export class EllipseSelectionCommand extends Command {
     selectionHeight: number;
     transformValues: Vec2;
     isCircle: boolean;
-    cornerCoords: Vec2[] = [];
+    pathData: Vec2[] = [];
     selectionCanvas: HTMLCanvasElement;
     isFromClipboard: boolean;
 
@@ -19,7 +19,7 @@ export class EllipseSelectionCommand extends Command {
 
     setValues(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, ellipseSelectionService: EllipseSelectionService): void {
         this.ctx = canvasContext;
-        this.cornerCoords = Object.assign([], ellipseSelectionService.cornerCoords);
+        this.pathData = Object.assign([], ellipseSelectionService.pathData);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
         this.selectionHeight = selectionCanvas.height;
         this.selectionWidth = selectionCanvas.width;
@@ -29,10 +29,10 @@ export class EllipseSelectionCommand extends Command {
     }
 
     execute(): void {
-        const ellipseCenter = this.getEllipseCenter(this.cornerCoords[START_INDEX], this.cornerCoords[END_INDEX], this.isCircle);
+        const ellipseCenter = this.getEllipseCenter(this.pathData[START_INDEX], this.pathData[END_INDEX], this.isCircle);
         const startX = ellipseCenter.x;
         const startY = ellipseCenter.y;
-        const radiiXAndY = this.getRadiiXAndY(this.cornerCoords);
+        const radiiXAndY = this.getRadiiXAndY(this.pathData);
         const xRadius = radiiXAndY[0];
         const yRadius = radiiXAndY[1];
 

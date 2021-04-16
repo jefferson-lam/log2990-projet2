@@ -5,7 +5,7 @@ import * as SelectionConstants from '@app/constants/selection-constants';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 
 export class EllipseClipboardCommand extends Command {
-    cornerCoords: Vec2[];
+    pathData: Vec2[];
     isCircle: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService) {
@@ -15,23 +15,19 @@ export class EllipseClipboardCommand extends Command {
 
     setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
         this.ctx = canvasContext;
-        this.cornerCoords = Object.assign([], clipboardService.cornerCoords);
+        this.pathData = Object.assign([], clipboardService.pathData);
         this.isCircle = clipboardService.isCircle;
     }
 
     execute(): void {
-        this.fillEllipse(this.ctx, this.cornerCoords, this.isCircle);
+        this.fillEllipse(this.ctx, this.pathData, this.isCircle);
     }
 
-    private fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean): void {
-        const ellipseCenter = this.getEllipseCenter(
-            cornerCoords[SelectionConstants.START_INDEX],
-            cornerCoords[SelectionConstants.END_INDEX],
-            isCircle,
-        );
+    private fillEllipse(ctx: CanvasRenderingContext2D, pathData: Vec2[], isCircle: boolean): void {
+        const ellipseCenter = this.getEllipseCenter(pathData[SelectionConstants.START_INDEX], pathData[SelectionConstants.END_INDEX], isCircle);
         const startX = ellipseCenter.x;
         const startY = ellipseCenter.y;
-        const radiiXAndY = this.getRadiiXAndY(this.cornerCoords);
+        const radiiXAndY = this.getRadiiXAndY(this.pathData);
         const xRadius = radiiXAndY[0];
         const yRadius = radiiXAndY[1];
         ctx.beginPath();

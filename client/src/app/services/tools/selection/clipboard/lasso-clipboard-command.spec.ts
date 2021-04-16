@@ -26,7 +26,7 @@ describe('LassoClipboardCommand', () => {
             { x: 257, y: 399 },
             { x: 394, y: 432 },
         ] as Vec2[];
-        clipboardService.cornerCoords = Object.assign([], pathStub);
+        clipboardService.pathData = Object.assign([], pathStub);
 
         command = new LassoClipboardCommand(baseCtxStub, clipboardService);
     });
@@ -37,7 +37,7 @@ describe('LassoClipboardCommand', () => {
 
     it('setValues should bind correct values to Command', () => {
         command.setValues(baseCtxStub, clipboardService);
-        expect(command.pathData).toEqual(clipboardService.cornerCoords);
+        expect(command.pathData).toEqual(clipboardService.pathData);
     });
 
     it('execute should correctly call with correct parameters', () => {

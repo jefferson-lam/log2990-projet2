@@ -105,7 +105,7 @@ describe('RectangleSelectionService', () => {
         expect(executeSpy).toHaveBeenCalled();
         expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
-        expect(service.cornerCoords[START_INDEX]).toEqual(expectedResult);
+        expect(service.pathData[START_INDEX]).toEqual(expectedResult);
     });
 
     it('onMouseDown should not set inUse to true if not left mouse button', () => {
@@ -133,7 +133,7 @@ describe('RectangleSelectionService', () => {
         service.onMouseUp(mouseUpEvent);
         expect(service.rectangleService.inUse).toBeFalsy();
         expect(parentMouseUpSpy).toHaveBeenCalled();
-        expect(service.cornerCoords[END_INDEX]).toEqual(expectedEndVec2);
+        expect(service.pathData[END_INDEX]).toEqual(expectedEndVec2);
     });
 
     it('onMouseUp should return if selectionW and selectionH are 0', () => {
@@ -142,7 +142,7 @@ describe('RectangleSelectionService', () => {
             y: 250,
         };
         service.inUse = true;
-        service.cornerCoords[START_INDEX] = startPoint;
+        service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(service.inUse).toBeFalsy();
@@ -154,7 +154,7 @@ describe('RectangleSelectionService', () => {
             y: 40,
         };
         service.inUse = true;
-        service.cornerCoords[START_INDEX] = startPoint;
+        service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(service.inUse).toBeFalsy();
         expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
@@ -168,7 +168,7 @@ describe('RectangleSelectionService', () => {
         };
         service.isSquare = true;
         service.inUse = true;
-        service.cornerCoords[START_INDEX] = startPoint;
+        service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(computeSquareCoordsSpy).toHaveBeenCalled();
     });
@@ -185,14 +185,14 @@ describe('RectangleSelectionService', () => {
         expect(parentMouseEnterSpy).toHaveBeenCalledWith(mouseEvent);
     });
 
-    it('onMouseMove should update cornerCoords', () => {
+    it('onMouseMove should update pathData', () => {
         const expectedResult: Vec2 = {
             x: 25,
             y: 40,
         };
         service.inUse = true;
         service.onMouseMove(mouseEvent);
-        expect(service.cornerCoords[END_INDEX]).toEqual(expectedResult);
+        expect(service.pathData[END_INDEX]).toEqual(expectedResult);
     });
 
     it('onMouseMove should pass if not inUse', () => {
@@ -306,7 +306,7 @@ describe('RectangleSelectionService', () => {
         } as KeyboardEvent;
         service.isManipulating = true;
         service.isEscapeDown = true;
-        service.cornerCoords = [
+        service.pathData = [
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
@@ -360,7 +360,7 @@ describe('RectangleSelectionService', () => {
         service.selectAll();
         expect(canvasTestHelper.selectionCanvas.style.left).toEqual('0px');
         expect(canvasTestHelper.selectionCanvas.style.top).toEqual('0px');
-        expect(service.cornerCoords).toEqual([
+        expect(service.pathData).toEqual([
             { x: 0, y: 0 },
             { x: service.selectionWidth, y: service.selectionHeight },
         ]);
@@ -411,7 +411,7 @@ describe('RectangleSelectionService', () => {
         const sw = 75;
         const sh = 210;
         service.isManipulating = true;
-        service.cornerCoords = [
+        service.pathData = [
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
@@ -419,17 +419,7 @@ describe('RectangleSelectionService', () => {
         service.selectionHeight = sh;
         service.undoSelection();
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
-        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
-            0,
-            0,
-            sw,
-            sh,
-            service.cornerCoords[0].x,
-            service.cornerCoords[0].y,
-            sw,
-            sh,
-        );
+        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(selectionCtxStub.canvas, 0, 0, sw, sh, service.pathData[0].x, service.pathData[0].y, sw, sh);
         expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
         expect(service.isManipulating).toBeFalsy();

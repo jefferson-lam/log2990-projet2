@@ -17,7 +17,7 @@ export class LassoSelectionService extends ToolSelectionService {
     isManipulating: boolean;
     isConnected: boolean;
     isInvalidSegment: boolean;
-    linePathData: Vec2[];
+    pathData: Vec2[];
     initialPoint: Vec2;
     transformValues: Vec2;
     selectionWidth: number;
@@ -38,19 +38,19 @@ export class LassoSelectionService extends ToolSelectionService {
         this.isManipulating = false;
         this.isConnected = false;
         this.isInvalidSegment = false;
-        this.linePathData = new Array<Vec2>();
+        this.pathData = new Array<Vec2>();
         this.isEscapeDown = false;
         this.isFromClipboard = false;
         this.numSides = 0;
         this.lineService.addPointSubject.asObservable().subscribe((point) => {
-            this.linePathData.push(point);
+            this.pathData.push(point);
         });
         this.lineService.currentPointSubject.asObservable().subscribe((point) => {
-            this.linePathData[this.linePathData.length - 1] = point;
+            this.pathData[this.pathData.length - 1] = point;
         });
         this.lineService.removePointSubject.asObservable().subscribe((removedPoint) => {
             if (removedPoint) {
-                this.linePathData.pop();
+                this.pathData.pop();
                 this.numSides--;
             }
         });
@@ -67,12 +67,12 @@ export class LassoSelectionService extends ToolSelectionService {
         if (!this.inUse) {
             this.clearPath();
             this.initialPoint = this.getPositionFromMouse(event);
-            this.linePathData[SelectionConstants.START_INDEX] = this.initialPoint;
-            this.linePathData.push(this.initialPoint);
+            this.pathData[SelectionConstants.START_INDEX] = this.initialPoint;
+            this.pathData.push(this.initialPoint);
             this.inUse = true;
         } else if (this.inUse) {
             this.numSides++;
-            this.isConnected = this.arePointsEqual(this.linePathData[this.linePathData.length - 1], this.initialPoint);
+            this.isConnected = this.arePointsEqual(this.pathData[this.pathData.length - 1], this.initialPoint);
         }
         if (this.isConnected) {
             this.initializeSelection();
@@ -82,7 +82,7 @@ export class LassoSelectionService extends ToolSelectionService {
     onMouseMove(event: MouseEvent): void {
         if (!this.inUse) return;
         super.onMouseMove(event);
-        this.isInvalidSegment = this.validateSegment(this.linePathData[this.linePathData.length - 1], this.linePathData);
+        this.isInvalidSegment = this.validateSegment(this.pathData[this.pathData.length - 1], this.pathData);
         if (this.isInvalidSegment) {
             this.drawingService.previewCtx.canvas.style.cursor = 'no-drop';
         } else {
@@ -220,14 +220,14 @@ export class LassoSelectionService extends ToolSelectionService {
 
     initializeSelection(): void {
         this.lineService.onToolChange();
-        const selectionSize = this.computeSelectionSize(this.linePathData);
+        const selectionSize = this.computeSelectionSize(this.pathData);
         this.selectionWidth = selectionSize[0];
         this.selectionHeight = selectionSize[1];
         this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
         this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
         this.drawingService.borderCanvas.width = this.selectionWidth;
         this.drawingService.borderCanvas.height = this.selectionHeight;
-        this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.linePathData);
+        this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData);
         this.setSelectionCanvasPosition(this.topLeft);
         this.isConnected = false;
         this.inUse = false;
@@ -312,7 +312,7 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     private clearPath(): void {
-        this.linePathData = [];
+        this.pathData = [];
     }
 
     private arePointsEqual(point1: Vec2, point2: Vec2): boolean {

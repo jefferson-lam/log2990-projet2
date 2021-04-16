@@ -45,7 +45,7 @@ describe('EllipseSelectionCommandService', () => {
             { x: TEST_X_OFFSET, y: TEST_Y_OFFSET },
         ] as Vec2[];
 
-        ellipseSelectionService.cornerCoords = Object.assign([], pathStub);
+        ellipseSelectionService.pathData = Object.assign([], pathStub);
         selectionCtxStub.canvas.height = TEST_SELECTION_HEIGHT;
         selectionCtxStub.canvas.width = TEST_SELECTION_WIDTH;
         ellipseSelectionService.transformValues = TEST_TRANSFORM_VALUES;
@@ -98,8 +98,8 @@ describe('EllipseSelectionCommandService', () => {
     });
 
     it('getEllipseCenter should set displacement to shortest side if isCircle', () => {
-        const start = command.cornerCoords[START_INDEX];
-        const end = command.cornerCoords[END_INDEX];
+        const start = command.pathData[START_INDEX];
+        const end = command.pathData[END_INDEX];
 
         const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
 
@@ -116,9 +116,9 @@ describe('EllipseSelectionCommandService', () => {
     it('getRadiiXAndY should set radius to shortest side if isCircle', () => {
         command.isCircle = true;
 
-        const start = command.cornerCoords[START_INDEX];
+        const start = command.pathData[START_INDEX];
 
-        const end = command.cornerCoords[END_INDEX];
+        const end = command.pathData[END_INDEX];
 
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;
@@ -126,7 +126,7 @@ describe('EllipseSelectionCommandService', () => {
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
 
         // tslint:disable:no-string-literal
-        const radii = command['getRadiiXAndY'](command.cornerCoords);
+        const radii = command['getRadiiXAndY'](command.pathData);
 
         expect(radii[0]).toEqual(shortestSide);
         expect(radii[1]).toEqual(shortestSide);

@@ -12,7 +12,7 @@ export class LassoClipboardCommand extends Command {
 
     setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
         this.ctx = canvasContext;
-        this.pathData = Object.assign([], clipboardService.cornerCoords);
+        this.pathData = Object.assign([], clipboardService.pathData);
     }
 
     execute(): void {
