@@ -133,6 +133,7 @@ export class LassoSelectionService extends ToolSelectionService {
         this.resetSelectedToolSettings();
         this.resetCanvasState(this.drawingService.selectionCanvas);
         this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
         this.resizerHandlerService.resetResizers();
         this.isManipulating = false;
         this.isEscapeDown = false;
@@ -142,6 +143,7 @@ export class LassoSelectionService extends ToolSelectionService {
     resetSelection(): void {
         this.resetCanvasState(this.drawingService.selectionCanvas);
         this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
         this.resetSelectedToolSettings();
         // Erase the rectangle drawn as a preview of selection
         this.clearPath();
@@ -220,8 +222,8 @@ export class LassoSelectionService extends ToolSelectionService {
         const selectionSize = this.computeSelectionSize(this.linePathData);
         this.selectionWidth = selectionSize[0];
         this.selectionHeight = selectionSize[1];
-        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
-        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.drawingService.borderCanvas.width = this.selectionWidth;
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.drawingService.borderCanvas.height = this.selectionHeight;
         this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.linePathData);
         this.setSelectionCanvasPosition(this.topLeft);
         this.isConnected = false;
@@ -255,8 +257,7 @@ export class LassoSelectionService extends ToolSelectionService {
             this.selectionHeight,
         );
         targetCtx.restore();
-        this.drawLassoOutline(this.drawingService.previewSelectionCtx, pathData);
-        // this.drawLassoOutline(targetCtx, pathData);
+        this.drawLassoOutline(this.drawingService.borderCtx, pathData);
     }
 
     private fillLasso(ctx: CanvasRenderingContext2D, pathData: Vec2[], color: string): void {
@@ -302,6 +303,8 @@ export class LassoSelectionService extends ToolSelectionService {
         this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
         this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
         this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
     }
 
