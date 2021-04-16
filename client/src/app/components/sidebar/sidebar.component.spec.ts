@@ -56,8 +56,9 @@ describe('SidebarComponent', () => {
             {} as DrawingService,
             {} as UndoRedoService,
             {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
+            rectangleStub as RectangleService,
         );
+
         clipboardServiceStub = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'deleteSelection', 'pasteSelection']);
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
