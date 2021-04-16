@@ -22,6 +22,7 @@ export class LassoSelectionService extends ToolSelectionService {
     transformValues: Vec2;
     selectionWidth: number;
     selectionHeight: number;
+    numSides: number;
     topLeft: Vec2;
     isEscapeDown: boolean;
     isFromClipboard: boolean;
@@ -40,6 +41,7 @@ export class LassoSelectionService extends ToolSelectionService {
         this.linePathData = new Array<Vec2>();
         this.isEscapeDown = false;
         this.isFromClipboard = false;
+        this.numSides = 0;
         this.lineService.addPointSubject.asObservable().subscribe((point) => {
             this.linePathData.push(point);
         });
@@ -68,6 +70,7 @@ export class LassoSelectionService extends ToolSelectionService {
             this.linePathData.push(this.initialPoint);
             this.inUse = true;
         } else if (this.inUse) {
+            this.numSides++;
             this.isConnected = this.arePointsEqual(this.linePathData[this.linePathData.length - 1], this.initialPoint);
         }
         if (this.isConnected) {
@@ -78,12 +81,19 @@ export class LassoSelectionService extends ToolSelectionService {
     onMouseMove(event: MouseEvent): void {
         if (!this.inUse) return;
         super.onMouseMove(event);
-        this.isInvalidSegment = this.isIntersect(this.linePathData[this.linePathData.length - 1], this.linePathData);
+        this.isInvalidSegment = this.validateSegment(this.linePathData[this.linePathData.length - 1], this.linePathData);
         if (this.isInvalidSegment) {
             this.drawingService.previewCtx.canvas.style.cursor = 'no-drop';
         } else {
             this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
         }
+    }
+
+    validateSegment(point: Vec2, pathData: Vec2[]): boolean {
+        return (
+            this.isIntersect(point, pathData) ||
+            (this.arePointsEqual(point, this.initialPoint) && this.numSides < SelectionConstants.MINIMUM_LINE_LASSO)
+        );
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
@@ -136,24 +146,30 @@ export class LassoSelectionService extends ToolSelectionService {
         // Erase the rectangle drawn as a preview of selection
         this.clearPath();
         this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
+        this.numSides = 0;
         this.isInvalidSegment = false;
         this.inUse = false;
     }
 
     isIntersect(point: Vec2, pathData: Vec2[]): boolean {
-        if (point === this.initialPoint) {
-            return false;
-        }
         const newLine = { start: pathData[pathData.length - 2], end: point };
         let pathLine;
+        let numIntersections = 0;
         for (let i = 0; i < pathData.length - 2; i++) {
             pathLine = { start: pathData[i], end: pathData[i + 1] };
             const isIntersect = this.segmentIntersectionService.intersects(newLine, pathLine);
             if (isIntersect) {
-                return true;
+                ++numIntersections;
             }
         }
-        return false;
+        if (numIntersections === 0) {
+            return false;
+        }
+        if (numIntersections === 1 && this.arePointsEqual(point, this.initialPoint)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     computeSelectionSize(pathData: Vec2[]): number[] {
@@ -210,6 +226,7 @@ export class LassoSelectionService extends ToolSelectionService {
         this.setSelectionCanvasPosition(this.topLeft);
         this.isConnected = false;
         this.inUse = false;
+        this.numSides = 0;
         this.isManipulating = true;
     }
 
