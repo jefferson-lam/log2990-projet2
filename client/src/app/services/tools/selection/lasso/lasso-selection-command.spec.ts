@@ -31,7 +31,12 @@ describe('LassoSelectionCommand', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         selectionCtxStub = canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-        pathStub = [{ x: 394, y: 432 }, , { x: 133, y: 256 }, { x: 257, y: 399 }, { x: 394, y: 432 }] as Vec2[];
+        pathStub = [
+            { x: 394, y: 432 },
+            { x: 133, y: 256 },
+            { x: 257, y: 399 },
+            { x: 394, y: 432 },
+        ] as Vec2[];
 
         lassoSelectionService.linePathData = Object.assign([], pathStub);
         lassoSelectionService.transformValues = TEST_TRANSFORM_VALUES;
@@ -98,5 +103,17 @@ describe('LassoSelectionCommand', () => {
             TEST_SELECTION_WIDTH,
             TEST_SELECTION_HEIGHT,
         );
+    });
+
+    it('fillLasso should fill the correct path', () => {
+        const moveToSpy = spyOn(baseCtxStub, 'moveTo');
+        const lineToSpy = spyOn(baseCtxStub, 'lineTo');
+        const fillSpy = spyOn(baseCtxStub, 'fill');
+        command['fillLasso'](baseCtxStub, command.linePathData, 'white');
+        expect(moveToSpy).toHaveBeenCalled();
+        for (const point of command.linePathData) {
+            expect(lineToSpy).toHaveBeenCalledWith(point.x, point.y);
+        }
+        expect(fillSpy).toHaveBeenCalled();
     });
 });
