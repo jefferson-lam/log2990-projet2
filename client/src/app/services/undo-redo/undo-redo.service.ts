@@ -36,14 +36,12 @@ export class UndoRedoService {
 
     undo(): void {
         if (this.undoPile.length === 0) return;
-
         this.redoPile.push(this.undoPile.pop() as Command);
         this.refresh();
     }
 
     redo(): void {
         if (this.redoPile.length === 0) return;
-
         this.undoPile.push(this.redoPile.pop() as Command);
         this.refresh();
     }
