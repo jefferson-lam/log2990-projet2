@@ -2,7 +2,8 @@
     font-family: 'Rubik', serif;
 }
 
-#saveButton, #newButton {
+#saveButton,
+#newButton {
     align-content: center;
     font-size: large;
     background-color: coral;
@@ -17,6 +18,7 @@
     justify-content: space-between;
     flex-direction: column;
     display: flex;
+    overflow: hidden;
 }
 
 .mat-dialog-title {
