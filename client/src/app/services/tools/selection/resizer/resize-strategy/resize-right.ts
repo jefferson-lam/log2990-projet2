@@ -19,7 +19,6 @@ export class ResizeRight extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.width = this.selectionComponent.initialPosition.x - pointerPosition;
             this.selectionComponent.previewSelectionCanvas.style.left = pointerPosition + 'px';
         }
-        this.recalibrateBorderCanvas();
         this.lastWidth = this.selectionComponent.previewSelectionCanvas.width;
     }
 
