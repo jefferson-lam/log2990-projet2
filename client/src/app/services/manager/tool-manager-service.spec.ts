@@ -42,7 +42,6 @@ describe('ToolManagerService', () => {
 
     it('should be created', () => {
         expect(service).toBeTruthy();
-        console.log(lassoSelectionServiceSpy);
     });
 
     it('select tool on 1 keypress should select rectangle', () => {
