@@ -58,7 +58,7 @@
     </div>
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">
-        <mat-drawer [mode]="'side'" class="sidenav" [opened]="true">
+        <mat-drawer [mode]="'side'" class="sidenav" [opened]="true" [disableClose]="true">
             <mat-drawer-content [ngSwitch]="selectedTool.keyShortcut">
                 <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="'c'"> </app-sidebar-pencil>
                 <app-sidebar-eraser class="sidebar-tool-options" *ngSwitchCase="'e'"></app-sidebar-eraser>
