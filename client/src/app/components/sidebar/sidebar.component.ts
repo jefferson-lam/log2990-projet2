@@ -86,10 +86,6 @@ export class SidebarComponent {
         this.isMagnetismOptionsDisplayed = !this.isMagnetismOptionsDisplayed;
     }
 
-    closeMagnetismOptions(): void {
-        this.isMagnetismOptionsDisplayed = false;
-    }
-
     undo(): void {
         if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
             if (this.toolManager.currentTool.isManipulating) {

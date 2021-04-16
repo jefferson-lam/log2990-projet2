@@ -373,11 +373,6 @@ describe('SidebarComponent', () => {
         expect(component.isMagnetismOptionsDisplayed).toBeFalse();
     });
 
-    it('closeMagnetismOptions should set isMagnetismOptionsDisplayed to false', () => {
-        component.closeMagnetismOptions();
-        expect(component.isMagnetismOptionsDisplayed).toBeFalse();
-    });
-
     it('clicking on copySelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
         component.copySelection();
         expect(clipboardServiceStub.copySelection).toHaveBeenCalled();
