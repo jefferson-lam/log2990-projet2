@@ -138,7 +138,10 @@ export class SelectionComponent implements AfterViewInit {
             // Save drawing to preview canvas before drawing is wiped due to resizing
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
 
-            this.recalibrateCanvases();
+            this.recalibrateCanvasHeights();
+            this.recalibrateWidths();
+            this.recalibrateCanvasLefts();
+            this.recalibrateCanvasTops();
 
             // Clear the contents of the selectionCtx before redrawing the scaled image
             this.selectionCtx.clearRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
@@ -225,10 +228,17 @@ export class SelectionComponent implements AfterViewInit {
         this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
     }
 
-    private recalibrateCanvases(): void {
+    private recalibrateWidths(): void {
         this.selectionCanvas.width = this.borderCanvas.width = this.previewSelectionCanvas.width;
+    }
+
+    private recalibrateCanvasHeights(): void {
         this.selectionCanvas.height = this.borderCanvas.height = this.previewSelectionCanvas.height;
-        this.selectionCanvas.style.top = this.borderCanvas.style.top = this.previewSelectionCanvas.style.top;
+    }
+    private recalibrateCanvasLefts(): void {
         this.selectionCanvas.style.left = this.borderCanvas.style.left = this.previewSelectionCanvas.style.left;
+    }
+    private recalibrateCanvasTops(): void {
+        this.selectionCanvas.style.top = this.borderCanvas.style.top = this.previewSelectionCanvas.style.top;
     }
 }
