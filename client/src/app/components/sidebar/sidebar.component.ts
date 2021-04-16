@@ -17,7 +17,9 @@ export class SidebarComponent {
     @Input() isUndoPossible: boolean = false;
     @Input() isRedoPossible: boolean = false;
     @Input() selectedTool: SidebarToolButton;
-    @Input() isGridOptionsDisplayed: boolean;
+    @Input() isCanvasEmpty: boolean;
+    @Input() isMagnetismOptionsDisplayed: boolean;
+    isGridOptionsDisplayed: boolean;
     shouldRun: boolean;
     isUndoSelection: boolean;
 
@@ -55,6 +57,8 @@ export class SidebarComponent {
             this.selectedTool = this.sidebarToolButtons.find((sidebarToolButton) => {
                 return sidebarToolButton.service === tool.constructor.name;
             }) as SidebarToolButton;
+            this.isMagnetismOptionsDisplayed = false;
+            this.isGridOptionsDisplayed = false;
         });
     }
 
@@ -76,6 +80,14 @@ export class SidebarComponent {
 
     openGridOptions(): void {
         this.isGridOptionsDisplayed = !this.isGridOptionsDisplayed;
+    }
+
+    openMagnetismOptions(): void {
+        this.isMagnetismOptionsDisplayed = !this.isMagnetismOptionsDisplayed;
+    }
+
+    closeMagnetismeOptions(): void {
+        this.isMagnetismOptionsDisplayed = false;
     }
 
     undo(): void {

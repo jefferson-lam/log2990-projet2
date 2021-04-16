@@ -21,6 +21,9 @@ export class ResizeStrategy {
         const shortestSide = Math.min(this.selectionComponent.previewSelectionCanvas.width, this.selectionComponent.previewSelectionCanvas.height);
         this.selectionComponent.previewSelectionCanvas.width = shortestSide;
         this.selectionComponent.previewSelectionCanvas.height = shortestSide;
+
+        this.selectionComponent.borderCanvas.width = shortestSide;
+        this.selectionComponent.borderCanvas.height = shortestSide;
     }
 
     restoreLastDimensions(): void {}

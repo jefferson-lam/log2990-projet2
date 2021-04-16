@@ -79,6 +79,11 @@ export class EditorComponent {
         this.shortcutManager.onPlusKeyDown();
     }
 
+    @HostListener('window:keydown.m', ['$event'])
+    onMKeyDown(): void {
+        this.shortcutManager.onMKeyDown();
+    }
+
     @HostListener('window:keydown.=', ['$event'])
     onEqualKeyDown(): void {
         this.shortcutManager.onEqualKeyDown();

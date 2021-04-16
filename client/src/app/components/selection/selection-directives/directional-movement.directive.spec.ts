@@ -3,6 +3,7 @@ import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core
 import { By } from '@angular/platform-browser';
 import { SelectionComponent } from '@app/components/selection/selection.component';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
+import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -27,6 +28,7 @@ describe('DirectionalMovementDirective', () => {
             {} as UndoRedoService,
             {} as CanvasGridService,
             {} as ToolManagerService,
+            {} as MagnetismService,
             {} as ClipboardService,
         );
         fixture = TestBed.configureTestingModule({

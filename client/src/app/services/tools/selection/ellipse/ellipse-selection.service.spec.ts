@@ -19,6 +19,7 @@ describe('EllipseToolSelectionService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
+    let borderCtxStub: CanvasRenderingContext2D;
     let parentMouseDownSpy: jasmine.Spy;
     let parentMouseUpSpy: jasmine.Spy;
     let parentKeyboardDownSpy: jasmine.Spy;
@@ -56,15 +57,18 @@ describe('EllipseToolSelectionService', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         selectionCtxStub = canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+        borderCtxStub = canvasTestHelper.borderCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         // Configuration of spy of service
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].selectionCtx = selectionCtxStub;
+        service['drawingService'].borderCtx = borderCtxStub;
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
+        service['drawingService'].borderCanvas = canvasTestHelper.borderCanvas;
 
         parentMouseDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseDown');
         parentMouseUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseUp');
@@ -182,6 +186,8 @@ describe('EllipseToolSelectionService', () => {
         expect(drawServiceSpy.selectionCanvas.height).toEqual(expectedHeight);
         expect(drawServiceSpy.selectionCanvas.style.left).toEqual('25px');
         expect(drawServiceSpy.selectionCanvas.style.top).toEqual('40px');
+        expect(drawServiceSpy.borderCanvas.style.left).toEqual(drawServiceSpy.selectionCanvas.style.left);
+        expect(drawServiceSpy.borderCanvas.style.top).toEqual(drawServiceSpy.selectionCanvas.style.top);
         expect(resizerHandlerServiceSpy.setResizerPositions).toHaveBeenCalled();
         expect(service.inUse).toBeFalsy();
         expect(service.isManipulating).toBeTruthy();
@@ -454,36 +460,6 @@ describe('EllipseToolSelectionService', () => {
         service.undoSelection();
         expect(clipEllipseSpy).toHaveBeenCalled();
         expect(baseCtxDrawImage).toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
-            0,
-            0,
-            service.selectionWidth,
-            service.selectionHeight,
-            service.cornerCoords[0].x,
-            service.cornerCoords[0].y,
-            service.selectionWidth,
-            service.selectionHeight,
-        );
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
-        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
-        expect(service.isManipulating).toBeFalsy();
-        expect(service.isEscapeDown).toBeFalsy();
-    });
-
-    it('undoSelection should not draw to base context if isFromClipboard is true', () => {
-        const sw = 75;
-        const sh = 210;
-        service.isFromClipboard = true;
-        service.isManipulating = true;
-        service.cornerCoords = [
-            { x: 25, y: 40 },
-            { x: 100, y: 250 },
-        ];
-        service.selectionWidth = sw;
-        service.selectionHeight = sh;
-        service.undoSelection();
-        expect(clipEllipseSpy).toHaveBeenCalled();
-        expect(baseCtxDrawImage).not.toHaveBeenCalledWith(
             selectionCtxStub.canvas,
             0,
             0,

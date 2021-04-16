@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { Vec2 } from '@app/classes/vec2';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 
@@ -13,13 +14,15 @@ import { ResizerHandlerService } from '@app/services/tools/selection/resizer/res
 })
 export class SelectionComponent implements AfterViewInit {
     @ViewChild('selectionCanvas', { static: false }) selectionCanvasRef: ElementRef<HTMLCanvasElement>;
+    @ViewChild('borderCanvas', { static: false }) borderCanvasRef: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewSelectionCanvas', { static: false }) previewSelectionCanvasRef: ElementRef<HTMLCanvasElement>;
     @ViewChild('selectionBox', { static: false }) selectionContainer: ElementRef<HTMLCanvasElement>;
     selectionCanvas: HTMLCanvasElement;
+    borderCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
 
-    // virtualSelectionCanvas
-    // virtualOutlineCanvas
+    // Not present on dom, used as reference to store outline
+    outlineSelectionCanvas: HTMLCanvasElement;
 
     @ViewChild('leftResizer', { static: false }) leftResizer: ElementRef<HTMLElement>;
     @ViewChild('rightResizer', { static: false }) rightResizer: ElementRef<HTMLElement>;
@@ -31,12 +34,17 @@ export class SelectionComponent implements AfterViewInit {
     @ViewChild('bottomRightResizer', { static: false }) bottomRightResizer: ElementRef<HTMLElement>;
 
     selectionCtx: CanvasRenderingContext2D;
+    borderCtx: CanvasRenderingContext2D;
     previewSelectionCtx: CanvasRenderingContext2D;
+
+    outlineSelectionCtx: CanvasRenderingContext2D;
+
     resizerDown: ResizerDown;
     initialPosition: Vec2;
     bottomRight: Vec2;
 
     constructor(
+        private magnetismService: MagnetismService,
         private drawingService: DrawingService,
         public resizerHandlerService: ResizerHandlerService,
         public shortcutManager: ShortcutManagerService,
@@ -47,14 +55,23 @@ export class SelectionComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.selectionCanvas = this.selectionCanvasRef.nativeElement;
+        this.borderCanvas = this.borderCanvasRef.nativeElement;
         this.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
 
+        this.outlineSelectionCanvas = document.createElement('canvas');
+
         this.selectionCtx = this.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.borderCtx = this.borderCanvas.getContext('2d') as CanvasRenderingContext2D;
         this.previewSelectionCtx = this.previewSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+        this.outlineSelectionCtx = this.outlineSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+
         this.drawingService.selectionCtx = this.selectionCtx;
+        this.drawingService.borderCtx = this.borderCtx;
         this.drawingService.previewSelectionCtx = this.previewSelectionCtx;
         this.drawingService.selectionCanvas = this.selectionCanvasRef.nativeElement;
         this.drawingService.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
+        this.drawingService.borderCanvas = this.borderCanvas;
 
         this.resizerHandlerService.resizers
             .set(ResizerDown.TopLeft, this.topLeftResizer.nativeElement)
@@ -71,6 +88,8 @@ export class SelectionComponent implements AfterViewInit {
         this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
             this.resizeContainer(size[0], size[1]);
         });
+
+        this.magnetismService.previewSelectionCanvas = this.previewSelectionCanvas;
     }
 
     resizeContainer(width: number, height: number): void {
@@ -86,14 +105,23 @@ export class SelectionComponent implements AfterViewInit {
 
     setCanvasPosition(): void {
         const transformValues = this.getTransformValues(this.previewSelectionCanvas);
-        this.selectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) + transformValues.x + 'px';
-        this.selectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + transformValues.y + 'px';
+        this.magnetismService.transformValues = transformValues;
+        if (this.magnetismService.isMagnetismOn) {
+            const magnetizedCoords: Vec2 = this.magnetismService.magnetizeSelection();
+            this.selectionCanvas.style.left = magnetizedCoords.x + 'px';
+            this.selectionCanvas.style.top = magnetizedCoords.y + 'px';
+        } else {
+            this.selectionCanvas.style.left = parseInt(this.previewSelectionCanvas.style.left, 10) + transformValues.x + 'px';
+            this.selectionCanvas.style.top = parseInt(this.previewSelectionCanvas.style.top, 10) + transformValues.y + 'px';
+        }
         this.resizerHandlerService.setResizerPositions(this.selectionCanvas);
+        this.borderCanvas.style.left = this.selectionCanvas.style.left;
+        this.borderCanvas.style.top = this.selectionCanvas.style.top;
     }
 
     resetPreviewSelectionCanvas(event: CdkDragEnd): void {
-        this.previewSelectionCanvas.style.left = this.selectionCanvas.style.left;
-        this.previewSelectionCanvas.style.top = this.selectionCanvas.style.top;
+        this.previewSelectionCanvas.style.left = this.borderCanvas.style.left = this.selectionCanvas.style.left;
+        this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
         event.source._dragRef.reset();
     }
 
@@ -113,10 +141,7 @@ export class SelectionComponent implements AfterViewInit {
             this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
             // Set virtual canvas to previewSelectionCanvas size
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
-            // this.drawWithScalingFactors(this.virtualBorder, this.borderCanvas);
-            // this.drawWithScalingFactors(this.virtualSelection, this.selectionCanvas);
-            // Draw virtualBorder -> previewSelectionCtx
-            // Draw virtualSelection -> previewSelectionCtx
+            this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
             this.selectionCanvas.style.visibility = 'hidden';
         }
     }
@@ -129,20 +154,30 @@ export class SelectionComponent implements AfterViewInit {
 
             // Save drawing to preview canvas before drawing is wiped due to resizing
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+            this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
 
             // Replace base canvas
             this.selectionCanvas.style.top = this.previewSelectionCanvas.style.top;
             this.selectionCanvas.style.left = this.previewSelectionCanvas.style.left;
 
+            // Replace border canvas
+            this.borderCanvas.style.left = this.selectionCanvas.style.left;
+            this.borderCanvas.style.top = this.selectionCanvas.style.top;
+
             // Resize base canvas
             this.selectionCanvas.width = this.previewSelectionCanvas.width;
             this.selectionCanvas.height = this.previewSelectionCanvas.height;
+
+            // Resize border canvas
+            this.borderCanvas.width = this.previewSelectionCanvas.width;
+            this.borderCanvas.height = this.previewSelectionCanvas.height;
 
             // Clear the contents of the selectionCtx before redrawing the scaled image
             this.selectionCtx.clearRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
 
             // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
             this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);
+            this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
             this.previewSelectionCtx.clearRect(0, 0, this.previewSelectionCanvas.width, this.previewSelectionCanvas.height);
         }
     }
@@ -150,13 +185,6 @@ export class SelectionComponent implements AfterViewInit {
     drawWithScalingFactors(targetContext: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
         const scalingFactors = this.getScalingFactors();
         targetContext.scale(scalingFactors[0], scalingFactors[1]);
-
-        // BorderCanvas that has outline
-        // selectionCanvas that has drawing
-
-        // We also know that the previewCanvas has a scaling factor applied in relation to its delta size.
-        // We know then that everything drawn on previewCanvas will be scaled appropriately.
-
         targetContext.drawImage(sourceCanvas, 0, 0, scalingFactors[0] * targetContext.canvas.width, scalingFactors[1] * targetContext.canvas.height);
     }
 
@@ -194,6 +222,9 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     setInitialValues(resizer: number): void {
+        this.outlineSelectionCanvas.width = this.borderCanvas.width;
+        this.outlineSelectionCanvas.height = this.borderCanvas.height;
+        this.outlineSelectionCtx.drawImage(this.borderCanvas, 0, 0);
         this.resizerHandlerService.inUse = true;
         this.resizerDown = resizer;
         this.initialPosition = { x: parseInt(this.previewSelectionCanvas.style.left, 10), y: parseInt(this.previewSelectionCanvas.style.top, 10) };
@@ -204,6 +235,13 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.setResizeStrategy(this.resizerDown);
     }
 
+    applyFocusBorderStyle(): void {
+        this.borderCanvas.style.border = '1px solid black';
+    }
+
+    applyFocusOutBorderStyle(): void {
+        this.borderCanvas.style.border = '1px dashed black';
+    }
     @HostListener('window:keydown.shift')
     onShiftKeyDown(): void {
         this.shortcutManager.selectionOnShiftKeyDown(this);
@@ -212,5 +250,14 @@ export class SelectionComponent implements AfterViewInit {
     @HostListener('window:keyup.shift', ['$event'])
     onShiftKeyUp(): void {
         this.shortcutManager.selectionOnShiftKeyUp(this);
+    }
+
+    @HostListener('keyup.ArrowLeft', ['$event'])
+    @HostListener('keyup.ArrowDown', ['$event'])
+    @HostListener('keyup.ArrowRight', ['$event'])
+    @HostListener('keyup.ArrowUp', ['$event'])
+    correctPreviewCanvasPosition(): void {
+        this.previewSelectionCanvas.style.left = this.borderCanvas.style.left = this.selectionCanvas.style.left;
+        this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
     }
 }
