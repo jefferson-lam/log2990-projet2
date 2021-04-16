@@ -37,8 +37,6 @@ export class ToolManagerService {
         public pipetteService: PipetteService,
         public paintBucketService: PaintBucketService,
     ) {
-        this.keyBindings = new Map();
-        this.currentToolSubject = new Subject<Tool>();
         this.bindKeys();
         this.currentTool = this.pencilService;
         this.currentToolSubject = new BehaviorSubject<Tool>(this.currentTool);

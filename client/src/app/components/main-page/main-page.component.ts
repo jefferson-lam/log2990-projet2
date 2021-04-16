@@ -17,7 +17,6 @@ export class MainPageComponent implements OnInit {
     readonly title: string;
     message: BehaviorSubject<string>;
     ongoingDrawing: boolean;
-    isPopUpOpen: boolean;
 
     constructor(
         public dialog: MatDialog,
@@ -29,7 +28,6 @@ export class MainPageComponent implements OnInit {
     ) {
         this.title = 'LOG2990';
         this.message = new BehaviorSubject<string>('');
-        this.isPopUpOpen = false;
     }
 
     ngOnInit(): void {
