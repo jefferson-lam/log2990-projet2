@@ -138,21 +138,7 @@ export class SelectionComponent implements AfterViewInit {
             // Save drawing to preview canvas before drawing is wiped due to resizing
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
 
-            // Replace base canvas
-            this.selectionCanvas.style.top = this.previewSelectionCanvas.style.top;
-            this.selectionCanvas.style.left = this.previewSelectionCanvas.style.left;
-
-            // Replace border canvas
-            this.borderCanvas.style.left = this.selectionCanvas.style.left;
-            this.borderCanvas.style.top = this.selectionCanvas.style.top;
-
-            // Resize base canvas
-            this.selectionCanvas.width = this.previewSelectionCanvas.width;
-            this.selectionCanvas.height = this.previewSelectionCanvas.height;
-
-            // Resize border canvas
-            this.borderCanvas.width = this.previewSelectionCanvas.width;
-            this.borderCanvas.height = this.previewSelectionCanvas.height;
+            this.recalibrateCanvases();
 
             // Clear the contents of the selectionCtx before redrawing the scaled image
             this.selectionCtx.clearRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
@@ -237,5 +223,12 @@ export class SelectionComponent implements AfterViewInit {
     correctPreviewCanvasPosition(): void {
         this.previewSelectionCanvas.style.left = this.borderCanvas.style.left = this.selectionCanvas.style.left;
         this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
+    }
+
+    private recalibrateCanvases(): void {
+        this.selectionCanvas.width = this.borderCanvas.width = this.previewSelectionCanvas.width;
+        this.selectionCanvas.height = this.borderCanvas.height = this.previewSelectionCanvas.height;
+        this.selectionCanvas.style.top = this.borderCanvas.style.top = this.previewSelectionCanvas.style.top;
+        this.selectionCanvas.style.left = this.borderCanvas.style.left = this.previewSelectionCanvas.style.left;
     }
 }
