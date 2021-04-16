@@ -86,7 +86,7 @@ export class SidebarComponent {
         this.isMagnetismOptionsDisplayed = !this.isMagnetismOptionsDisplayed;
     }
 
-    closeMagnetismeOptions(): void {
+    closeMagnetismOptions(): void {
         this.isMagnetismOptionsDisplayed = false;
     }
 

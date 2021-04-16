@@ -374,7 +374,7 @@ describe('SidebarComponent', () => {
     });
 
     it('closeMagnetismOptions should set isMagnetismOptionsDisplayed to false', () => {
-        component.closeMagnetismeOptions();
+        component.closeMagnetismOptions();
         expect(component.isMagnetismOptionsDisplayed).toBeFalse();
     });
 
