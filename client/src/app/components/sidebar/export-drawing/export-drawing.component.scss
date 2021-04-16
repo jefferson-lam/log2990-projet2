@@ -12,6 +12,12 @@
     display: none;
 }
 
+#buttonDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 #saveButton,
 #cancelButton,
 #imgurButton {
@@ -19,7 +25,8 @@
     font-size: large;
     background-color: coral;
     margin: auto;
-    width: 210px;
+    width: 125px;
+    margin: 10px;
 }
 
 #saveButton:hover,
