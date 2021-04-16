@@ -51,6 +51,7 @@ describe('ShortcutManagerService', () => {
             ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize'],
             ['squareWidth'],
         );
+        // tslint:disable-next-line: no-magic-numbers
         (Object.getOwnPropertyDescriptor(canvasGridServiceSpy, 'squareWidth')?.get as jasmine.Spy<() => number>).and.returnValue(50);
 
         magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['toggleMagnetism', 'magnetizeSelection']);
