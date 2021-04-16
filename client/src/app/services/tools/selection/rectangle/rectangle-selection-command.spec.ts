@@ -85,11 +85,6 @@ describe('RectangleSelectionCommandService', () => {
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
     });
 
-    it('cloneCanvas should return a cloned copy of canvas passed in parameter', () => {
-        const clonedCanvas: HTMLCanvasElement = command.cloneCanvas(canvasTestHelper.selectionCanvas);
-        expect(clonedCanvas).toEqual(canvasTestHelper.selectionCanvas);
-    });
-
     it('execute should not fill shape if isFromClipboard is set to true', () => {
         command.isFromClipboard = true;
         command.execute();
