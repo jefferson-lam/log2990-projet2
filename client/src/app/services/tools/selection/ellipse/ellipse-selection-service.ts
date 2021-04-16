@@ -132,6 +132,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     onToolChange(): void {
+        super.onToolChange();
         if (this.isManipulating) {
             this.confirmSelection();
         } else if (this.inUse) {
