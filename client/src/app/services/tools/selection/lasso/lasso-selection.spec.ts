@@ -67,6 +67,7 @@ describe('LassoSelectionService', () => {
             x: 25,
             y: 60,
         };
+        service.numSides = 2;
 
         mouseEvent = {
             offsetX: 25,
@@ -77,6 +78,33 @@ describe('LassoSelectionService', () => {
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    it('currentPointSubject should correctly update pathData', () => {
+        const expectedX = 257;
+        const expectedY = 399;
+        const expectedPoint = {
+            x: expectedX,
+            y: expectedY,
+        };
+        service.lineService.currentPointSubject.next(expectedPoint);
+        expect(service.pathData[service.pathData.length - 1]).toEqual({ x: expectedX, y: expectedY });
+    });
+
+    it('removePointSubject should correctly pop pathData and reduce numSides', () => {
+        const expectedLength = 2;
+        const expectedSides = 1;
+        service.lineService.removePointSubject.next(true);
+        expect(service.pathData.length).toEqual(expectedLength);
+        expect(service.numSides).toEqual(expectedSides);
+    });
+
+    it('removePointSubject should pass if not next(false)', () => {
+        const expectedLength = 3;
+        const expectedSides = 2;
+        service.lineService.removePointSubject.next(false);
+        expect(service.pathData.length).toEqual(expectedLength);
+        expect(service.numSides).toEqual(expectedSides);
     });
 
     it('onMouseDown should return if not called with Left MouseButton', () => {
@@ -113,6 +141,7 @@ describe('LassoSelectionService', () => {
     });
 
     it('onMouseDown should start new path if passes initial validation and called first time', () => {
+        service.inUse = false;
         service.onMouseDown(mouseEvent);
         expect(service.initialPoint).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
         expect(service.pathData).toEqual([service.initialPoint, service.initialPoint]);
@@ -169,6 +198,28 @@ describe('LassoSelectionService', () => {
         expect(previewCtxStub.canvas.style.cursor).toEqual('no-drop');
     });
 
+    it('validateSegment should correctly return true if isIntersect is true', () => {
+        const isIntersectSpy = spyOn(service, 'isIntersect').and.callFake(() => {
+            return true;
+        });
+        const result = service.validateSegment(service.pathData[service.pathData.length - 1], service.pathData);
+        expect(isIntersectSpy).toHaveBeenCalled();
+        expect(result).toBeTruthy();
+    });
+
+    it('validateSegment should correctly return true if isIntersect is true', () => {
+        const isIntersectSpy = spyOn(service, 'isIntersect').and.callFake(() => {
+            return false;
+        });
+        const arePointsEqualSpy = spyOn<any>(service, 'arePointsEqual').and.callFake(() => {
+            return true;
+        });
+        const result = service.validateSegment(service.pathData[service.pathData.length - 1], service.pathData);
+        expect(isIntersectSpy).toHaveBeenCalled();
+        expect(arePointsEqualSpy).toHaveBeenCalled();
+        expect(result).toBeFalsy();
+    });
+
     it('onKeyboardDown with escape should set isEscapeDown to true', () => {
         const escapeKeyboardEvent = {
             key: 'Escape',
@@ -207,6 +258,12 @@ describe('LassoSelectionService', () => {
         service.isManipulating = true;
         service.onKeyboardUp(escapeKeyboardEvent);
         expect(confirmSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('onKeyboardUp should pass if not inUse or isManipulating', () => {
+        expect(() => {
+            service.onKeyboardUp({} as KeyboardEvent);
+        }).not.toThrow();
     });
 
     it('undoSelection should pass if not manipulating', () => {
@@ -318,6 +375,12 @@ describe('LassoSelectionService', () => {
         service.inUse = true;
         service.onToolChange();
         expect(resetSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('onToolChange should pass if not inUse or isManipulating', () => {
+        expect(() => {
+            service.onToolChange();
+        }).not.toThrow();
     });
 
     it('isIntersect should return false if point is initialPoint', () => {

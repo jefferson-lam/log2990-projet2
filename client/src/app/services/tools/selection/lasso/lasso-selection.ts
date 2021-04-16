@@ -70,7 +70,7 @@ export class LassoSelectionService extends ToolSelectionService {
             this.pathData[SelectionConstants.START_INDEX] = this.initialPoint;
             this.pathData.push(this.initialPoint);
             this.inUse = true;
-        } else if (this.inUse) {
+        } else {
             this.numSides++;
             this.isConnected = this.arePointsEqual(this.pathData[this.pathData.length - 1], this.initialPoint);
         }
