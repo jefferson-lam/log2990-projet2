@@ -38,7 +38,7 @@ describe('LassoSelectionCommand', () => {
             { x: 394, y: 432 },
         ] as Vec2[];
 
-        lassoSelectionService.linePathData = Object.assign([], pathStub);
+        lassoSelectionService.pathData = Object.assign([], pathStub);
         lassoSelectionService.transformValues = TEST_TRANSFORM_VALUES;
         lassoSelectionService.selectionHeight = TEST_SELECTION_HEIGHT;
         lassoSelectionService.selectionWidth = TEST_SELECTION_WIDTH;
@@ -111,9 +111,9 @@ describe('LassoSelectionCommand', () => {
         const fillSpy = spyOn(baseCtxStub, 'fill');
 
         // tslint:disable:no-string-literal
-        command['fillLasso'](baseCtxStub, command.linePathData, 'white');
+        command['fillLasso'](baseCtxStub, command.pathData, 'white');
         expect(moveToSpy).toHaveBeenCalled();
-        for (const point of command.linePathData) {
+        for (const point of command.pathData) {
             expect(lineToSpy).toHaveBeenCalledWith(point.x, point.y);
         }
         expect(fillSpy).toHaveBeenCalled();

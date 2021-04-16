@@ -112,7 +112,7 @@ describe('EllipseToolSelectionService', () => {
         expect(executeSpy).toHaveBeenCalled();
         expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
-        expect(service.cornerCoords[START_INDEX]).toEqual(expectedResult);
+        expect(service.pathData[START_INDEX]).toEqual(expectedResult);
     });
 
     it('onMouseUp should pass if tool not inUse', () => {
@@ -132,7 +132,7 @@ describe('EllipseToolSelectionService', () => {
         service.onMouseUp(mouseUpEvent);
         expect(service.ellipseService.inUse).toBeFalsy();
         expect(parentMouseUpSpy).toHaveBeenCalled();
-        expect(service.cornerCoords[END_INDEX]).toEqual(expectedEndVec2);
+        expect(service.pathData[END_INDEX]).toEqual(expectedEndVec2);
     });
 
     it('onMouseUp should return if selectionW is 0', () => {
@@ -141,7 +141,7 @@ describe('EllipseToolSelectionService', () => {
             y: 250,
         };
         service.inUse = true;
-        service.cornerCoords[START_INDEX] = startPoint;
+        service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(service.inUse).toBeFalsy();
     });
@@ -152,7 +152,7 @@ describe('EllipseToolSelectionService', () => {
             y: 40,
         };
         service.inUse = true;
-        service.cornerCoords[START_INDEX] = startPoint;
+        service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(service.inUse).toBeFalsy();
         expect(service.onMouseUp(mouseEvent)).toBe(undefined);
@@ -166,7 +166,7 @@ describe('EllipseToolSelectionService', () => {
         const expectedCircleDiameter = 210;
         service.inUse = true;
         service.isCircle = true;
-        service.cornerCoords[START_INDEX] = startPoint;
+        service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(service.selectionHeight).toEqual(expectedCircleDiameter);
         expect(service.selectionWidth).toEqual(expectedCircleDiameter);
@@ -180,7 +180,7 @@ describe('EllipseToolSelectionService', () => {
         const expectedWidth = 225;
         const expectedHeight = 210;
         service.inUse = true;
-        service.cornerCoords[START_INDEX] = startPoint;
+        service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(drawServiceSpy.selectionCanvas.width).toEqual(expectedWidth);
         expect(drawServiceSpy.selectionCanvas.height).toEqual(expectedHeight);
@@ -205,14 +205,14 @@ describe('EllipseToolSelectionService', () => {
         expect(parentMouseEnterSpy).toHaveBeenCalledWith(mouseEvent);
     });
 
-    it('onMouseMove should update cornerCoords', () => {
+    it('onMouseMove should update pathData', () => {
         const expectedResult: Vec2 = {
             x: 25,
             y: 40,
         };
         service.inUse = true;
         service.onMouseMove(mouseEvent);
-        expect(service.cornerCoords[END_INDEX]).toEqual(expectedResult);
+        expect(service.pathData[END_INDEX]).toEqual(expectedResult);
     });
 
     it('onMouseMove should pass if not inUse', () => {
@@ -326,7 +326,7 @@ describe('EllipseToolSelectionService', () => {
         } as KeyboardEvent;
         service.isManipulating = true;
         service.isEscapeDown = true;
-        service.cornerCoords = [
+        service.pathData = [
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
@@ -374,11 +374,11 @@ describe('EllipseToolSelectionService', () => {
         const expectedStartY = 145;
         const expectedXRadius = 37.5;
         const expectedYRadius = 105;
-        service.cornerCoords = [
+        service.pathData = [
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
-        service.fillEllipse(baseCtxStub, service.cornerCoords, false);
+        service.fillEllipse(baseCtxStub, service.pathData, false);
         expect(baseCtxEllipseSpy).toHaveBeenCalled();
         expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
@@ -399,13 +399,13 @@ describe('EllipseToolSelectionService', () => {
         const expectedYRadius = 105;
         const sw = 75;
         const sh = 210;
-        service.cornerCoords = [
+        service.pathData = [
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
         service.selectionWidth = sw;
         service.selectionHeight = sh;
-        service.clipEllipse(baseCtxStub, service.cornerCoords[0], sh, sw, 0);
+        service.clipEllipse(baseCtxStub, service.pathData[0], sh, sw, 0);
         expect(baseCtxEllipseSpy).toHaveBeenCalled();
         expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
@@ -451,7 +451,7 @@ describe('EllipseToolSelectionService', () => {
         const sw = 75;
         const sh = 210;
         service.isManipulating = true;
-        service.cornerCoords = [
+        service.pathData = [
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
@@ -465,8 +465,8 @@ describe('EllipseToolSelectionService', () => {
             0,
             service.selectionWidth,
             service.selectionHeight,
-            service.cornerCoords[0].x,
-            service.cornerCoords[0].y,
+            service.pathData[0].x,
+            service.pathData[0].y,
             service.selectionWidth,
             service.selectionHeight,
         );
