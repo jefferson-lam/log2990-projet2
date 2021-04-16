@@ -95,7 +95,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.currentTool.onMouseDoubleClick(event);
     }
 
-    @HostListener('mousemove', ['$event'])
+    @HostListener('window:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);
     }
@@ -105,17 +105,17 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.currentTool.onMouseDown(event);
     }
 
-    @HostListener('mouseup', ['$event'])
+    @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.currentTool.onMouseUp(event);
     }
 
-    @HostListener('mouseleave', ['$event'])
+    @HostListener('window:mouseleave', ['$event'])
     onMouseLeave(event: MouseEvent): void {
         this.currentTool.onMouseLeave(event);
     }
 
-    @HostListener('mouseenter', ['$event'])
+    @HostListener('window:mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.currentTool.onMouseEnter(event);
     }
