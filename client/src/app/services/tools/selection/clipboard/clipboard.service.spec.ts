@@ -5,14 +5,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SegmentIntersectionService } from '@app/services/helper/segment-intersection.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
+import { LineService } from '@app/services/tools/line/line-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { LineService } from '../../line/line-service';
-import { LassoSelectionService } from '../lasso/lasso-selection';
 
 describe('ClipboardService', () => {
     let service: ClipboardService;
@@ -272,6 +272,7 @@ describe('ClipboardService', () => {
 
     it('getCurrentSelectionToolName should return correct name with Lasso', () => {
         service.currentTool = lassoSelectionServiceStub;
+        // tslint:disable:no-string-literal
         const result = service['getCurrentSelectionToolName']();
         expect(result).toEqual(ToolManagerConstants.LASSO_SELECTION_KEY);
     });
