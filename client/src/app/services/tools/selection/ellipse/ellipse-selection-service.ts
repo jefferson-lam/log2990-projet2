@@ -114,6 +114,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             } else if (event.key === 'Escape' && this.isEscapeDown) {
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+                this.resetCanvasState(this.drawingService.borderCanvas);
                 this.resetSelectedToolSettings();
                 // Erase the rectangle drawn as a preview of selection
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);

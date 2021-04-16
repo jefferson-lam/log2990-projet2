@@ -90,6 +90,7 @@ export class ClipboardService {
         this.currentTool.resetSelectedToolSettings();
         this.currentTool.resetCanvasState(this.drawingService.selectionCanvas);
         this.currentTool.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.currentTool.resetCanvasState(this.drawingService.borderCanvas);
         this.currentTool.resizerHandlerService.resetResizers();
         this.currentTool.isManipulating = false;
         this.currentTool.isEscapeDown = false;
