@@ -125,7 +125,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             }
         } else if (this.isManipulating) {
             if (event.key === 'Escape' && this.isEscapeDown) {
-                this.onMouseDown({} as MouseEvent);
+                this.confirmSelection();
                 this.isEscapeDown = false;
             }
         }
@@ -160,8 +160,7 @@ export class RectangleSelectionService extends ToolSelectionService {
     onToolChange(): void {
         super.onToolChange();
         if (this.isManipulating) {
-            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
-            this.onMouseDown(emptyMouseEvent);
+            this.confirmSelection();
         } else if (this.inUse) {
             const resetKeyboardEvent: KeyboardEvent = {
                 key: 'Escape',

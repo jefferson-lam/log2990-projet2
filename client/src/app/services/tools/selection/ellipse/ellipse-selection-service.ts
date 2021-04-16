@@ -125,7 +125,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             if (event.key === 'Escape' && this.isEscapeDown) {
                 // Case where user has defined the selection area
                 // onMouseDown draws the image on baseCtx.
-                this.onMouseDown({} as MouseEvent);
+                this.confirmSelection();
                 this.isEscapeDown = false;
             }
         }
@@ -133,8 +133,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onToolChange(): void {
         if (this.isManipulating) {
-            const emptyMouseEvent: MouseEvent = {} as MouseEvent;
-            this.onMouseDown(emptyMouseEvent);
+            this.confirmSelection();
         } else if (this.inUse) {
             const resetKeyboardEvent: KeyboardEvent = {
                 key: 'Escape',
