@@ -13,7 +13,7 @@ export class MagnetismService {
     topLeftResizerCoords: Vec2;
     bottomRightResizerCoords: Vec2;
     referenceResizerCoords: Vec2;
-    magnetismStateSubject: Subject<boolean> = new Subject<boolean>();
+    magnetismStateSubject: Subject<boolean>;
     transformValues: Vec2;
 
     previewSelectionCanvas: HTMLCanvasElement;
@@ -22,6 +22,7 @@ export class MagnetismService {
 
     constructor(private canvasGridService: CanvasGridService) {
         this.isMagnetismOn = false;
+        this.magnetismStateSubject = new Subject<boolean>();
         this.referenceResizerMode = MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX;
         this.pointOffsets = new Array<Vec2>(MagnestismConstants.ResizerIndex.CENTER_INDEX + 1);
     }
