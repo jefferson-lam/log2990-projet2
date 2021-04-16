@@ -8,7 +8,7 @@ import * as CanvasConstants from '@app/constants/canvas-constants';
     providedIn: 'root',
 })
 export class ResizeBottom extends ResizeStrategy {
-    resize(event: CdkDragMove, isShiftDown?: boolean): void {
+    resizePreview(event: CdkDragMove, isShiftDown?: boolean): void {
         // Resizing bottom
         if (event.pointerPosition.y > this.selectionComponent.initialPosition.y) {
             this.selectionComponent.previewSelectionCanvas.style.top = this.selectionComponent.initialPosition.y + 'px';
@@ -18,9 +18,6 @@ export class ResizeBottom extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.style.top = event.pointerPosition.y + 'px';
             this.selectionComponent.previewSelectionCanvas.height = this.selectionComponent.initialPosition.y - event.pointerPosition.y;
         }
-        // Modify border canvas in consequence
-        this.selectionComponent.borderCanvas.height = this.selectionComponent.previewSelectionCanvas.height;
-        this.selectionComponent.borderCanvas.style.top = this.selectionComponent.previewSelectionCanvas.style.top;
         this.lastHeight = this.selectionComponent.previewSelectionCanvas.height;
     }
 
