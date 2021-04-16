@@ -46,8 +46,15 @@ describe('ShortcutManagerService', () => {
             ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp', 'openCarrouselPopUp'],
             ['isPopUpOpen'],
         );
-        canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize']);
-        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['toggleMagnetism']);
+        canvasGridServiceSpy = jasmine.createSpyObj(
+            'CanvasGridService',
+            ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize'],
+            ['squareWidth'],
+        );
+        // tslint:disable-next-line: no-magic-numbers
+        (Object.getOwnPropertyDescriptor(canvasGridServiceSpy, 'squareWidth')?.get as jasmine.Spy<() => number>).and.returnValue(50);
+
+        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['toggleMagnetism', 'magnetizeSelection']);
         clipboardServiceSpy = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'pasteSelection', 'deleteSelection']);
 
         TestBed.configureTestingModule({
@@ -579,6 +586,20 @@ describe('ShortcutManagerService', () => {
         expect(directiveTranslateSpy).toHaveBeenCalledTimes(1);
     }));
 
+    it('selectionMovementOnArrowDown should call delay and translate selection with canvasGridService.square width once if key not already pressed, directive.hasMovedOnce true, isShortcutAllowed true and isMagnetism is true', fakeAsync((): void => {
+        const keyEvent = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowLeft', timeStamp: '100' });
+        allowShortcutSpy.and.returnValue(true);
+        directive.hasMovedOnce = true;
+        service.magnetismService.isMagnetismOn = true;
+
+        service.selectionMovementOnArrowDown(keyEvent, directive);
+        flush();
+
+        expect(directiveDelaySpy).toHaveBeenCalledTimes(1);
+        expect(directiveTranslateSpy).toHaveBeenCalledTimes(1);
+        expect(directiveTranslateSpy).toHaveBeenCalledWith(canvasGridServiceSpy.squareWidth / 2 + 1);
+    }));
+
     it('selectionMovementOnArrowDown should call delay and translate selection twice if key not already pressed, directive.hasMovedOnce false and isShortcutAllowed true', fakeAsync((): void => {
         const keyEvent = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowLeft', timeStamp: '100' });
         allowShortcutSpy.and.returnValue(true);
@@ -589,6 +610,21 @@ describe('ShortcutManagerService', () => {
 
         expect(directiveDelaySpy).toHaveBeenCalledTimes(2);
         expect(directiveTranslateSpy).toHaveBeenCalledTimes(2);
+    }));
+
+    it('selectionMovementOnArrowDown should call delay and translate selection twice with canvasGridService squareWidth if key not already pressed, directive.hasMovedOnce false, isShortcutAllowed true and isMagnetismOn true', fakeAsync((): void => {
+        const keyEvent = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowLeft', timeStamp: '100' });
+        allowShortcutSpy.and.returnValue(true);
+        directive.hasMovedOnce = false;
+        service.magnetismService.isMagnetismOn = true;
+
+        service.selectionMovementOnArrowDown(keyEvent, directive);
+        flush();
+
+        expect(directiveDelaySpy).toHaveBeenCalledTimes(2);
+        expect(directiveTranslateSpy).toHaveBeenCalledTimes(2);
+        expect(directiveTranslateSpy).toHaveBeenCalledWith(canvasGridServiceSpy.squareWidth / 2 + 1);
+        expect(directiveTranslateSpy).toHaveBeenCalledWith(canvasGridServiceSpy.squareWidth);
     }));
 
     it('selectionMovementOnArrowDown should not call delay and translate selection if isShortcutAllowed false', fakeAsync((): void => {

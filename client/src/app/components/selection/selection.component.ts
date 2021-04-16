@@ -88,6 +88,8 @@ export class SelectionComponent implements AfterViewInit {
         this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
             this.resizeContainer(size[0], size[1]);
         });
+
+        this.magnetismService.previewSelectionCanvas = this.previewSelectionCanvas;
     }
 
     resizeContainer(width: number, height: number): void {
@@ -103,8 +105,9 @@ export class SelectionComponent implements AfterViewInit {
 
     setCanvasPosition(): void {
         const transformValues = this.getTransformValues(this.previewSelectionCanvas);
+        this.magnetismService.transformValues = transformValues;
         if (this.magnetismService.isMagnetismOn) {
-            const magnetizedCoords: Vec2 = this.magnetismService.magnetizeSelection(this.previewSelectionCanvas, transformValues);
+            const magnetizedCoords: Vec2 = this.magnetismService.magnetizeSelection();
             this.selectionCanvas.style.left = magnetizedCoords.x + 'px';
             this.selectionCanvas.style.top = magnetizedCoords.y + 'px';
         } else {
