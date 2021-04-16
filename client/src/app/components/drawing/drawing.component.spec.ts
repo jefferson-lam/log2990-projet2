@@ -172,19 +172,19 @@ describe('DrawingComponent', () => {
     });
 
     it('changeCursor should set cursor to none if eraserService selected', () => {
-        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
+        const canvasStyle = component.previewCanvas.nativeElement.style;
         component.changeCursor(eraserStub);
         expect(canvasStyle.cursor).toBe('none');
     });
 
     it('changeCursor should set cursor to pencil-icon if pencilService selected', () => {
-        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
+        const canvasStyle = component.previewCanvas.nativeElement.style;
         component.changeCursor(pencilStub);
         expect(canvasStyle.cursor).toBe('url("assets/pencil.png") 0 15, auto');
     });
 
     it('changeCursor should set cursor to crosshair if not eraser or pencil selected', () => {
-        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
+        const canvasStyle = component.previewCanvas.nativeElement.style;
         component.changeCursor(lineStub);
         expect(canvasStyle.cursor).toBe('crosshair');
     });

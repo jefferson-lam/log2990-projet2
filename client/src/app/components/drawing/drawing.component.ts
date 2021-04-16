@@ -56,7 +56,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     changeCursor(tool: Tool): void {
-        const canvasStyle = (document.getElementById('previewLayer') as HTMLCanvasElement).style;
+        const canvasStyle = this.previewCanvas.nativeElement.style;
         if (tool === this.toolManager.pencilService) {
             canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
         } else if (tool === this.toolManager.eraserService) {
