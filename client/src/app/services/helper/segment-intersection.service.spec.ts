@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { SegmentIntersectionService } from './segment-intersection.service';
 
+// tslint:disable:no-any
+// tslint:disable:no-string-literal
 describe('SegmentIntersectionService', () => {
     let service: SegmentIntersectionService;
 

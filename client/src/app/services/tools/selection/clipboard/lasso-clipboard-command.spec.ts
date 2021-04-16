@@ -41,6 +41,7 @@ describe('LassoClipboardCommand', () => {
     });
 
     it('execute should correctly call with correct parameters', () => {
+        // tslint:disable:no-any
         const fillLassoSpy = spyOn<any>(command, 'fillLasso');
         command.execute();
         expect(fillLassoSpy).toHaveBeenCalled();
@@ -50,6 +51,7 @@ describe('LassoClipboardCommand', () => {
         const moveToSpy = spyOn(baseCtxStub, 'moveTo');
         const lineToSpy = spyOn(baseCtxStub, 'lineTo');
         const fillSpy = spyOn(baseCtxStub, 'fill');
+        // tslint:disable:no-string-literal
         command['fillLasso'](baseCtxStub, command.pathData, 'white');
         expect(moveToSpy).toHaveBeenCalled();
         for (const point of command.pathData) {

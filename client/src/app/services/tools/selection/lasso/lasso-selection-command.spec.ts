@@ -63,7 +63,7 @@ describe('LassoSelectionCommand', () => {
     });
 
     it('execute should correctly fill lasso shape', () => {
-        // tslint:disable:next:no-any
+        // tslint:disable:no-any
         const fillLassoSpy = spyOn<any>(command, 'fillLasso');
         const baseCtxDrawImageSpy = spyOn(baseCtxStub, 'drawImage');
         command.isFromClipboard = false;
@@ -109,6 +109,8 @@ describe('LassoSelectionCommand', () => {
         const moveToSpy = spyOn(baseCtxStub, 'moveTo');
         const lineToSpy = spyOn(baseCtxStub, 'lineTo');
         const fillSpy = spyOn(baseCtxStub, 'fill');
+
+        // tslint:disable:no-string-literal
         command['fillLasso'](baseCtxStub, command.linePathData, 'white');
         expect(moveToSpy).toHaveBeenCalled();
         for (const point of command.linePathData) {

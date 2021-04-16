@@ -223,8 +223,10 @@ export class LassoSelectionService extends ToolSelectionService {
         const selectionSize = this.computeSelectionSize(this.linePathData);
         this.selectionWidth = selectionSize[0];
         this.selectionHeight = selectionSize[1];
-        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.drawingService.borderCanvas.width = this.selectionWidth;
-        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.drawingService.borderCanvas.height = this.selectionHeight;
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+        this.drawingService.borderCanvas.width = this.selectionWidth;
+        this.drawingService.borderCanvas.height = this.selectionHeight;
         this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.linePathData);
         this.setSelectionCanvasPosition(this.topLeft);
         this.isConnected = false;
