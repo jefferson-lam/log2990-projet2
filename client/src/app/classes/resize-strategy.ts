@@ -22,8 +22,6 @@ export class ResizeStrategy {
         this.selectionComponent.previewSelectionCanvas.width = shortestSide;
         this.selectionComponent.previewSelectionCanvas.height = shortestSide;
 
-        // this.selectionComponent.borderCanvas.width = shortestSide;
-        // this.selectionComponent.borderCanvas.height = shortestSide;
         this.recalibrateBorderCanvas();
     }
 
