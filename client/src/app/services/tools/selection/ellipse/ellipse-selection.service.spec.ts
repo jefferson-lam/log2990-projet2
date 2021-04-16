@@ -345,9 +345,9 @@ describe('EllipseToolSelectionService', () => {
 
     it('onToolChange should call onMouseDown if isManipulating is true', () => {
         service.isManipulating = true;
-        const onMouseDownSpy = spyOn(service, 'onMouseDown');
+        const confirmSelectionSpy = spyOn(service, 'confirmSelection');
         service.onToolChange();
-        expect(onMouseDownSpy).toHaveBeenCalled();
+        expect(confirmSelectionSpy).toHaveBeenCalled();
     });
 
     it('onToolChange should call onKeyboardUp with escape if inUse is true', () => {

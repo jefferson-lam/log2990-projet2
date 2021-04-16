@@ -376,9 +376,9 @@ describe('RectangleSelectionService', () => {
 
     it('onToolChange should call onMouseDown if isManipulating is true', () => {
         service.isManipulating = true;
-        const onMouseDownSpy = spyOn(service, 'onMouseDown');
+        const confirmSelection = spyOn(service, 'confirmSelection');
         service.onToolChange();
-        expect(onMouseDownSpy).toHaveBeenCalled();
+        expect(confirmSelection).toHaveBeenCalled();
     });
 
     it('onToolChange should call onKeyboardUp with escape if inUse is true', () => {
