@@ -197,7 +197,10 @@ export class RectangleSelectionService extends ToolSelectionService {
     }
 
     undoSelection(): void {
-        if (this.isManipulating) {
+        if (!this.isManipulating) {
+            return;
+        }
+        if (!this.isFromClipboard) {
             this.drawingService.baseCtx.drawImage(
                 this.drawingService.selectionCanvas,
                 0,
@@ -209,13 +212,13 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.resetSelectedToolSettings();
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resizerHandlerService.resetResizers();
-            this.isManipulating = false;
-            this.isEscapeDown = false;
         }
+        this.resetSelectedToolSettings();
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resizerHandlerService.resetResizers();
+        this.isManipulating = false;
+        this.isEscapeDown = false;
     }
 
     private fillRectangle(baseCtx: CanvasRenderingContext2D, cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): void {
