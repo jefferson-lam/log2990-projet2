@@ -2,7 +2,7 @@
     <mat-label>Tags</mat-label>
     <input #tagInput matInput (input)="validateTag(tagInput.value)" />
 </mat-form-field>
-<input id="addTagButton" [disabled]="!isSavePossible" type="button" value="Ajouter un tag" (click)="addTag(tagInput.value)" #tagInput />
+<button mat-button id="addTagButton" [disabled]="!isSavePossible" (click)="addTag(tagInput.value)">Ajouter un tag</button>
 <div>
     <div #distinctTagsDiv [className]="distinctTagsDivClass">{{ distinctTagsRequirement }}</div>
     <div #minLengthDiv [className]="minLengthDivClass">{{ minLengthRequirement }}</div>

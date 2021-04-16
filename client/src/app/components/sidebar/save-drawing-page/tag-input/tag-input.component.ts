@@ -36,6 +36,7 @@ export class TagInputComponent {
             this.tags.push(tag);
         }
         this.tagInput.nativeElement.value = '';
+        this.isSavePossible = false;
     }
 
     deleteTag(tag: string): void {
