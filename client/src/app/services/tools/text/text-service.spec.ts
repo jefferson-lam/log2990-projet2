@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { TextService } from './text-service';
 
-fdescribe('TextService', () => {
+describe('TextService', () => {
     let service: TextService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -81,13 +81,34 @@ fdescribe('TextService', () => {
         expect(service.inUse).toEqual(true);
     });
 
-    it('onMouseDown should call drawTextOnCanvas if finished drawing is true', () => {
+    it('onMouseDown should call drawTextOnCanvas if lockKeyboard is true and escape key false', () => {
         service.lockKeyboard = true;
+        service.escapeKeyUsed = false;
         service.placeHolderSpan.style.zIndex = '2';
 
         service.onMouseDown(mouseEvent);
 
         expect(drawSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false and escape key true', () => {
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = true;
+        service.placeHolderSpan.style.zIndex = '2';
+
+        service.onMouseDown(mouseEvent);
+
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false or escape key true', () => {
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = false;
+        service.placeHolderSpan.style.zIndex = '2';
+
+        service.onMouseDown(mouseEvent);
+
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseUp should not call executeCommand if mouse was not already down', () => {
@@ -104,7 +125,7 @@ fdescribe('TextService', () => {
         expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp should not call executeCommand lock true', () => {
+    it('onMouseUp should not call executeCommand lock keyboard is true', () => {
         service.lockKeyboard = true;
         service.escapeKeyUsed = false;
         service.inUse = false;
@@ -113,7 +134,7 @@ fdescribe('TextService', () => {
         expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp should not call executeCommand', () => {
+    it('onMouseUp should not call executeCommand if both lock keyboard and escape key are true', () => {
         service.lockKeyboard = true;
         service.escapeKeyUsed = true;
         service.inUse = true;
@@ -122,7 +143,7 @@ fdescribe('TextService', () => {
         expect(executeSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp should set placeholder attributes if only lock is false', () => {
+    it('onMouseUp should set placeholder attributes if only lock keyboard is false', () => {
         service.inUse = true;
         service.escapeKeyUsed = true;
         service.lockKeyboard = false;
@@ -132,6 +153,7 @@ fdescribe('TextService', () => {
         expect(service.placeHolderSpan.style.zIndex).toEqual('2');
         expect(service.placeHolderSpan.style.visibility).toEqual('visible');
         expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
+        expect(service.placeHolderSpan.style.display).toEqual('block');
         expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords[0].x + 'px');
         expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords[0].y + 'px');
         expect(service.lockKeyboard).toEqual(true);
@@ -139,7 +161,7 @@ fdescribe('TextService', () => {
         expect(selectedTextSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should set placeholder attributes if escaped is true', () => {
+    it('onMouseUp should set placeholder attributes if escaped key used is true', () => {
         service.inUse = true;
         service.escapeKeyUsed = true;
         service.mouseDownCoord = { x: 0, y: 0 };
@@ -148,9 +170,11 @@ fdescribe('TextService', () => {
         expect(service.placeHolderSpan.style.zIndex).toEqual('2');
         expect(service.placeHolderSpan.style.visibility).toEqual('visible');
         expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
+        expect(service.placeHolderSpan.style.display).toEqual('block');
         expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords[0].x + 'px');
         expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords[0].y + 'px');
         expect(service.lockKeyboard).toEqual(true);
+        expect(service.escapeKeyUsed).toEqual(false);
         expect(selectedTextSpy).toHaveBeenCalled();
     });
 
@@ -207,7 +231,7 @@ fdescribe('TextService', () => {
         expect(clearCornerSpy).toHaveBeenCalled();
     });
 
-    it('drawTextOnCanvas should call multiple functions', () => {
+    it('drawTextOnCanvas should call multiple functions and call new command', () => {
         drawSpy.and.callThrough();
         service.drawTextOnCanvas();
 
@@ -259,26 +283,31 @@ fdescribe('TextService', () => {
     it('setFontFamily should change family font', () => {
         service.setFontFamily(TEST_FONT_FAMILY);
         expect(service.placeHolderSpan.style.fontFamily).toEqual(TEST_FONT_FAMILY);
+        expect(service.fontFamily).toEqual(TEST_FONT_FAMILY);
     });
 
     it('setFontSize should change font size', () => {
         service.setFontSize(TEST_FONT_SIZE);
         expect(service.placeHolderSpan.style.fontSize).toEqual(TEST_FONT_SIZE + 'px');
+        expect(service.fontSize).toEqual(TEST_FONT_SIZE);
     });
 
     it('setTextAlign should change alignment of text', () => {
         service.setTextAlign(TEST_TEXT_ALIGN);
         expect(service.placeHolderSpan.style.textAlign).toEqual(TEST_TEXT_ALIGN);
+        expect(service.textAlign).toEqual(TEST_TEXT_ALIGN);
     });
 
     it('setTextBold should change style of text to bold', () => {
         service.setTextBold(TEST_FONT_WEIGHT);
         expect(service.placeHolderSpan.style.fontWeight).toEqual(TEST_FONT_WEIGHT);
+        expect(service.fontWeight).toEqual(TEST_FONT_WEIGHT);
     });
 
     it('setTextItalic should change style of text to italic', () => {
         service.setTextItalic(TEST_ITALIC);
         expect(service.placeHolderSpan.style.fontStyle).toEqual(TEST_ITALIC);
+        expect(service.fontStyle).toEqual(TEST_ITALIC);
     });
 
     it('setPrimaryColor should change primary color to wanted color', () => {

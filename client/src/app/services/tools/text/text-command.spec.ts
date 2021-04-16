@@ -96,63 +96,55 @@ describe('TextCommand', () => {
         expect(splitSpy).toHaveBeenCalled();
     });
 
-    it('writeText should call adjustWidthWithTextAlign() with center align', () => {
+    it('writeText should call adjustTextAlignWidth() with center align', () => {
         command.textAlign = 'center';
-        const adjustSpy = spyOn(command, 'adjustWidthWithTextAlign');
+        const adjustSpy = spyOn(command, 'adjustTextAlignWidth');
         command.writeText(testCtx);
         expect(adjustSpy).toHaveBeenCalled();
     });
 
-    it('writeText should call adjustWidthWithTextAlign() with left align', () => {
+    it('writeText should call adjustTextAlignWidth() with left align', () => {
         command.textAlign = 'left';
-        const adjustSpy = spyOn(command, 'adjustWidthWithTextAlign');
+        const adjustSpy = spyOn(command, 'adjustTextAlignWidth');
         command.writeText(testCtx);
         expect(adjustSpy).toHaveBeenCalled();
     });
 
-    it('writeText should call adjustWidthWithTextAlign() with right align', () => {
+    it('writeText should call adjustTextAlignWidth() with right align', () => {
         command.textAlign = 'right';
-        const adjustSpy = spyOn(command, 'adjustWidthWithTextAlign');
+        const adjustSpy = spyOn(command, 'adjustTextAlignWidth');
         command.writeText(testCtx);
         expect(adjustSpy).toHaveBeenCalled();
     });
 
-    it('writeText should call adjustWidthWithTextAlign() with 0 return', () => {
+    it('writeText should call adjustTextAlignWidth() with 0 return if wrong value', () => {
         command.textAlign = 'ddddd';
-        const adjustSpy = spyOn(command, 'adjustWidthWithTextAlign');
+        const adjustSpy = spyOn(command, 'adjustTextAlignWidth');
         command.writeText(testCtx);
         expect(adjustSpy).toHaveBeenCalled();
     });
 
-    it('adjustWidthWithTextAlign() with right align', () => {
+    it('adjustTextAlignWidth() with right align', () => {
         command.textAlign = 'right';
-        const positionSpan = command.adjustWidthWithTextAlign(command.textAlign);
-        command.adjustWidthWithTextAlign(command.textAlign);
-        command.writeText(testCtx);
+        const positionSpan = command.adjustTextAlignWidth(command.textAlign);
         expect(positionSpan).toEqual(command.spanLeftPosition);
     });
 
-    it('adjustWidthWithTextAlign() with left align', () => {
+    it('adjustTextAlignWidth() with left align', () => {
         command.textAlign = 'left';
-        const positionSpan = command.adjustWidthWithTextAlign(command.textAlign);
-        command.adjustWidthWithTextAlign(command.textAlign);
-        command.writeText(testCtx);
+        const positionSpan = command.adjustTextAlignWidth(command.textAlign);
         expect(positionSpan).toEqual(0);
     });
 
-    it('adjustWidthWithTextAlign() with center align', () => {
+    it('adjustTextAlignWidth() with center align', () => {
         command.textAlign = 'center';
-        const positionSpan = command.adjustWidthWithTextAlign(command.textAlign);
-        command.adjustWidthWithTextAlign(command.textAlign);
-        command.writeText(testCtx);
+        const positionSpan = command.adjustTextAlignWidth(command.textAlign);
         expect(positionSpan).toEqual(command.spanLeftPosition / 2);
     });
 
-    it('adjustWidthWithTextAlign() with wrong align', () => {
+    it('adjustTextAlignWidth() with wrong align', () => {
         command.textAlign = 'dddd';
-        const positionSpan = command.adjustWidthWithTextAlign(command.textAlign);
-        command.adjustWidthWithTextAlign(command.textAlign);
-        command.writeText(testCtx);
+        const positionSpan = command.adjustTextAlignWidth(command.textAlign);
         expect(positionSpan).toEqual(0);
     });
 
@@ -169,5 +161,24 @@ describe('TextCommand', () => {
     it('writeText should set textAlign', () => {
         command.writeText(testCtx);
         expect(testCtx.textAlign).toEqual(command.textAlign);
+    });
+
+    it('fillTextOnCanvas should call fillText', () => {
+        const INDEX_STUB = 2;
+        const fillSpy = spyOn(testCtx, 'fillText');
+        command.fillTextOnCanvas(testCtx, INDEX_STUB);
+        expect(fillSpy).toHaveBeenCalled();
+    });
+
+    it('splitTextString should split text to paste on canvas', () => {
+        command.text = 'TEXT \n TESTING';
+        command.splitTextString();
+        expect(command.splitText).toEqual(['TEXT ', ' TESTING']);
+    });
+
+    it('splitTextString should not split text if no "\n" found', () => {
+        command.text = 'TEXT TESTING';
+        command.splitTextString();
+        expect(command.splitText).toEqual(['TEXT TESTING']);
     });
 });

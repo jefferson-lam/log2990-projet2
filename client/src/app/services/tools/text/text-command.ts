@@ -68,7 +68,7 @@ export class TextCommand extends Command {
 
     fillTextOnCanvas(ctx: CanvasRenderingContext2D, index: number): void {
         const textPosition = {
-            x: this.textWidth + this.adjustWidthWithTextAlign(this.textAlign),
+            x: this.textWidth + this.adjustTextAlignWidth(this.textAlign),
             y:
                 this.textHeight +
                 this.fontSize +
@@ -82,7 +82,7 @@ export class TextCommand extends Command {
         this.splitText = this.text.split('\n');
     }
 
-    adjustWidthWithTextAlign(textAlign: string): number {
+    adjustTextAlignWidth(textAlign: string): number {
         if (textAlign === 'center') return this.spanLeftPosition / 2;
         if (textAlign === 'right') return this.spanLeftPosition;
         else return 0;
