@@ -3,8 +3,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
-import { EllipseClipboardCommand } from '@app/services/tools/selection/clipboard/ellipse-clipboard-command';
-import { RectangleClipboardCommand } from '@app/services/tools/selection/clipboard/rectangle-clipboard-command';
+import { ClipboardCommand } from '@app/services/tools/selection/clipboard/clipboard-command';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
@@ -18,9 +17,6 @@ export class ClipboardService {
     currentTool: RectangleSelectionService | EllipseSelectionService;
     lastSelectionTool: string;
     cornerCoords: Vec2[];
-    isCircle: boolean;
-    selectionWidth: number;
-    selectionHeight: number;
 
     constructor(
         public drawingService: DrawingService,
@@ -60,8 +56,7 @@ export class ClipboardService {
             return;
         }
         if (this.isSelected(this.drawingService.selectionCanvas)) {
-            this.currentTool.isEscapeDown = true;
-            this.currentTool.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
+            this.currentTool.confirmSelection();
         }
         this.changeToSelectionTool(this.lastSelectionTool);
         this.setPastedCanvasPosition();
@@ -75,28 +70,15 @@ export class ClipboardService {
 
     deleteSelection(): void {
         if (this.isSelected(this.drawingService.selectionCanvas)) {
-            this.currentTool.undoSelection();
-            this.cornerCoords = this.currentTool.cornerCoords;
-            this.deleteEllipse();
-            this.deleteRectangle();
-            this.currentTool.isFromClipboard = false;
-        }
-    }
-
-    private deleteEllipse(): void {
-        if (this.currentTool instanceof EllipseSelectionService) {
-            this.isCircle = this.currentTool.isCircle;
-            const command = new EllipseClipboardCommand(this.drawingService.baseCtx, this);
+            const command = new ClipboardCommand(
+                this.drawingService.baseCtx,
+                this.drawingService.selectionCanvas,
+                this.drawingService.previewSelectionCanvas,
+                this,
+            );
             this.undoRedoService.executeCommand(command);
-        }
-    }
-
-    private deleteRectangle(): void {
-        if (this.currentTool instanceof RectangleSelectionService) {
-            this.selectionHeight = this.currentTool.selectionHeight;
-            this.selectionWidth = this.currentTool.selectionWidth;
-            const command = new RectangleClipboardCommand(this.drawingService.baseCtx, this);
-            this.undoRedoService.executeCommand(command);
+            this.currentTool.isManipulating = false;
+            this.currentTool.isEscapeDown = false;
         }
     }
 

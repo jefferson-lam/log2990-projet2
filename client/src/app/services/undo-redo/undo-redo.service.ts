@@ -42,7 +42,6 @@ export class UndoRedoService {
 
     redo(): void {
         if (this.redoPile.length === 0) return;
-
         this.undoPile.push(this.redoPile.pop() as Command);
         this.refresh();
     }
