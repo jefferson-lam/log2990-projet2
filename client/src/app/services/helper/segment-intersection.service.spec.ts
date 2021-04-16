@@ -144,6 +144,27 @@ describe('SegmentIntersectionService', () => {
         expect(result).toBeFalsy();
     });
 
+    it('doLinesShareRange should call doDomainsOverlap and areAllPointsAligned return false', () => {
+        const doDomainsOverlapSpy = spyOn<any>(service, 'doDomainsOverlap').and.callThrough();
+        const areAllPointsAlignedSpy = spyOn<any>(service, 'areAllPointsAligned').and.callThrough();
+        const start1 = { x: 100, y: 199 };
+        const end1 = { x: 24, y: 900 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 121, y: 109 };
+        const end2 = { x: 52, y: 132 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['doLinesShareRange'](line1, line2);
+        expect(doDomainsOverlapSpy).toHaveBeenCalled();
+        expect(areAllPointsAlignedSpy).toHaveBeenCalled();
+        expect(result).toBeFalsy();
+    });
+
     it('isColinear should return false if both lines are not colinear', () => {
         const start1 = { x: 32, y: 50 };
         const end1 = { x: 120, y: 900 };
@@ -196,14 +217,14 @@ describe('SegmentIntersectionService', () => {
     });
 
     it('intersects should return false if both lines determinant is 0', () => {
-        const start1 = { x: 5, y: 520 };
-        const end1 = { x: 32, y: 50 };
+        const start1 = { x: 5, y: 45 };
+        const end1 = { x: 10, y: 50 };
         const line1 = {
             start: start1,
             end: end1,
         };
         const start2 = { x: 32, y: 50 };
-        const end2 = { x: 25, y: 43 };
+        const end2 = { x: 37, y: 55 };
         const line2 = {
             start: start2,
             end: end2,
@@ -227,5 +248,39 @@ describe('SegmentIntersectionService', () => {
         };
         const result = service['intersects'](line1, line2);
         expect(result).toBeFalsy();
+    });
+
+    it('intersects should return false if lambda is smaller than 0', () => {
+        const start1 = { x: 10, y: 80 };
+        const end1 = { x: 100, y: 190 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 700, y: 120 };
+        const end2 = { x: 350, y: 50 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['intersects'](line1, line2);
+        expect(result).toBeFalsy();
+    });
+
+    it('intersects should return true if lambda is between 0 and 1', () => {
+        const start1 = { x: 620, y: 281 };
+        const end1 = { x: 218, y: 299 };
+        const line1 = {
+            start: start1,
+            end: end1,
+        };
+        const start2 = { x: 250, y: 250 };
+        const end2 = { x: 720, y: 750 };
+        const line2 = {
+            start: start2,
+            end: end2,
+        };
+        const result = service['intersects'](line1, line2);
+        expect(result).toBeTruthy();
     });
 });
