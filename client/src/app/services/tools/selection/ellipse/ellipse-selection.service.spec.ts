@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constants';
+import { MouseButton } from '@app/constants/mouse-constants';
 import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
@@ -113,6 +114,16 @@ describe('EllipseToolSelectionService', () => {
         expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
         expect(service.isManipulating).toBeFalsy();
         expect(service.pathData[START_INDEX]).toEqual(expectedResult);
+    });
+
+    it('onMouseDown should pass if not mouseleft, nor manipulating', () => {
+        const rightMouseEvent = {
+            button: MouseButton.Right,
+        } as MouseEvent;
+        service.isManipulating = false;
+        expect(() => {
+            service.onMouseDown(rightMouseEvent);
+        }).not.toThrow();
     });
 
     it('onMouseUp should pass if tool not inUse', () => {
