@@ -56,13 +56,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     changeCursor(tool: Tool): void {
-        const canvasStyle = this.previewCanvas.nativeElement.style;
         if (tool === this.toolManager.pencilService) {
-            canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
+            this.previewCanvas.nativeElement.style.cursor = 'url(assets/pencil.png) 0 15, auto';
         } else if (tool === this.toolManager.eraserService) {
-            canvasStyle.cursor = 'none';
+            this.previewCanvas.nativeElement.style.cursor = 'none';
         } else {
-            canvasStyle.cursor = 'crosshair';
+            this.previewCanvas.nativeElement.style.cursor = 'crosshair';
         }
     }
 
