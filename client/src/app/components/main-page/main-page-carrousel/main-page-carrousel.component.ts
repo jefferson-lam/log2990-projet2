@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -86,7 +86,6 @@ export class MainPageCarrouselComponent {
         this.resetShowcasedDrawings();
     }
 
-    @HostListener('keydown.ArrowLeft', ['$event'])
     showcasePreviousDrawing(): void {
         this.noValidDrawing = false;
         if (this.showCasedDrawings.length === 0) {
@@ -103,7 +102,6 @@ export class MainPageCarrouselComponent {
         this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
     }
 
-    @HostListener('keydown.ArrowRight', ['$event'])
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;
         this.noValidDrawing = false;

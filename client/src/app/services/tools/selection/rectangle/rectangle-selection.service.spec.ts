@@ -435,4 +435,23 @@ describe('RectangleSelectionService', () => {
         expect(service.isManipulating).toBeFalsy();
         expect(service.isEscapeDown).toBeFalsy();
     });
+
+    it('undoSelection not call drawImage when isFromClipboard is true', () => {
+        const sw = 75;
+        const sh = 210;
+        service.isManipulating = true;
+        service.cornerCoords = [
+            { x: 25, y: 40 },
+            { x: 100, y: 250 },
+        ];
+        service.selectionWidth = sw;
+        service.selectionHeight = sh;
+        service.isFromClipboard = true;
+        service.undoSelection();
+        expect(baseCtxDrawImageSpy).not.toHaveBeenCalled();
+        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(service.isManipulating).toBeFalsy();
+        expect(service.isEscapeDown).toBeFalsy();
+    });
 });

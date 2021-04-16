@@ -209,8 +209,9 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     undoSelection(): void {
-        if (this.isManipulating) {
-            this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
+        if (!this.isManipulating) return;
+        this.clipEllipse(this.drawingService.baseCtx, this.cornerCoords[0], this.selectionHeight, this.selectionWidth, 1);
+        if (!this.isFromClipboard) {
             this.drawingService.baseCtx.drawImage(
                 this.drawingService.selectionCanvas,
                 0,
@@ -222,15 +223,15 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.selectionWidth,
                 this.selectionHeight,
             );
-            this.drawingService.baseCtx.restore();
-            this.resetSelectedToolSettings();
-            this.resetCanvasState(this.drawingService.selectionCanvas);
-            this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-            this.resetCanvasState(this.drawingService.borderCanvas);
-            this.resizerHandlerService.resetResizers();
-            this.isManipulating = false;
-            this.isEscapeDown = false;
         }
+        this.drawingService.baseCtx.restore();
+        this.resetSelectedToolSettings();
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
+        this.resizerHandlerService.resetResizers();
+        this.isManipulating = false;
+        this.isEscapeDown = false;
     }
 
     private validateSelectionHeightAndWidth(): boolean {
