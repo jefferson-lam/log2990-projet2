@@ -1,11 +1,11 @@
-export enum ResizerIndex {
-    TOP_LEFT_INDEX,
-    TOP_MIDDLE_INDEX,
-    TOP_RIGHT_INDEX,
-    MID_LEFT_INDEX,
-    MID_RIGHT_INDEX,
-    BOTTOM_LEFT_INDEX,
-    BOTTOM_MIDDLE_INDEX,
-    BOTTOM_RIGHT_INDEX,
-    CENTER_INDEX,
+export enum MagnetizedPoint {
+    TOP_LEFT,
+    TOP_MIDDLE,
+    TOP_RIGHT,
+    MID_LEFT,
+    MID_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_MIDDLE,
+    BOTTOM_RIGHT,
+    CENTER,
 }

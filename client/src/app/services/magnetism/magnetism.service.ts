@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 })
 export class MagnetismService {
     isMagnetismOn: boolean;
-    referenceResizerMode: MagnestismConstants.ResizerIndex;
+    magnetizedPoint: MagnestismConstants.MagnetizedPoint;
     topLeftResizerCoords: Vec2;
     bottomRightResizerCoords: Vec2;
     referenceResizerCoords: Vec2;
@@ -23,13 +23,13 @@ export class MagnetismService {
     constructor(private canvasGridService: CanvasGridService) {
         this.isMagnetismOn = false;
         this.magnetismStateSubject = new Subject<boolean>();
-        this.referenceResizerMode = MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX;
-        this.pointOffsets = new Array<Vec2>(MagnestismConstants.ResizerIndex.CENTER_INDEX + 1);
+        this.magnetizedPoint = MagnestismConstants.MagnetizedPoint.TOP_LEFT;
+        this.pointOffsets = new Array<Vec2>(MagnestismConstants.MagnetizedPoint.CENTER + 1);
     }
 
     magnetizeSelection(): Vec2 {
         this.setPointOffsets(this.previewSelectionCanvas);
-        this.referenceResizerCoords = this.pointOffsets[this.referenceResizerMode];
+        this.referenceResizerCoords = this.pointOffsets[this.magnetizedPoint];
         return this.findClosestCorner(this.transformValues);
     }
 
@@ -82,15 +82,15 @@ export class MagnetismService {
     }
 
     private setTopLeft(): void {
-        this.pointOffsets[MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX] = this.topLeftResizerCoords;
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.TOP_LEFT] = this.topLeftResizerCoords;
     }
 
     private setTopRight(): void {
-        this.pointOffsets[MagnestismConstants.ResizerIndex.TOP_RIGHT_INDEX] = { x: this.bottomRightResizerCoords.x, y: this.topLeftResizerCoords.y };
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.TOP_RIGHT] = { x: this.bottomRightResizerCoords.x, y: this.topLeftResizerCoords.y };
     }
 
     private setBottomLeft(): void {
-        this.pointOffsets[MagnestismConstants.ResizerIndex.BOTTOM_LEFT_INDEX] = {
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.BOTTOM_LEFT] = {
             x: this.topLeftResizerCoords.x,
             y: this.bottomRightResizerCoords.y,
         };
@@ -98,31 +98,31 @@ export class MagnetismService {
 
     private setTopMiddle(): void {
         const topMiddleXPosition = (this.topLeftResizerCoords.x + this.bottomRightResizerCoords.x) / 2;
-        this.pointOffsets[MagnestismConstants.ResizerIndex.TOP_MIDDLE_INDEX] = { x: topMiddleXPosition, y: this.topLeftResizerCoords.y };
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.TOP_MIDDLE] = { x: topMiddleXPosition, y: this.topLeftResizerCoords.y };
     }
 
     private setMiddleLeft(): void {
         const middleYLeftPosition = (this.topLeftResizerCoords.y + this.bottomRightResizerCoords.y) / 2;
-        this.pointOffsets[MagnestismConstants.ResizerIndex.MID_LEFT_INDEX] = { x: this.topLeftResizerCoords.x, y: middleYLeftPosition };
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.MID_LEFT] = { x: this.topLeftResizerCoords.x, y: middleYLeftPosition };
     }
 
     private setMiddleRight(): void {
         const middleRightPosition = (this.topLeftResizerCoords.y + this.bottomRightResizerCoords.y) / 2;
-        this.pointOffsets[MagnestismConstants.ResizerIndex.MID_RIGHT_INDEX] = { x: this.bottomRightResizerCoords.x, y: middleRightPosition };
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.MID_RIGHT] = { x: this.bottomRightResizerCoords.x, y: middleRightPosition };
     }
 
     private setBottomMiddle(): void {
         const bottomMiddleXPosition = (this.topLeftResizerCoords.x + this.bottomRightResizerCoords.x) / 2;
-        this.pointOffsets[MagnestismConstants.ResizerIndex.BOTTOM_MIDDLE_INDEX] = { x: bottomMiddleXPosition, y: this.bottomRightResizerCoords.y };
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.BOTTOM_MIDDLE] = { x: bottomMiddleXPosition, y: this.bottomRightResizerCoords.y };
     }
 
     private setBottomRight(): void {
-        this.pointOffsets[MagnestismConstants.ResizerIndex.BOTTOM_RIGHT_INDEX] = this.bottomRightResizerCoords;
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.BOTTOM_RIGHT] = this.bottomRightResizerCoords;
     }
 
     private setCenter(): void {
         const centerXCoords = (this.topLeftResizerCoords.x + this.bottomRightResizerCoords.x) / 2;
         const centerYCoords = (this.topLeftResizerCoords.y + this.bottomRightResizerCoords.y) / 2;
-        this.pointOffsets[MagnestismConstants.ResizerIndex.CENTER_INDEX] = { x: centerXCoords, y: centerYCoords };
+        this.pointOffsets[MagnestismConstants.MagnetizedPoint.CENTER] = { x: centerXCoords, y: centerYCoords };
     }
 }

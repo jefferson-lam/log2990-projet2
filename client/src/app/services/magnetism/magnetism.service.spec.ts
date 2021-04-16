@@ -31,63 +31,63 @@ describe('MagnetismService', () => {
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for top left', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.TOP_LEFT;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: 0, y: 0 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for top middle', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.TOP_MIDDLE_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.TOP_MIDDLE;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: 10, y: 0 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for top right', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.TOP_RIGHT_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.TOP_RIGHT;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: -10, y: 0 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for mid left', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.MID_LEFT_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.MID_LEFT;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: 0, y: 10 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for mid right', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.MID_RIGHT_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.MID_RIGHT;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: -10, y: 10 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for bottom left', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.BOTTOM_LEFT_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.BOTTOM_LEFT;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: 0, y: -10 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for bottom middle', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.BOTTOM_MIDDLE_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.BOTTOM_MIDDLE;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: 10, y: -10 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for bottom right', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.BOTTOM_RIGHT_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.BOTTOM_RIGHT;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: -10, y: -10 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
     });
 
     it('magnetizeSelection should properly set referenceResizerCoords for center', () => {
-        service.referenceResizerMode = MagnestismConstants.ResizerIndex.CENTER_INDEX;
+        service.magnetizedPoint = MagnestismConstants.MagnetizedPoint.CENTER;
         const closestCorner = service.magnetizeSelection();
         const EXPECTED_CORNER = { x: 10, y: 10 };
         expect(closestCorner).toEqual(EXPECTED_CORNER);
