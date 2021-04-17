@@ -5,6 +5,7 @@ import * as CanvasConstants from '@app/constants/canvas-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -25,7 +26,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private gridCanvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
 
     @Input() currentTool: Tool;
-    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService, public canvasGridService: CanvasGridService) {}
+    constructor(
+        private drawingService: DrawingService,
+        public toolManager: ToolManagerService,
+        public canvasGridService: CanvasGridService,
+        public undoRedoService: UndoRedoService,
+    ) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -94,7 +100,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.currentTool.onMouseDoubleClick(event);
     }
 
-    @HostListener('mousemove', ['$event'])
+    @HostListener('window:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);
     }
@@ -102,19 +108,21 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
         this.currentTool.onMouseDown(event);
+        this.undoRedoService.updateActionsAllowed(!this.currentTool.inUse);
     }
 
-    @HostListener('mouseup', ['$event'])
+    @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.currentTool.onMouseUp(event);
+        this.undoRedoService.updateActionsAllowed(!this.currentTool.inUse);
     }
 
-    @HostListener('mouseleave', ['$event'])
+    @HostListener('window:mouseleave', ['$event'])
     onMouseLeave(event: MouseEvent): void {
         this.currentTool.onMouseLeave(event);
     }
 
-    @HostListener('mouseenter', ['$event'])
+    @HostListener('window:mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.currentTool.onMouseEnter(event);
     }
