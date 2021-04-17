@@ -192,12 +192,6 @@ describe('PolygoneService', () => {
         expect(radii[1]).toEqual(yRadius);
     });
 
-    it('setLineWidth should change size of lineWidth', () => {
-        const RANDOM_TEST_WIDTH = 10;
-        service.setLineWidth(RANDOM_TEST_WIDTH);
-        expect(service.lineWidth).toEqual(RANDOM_TEST_WIDTH);
-    });
-
     it('onToolChange should call onMouseUp', () => {
         const onMouseUpSpy = spyOn(service, 'onMouseUp');
 

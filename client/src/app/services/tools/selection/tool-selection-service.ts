@@ -136,7 +136,7 @@ export class ToolSelectionService extends Tool {
     resetSelectedToolSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'black';
         this.selectionTool.fillMode = this.selectionToolFillMode;
-        this.selectionTool.setLineWidth(this.selectionToolLineWidth);
+        this.selectionTool.lineWidth = this.selectionToolLineWidth;
         this.selectionTool.primaryColor = this.selectionToolPrimaryColor;
         this.selectionTool.secondaryColor = this.selectionToolSecondaryColor;
         this.drawingService.previewCtx.setLineDash([]);
