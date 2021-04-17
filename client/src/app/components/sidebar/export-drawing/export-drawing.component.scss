@@ -12,6 +12,10 @@
     display: none;
 }
 
+#formWrapper {
+    margin-top: 20px;
+}
+
 #buttonDiv {
     display: flex;
     flex-direction: row;
@@ -24,7 +28,6 @@
     align-content: center;
     font-size: large;
     background-color: coral;
-    margin: auto;
     width: 125px;
     margin: 10px;
 }
@@ -47,5 +50,5 @@
 }
 
 img {
-  border: 1px solid black;
+    border: 1px solid black;
 }

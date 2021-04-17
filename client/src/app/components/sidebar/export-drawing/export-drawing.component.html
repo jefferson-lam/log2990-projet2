@@ -13,7 +13,7 @@
         <img #exportImg [style.width]="canvasStyleWidth" [style.height]="canvasStyleHeight" />
     </div>
 
-    <mat-form-field>
+    <mat-form-field id="formWrapper">
         <mat-label for="filter">Filtre appliquée : </mat-label>
         <mat-select [(value)]="filter" (selectionChange)="applyFilter($event.value)" id="filter">
             <mat-option value="none">Aucun filtre</mat-option>
