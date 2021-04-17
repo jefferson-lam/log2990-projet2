@@ -9,10 +9,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class AutoSaveService {
     constructor(public drawingService: DrawingService, public undoRedoService: UndoRedoService) {
-        this.undoRedoService.pileSizeObservable.subscribe((sizes: number[]) => {
-            if (sizes[0] + sizes[1] > 0) {
-                this.autoSaveDrawing();
-            }
+        this.undoRedoService.actionsAllowedObservable.subscribe((allowed: boolean[]) => {
+            if (allowed[0] || allowed[1]) this.autoSaveDrawing();
         });
     }
 
