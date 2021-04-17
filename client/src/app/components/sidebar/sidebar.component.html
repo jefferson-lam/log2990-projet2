@@ -41,6 +41,9 @@
             <li id="gridButton">
                 <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
             </li>
+            <li id="magnetismButton">
+                <mat-icon matTooltip="Options magnetisme" [matTooltipPosition]="'right'" (click)="toggleMagnetismOptions()"> select_all </mat-icon>
+            </li>
         </ul>
         <ul class="tools-sidebar">
             <li id="toolId" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons" class="listToolsClass">
@@ -72,6 +75,7 @@
                 <app-sidebar-ellipse-selection class="sidebar-tool-options" *ngSwitchCase="'s'"></app-sidebar-ellipse-selection>
                 <app-sidebar-paint-bucket class="sidebar-tool-options" *ngSwitchCase="'b'"></app-sidebar-paint-bucket>
                 <app-sidebar-grid class="sidebar-tool-options" *ngIf="isGridOptionsDisplayed"></app-sidebar-grid>
+                <app-sidebar-magnetism class="sidebar-tool-options" *ngIf="isMagnetismOptionsDisplayed"></app-sidebar-magnetism>
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

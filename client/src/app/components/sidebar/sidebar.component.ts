@@ -15,7 +15,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class SidebarComponent {
     @Input() selectedTool: SidebarToolButton;
-    @Input() isGridOptionsDisplayed: boolean;
+    @Input() isMagnetismOptionsDisplayed: boolean;
+    isGridOptionsDisplayed: boolean;
     shouldRun: boolean;
     isUndoSelection: boolean;
 
@@ -49,6 +50,8 @@ export class SidebarComponent {
             this.selectedTool = this.sidebarToolButtons.find((sidebarToolButton) => {
                 return sidebarToolButton.service === tool.constructor.name;
             }) as SidebarToolButton;
+            this.isMagnetismOptionsDisplayed = false;
+            this.isGridOptionsDisplayed = false;
         });
     }
 
@@ -70,6 +73,10 @@ export class SidebarComponent {
 
     openGridOptions(): void {
         this.isGridOptionsDisplayed = !this.isGridOptionsDisplayed;
+    }
+
+    toggleMagnetismOptions(): void {
+        this.isMagnetismOptionsDisplayed = !this.isMagnetismOptionsDisplayed;
     }
 
     undo(): void {

@@ -20,14 +20,14 @@ export class ResizeBottomRight extends ResizeStrategy {
         this.resizeHeight = new ResizeBottom();
     }
 
-    resize(event: CdkDragMove, isShiftDown: boolean): void {
+    resizePreview(event: CdkDragMove, isShiftDown: boolean): void {
         if (isShiftDown) {
             this.oppositePoint = this.selectionComponent.initialPosition;
             this.resizeWidth.resizeWidth(event, this.oppositePoint);
             this.resizeHeight.resizeHeight(event, this.oppositePoint);
         } else {
-            this.resizeWidth.resize(event);
-            this.resizeHeight.resize(event);
+            this.resizeWidth.resizePreview(event);
+            this.resizeHeight.resizePreview(event);
         }
     }
 

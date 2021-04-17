@@ -58,6 +58,8 @@ export class EllipseSelectionService extends ToolSelectionService {
             }
             this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+            this.drawingService.borderCanvas.width = this.selectionWidth;
+            this.drawingService.borderCanvas.height = this.selectionHeight;
             this.selectEllipse(
                 this.drawingService.selectionCtx,
                 this.drawingService.baseCtx,
@@ -112,6 +114,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             } else if (event.key === 'Escape' && this.isEscapeDown) {
                 this.resetCanvasState(this.drawingService.selectionCanvas);
                 this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+                this.resetCanvasState(this.drawingService.borderCanvas);
                 this.resetSelectedToolSettings();
                 // Erase the rectangle drawn as a preview of selection
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -184,14 +187,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.stroke();
     }
 
-    setSelectionCanvasPosition(topLeft: Vec2): void {
-        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
-        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
-    }
-
     confirmSelection(): void {
         // transformValues represent where the canvas' topleft corner was moved
         this.transformValues = {
@@ -206,6 +201,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
         this.resetCanvasState(this.drawingService.selectionCanvas);
         this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
         this.clearCorners(this.cornerCoords);
         this.resetSelectedToolSettings();
         this.resizerHandlerService.resetResizers();
@@ -232,6 +228,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.resetSelectedToolSettings();
         this.resetCanvasState(this.drawingService.selectionCanvas);
         this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
         this.resizerHandlerService.resetResizers();
         this.isManipulating = false;
         this.isEscapeDown = false;
@@ -253,6 +250,17 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.selectionHeight = Math.abs(this.selectionHeight);
         return true;
     }
+
+    private setSelectionCanvasPosition(topLeft: Vec2): void {
+        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+    }
+
     private getRadiiXAndY(path: Vec2[]): number[] {
         let xRadius = Math.abs(path[SelectionConstants.END_INDEX].x - path[SelectionConstants.START_INDEX].x) / 2;
         let yRadius = Math.abs(path[SelectionConstants.END_INDEX].y - path[SelectionConstants.START_INDEX].y) / 2;

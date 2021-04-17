@@ -25,7 +25,7 @@ describe('ClipboardService', () => {
         drawServiceSpy = jasmine.createSpyObj(
             'DrawingService',
             ['clearCanvas'],
-            ['baseCtx', 'selectionCtx', 'selectionCanvas', 'previewSelectionCanvas'],
+            ['baseCtx', 'selectionCtx', 'selectionCanvas', 'previewSelectionCanvas', 'borderCanvas'],
         );
         resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['setResizerPositions', 'resetResizers']);
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['executeCommand']);
@@ -72,6 +72,9 @@ describe('ClipboardService', () => {
         );
         (Object.getOwnPropertyDescriptor(drawServiceSpy, 'previewSelectionCanvas')?.get as jasmine.Spy<() => HTMLCanvasElement>).and.returnValue(
             canvasTestHelper.previewSelectionCanvas as HTMLCanvasElement,
+        );
+        (Object.getOwnPropertyDescriptor(drawServiceSpy, 'borderCanvas')?.get as jasmine.Spy<() => HTMLCanvasElement>).and.returnValue(
+            canvasTestHelper.borderCanvas as HTMLCanvasElement,
         );
     });
 

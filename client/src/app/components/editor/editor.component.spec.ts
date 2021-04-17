@@ -42,6 +42,7 @@ describe('EditorComponent', () => {
             'onPlusKeyDown',
             'onEqualKeyDown',
             'onKeyboardDown',
+            'onMKeyDown',
         ]);
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService, {} as UndoRedoService);
@@ -127,6 +128,11 @@ describe('EditorComponent', () => {
     it('onGKeyDown should call shortcutManager.onGKeyDown', () => {
         component.onGKeyDown();
         expect(shortcutManagerSpy.onGKeyDown).toHaveBeenCalled();
+    });
+
+    it('onMKeyDown should call shortcutManager.onMKeyDown', () => {
+        component.onMKeyDown();
+        expect(shortcutManagerSpy.onMKeyDown).toHaveBeenCalled();
     });
 
     it('onMinusKeyDown should call shortcutManager.onMinusKeyDown', () => {

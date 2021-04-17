@@ -13,7 +13,10 @@ describe('ResizeStrategyService', () => {
         });
         service = TestBed.inject(ResizeStrategy);
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
-        service.selectionComponent = { previewSelectionCanvas: canvasTestHelper.previewSelectionCanvas } as SelectionComponent;
+        service.selectionComponent = {
+            previewSelectionCanvas: canvasTestHelper.previewSelectionCanvas,
+            borderCanvas: canvasTestHelper.borderCanvas,
+        } as SelectionComponent;
     });
 
     it('should be created', () => {
@@ -31,5 +34,7 @@ describe('ResizeStrategyService', () => {
         service.selectionComponent.previewSelectionCanvas.height = 2;
         service.resizeSquare();
         expect(service.selectionComponent.previewSelectionCanvas.height).toBe(service.selectionComponent.previewSelectionCanvas.width);
+        expect(service.selectionComponent.borderCanvas.width).toEqual(service.selectionComponent.previewSelectionCanvas.width);
+        expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
     });
 });

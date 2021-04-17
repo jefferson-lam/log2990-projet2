@@ -13,6 +13,7 @@ export class DrawingService {
     canvas: HTMLCanvasElement;
     imageURL: string = '';
     selectionCanvas: HTMLCanvasElement;
+    borderCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
 
     canvasSizeSubject: Subject<number[]> = new Subject<number[]>();
