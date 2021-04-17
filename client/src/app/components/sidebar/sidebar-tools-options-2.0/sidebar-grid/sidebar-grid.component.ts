@@ -42,6 +42,8 @@ export class SidebarGridComponent implements OnInit {
             this.squareWidth = width;
         });
         this.isGridOptionsDisplayed = this.canvasGridService.isGridDisplayed;
+        this.squareWidth = this.canvasGridService.squareWidth;
+        this.opacityValue = this.canvasGridService.opacityValue;
     }
 
     emitSquareWidth(): void {
