@@ -101,11 +101,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     @HostListener('mouseleave', ['$event'])
     onMouseLeave(event: MouseEvent): void {
         this.currentTool.onMouseLeave(event);
+        this.cursorManager.onMouseLeave();
     }
 
     @HostListener('mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.currentTool.onMouseEnter(event);
+        this.cursorManager.onMouseEnter();
     }
 
     @HostListener('mousewheel', ['$event'])

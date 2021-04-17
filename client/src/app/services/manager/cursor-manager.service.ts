@@ -11,6 +11,7 @@ export class CursorManagerService {
     private cursors: Map<Tool, string>;
     previewCanvas: HTMLCanvasElement;
     mousePosition: Vec2;
+    onCanvas: boolean;
 
     constructor(public undoRedoService: UndoRedoService, public toolManager: ToolManagerService) {
         this.mousePosition = { x: 0, y: 0 };
@@ -29,10 +30,18 @@ export class CursorManagerService {
     changeCursor(tool: Tool): void {
         this.previewCanvas.style.cursor = 'crosshair';
         if (this.cursors.get(tool)) this.previewCanvas.style.cursor = this.cursors.get(tool) as string;
-        tool.drawCursor(this.mousePosition);
+        if (this.onCanvas) tool.drawCursor(this.mousePosition);
     }
 
     onMouseMove(position: Vec2): void {
         this.mousePosition = position;
+    }
+
+    onMouseLeave(): void {
+        this.onCanvas = false;
+    }
+
+    onMouseEnter(): void {
+        this.onCanvas = true;
     }
 }
