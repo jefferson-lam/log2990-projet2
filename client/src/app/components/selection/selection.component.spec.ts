@@ -391,14 +391,14 @@ describe('SelectionComponent', () => {
         expect(setResizeStrategySpy).toHaveBeenCalledWith(ResizerDown.TopLeft);
     });
 
-    it('applyFocusBorderStyle should apply correct css changes to borderCanvas', () => {
-        component.applyFocusBorderStyle();
-        expect(component.borderCanvas.style.border).toEqual('1px solid black');
+    it('applyFocusOutlineStyle should apply correct css changes to borderCanvas', () => {
+        component.applyFocusOutlineStyle();
+        expect(component.borderCanvas.style.outline).toEqual('black solid 1px');
     });
 
-    it('applyfocusOutPreviewStyle should apply correct css change to previewSelectionCanvas', () => {
-        component.applyFocusOutBorderStyle();
-        expect(component.borderCanvas.style.border).toEqual('1px dashed black');
+    it('applyfocusOutOutlineStyle should apply correct css change to previewSelectionCanvas', () => {
+        component.applyFocusOutOutlineStyle();
+        expect(component.borderCanvas.style.outline).toEqual('black dashed 1px');
     });
 
     it('onShiftKeyDown should call shortcutManager.selectionOnShiftKeyDown', () => {

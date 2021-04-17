@@ -202,12 +202,12 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.setResizeStrategy(this.resizerDown);
     }
 
-    applyFocusBorderStyle(): void {
-        this.borderCanvas.style.border = '1px solid black';
+    applyFocusOutlineStyle(): void {
+        this.borderCanvas.style.outline = '1px solid black';
     }
 
-    applyFocusOutBorderStyle(): void {
-        this.borderCanvas.style.border = '1px dashed black';
+    applyFocusOutOutlineStyle(): void {
+        this.borderCanvas.style.outline = '1px dashed black';
     }
     @HostListener('window:keydown.shift')
     onShiftKeyDown(): void {
