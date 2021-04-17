@@ -27,14 +27,7 @@ export class StampCommand extends Command {
         this.position = stampService.position;
     }
 
-    private loadStamp(stampSource: string): void {
-        new Promise((r) => {
-            this.stamp.onload = r;
-            this.stamp.src = stampSource;
-        }).then();
-    }
-
-    addStamp(): void {
+    private addStamp(): void {
         this.ctx.save();
         this.ctx.translate(this.position.x, this.position.y);
         this.ctx.rotate(this.rotationAngle);
@@ -42,7 +35,7 @@ export class StampCommand extends Command {
         this.ctx.restore();
     }
 
-    pasteStamp(): void {
+    private pasteStamp(): void {
         const startPosition = {
             x: -this.getStampSize() / StampConstants.WIDTH_STAMP_FACTOR,
             y: -this.getStampSize() / 2,
@@ -54,9 +47,16 @@ export class StampCommand extends Command {
         this.ctx.drawImage(this.stamp, startPosition.x, startPosition.y, stampSize.width, stampSize.height);
     }
 
-    getStampSize(): number {
+    private getStampSize(): number {
         if (this.imageZoomFactor === 0) this.imageZoomFactor = 1;
         if (this.imageZoomFactor < 0) return (1 / Math.abs(this.imageZoomFactor)) * (StampConstants.INIT_STAMP_SIZE / 2);
         return this.imageZoomFactor * (StampConstants.INIT_STAMP_SIZE / 2);
+    }
+
+    private loadStamp(stampSource: string): void {
+        new Promise((r) => {
+            this.stamp.onload = r;
+            this.stamp.src = stampSource;
+        }).then();
     }
 }

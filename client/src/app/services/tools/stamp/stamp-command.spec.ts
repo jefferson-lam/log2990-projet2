@@ -1,16 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import * as StampConstants from '@app/constants/stamp-constants';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { StampCommand } from './stamp-command';
 
-// tslint:disable-next-line:no-any
+// tslint:disable:no-any
 // tslint:disable:no-string-literal
 describe('StampCommand', () => {
     let command: StampCommand;
     let stampService: StampService;
     let baseCtxStub: CanvasRenderingContext2D;
-    let testCtx: CanvasRenderingContext2D;
-    let testCanvas: HTMLCanvasElement;
 
     let canvasTestHelper: CanvasTestHelper;
 
@@ -20,9 +19,6 @@ describe('StampCommand', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         command = new StampCommand(baseCtxStub, stampService);
-        testCanvas = document.createElement('canvas');
-
-        testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D;
     });
 
     it('should be created', () => {
@@ -30,51 +26,58 @@ describe('StampCommand', () => {
     });
 
     it('execute should call addStamp', () => {
-        // tslint:disable-next-line:no-any
-        const stampSpy = spyOn<any>(command, 'addStamp');
+        const addStampSpy = spyOn<any>(command, 'addStamp');
         command.execute();
-        expect(stampSpy).toHaveBeenCalled();
+        expect(addStampSpy).toHaveBeenCalled();
     });
 
-    it('setValues should set values', () => {
+    it('setValues should set values and call loadStamp', () => {
+        const loadSpy = spyOn<any>(command, 'loadStamp');
         command.setValues({} as CanvasRenderingContext2D, stampService);
 
+        expect(loadSpy).toHaveBeenCalled();
         expect(command.rotationAngle).toEqual(stampService.rotationAngle);
-        expect(command.imageSource).toEqual(stampService.imageSource);
         expect(command.imageZoomFactor).toEqual(stampService.imageZoomFactor);
-        expect(command.cornerCoords).toEqual(stampService.cornerCoords);
+        expect(command.position).toEqual(stampService.position);
     });
 
-    it('getStampSize return right value if zoom factor zero', () => {
-        command.getStampSize(0);
-        expect(command.imageZoomFactor).toEqual(1);
-    });
-
-    it('addStamp should call getStampSize and set right zoomFactor', () => {
-        command.getStampSize(0);
-        expect(command.imageZoomFactor).toEqual(1);
-    });
-
-    it('addStamp should call getStampSize and set right zoomFactor', () => {
-        const ZOOM_FACTOR = -1;
-        command.getStampSize(ZOOM_FACTOR);
-        expect(command.imageZoomFactor).toEqual(1);
-    });
-
-    it('addStamp should call pasteStamp and set right stamp on canvas', () => {
-        // tslint:disable-next-line:no-any
+    it('addStamp should call pasteStamp and canvas functions', () => {
         const pasteStampSpy = spyOn<any>(command, 'pasteStamp');
-        command['addStamp'](command['ctx'], command.cornerCoords, command.rotationAngle);
+        const saveSpy = spyOn(baseCtxStub, 'save');
+        const translateSpy = spyOn(baseCtxStub, 'translate');
+        const rotateSpy = spyOn(baseCtxStub, 'rotate');
+        const restoreSpy = spyOn(baseCtxStub, 'restore');
+
+        command['addStamp']();
 
         expect(pasteStampSpy).toHaveBeenCalled();
+        expect(saveSpy).toHaveBeenCalled();
+        expect(translateSpy).toHaveBeenCalled();
+        expect(translateSpy).toHaveBeenCalledWith(command.position.x, command.position.y);
+        expect(rotateSpy).toHaveBeenCalled();
+        expect(rotateSpy).toHaveBeenCalledWith(command.rotationAngle);
+        expect(restoreSpy).toHaveBeenCalled();
     });
 
     it('pasteStamp should call drawImage from context and set right values on canvas', () => {
-        // tslint:disable-next-line:no-any
-        const image: HTMLImageElement = new Image();
-        const drawSpy = spyOn(testCtx, 'drawImage');
-        command['pasteStamp'](testCtx, image);
+        const drawSpy = spyOn(baseCtxStub, 'drawImage');
+        command['pasteStamp']();
 
         expect(drawSpy).toHaveBeenCalled();
+    });
+
+    it('getStampSize should set zoom factor to one and return right value if zoom factor zero', () => {
+        command.imageZoomFactor = 0;
+        const result = command['getStampSize']();
+        expect(command.imageZoomFactor).toEqual(1);
+        expect(result).toBe(StampConstants.INIT_STAMP_SIZE / 2);
+    });
+
+    it('getStampSize should return right value', () => {
+        // tslint:disable-next-line:no-magic-numbers
+        command.imageZoomFactor = -2;
+        const expectedValue = StampConstants.INIT_STAMP_SIZE / 2 / Math.abs(command.imageZoomFactor);
+        const result = command['getStampSize']();
+        expect(result).toBe(expectedValue);
     });
 });

@@ -22,9 +22,7 @@ export class CursorManagerService {
             .set(toolManager.stampService, 'none');
 
         this.undoRedoService.pileSizeObservable.subscribe(() => {
-            if (this.cursors.get(this.toolManager.currentTool) === 'none') {
-                this.toolManager.currentTool.drawCursor(this.mousePosition);
-            }
+            this.toolManager.currentTool.drawCursor(this.mousePosition);
         });
     }
 

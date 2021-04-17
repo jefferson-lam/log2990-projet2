@@ -66,19 +66,6 @@ export class EraserService extends Tool {
         }
     }
 
-    drawCursor(position: Vec2): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-
-        this.drawingService.previewCtx.lineWidth = 1;
-        this.drawingService.previewCtx.fillStyle = 'white';
-        this.drawingService.previewCtx.strokeStyle = 'black';
-
-        this.drawingService.previewCtx.beginPath();
-        this.drawingService.previewCtx.rect(position.x - this.lineWidth / 2, position.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
-        this.drawingService.previewCtx.fillRect(position.x - this.lineWidth / 2, position.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
-        this.drawingService.previewCtx.stroke();
-    }
-
     onMouseLeave(event: MouseEvent): void {
         if (this.inUse) {
             const command: Command = new EraserCommand(this.drawingService.baseCtx, this);
@@ -94,11 +81,24 @@ export class EraserService extends Tool {
         }
     }
 
-    private clearPath(): void {
-        this.pathData = [];
+    drawCursor(position: Vec2): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
+        this.drawingService.previewCtx.lineWidth = 1;
+        this.drawingService.previewCtx.fillStyle = 'white';
+        this.drawingService.previewCtx.strokeStyle = 'black';
+
+        this.drawingService.previewCtx.beginPath();
+        this.drawingService.previewCtx.rect(position.x - this.lineWidth / 2, position.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
+        this.drawingService.previewCtx.fillRect(position.x - this.lineWidth / 2, position.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
+        this.drawingService.previewCtx.stroke();
     }
 
     onToolChange(): void {
         this.onMouseUp({} as MouseEvent);
+    }
+
+    private clearPath(): void {
+        this.pathData = [];
     }
 }

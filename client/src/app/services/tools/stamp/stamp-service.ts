@@ -61,12 +61,8 @@ export class StampService extends Tool {
         this.previewCommand.execute();
     }
 
-    onMouseLeave(event: MouseEvent): void {
+    onMouseLeave(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        // if (this.inUse) {
-        //     this.previewCommand.setValues(this.drawingService.previewCtx, this);
-        //     this.previewCommand.execute();
-        // }
     }
 
     onMouseEnter(event: MouseEvent): void {

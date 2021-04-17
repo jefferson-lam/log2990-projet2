@@ -16,7 +16,7 @@ describe('StampService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
 
     let previewExecuteSpy: jasmine.Spy;
-    let executeSpy: jasmine.Spy;
+    let executeCommandSpy: jasmine.Spy;
 
     let undoRedoService: UndoRedoService;
 
@@ -31,7 +31,7 @@ describe('StampService', () => {
         service = TestBed.inject(StampService);
 
         undoRedoService = TestBed.inject(UndoRedoService);
-        executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
+        executeCommandSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
         previewExecuteSpy = spyOn(service.previewCommand, 'execute');
 
         // tslint:disable:no-string-literal
@@ -52,7 +52,7 @@ describe('StampService', () => {
     it('onMouseDown should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 40 };
         service.onMouseDown(mouseEvent);
-        expect(service.cornerCoords[0]).toEqual(expectedResult);
+        expect(service.position).toEqual(expectedResult);
     });
 
     it('onMouseDown should set inUse property to true on left click', () => {
@@ -75,14 +75,14 @@ describe('StampService', () => {
         service.inUse = true;
         service.fillMode = 1;
         service.onMouseUp(mouseEvent);
-        expect(executeSpy).toHaveBeenCalled();
+        expect(executeCommandSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should not call executeCommand if mouse was not already down', () => {
         service.inUse = false;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
-        expect(executeSpy).not.toHaveBeenCalled();
+        expect(executeCommandSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseMove should call executeCommand if mouse was already down', () => {
@@ -92,20 +92,11 @@ describe('StampService', () => {
         expect(previewExecuteSpy).toHaveBeenCalled();
     });
 
-    it('onMouseLeave should call executeCommand if mouse was pressed', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.inUse = true;
-        service.onMouseLeave(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(previewExecuteSpy).toHaveBeenCalled();
-    });
+    it('onMouseLeave should call clearCanvas on previewCtx', () => {
+        service.onMouseLeave();
 
-    it('onMouseLeave should not call executeCommand if mouse was not pressed', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.inUse = false;
-        service.onMouseLeave(mouseEvent);
-        expect(executeSpy).not.toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
     });
 
     it('onMouseEnter should make service.mouseDown true if left mouse was pressed and mouse was pressed before leaving', () => {
@@ -148,6 +139,9 @@ describe('StampService', () => {
             offsetX: 25,
             offsetY: 40,
             buttons: 0,
+            preventDefault(): void {
+                return;
+            },
         } as WheelEvent;
         service.onMouseWheel(mouseWheelEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
@@ -231,5 +225,16 @@ describe('StampService', () => {
         service.onToolChange();
 
         expect(onMouseUpSpy).toHaveBeenCalled();
+    });
+
+    it('drawCursor should set position, previewCommand values and execute previewCommand', () => {
+        const setPreviewCommandValuesSpy = spyOn(service.previewCommand, 'setValues');
+        const expectedPosition = { x: 2, y: 40 };
+
+        service.drawCursor(expectedPosition);
+
+        expect(service.position).toBe(expectedPosition);
+        expect(setPreviewCommandValuesSpy).toHaveBeenCalled();
+        expect(previewExecuteSpy).toHaveBeenCalled();
     });
 });

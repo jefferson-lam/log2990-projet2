@@ -77,8 +77,7 @@ describe('DrawingComponent', () => {
     });
 
     it('should get pencilStub', () => {
-        const currentTool = component.currentTool;
-        expect(currentTool).toEqual(pencilStub);
+        expect(component.currentTool).toEqual(pencilStub);
     });
 
     it(" should call the tool's mouse move when receiving a mouse move event", () => {
@@ -165,26 +164,5 @@ describe('DrawingComponent', () => {
         component.onContextMenu(eventSpy);
 
         expect(eventSpy.preventDefault).toHaveBeenCalled();
-    });
-
-    it('changeCursor should set cursor to none if eraserService selected', () => {
-        component.changeCursor(eraserStub);
-        expect(component.previewCanvas.nativeElement.style.cursor).toBe('none');
-    });
-
-    it('changeCursor should set cursor to pencil-icon if pencilService selected', () => {
-        component.changeCursor(pencilStub);
-        expect(component.previewCanvas.nativeElement.style.cursor).toBe('url("assets/pencil.png") 0 15, auto');
-    });
-
-    it('changeCursor should set cursor to crosshair if not eraser or pencil selected', () => {
-        component.changeCursor(lineStub);
-        expect(component.previewCanvas.nativeElement.style.cursor).toBe('crosshair');
-    });
-
-    it('changeCursor should set cursor to none if stampService selected', () => {
-        const canvasStyle = document.getElementsByTagName('canvas')[1].style;
-        component.changeCursor(stampStub);
-        expect(canvasStyle.cursor).toBe('none');
     });
 });
