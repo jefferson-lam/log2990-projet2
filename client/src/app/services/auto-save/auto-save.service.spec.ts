@@ -51,11 +51,11 @@ describe('AutoSaveService', () => {
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['reset'], {
             pileSizeSource: mockSubject,
             pileSizeObservable: mockSubject.asObservable(),
-            resetCanvasSize: new ResizerCommand(drawServiceSpy),
+            resetCanvasSize: resizerCommandSpy,
             initialImage: new Image(),
         });
 
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['newDrawing'], ['canvas', 'baseCtx']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['newDrawing', 'whiteOut'], ['canvas', 'baseCtx']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
@@ -71,7 +71,7 @@ describe('AutoSaveService', () => {
 
         autoSaveSpy = spyOn(service, 'autoSaveDrawing');
         loadLocalStorageSpy = spyOn<any>(service, 'loadLocalStorage').and.callFake(() => {
-            service.undoRedoService.initialImage.src = mockImageURL;
+            (service.undoRedoService.initialImage as HTMLImageElement).src = mockImageURL;
         });
     });
 

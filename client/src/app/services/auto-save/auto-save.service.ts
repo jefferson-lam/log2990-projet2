@@ -55,9 +55,9 @@ export class AutoSaveService {
     }
 
     private async loadLocalStorage(): Promise<void> {
-      await new Promise((r) => {
-        (this.undoRedoService.initialImage as HTMLImageElement).onload = r;
-        (this.undoRedoService.initialImage as HTMLImageElement).src = localStorage.getItem('autosave') as string;
-      });
+        await new Promise((r) => {
+            (this.undoRedoService.initialImage as HTMLImageElement).onload = r;
+            (this.undoRedoService.initialImage as HTMLImageElement).src = localStorage.getItem('autosave') as string;
+        });
     }
 }
