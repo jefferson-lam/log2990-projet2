@@ -153,6 +153,7 @@ describe('AutoSaveService', () => {
         resizerCommandSpy.execute.and.callFake(() => {});
         service.loadDrawing();
         flush();
+        expect(loadLocalStorageSpy).toHaveBeenCalled();
         expect(autoSaveSpy).toHaveBeenCalled();
     }));
 
