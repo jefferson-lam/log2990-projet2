@@ -379,6 +379,7 @@ describe('TextService', () => {
         const EXPECTED_RANDOM_COLOR = 'blue';
         service.setPrimaryColor(EXPECTED_RANDOM_COLOR);
         expect(service.primaryColor).toEqual(EXPECTED_RANDOM_COLOR);
+        expect(service.placeHolderSpan.style.color).toEqual(EXPECTED_RANDOM_COLOR);
     });
     // tslint:disable-next-line:max-file-line-count
 });

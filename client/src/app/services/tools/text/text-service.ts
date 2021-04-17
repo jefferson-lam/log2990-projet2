@@ -7,6 +7,7 @@ import * as TextConstants from '@app/constants/text-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextCommand } from '@app/services/tools/text/text-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -24,6 +25,7 @@ export class TextService extends Tool {
     escapeKeyUsed: boolean;
     lockKeyboard: boolean;
 
+    primaryColorChanged: Subject<string> = new Subject<string>();
     placeHolderSpan: HTMLSpanElement;
     cornerCoords: Vec2[];
     previewCommand: TextCommand;
@@ -79,7 +81,6 @@ export class TextService extends Tool {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.inUse = false;
         }
-        this.placeHolderSpan.style.color = this.primaryColor;
     }
 
     drawTextOnCanvas(): void {
@@ -149,6 +150,9 @@ export class TextService extends Tool {
 
     setPrimaryColor(newColor: string): void {
         this.primaryColor = newColor;
+        if (this.placeHolderSpan !== undefined) {
+            this.placeHolderSpan.style.color = newColor;
+        }
     }
 
     private clearCornerCoords(): void {
