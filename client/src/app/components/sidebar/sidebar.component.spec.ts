@@ -11,6 +11,7 @@ import { LineService } from '@app/services/tools/line/line-service';
 import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
+import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -27,6 +28,7 @@ describe('SidebarComponent', () => {
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
     let rectangleSelectionServiceStub: RectangleSelectionService;
+    let clipboardServiceStub: jasmine.SpyObj<ClipboardService>;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
@@ -54,8 +56,10 @@ describe('SidebarComponent', () => {
             {} as DrawingService,
             {} as UndoRedoService,
             {} as ResizerHandlerService,
-            new RectangleService({} as DrawingService, {} as UndoRedoService),
+            rectangleStub as RectangleService,
         );
+
+        clipboardServiceStub = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'deleteSelection', 'pasteSelection']);
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<
@@ -71,6 +75,7 @@ describe('SidebarComponent', () => {
                 { provide: EllipseService, useValue: ellipseStub },
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
                 { provide: PopupManagerService, useValue: popupManagerSpy },
+                { provide: ClipboardService, useValue: clipboardServiceStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -354,5 +359,25 @@ describe('SidebarComponent', () => {
         component.isGridOptionsDisplayed = false;
         component.openGridOptions();
         expect(component.isGridOptionsDisplayed).toBeTrue();
+    });
+
+    it('clicking on copySelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        component.copySelection();
+        expect(clipboardServiceStub.copySelection).toHaveBeenCalled();
+    });
+
+    it('clicking on cutSelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        component.cutSelection();
+        expect(clipboardServiceStub.cutSelection).toHaveBeenCalled();
+    });
+
+    it('clicking on deleteSelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
+        component.deleteSelection();
+        expect(clipboardServiceStub.deleteSelection).toHaveBeenCalled();
+    });
+
+    it('clicking on pasteSelection should call clipboardService method', () => {
+        component.pasteSelection();
+        expect(clipboardServiceStub.pasteSelection).toHaveBeenCalled();
     });
 });

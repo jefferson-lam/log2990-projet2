@@ -26,6 +26,18 @@
             <li id="selectAllButton">
                 <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
             </li>
+            <li id="copyButton">
+                <mat-icon matTooltip="Copier la sélection" [matTooltipPosition]="'right'" (click)="copySelection()">content_copy</mat-icon>
+            </li>
+            <li id="cutButton">
+                <mat-icon matTooltip="Couper la sélection" [matTooltipPosition]="'right'" (click)="cutSelection()">content_cut</mat-icon>
+            </li>
+            <li id="pasteButton">
+                <mat-icon matTooltip="Coller la sélection" [matTooltipPosition]="'right'" (click)="pasteSelection()">content_paste</mat-icon>
+            </li>
+            <li id="deleteButton">
+                <mat-icon matTooltip="Supprimer la sélection" [matTooltipPosition]="'right'" (click)="deleteSelection()">clear</mat-icon>
+            </li>
             <li id="gridButton">
                 <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
             </li>
@@ -46,7 +58,7 @@
     </div>
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">
-        <mat-drawer [mode]="'side'" class="sidenav" [opened]="true">
+        <mat-drawer [mode]="'side'" class="sidenav" [opened]="true" [disableClose]="true">
             <mat-drawer-content [ngSwitch]="selectedTool.keyShortcut">
                 <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="'c'"> </app-sidebar-pencil>
                 <app-sidebar-eraser class="sidebar-tool-options" *ngSwitchCase="'e'"></app-sidebar-eraser>

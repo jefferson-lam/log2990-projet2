@@ -19,7 +19,6 @@ describe('EditorComponent', () => {
     let fixture: ComponentFixture<EditorComponent>;
     let toolStub: ToolStub;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    // let keyboardEventSpy: jasmine.Spy;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
@@ -35,6 +34,10 @@ describe('EditorComponent', () => {
             'onCtrlSKeyDown',
             'onCtrlShiftZKeyDown',
             'onCtrlZKeyDown',
+            'onCtrlCKeyDown',
+            'onCtrlVKeyDown',
+            'onCtrlXKeyDown',
+            'onDeleteKeyDown',
             'onMinusKeyDown',
             'onPlusKeyDown',
             'onEqualKeyDown',
@@ -186,7 +189,7 @@ describe('EditorComponent', () => {
         expect(shortcutManagerSpy.onCtrlZKeyDown).toHaveBeenCalled();
     });
 
-    it("'ctrl+s' should call openSavePopUp", () => {
+    it("'ctrl+s' should call shortcutManager.onCtrlSKeyDown", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyS', key: '' });
         component.onCtrlSKeyDown(eventSpy);
 
@@ -200,14 +203,38 @@ describe('EditorComponent', () => {
         expect(shortcutManagerSpy.onKeyboardDown).not.toHaveBeenCalled();
     });
 
-    it('alt key down should call shortcutManager.setStampAngleAlt', () => {
+    it('alt key down should call shortcutManager.onAltDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
         component.onAltDown(eventSpy);
         expect(shortcutManagerSpy.onAltDown).toHaveBeenCalledWith(eventSpy);
     });
 
-    it('alt key up should call shortcutManager.setStampAngleNormal', () => {
+    it('alt key up should call shortcutManager.onAltUp', () => {
         component.onAltUp();
         expect(shortcutManagerSpy.onAltUp).toHaveBeenCalled();
+    });
+
+    it('ctrl+c should call shortcutManager.onCtrlCKeyDown', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyC', key: 'c' });
+        component.onCtrlCKeyDown(eventSpy);
+        expect(shortcutManagerSpy.onCtrlCKeyDown).toHaveBeenCalled();
+    });
+
+    it('ctrl+x should call shortcutManager.onCtrlXKeyDown', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyX', key: 'x' });
+        component.onCtrlXKeyDown(eventSpy);
+        expect(shortcutManagerSpy.onCtrlXKeyDown).toHaveBeenCalled();
+    });
+
+    it('ctrl+v should call shortcutManager.onCtrlVKeyDown', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyV', key: 'v' });
+        component.onCtrlVKeyDown(eventSpy);
+        expect(shortcutManagerSpy.onCtrlVKeyDown).toHaveBeenCalled();
+    });
+
+    it('delete should call shortcutManager.onDeleteKeyDown', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        component.onDeleteKeyDown(eventSpy);
+        expect(shortcutManagerSpy.onDeleteKeyDown).toHaveBeenCalled();
     });
 });
