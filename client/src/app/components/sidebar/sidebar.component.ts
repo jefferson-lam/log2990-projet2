@@ -14,8 +14,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    @Input() isUndoPossible: boolean = false;
-    @Input() isRedoPossible: boolean = false;
+    @Input() isUndoPossible: boolean;
+    @Input() isRedoPossible: boolean;
     @Input() selectedTool: SidebarToolButton;
     @Input() isCanvasEmpty: boolean;
     @Input() isMagnetismOptionsDisplayed: boolean;
@@ -46,6 +46,8 @@ export class SidebarComponent {
         public clipboardService: ClipboardService,
         public popupManager: PopupManagerService,
     ) {
+        this.isUndoPossible = false;
+        this.isRedoPossible = false;
         this.shouldRun = false;
         this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
