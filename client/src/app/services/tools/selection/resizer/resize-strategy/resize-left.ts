@@ -35,7 +35,7 @@ export class ResizeLeft extends ResizeStrategy {
             // Left side resizing
             this.selectionComponent.previewSelectionCanvas.style.left = reference.x - shortestSide + 'px';
         }
-        this.selectionComponent.borderCanvas.style.left = this.selectionComponent.previewSelectionCanvas.style.left;
+        this.recalibrateBorderCanvas();
         this.resizeSquare(false, shortestSide);
     }
 
@@ -51,6 +51,7 @@ export class ResizeLeft extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10) + difference + 'px';
         }
+        this.recalibrateBorderCanvas();
     }
 
     restoreLastDimensions(): void {

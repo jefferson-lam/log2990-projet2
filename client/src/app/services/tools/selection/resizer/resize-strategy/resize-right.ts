@@ -30,12 +30,12 @@ export class ResizeRight extends ResizeStrategy {
         const pointerPosition = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN;
         // Right side resizing
         if (pointerPosition > reference.x) {
-            this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left = reference.x + 'px';
+            this.selectionComponent.previewSelectionCanvas.style.left = reference.x + 'px';
         } else {
             // Mirrored to left
-            this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left =
-                reference.x - shortestSide + 'px';
+            this.selectionComponent.previewSelectionCanvas.style.left = reference.x - shortestSide + 'px';
         }
+        this.recalibrateBorderCanvas();
         this.resizeSquare(false, shortestSide);
     }
 
@@ -51,6 +51,7 @@ export class ResizeRight extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10) + difference + 'px';
         }
+        this.recalibrateBorderCanvas();
     }
 
     restoreLastDimensions(): void {

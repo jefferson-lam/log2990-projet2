@@ -33,8 +33,8 @@ export class ResizeTop extends ResizeStrategy {
             // Resizing top
             this.selectionComponent.previewSelectionCanvas.style.top = reference.y - shortestSide + 'px';
         }
-        this.resizeSquare(false, shortestSide);
         this.recalibrateBorderCanvas();
+        this.resizeSquare(false, shortestSide);
     }
 
     resizeSquare(combined: boolean = false, length?: number): void {

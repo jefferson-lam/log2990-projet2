@@ -28,13 +28,12 @@ export class ResizeBottom extends ResizeStrategy {
         const shortestSide = Math.min(width, height);
         // Resizing bottom
         if (event.pointerPosition.y > this.selectionComponent.initialPosition.y) {
-            this.selectionComponent.previewSelectionCanvas.style.top = this.selectionComponent.borderCanvas.style.top = reference.y + 'px';
+            this.selectionComponent.previewSelectionCanvas.style.top = reference.y + 'px';
         } else {
             // Mirrored to top
-            this.selectionComponent.previewSelectionCanvas.style.top = this.selectionComponent.borderCanvas.style.top =
-                reference.y - shortestSide + 'px';
+            this.selectionComponent.previewSelectionCanvas.style.top = reference.y - shortestSide + 'px';
         }
-        this.selectionComponent.borderCanvas.style.top = this.selectionComponent.previewSelectionCanvas.style.top;
+        this.recalibrateBorderCanvas();
         this.resizeSquare(false, shortestSide);
     }
 
@@ -50,6 +49,7 @@ export class ResizeBottom extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.style.top = this.selectionComponent.borderCanvas.style.top =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.top, 10) + difference + 'px';
         }
+        this.recalibrateBorderCanvas();
     }
 
     restoreLastDimensions(): void {
