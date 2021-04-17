@@ -14,8 +14,6 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    @Input() isUndoPossible: boolean = false;
-    @Input() isRedoPossible: boolean = false;
     @Input() selectedTool: SidebarToolButton;
     @Input() isGridOptionsDisplayed: boolean;
     shouldRun: boolean;
@@ -40,17 +38,13 @@ export class SidebarComponent {
 
     constructor(
         public toolManager: ToolManagerService,
-        private undoRedoService: UndoRedoService,
+        public undoRedoService: UndoRedoService,
         public clipboardService: ClipboardService,
         public popupManager: PopupManagerService,
     ) {
         this.shouldRun = false;
         this.isUndoSelection = false;
         this.selectedTool = this.sidebarToolButtons[0];
-        this.undoRedoService.pileSizeObservable.subscribe((sizes: number[]) => {
-            this.isUndoPossible = sizes[0] > 0;
-            this.isRedoPossible = sizes[1] > 0;
-        });
         this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
             this.selectedTool = this.sidebarToolButtons.find((sidebarToolButton) => {
                 return sidebarToolButton.service === tool.constructor.name;
@@ -85,16 +79,14 @@ export class SidebarComponent {
                 this.isUndoSelection = true;
             }
         }
-        if (!this.toolManager.currentTool.inUse && !this.isUndoSelection) {
+        if (!this.isUndoSelection) {
             this.undoRedoService.undo();
         }
         this.isUndoSelection = false;
     }
 
     redo(): void {
-        if (!this.toolManager.currentTool.inUse) {
-            this.undoRedoService.redo();
-        }
+        this.undoRedoService.redo();
     }
 
     selectAll(): void {

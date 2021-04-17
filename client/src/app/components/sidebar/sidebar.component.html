@@ -12,10 +12,10 @@
             <li>
                 <mat-icon id="save-drawing-button" matTooltip="Sauvegarder" [matTooltipPosition]="'right'" (click)="saveDrawing()">save_alt</mat-icon>
             </li>
-            <li id="undoButton" [class.unclickable]="!isUndoPossible" (click)="undo()">
+            <li id="undoButton" [class.unclickable]="!undoRedoService.isUndoAllowed" (click)="undo()">
                 <mat-icon matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
             </li>
-            <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
+            <li id="redoButton" [class.unclickable]="!undoRedoService.isRedoAllowed" (click)="redo()">
                 <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
             </li>
             <li id="exportButton">
