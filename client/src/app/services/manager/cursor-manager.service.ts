@@ -14,6 +14,7 @@ export class CursorManagerService {
     onCanvas: boolean;
 
     constructor(public undoRedoService: UndoRedoService, public toolManager: ToolManagerService) {
+        this.onCanvas = false;
         this.mousePosition = { x: 0, y: 0 };
 
         this.cursors = new Map<Tool, string>();
