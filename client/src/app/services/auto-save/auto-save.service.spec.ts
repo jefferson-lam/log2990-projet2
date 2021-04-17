@@ -8,6 +8,7 @@ import { Observable, Subject } from 'rxjs';
 import { AutoSaveService } from './auto-save.service';
 import SpyObj = jasmine.SpyObj;
 
+// tslint:disable: no-any
 describe('AutoSaveService', () => {
     let service: AutoSaveService;
     let drawServiceSpy: SpyObj<DrawingService>;
@@ -150,7 +151,7 @@ describe('AutoSaveService', () => {
             return mockImageURL;
         });
 
-        resizerCommandSpy.execute.and.callFake(() => {});
+        resizerCommandSpy.execute.and.stub();
         service.loadDrawing();
         flush();
         expect(loadLocalStorageSpy).toHaveBeenCalled();
