@@ -205,7 +205,7 @@ describe('LassoSelectionService', () => {
         });
         const result = service.validateSegment(service.pathData[service.pathData.length - 1], service.pathData);
         expect(isIntersectSpy).toHaveBeenCalled();
-        expect(result).toBeTruthy();
+        expect(result).toBeFalsy();
     });
 
     it('validateSegment should correctly return true if isIntersect is true', () => {
@@ -218,7 +218,7 @@ describe('LassoSelectionService', () => {
         const result = service.validateSegment(service.pathData[service.pathData.length - 1], service.pathData);
         expect(isIntersectSpy).toHaveBeenCalled();
         expect(arePointsEqualSpy).toHaveBeenCalled();
-        expect(result).toBeFalsy();
+        expect(result).toBeTruthy();
     });
 
     it('onKeyboardDown with escape should set isEscapeDown to true', () => {
@@ -241,6 +241,15 @@ describe('LassoSelectionService', () => {
         expect(service.isEscapeDown).toBeTruthy();
     });
 
+    it('onKeyboardDown with key other than escape should pass', () => {
+        const escapeKeyboardEvent = {
+            key: 'r',
+        } as KeyboardEvent;
+        service.inUse = true;
+        service.onKeyboardDown(escapeKeyboardEvent);
+        expect(service.isEscapeDown).toBeFalsy();
+    });
+
     it('onKeyboardUp should call resetSelection if in use and escape', () => {
         const resetSelectionSpy = spyOn(service, 'resetSelection').and.callThrough();
         const escapeKeyboardEvent = {
@@ -261,9 +270,19 @@ describe('LassoSelectionService', () => {
         expect(confirmSelectionSpy).toHaveBeenCalled();
     });
 
+    it('onKeyboardUp with key other than escape should pass', () => {
+        const escapeKeyboardEvent = {
+            key: 'r',
+        } as KeyboardEvent;
+        service.isManipulating = true;
+        expect(() => {
+            service.onKeyboardUp(escapeKeyboardEvent);
+        }).not.toThrow();
+    });
+
     it('onKeyboardUp should pass if not inUse or isManipulating', () => {
         expect(() => {
-            service.onKeyboardUp({} as KeyboardEvent);
+            service.onKeyboardUp({ key: 'Escape' } as KeyboardEvent);
         }).not.toThrow();
     });
 
