@@ -28,7 +28,7 @@ export class LassoSelectionCommand extends Command {
 
     execute(): void {
         if (!this.isFromClipboard) {
-            this.fillLasso(this.ctx, this.pathData, 'white');
+            this.fillLasso();
         }
         this.ctx.drawImage(
             this.selectionCanvas,
@@ -43,16 +43,16 @@ export class LassoSelectionCommand extends Command {
         );
     }
 
-    private fillLasso(ctx: CanvasRenderingContext2D, pathData: Vec2[], color: string): void {
-        ctx.beginPath();
-        ctx.moveTo(pathData[0].x, pathData[0].y);
-        for (const point of pathData) {
-            ctx.lineTo(point.x, point.y);
+    private fillLasso(): void {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.pathData[0].x, this.pathData[0].y);
+        for (const point of this.pathData) {
+            this.ctx.lineTo(point.x, point.y);
         }
-        ctx.save();
-        ctx.clip();
-        ctx.fillStyle = color;
-        ctx.fill();
-        ctx.restore();
+        this.ctx.save();
+        this.ctx.clip();
+        this.ctx.fillStyle = 'white';
+        this.ctx.fill();
+        this.ctx.restore();
     }
 }

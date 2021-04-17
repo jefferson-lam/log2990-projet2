@@ -69,7 +69,6 @@ describe('LassoSelectionCommand', () => {
         command.isFromClipboard = false;
         command.execute();
         expect(fillLassoSpy).toHaveBeenCalled();
-        expect(fillLassoSpy).toHaveBeenCalledWith(baseCtxStub, pathStub, 'white');
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
         expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(
             selectionCtxStub.canvas,
@@ -111,7 +110,7 @@ describe('LassoSelectionCommand', () => {
         const fillSpy = spyOn(baseCtxStub, 'fill');
 
         // tslint:disable:no-string-literal
-        command['fillLasso'](baseCtxStub, command.pathData, 'white');
+        command['fillLasso']();
         expect(moveToSpy).toHaveBeenCalled();
         for (const point of command.pathData) {
             expect(lineToSpy).toHaveBeenCalledWith(point.x, point.y);
