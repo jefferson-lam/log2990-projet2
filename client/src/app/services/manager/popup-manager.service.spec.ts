@@ -236,8 +236,7 @@ describe('PopupManagerService', () => {
         expect(onToolChangeSpy).toHaveBeenCalled();
     });
 
-    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile isn't empty, canvas is empty and pop up isn't open", () => {
-        emptyCanvasSpy.and.returnValue(true);
+    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile isn't empty, no initialImage and pop up isn't open", () => {
         undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(false);
         service.openNewDrawingPopUp();
 
@@ -247,7 +246,7 @@ describe('PopupManagerService', () => {
     });
 
     it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile is empty, canvas is not empty and pop up isn't open", () => {
-        emptyCanvasSpy.and.returnValue(false);
+        service.undoRedoService.initialImage = new Image();
         undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(true);
         service.openNewDrawingPopUp();
 
@@ -257,7 +256,6 @@ describe('PopupManagerService', () => {
     });
 
     it('openNewDrawingPopUp should not open anything if undoPile is empty, canvas is empty and pop up is not open', () => {
-        emptyCanvasSpy.and.returnValue(true);
         undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(true);
         service.openNewDrawingPopUp();
 
