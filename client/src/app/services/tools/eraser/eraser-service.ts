@@ -57,28 +57,26 @@ export class EraserService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.moveCursor(this.drawingService.previewCtx, event);
+        this.drawCursor(this.getPositionFromMouse(event));
 
         if (this.inUse) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
+            this.pathData.push(this.getPositionFromMouse(event));
             this.previewCommand.setValues(this.drawingService.baseCtx, this);
             this.previewCommand.execute();
         }
     }
 
-    private moveCursor(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        this.drawingService.clearCanvas(ctx);
+    drawCursor(position: Vec2): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
-        ctx.lineWidth = 1;
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'black';
+        this.drawingService.previewCtx.lineWidth = 1;
+        this.drawingService.previewCtx.fillStyle = 'white';
+        this.drawingService.previewCtx.strokeStyle = 'black';
 
-        ctx.beginPath();
-        ctx.rect(mousePosition.x - this.lineWidth / 2, mousePosition.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
-        ctx.fillRect(mousePosition.x - this.lineWidth / 2, mousePosition.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
-        ctx.stroke();
+        this.drawingService.previewCtx.beginPath();
+        this.drawingService.previewCtx.rect(position.x - this.lineWidth / 2, position.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
+        this.drawingService.previewCtx.fillRect(position.x - this.lineWidth / 2, position.y - this.lineWidth / 2, this.lineWidth, this.lineWidth);
+        this.drawingService.previewCtx.stroke();
     }
 
     onMouseLeave(event: MouseEvent): void {

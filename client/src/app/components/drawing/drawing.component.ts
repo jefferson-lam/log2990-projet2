@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { CursorManagerService } from '@app/services/manager/cursor-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -25,7 +26,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private gridCanvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
 
     @Input() currentTool: Tool;
-    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService, public canvasGridService: CanvasGridService) {}
+    constructor(
+        private drawingService: DrawingService,
+        public toolManager: ToolManagerService,
+        public canvasGridService: CanvasGridService,
+        public cursorManager: CursorManagerService,
+    ) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -49,26 +55,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
             this.canvasGridService.resize(size[0], size[1]);
         });
+
+        this.cursorManager.previewCanvas = this.previewCanvas.nativeElement;
         this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
             this.currentTool = tool;
-            this.changeCursor(tool);
+            this.cursorManager.changeCursor(tool);
         });
-    }
-
-    changeCursor(tool: Tool): void {
-        switch (tool) {
-            case this.toolManager.pencilService:
-                this.previewCanvas.nativeElement.style.cursor = 'url(assets/pencil.png) 0 15, auto';
-                break;
-            case this.toolManager.eraserService:
-                this.previewCanvas.nativeElement.style.cursor = 'none';
-                break;
-            case this.toolManager.stampService:
-                this.previewCanvas.nativeElement.style.cursor = 'none';
-                break;
-            default:
-                this.previewCanvas.nativeElement.style.cursor = 'crosshair';
-        }
     }
 
     ngOnDestroy(): void {
@@ -85,16 +77,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.currentTool.onKeyboardUp(event);
     }
 
-    @HostListener('keypress', ['$event'])
-    onKeyboardPress(event: KeyboardEvent): void {
-        this.currentTool.onKeyboardPress(event);
-    }
-
-    @HostListener('click', ['$event'])
-    onMouseClick(event: MouseEvent): void {
-        this.currentTool.onMouseClick(event);
-    }
-
     @HostListener('dblclick', ['$event'])
     onMouseDoubleClick(event: MouseEvent): void {
         this.currentTool.onMouseDoubleClick(event);
@@ -103,6 +85,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);
+        this.cursorManager.onMouseMove(this.currentTool.getPositionFromMouse(event));
     }
 
     @HostListener('mousedown', ['$event'])

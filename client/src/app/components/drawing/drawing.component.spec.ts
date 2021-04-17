@@ -105,15 +105,6 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
-    it("should call the tool's keyboard press when receiving a keyboard press event", () => {
-        const keyboardEvent = {} as KeyboardEvent;
-        const keyboardEventSpy = spyOn(pencilStub, 'onKeyboardPress').and.callThrough();
-        component.onKeyboardPress(keyboardEvent);
-
-        expect(keyboardEventSpy).toHaveBeenCalled();
-        expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
-    });
-
     it("should call the tool's keyboard down when receiving a keyboard down event", () => {
         const keyboardEvent = {} as KeyboardEvent;
         const keyboardEventSpy = spyOn(pencilStub, 'onKeyboardDown').and.callThrough();
@@ -130,15 +121,6 @@ describe('DrawingComponent', () => {
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
-    });
-
-    it("should call the tool's mouse click when receiving a mouse click event", () => {
-        const mouseEvent = {} as MouseEvent;
-        const mouseEventSpy = spyOn(pencilStub, 'onMouseClick').and.callThrough();
-        component.onMouseClick(mouseEvent);
-
-        expect(mouseEventSpy).toHaveBeenCalled();
-        expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
     });
 
     it("should call the tool's mouse double click when receiving a mouse double click event", () => {

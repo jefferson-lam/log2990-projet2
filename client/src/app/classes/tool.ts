@@ -24,10 +24,6 @@ export abstract class Tool {
 
     onKeyboardUp(event: KeyboardEvent): void {}
 
-    onKeyboardPress(event: KeyboardEvent): void {}
-
-    onMouseClick(event: MouseEvent): void {}
-
     onMouseDoubleClick(event: MouseEvent): void {}
 
     onMouseDown(event: MouseEvent): void {}
@@ -75,4 +71,6 @@ export abstract class Tool {
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }
+
+    drawCursor(mousePosition: Vec2): void {}
 }

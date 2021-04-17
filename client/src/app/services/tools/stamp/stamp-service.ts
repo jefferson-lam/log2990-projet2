@@ -4,7 +4,6 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as StampConstants from '@app/constants/stamp-constants';
-import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { StampCommand } from '@app/services/tools/stamp/stamp-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -14,7 +13,7 @@ import { Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class StampService extends Tool {
-    cornerCoords: Vec2[];
+    position: Vec2;
     stampState: boolean;
     imageSource: string;
     realRotationValues: number;
@@ -28,53 +27,46 @@ export class StampService extends Tool {
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
-        const MAX_PATH_DATA_SIZE = 2;
         this.imageSource = 'assets/stamp_1.svg';
         this.realRotationValues = StampConstants.MIN_ANGLE;
         this.rotationAngle = StampConstants.INIT_ROTATION_ANGLE;
         this.imageZoomFactor = StampConstants.INIT_REAL_ZOOM;
         this.degreesRotation = StampConstants.INIT_DEGREES_ANGLE_COUNTER;
         this.angleSubject = new Subject<number>();
-        this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
-        this.clearCornerCoords();
+        this.position = { x: 0, y: 0 };
         this.previewCommand = new StampCommand(this.drawingService.previewCtx, this);
     }
 
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
-            this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
+            this.position = this.getPositionFromMouse(event);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
+            this.position = this.getPositionFromMouse(event);
             const command: Command = new StampCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
         this.inUse = false;
-        this.clearCornerCoords();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
+        this.position = this.getPositionFromMouse(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.previewCommand.setValues(this.drawingService.previewCtx, this);
         this.previewCommand.execute();
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.inUse) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cornerCoords[ToolConstants.END_INDEX] = this.getPositionFromMouse(event);
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
-        } else {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cornerCoords[ToolConstants.END_INDEX] = this.getPositionFromMouse(event);
-        }
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        // if (this.inUse) {
+        //     this.previewCommand.setValues(this.drawingService.previewCtx, this);
+        //     this.previewCommand.execute();
+        // }
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -88,7 +80,7 @@ export class StampService extends Tool {
 
     onMouseWheel(event: WheelEvent): void {
         event.preventDefault();
-        this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
+        this.position = this.getPositionFromMouse(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.changeRotationAngle(event);
         this.previewCommand.setValues(this.drawingService.previewCtx, this);
@@ -140,7 +132,9 @@ export class StampService extends Tool {
         this.onMouseUp({} as MouseEvent);
     }
 
-    private clearCornerCoords(): void {
-        this.cornerCoords.fill({ x: 0, y: 0 });
+    drawCursor(position: Vec2): void {
+        this.position = position;
+        this.previewCommand.setValues(this.drawingService.previewCtx, this);
+        this.previewCommand.execute();
     }
 }

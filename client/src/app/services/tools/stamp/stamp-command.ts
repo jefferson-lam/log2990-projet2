@@ -1,13 +1,12 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
 import * as StampConstants from '@app/constants/stamp-constants';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
 
 export class StampCommand extends Command {
-    cornerCoords: Vec2[];
+    position: Vec2;
     rotationAngle: number;
-    imageSource: string;
+    stamp: HTMLImageElement;
     imageZoomFactor: number;
 
     constructor(canvasContext: CanvasRenderingContext2D, stampService: StampService) {
@@ -21,23 +20,29 @@ export class StampCommand extends Command {
 
     setValues(canvasContext: CanvasRenderingContext2D, stampService: StampService): void {
         this.ctx = canvasContext;
+        this.stamp = new Image();
+        this.loadStamp(stampService.imageSource);
         this.rotationAngle = stampService.rotationAngle;
-        this.imageSource = stampService.imageSource;
         this.imageZoomFactor = stampService.imageZoomFactor;
-        this.cornerCoords = Object.assign([], stampService.cornerCoords);
+        this.position = stampService.position;
+    }
+
+    private loadStamp(stampSource: string): void {
+        new Promise((r) => {
+            this.stamp.onload = r;
+            this.stamp.src = stampSource;
+        }).then();
     }
 
     addStamp(): void {
-        const stamp = new Image();
-        stamp.src = this.imageSource;
         this.ctx.save();
-        this.ctx.translate(this.cornerCoords[RectangleConstants.START_INDEX].x, this.cornerCoords[RectangleConstants.START_INDEX].y);
+        this.ctx.translate(this.position.x, this.position.y);
         this.ctx.rotate(this.rotationAngle);
-        this.pasteStamp(stamp);
+        this.pasteStamp();
         this.ctx.restore();
     }
 
-    pasteStamp(stamp: HTMLImageElement): void {
+    pasteStamp(): void {
         const startPosition = {
             x: -this.getStampSize() / StampConstants.WIDTH_STAMP_FACTOR,
             y: -this.getStampSize() / 2,
@@ -46,7 +51,7 @@ export class StampCommand extends Command {
             width: this.getStampSize() * StampConstants.FORMAT_MATCH,
             height: this.getStampSize(),
         };
-        this.ctx.drawImage(stamp, startPosition.x, startPosition.y, stampSize.width, stampSize.height);
+        this.ctx.drawImage(this.stamp, startPosition.x, startPosition.y, stampSize.width, stampSize.height);
     }
 
     getStampSize(): number {
