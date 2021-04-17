@@ -24,10 +24,7 @@ export class AutoSaveService {
 
     async loadDrawing(): Promise<void> {
         if (localStorage.getItem('autosave')) {
-            await new Promise((r) => {
-                this.undoRedoService.initialImage.onload = r;
-                this.undoRedoService.initialImage.src = localStorage.getItem('autosave') as string;
-            });
+            await this.loadLocalStorage();
 
             this.undoRedoService.resetCanvasSize = new ResizerCommand(
                 this.drawingService,
@@ -54,5 +51,12 @@ export class AutoSaveService {
         }
         this.undoRedoService.reset();
         this.autoSaveDrawing();
+    }
+
+    private async loadLocalStorage(): Promise<void> {
+        await new Promise((r) => {
+            this.undoRedoService.initialImage.onload = r;
+            this.undoRedoService.initialImage.src = localStorage.getItem('autosave') as string;
+        });
     }
 }
