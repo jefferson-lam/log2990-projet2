@@ -16,7 +16,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class LassoSelectionService extends ToolSelectionService {
     isManipulating: boolean;
     isConnected: boolean;
-    isInvalidSegment: boolean;
+    isValidSegment: boolean;
     pathData: Vec2[];
     initialPoint: Vec2;
     transformValues: Vec2;
@@ -37,7 +37,7 @@ export class LassoSelectionService extends ToolSelectionService {
         super(drawingService, undoRedoService, resizerHandlerService, lineService);
         this.isManipulating = false;
         this.isConnected = false;
-        this.isInvalidSegment = false;
+        this.isValidSegment = true;
         this.pathData = new Array<Vec2>();
         this.isEscapeDown = false;
         this.isFromClipboard = false;
@@ -58,7 +58,7 @@ export class LassoSelectionService extends ToolSelectionService {
 
     onMouseDown(event: MouseEvent): void {
         if (event.button !== MouseButton.Left) return;
-        if (this.isInvalidSegment) return;
+        if (!this.isValidSegment) return;
         if (this.isManipulating) {
             this.confirmSelection();
             return;
@@ -82,16 +82,17 @@ export class LassoSelectionService extends ToolSelectionService {
     onMouseMove(event: MouseEvent): void {
         if (!this.inUse) return;
         super.onMouseMove(event);
-        this.isInvalidSegment = this.validateSegment(this.pathData[this.pathData.length - 1], this.pathData);
-        if (this.isInvalidSegment) {
-            this.drawingService.previewCtx.canvas.style.cursor = 'no-drop';
-        } else {
+        this.isValidSegment = this.validateSegment(this.pathData[this.pathData.length - 1], this.pathData);
+
+        if (this.isValidSegment) {
             this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
+        } else {
+            this.drawingService.previewCtx.canvas.style.cursor = 'no-drop';
         }
     }
 
     validateSegment(point: Vec2, pathData: Vec2[]): boolean {
-        return (
+        return !(
             this.isIntersect(point, pathData) ||
             (this.arePointsEqual(point, this.initialPoint) && this.numSides < SelectionConstants.MINIMUM_LINE_LASSO)
         );
@@ -100,31 +101,21 @@ export class LassoSelectionService extends ToolSelectionService {
     onKeyboardDown(event: KeyboardEvent): void {
         super.onKeyboardDown(event);
         if (this.isEscapeDown) return;
-        switch (event.key) {
-            case 'Escape':
-                this.isEscapeDown = true;
-                break;
-        }
+        if (event.key !== 'Escape') return;
+        this.isEscapeDown = true;
     }
 
     onKeyboardUp(event: KeyboardEvent): void {
         super.onKeyboardUp(event);
+        if (event.key !== 'Escape') return;
         if (this.inUse) {
-            switch (event.key) {
-                case 'Escape':
-                    this.resetSelection();
-                    this.isEscapeDown = false;
-                    break;
-            }
+            this.resetSelection();
+            this.isEscapeDown = false;
         } else if (this.isManipulating) {
-            switch (event.key) {
-                case 'Escape':
-                    this.confirmSelection();
-                    this.clearPath();
-                    this.lineService.onToolChange();
-                    this.isEscapeDown = false;
-                    break;
-            }
+            this.confirmSelection();
+            this.clearPath();
+            this.lineService.onToolChange();
+            this.isEscapeDown = false;
         }
     }
 
@@ -160,7 +151,7 @@ export class LassoSelectionService extends ToolSelectionService {
         this.clearPath();
         this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
         this.numSides = 0;
-        this.isInvalidSegment = false;
+        this.isValidSegment = true;
         this.inUse = false;
     }
 

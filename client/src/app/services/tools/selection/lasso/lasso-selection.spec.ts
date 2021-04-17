@@ -127,7 +127,7 @@ describe('LassoSelectionService', () => {
     });
 
     it('onMouseDown should return if invalid segment', () => {
-        service.isInvalidSegment = true;
+        service.isValidSegment = false;
         expect(() => {
             service.onMouseDown(mouseEvent);
         }).not.toThrow();
@@ -182,9 +182,10 @@ describe('LassoSelectionService', () => {
     it('onMouseMove should call isIntersect and set the cursor to crosshair if valid segment', () => {
         const isIntersectSpy = spyOn(service, 'isIntersect').and.callThrough();
         service.inUse = true;
+        service.isValidSegment = true;
         service.onMouseMove(mouseEvent);
         expect(isIntersectSpy).toHaveBeenCalled();
-        expect(service.isInvalidSegment).toBeFalsy();
+        expect(service.isValidSegment).toBeTruthy();
         expect(previewCtxStub.canvas.style.cursor).toEqual('crosshair');
     });
 
@@ -194,7 +195,7 @@ describe('LassoSelectionService', () => {
         service.pathData.push({ x: 133, y: 256 });
         service.onMouseMove(mouseEvent);
         expect(isIntersectSpy).toHaveBeenCalled();
-        expect(service.isInvalidSegment).toBeTruthy();
+        expect(service.isValidSegment).toBeFalsy();
         expect(previewCtxStub.canvas.style.cursor).toEqual('no-drop');
     });
 
