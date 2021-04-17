@@ -199,6 +199,30 @@ describe('LassoSelectionService', () => {
         expect(previewCtxStub.canvas.style.cursor).toEqual('no-drop');
     });
 
+    it('onMouseMove should with 1 segment should set valid to false if mouse is equal to initial point', () => {
+        const initialMouseEvent = {
+            offsetX: 394,
+            offsetY: 432,
+        } as MouseEvent;
+        service.inUse = true;
+        service.numSides = 1;
+        service.onMouseMove(initialMouseEvent);
+        expect(service.isValidSegment).toBeFalsy();
+    });
+
+    it('onMouseMove with 1 segment should set next line to mousePosition if inside 20px of initial', () => {
+        const initialMouseEvent = {
+            offsetX: 400,
+            offsetY: 432,
+        } as MouseEvent;
+        service.inUse = true;
+        service.numSides = 1;
+        service.pathData[service.pathData.length - 1] = service.initialPoint;
+        service.onMouseMove(initialMouseEvent);
+        expect(service.pathData[service.pathData.length - 1]).toEqual({ x: initialMouseEvent.offsetX, y: initialMouseEvent.offsetY });
+        expect(service.isValidSegment).toBeTruthy();
+    });
+
     it('validateSegment should correctly return true if isIntersect is true', () => {
         const isIntersectSpy = spyOn(service, 'isIntersect').and.callFake(() => {
             return true;

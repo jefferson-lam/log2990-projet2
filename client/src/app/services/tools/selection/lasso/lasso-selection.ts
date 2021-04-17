@@ -59,11 +59,14 @@ export class LassoSelectionService extends ToolSelectionService {
     onMouseDown(event: MouseEvent): void {
         if (event.button !== MouseButton.Left) return;
         if (!this.isValidSegment) return;
+
         if (this.isManipulating) {
             this.confirmSelection();
             return;
         }
+
         super.onMouseDown(event);
+
         if (!this.inUse) {
             this.clearPath();
             this.initialPoint = this.getPositionFromMouse(event);
@@ -74,6 +77,7 @@ export class LassoSelectionService extends ToolSelectionService {
             this.numSides++;
             this.isConnected = this.arePointsEqual(this.pathData[this.pathData.length - 1], this.initialPoint);
         }
+
         if (this.isConnected) {
             this.initializeSelection();
         }
@@ -81,8 +85,20 @@ export class LassoSelectionService extends ToolSelectionService {
 
     onMouseMove(event: MouseEvent): void {
         if (!this.inUse) return;
+
+        const mousePosition = this.getPositionFromMouse(event);
+
         super.onMouseMove(event);
-        this.isValidSegment = this.validateSegment(this.pathData[this.pathData.length - 1], this.pathData);
+
+        if (this.arePointsEqual(mousePosition, this.initialPoint) && this.numSides === 1) {
+            this.isValidSegment = false;
+        } else if (this.arePointsEqual(this.pathData[this.pathData.length - 1], this.initialPoint) && this.numSides === 1) {
+            this.pathData[this.pathData.length - 1] = mousePosition;
+            this.lineService.linePathData[this.lineService.linePathData.length - 1] = mousePosition;
+            this.isValidSegment = true;
+        } else {
+            this.isValidSegment = this.validateSegment(this.pathData[this.pathData.length - 1], this.pathData);
+        }
 
         if (this.isValidSegment) {
             this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
