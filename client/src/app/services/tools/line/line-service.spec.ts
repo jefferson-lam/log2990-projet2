@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -49,9 +50,10 @@ describe('LineService', () => {
         service.linePathData = [service.initialPoint, { x: 133, y: 256 }, { x: 257, y: 399 }];
         service.mousePosition = { x: 289, y: 400 };
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 25,
             button: 0,
         } as MouseEvent;
     });

@@ -2,6 +2,7 @@ import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as AerosolConstants from '@app/constants/aerosol-constants';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -43,9 +44,10 @@ describe('AerosolService', () => {
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 25,
             button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
 

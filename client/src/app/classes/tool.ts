@@ -1,3 +1,4 @@
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -75,6 +76,6 @@ export abstract class Tool {
     setTextItalic(fontStyle: string): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
-        return { x: event.offsetX, y: event.offsetY };
+        return { x: event.x - CanvasConstants.LEFT_MARGIN, y: event.y };
     }
 }
