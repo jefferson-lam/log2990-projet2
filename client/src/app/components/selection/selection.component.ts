@@ -139,7 +139,7 @@ export class SelectionComponent implements AfterViewInit {
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
 
             this.recalibrateCanvasHeights();
-            this.recalibrateWidths();
+            this.recalibrateCanvasWidths();
             this.recalibrateCanvasLefts();
             this.recalibrateCanvasTops();
 
@@ -228,7 +228,7 @@ export class SelectionComponent implements AfterViewInit {
         this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
     }
 
-    private recalibrateWidths(): void {
+    private recalibrateCanvasWidths(): void {
         this.selectionCanvas.width = this.borderCanvas.width = this.previewSelectionCanvas.width;
     }
 
