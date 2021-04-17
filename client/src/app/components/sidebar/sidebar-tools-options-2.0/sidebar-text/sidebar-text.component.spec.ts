@@ -18,7 +18,6 @@ describe('SidebarTextComponent', () => {
     const TEST_FONT_WEIGHT = 'bold';
     const TEST_FONT_SIZE = 50;
     const TEST_TEXT_ALIGN = 'center';
-    const TEST_ITALIC = 'italic';
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -74,32 +73,36 @@ describe('SidebarTextComponent', () => {
         expect(textItalicChangedSpy).toHaveBeenCalled();
     });
 
-    it('emitFontOptions should emit font weight and font style', () => {
-        const emitItalicSpy = spyOn(textComponent.textItalicChanged, 'emit');
+    it('emitFontWeight should emit font weight bold', () => {
         const emitBoldSpy = spyOn(textComponent.textBoldChanged, 'emit');
-        textComponent.fontStyle = TEST_ITALIC;
-        textComponent.fontOptions = 'normal';
-        textComponent.emitFontOptions();
-        expect(emitItalicSpy).toHaveBeenCalled();
+        textComponent.textBold = true;
+        textComponent.emitFontWeight();
         expect(emitBoldSpy).toHaveBeenCalled();
+        expect(textComponent.fontWeight).toEqual('bold');
     });
 
-    it('emitFontOptions should emit font style', () => {
-        const emitItalicSpy = spyOn(textComponent.textItalicChanged, 'emit');
+    it('emitFontWeight should emit font weight normal', () => {
         const emitBoldSpy = spyOn(textComponent.textBoldChanged, 'emit');
-        textComponent.fontOptions = 'italic';
-        textComponent.emitFontOptions();
-        expect(emitItalicSpy).toHaveBeenCalled();
-        expect(emitBoldSpy).not.toHaveBeenCalled();
+        textComponent.textBold = false;
+        textComponent.emitFontWeight();
+        expect(emitBoldSpy).toHaveBeenCalled();
+        expect(textComponent.fontWeight).toEqual('normal');
     });
 
-    it('emitFontOptions should emit font weight', () => {
+    it('emitFontStyle should emit font style italic', () => {
         const emitItalicSpy = spyOn(textComponent.textItalicChanged, 'emit');
-        const emitBoldSpy = spyOn(textComponent.textBoldChanged, 'emit');
-        textComponent.fontOptions = 'bold';
-        textComponent.emitFontOptions();
-        expect(emitItalicSpy).not.toHaveBeenCalled();
-        expect(emitBoldSpy).toHaveBeenCalled();
+        textComponent.textItalic = true;
+        textComponent.emitFontStyle();
+        expect(emitItalicSpy).toHaveBeenCalled();
+        expect(textComponent.fontStyle).toEqual('italic');
+    });
+
+    it('emitFontStyle should emit font style italic', () => {
+        const emitItalicSpy = spyOn(textComponent.textItalicChanged, 'emit');
+        textComponent.textItalic = false;
+        textComponent.emitFontStyle();
+        expect(emitItalicSpy).toHaveBeenCalled();
+        expect(textComponent.fontStyle).toEqual('normal');
     });
 
     it('emitFontFamily should emit font family', () => {
@@ -121,46 +124,6 @@ describe('SidebarTextComponent', () => {
         textComponent.textAlign = TEST_TEXT_ALIGN;
         textComponent.emitTexAlign();
         expect(emitSpy).toHaveBeenCalled();
-    });
-
-    it('emitFontWeight should emit font weight to bold', () => {
-        const emitSpy = spyOn(textComponent.textBoldChanged, 'emit');
-        textComponent.fontWeight = TEST_FONT_WEIGHT;
-        textComponent.fontOptions = 'bold';
-        textComponent.emitFontWeight();
-        expect(emitSpy).toHaveBeenCalled();
-        expect(textComponent.fontWeight).toEqual('bold');
-    });
-
-    it('emitFontWeight should emit font weight to normal', () => {
-        const emitSpy = spyOn(textComponent.textBoldChanged, 'emit');
-        textComponent.fontOptions = 'normal';
-        textComponent.emitFontWeight();
-        expect(emitSpy).toHaveBeenCalled();
-    });
-
-    it('emitFontStyle should emit font style to italic', () => {
-        const emitSpy = spyOn(textComponent.textItalicChanged, 'emit');
-        textComponent.fontStyle = TEST_ITALIC;
-        textComponent.fontOptions = 'italic';
-        textComponent.emitFontStyle();
-        expect(emitSpy).toHaveBeenCalled();
-    });
-
-    it('emitFontStyle should emit font style to normal', () => {
-        const emitSpy = spyOn(textComponent.textItalicChanged, 'emit');
-        textComponent.fontStyle = TEST_ITALIC;
-        textComponent.fontOptions = 'normal';
-        textComponent.emitFontStyle();
-        expect(emitSpy).toHaveBeenCalled();
-    });
-
-    it('emitFontStyle should set font options to normal', () => {
-        const emitSpy = spyOn(textComponent.textItalicChanged, 'emit');
-        textComponent.fontOptions = 'normal';
-        textComponent.emitFontStyle();
-        expect(emitSpy).toHaveBeenCalled();
-        expect(textComponent.fontStyle).toEqual('normal');
     });
 
     it('should call setFontFamily() from settingsManager after font family change', () => {
@@ -186,7 +149,7 @@ describe('SidebarTextComponent', () => {
 
     it('should call setTextBold() from settingsManager after font weight change to italic', () => {
         const setTextBoldSpy = spyOn(settingsManagerService, 'setTextBold');
-        textComponent.fontOptions = 'bold';
+        textComponent.fontWeight = 'bold';
         textComponent.ngOnInit();
         textComponent.emitFontWeight();
         expect(setTextBoldSpy).toHaveBeenCalled();
@@ -194,7 +157,7 @@ describe('SidebarTextComponent', () => {
 
     it('should call setTextBold() from settingsManager after font weight change to normal', () => {
         const setTextBoldSpy = spyOn(settingsManagerService, 'setTextBold');
-        textComponent.fontOptions = 'normal';
+        textComponent.fontWeight = 'normal';
         textComponent.ngOnInit();
         textComponent.emitFontWeight();
         expect(setTextBoldSpy).toHaveBeenCalled();
@@ -202,7 +165,7 @@ describe('SidebarTextComponent', () => {
 
     it('should call setTextItalic() from settingsManager after font style change to italic', () => {
         const setTextItalicSpy = spyOn(settingsManagerService, 'setTextItalic');
-        textComponent.fontOptions = 'italic';
+        textComponent.fontStyle = 'italic';
         textComponent.ngOnInit();
         textComponent.emitFontStyle();
         expect(setTextItalicSpy).toHaveBeenCalled();
@@ -210,7 +173,7 @@ describe('SidebarTextComponent', () => {
 
     it('should call setTextItalic() from settingsManager after font style change to normal', () => {
         const setTextItalicSpy = spyOn(settingsManagerService, 'setTextItalic');
-        textComponent.fontOptions = 'normal';
+        textComponent.fontStyle = 'normal';
         textComponent.ngOnInit();
         textComponent.emitFontStyle();
         expect(setTextItalicSpy).toHaveBeenCalled();

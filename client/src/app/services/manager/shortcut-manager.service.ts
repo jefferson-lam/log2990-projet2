@@ -162,11 +162,13 @@ export class ShortcutManagerService {
     }
 
     onDeleteKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
         if (!this.isShortcutAllowed()) {
             return;
         }
-        this.clipboardService.deleteSelection();
+        if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
+            event.preventDefault();
+            this.clipboardService.deleteSelection();
+        }
     }
 
     onMinusKeyDown(): void {

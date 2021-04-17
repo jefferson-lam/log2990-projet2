@@ -20,7 +20,6 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     fontWeight: string;
     textAlign: string;
     fontFamily: string;
-    fontOptions: string;
     textBold: boolean;
     textItalic: boolean;
 
@@ -41,7 +40,6 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.fontWeight = 'normal';
         this.textAlign = 'center';
         this.fontFamily = 'Arial';
-        this.fontOptions = 'normal';
         this.textBold = false;
         this.textItalic = false;
         this.fontFamilyChanged = new EventEmitter();
@@ -77,13 +75,9 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.zIndex = '2';
         this.textService.placeHolderSpan.style.border = '1px solid black';
         this.textService.placeHolderSpan.style.whiteSpace = 'pre-line';
+        this.textService.placeHolderSpan.style.minWidth = this.fontSize * TextConstants.MIN_BOX_WIDTH + 'px';
 
         (document.getElementById('drawing-container') as HTMLElement).appendChild(this.textService.placeHolderSpan);
-    }
-
-    emitFontOptions(): void {
-        this.emitFontWeight();
-        this.emitFontStyle();
     }
 
     emitFontFamily(): void {
@@ -99,22 +93,20 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     }
 
     emitFontWeight(): void {
-        if (this.fontOptions === 'bold') {
-            this.fontWeight = this.fontOptions;
-            this.textBoldChanged.emit(this.fontWeight);
-        } else if (this.fontOptions === 'normal') {
+        if (this.textBold) {
+            this.fontWeight = 'bold';
+        } else {
             this.fontWeight = 'normal';
-            this.textBoldChanged.emit(this.fontWeight);
         }
+        this.textBoldChanged.emit(this.fontWeight);
     }
 
     emitFontStyle(): void {
-        if (this.fontOptions === 'italic') {
-            this.fontStyle = this.fontOptions;
-            this.textItalicChanged.emit(this.fontStyle);
-        } else if (this.fontOptions === 'normal') {
+        if (this.textItalic) {
+            this.fontStyle = 'italic';
+        } else {
             this.fontStyle = 'normal';
-            this.textItalicChanged.emit(this.fontStyle);
         }
+        this.textItalicChanged.emit(this.fontStyle);
     }
 }

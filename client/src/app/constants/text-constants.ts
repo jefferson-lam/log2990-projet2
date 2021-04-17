@@ -1,4 +1,4 @@
-export const INIT_FONT_SIZE = 30;
+export const INIT_FONT_SIZE = 20;
 
 export const END_INDEX = 1;
 
@@ -15,3 +15,5 @@ export const TEXT_HEIGHT_FACTOR = 6;
 export const TEXT_LINE_HEIGHT_FACTOR = 3.1;
 
 export const LINE_HEIGHT_CONVERSION = 1.2;
+
+export const MIN_BOX_WIDTH = 5;

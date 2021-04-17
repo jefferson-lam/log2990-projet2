@@ -20,6 +20,7 @@ export class TextService extends Tool {
     textAlign: string;
     textWidth: number;
     textHeight: number;
+    spanWidth: number;
     escapeKeyUsed: boolean;
     lockKeyboard: boolean;
 
@@ -32,6 +33,7 @@ export class TextService extends Tool {
         const MAX_PATH_DATA_SIZE = 2;
         this.primaryColor = '#b5cf60';
         this.fontSize = TextConstants.INIT_FONT_SIZE;
+        this.fontFamily = 'Arial';
         this.escapeKeyUsed = false;
         this.lockKeyboard = false;
         this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
@@ -40,7 +42,8 @@ export class TextService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
-        if (this.inUse && (!this.lockKeyboard || this.escapeKeyUsed)) {
+        if (!this.inUse) return;
+        if (!this.lockKeyboard || this.escapeKeyUsed) {
             this.cornerCoords[TextConstants.START_INDEX] = this.getPositionFromMouse(event);
             this.textWidth = this.cornerCoords[TextConstants.START_INDEX].x;
             this.textHeight = this.cornerCoords[TextConstants.START_INDEX].y;
@@ -52,16 +55,9 @@ export class TextService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.inUse && (!this.lockKeyboard || this.escapeKeyUsed)) {
-            this.placeHolderSpan.id = 'placeHolderSpan';
-            this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
-
-            this.placeHolderSpan.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
-            this.placeHolderSpan.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
-            this.placeHolderSpan.style.display = 'block';
-            this.placeHolderSpan.style.zIndex = '2';
-            this.placeHolderSpan.style.visibility = 'visible';
-
+        if (!this.inUse) return;
+        if (!this.lockKeyboard || this.escapeKeyUsed) {
+            this.setSpanValues();
             this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
             this.lockKeyboard = true;
             this.escapeKeyUsed = false;
@@ -101,6 +97,28 @@ export class TextService extends Tool {
         range.selectNodeContents(this.placeHolderSpan);
         selection.removeAllRanges();
         selection.addRange(range);
+    }
+
+    setSpanValues(): void {
+        this.placeHolderSpan.id = 'placeHolderSpan';
+        this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
+
+        this.placeHolderSpan.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
+        this.placeHolderSpan.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
+        this.placeHolderSpan.style.display = 'block';
+        this.placeHolderSpan.style.zIndex = '2';
+        this.placeHolderSpan.style.visibility = 'visible';
+        this.placeHolderSpan.style.fontSize = this.fontSize + 'px';
+        this.placeHolderSpan.style.position = 'absolute';
+        this.placeHolderSpan.style.textAlign = this.textAlign;
+        this.placeHolderSpan.style.fontFamily = this.fontFamily;
+        this.placeHolderSpan.style.fontWeight = this.fontWeight;
+        this.placeHolderSpan.style.fontStyle = this.fontStyle;
+        this.placeHolderSpan.style.lineHeight = this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION + 'px';
+        this.placeHolderSpan.style.color = this.primaryColor;
+        this.placeHolderSpan.style.zIndex = '2';
+        this.placeHolderSpan.style.border = '1px solid black';
+        this.placeHolderSpan.style.whiteSpace = 'pre-line';
     }
 
     setFontFamily(fontFamily: string): void {

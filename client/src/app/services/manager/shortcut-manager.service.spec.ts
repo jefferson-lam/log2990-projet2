@@ -482,14 +482,35 @@ describe('ShortcutManagerService', () => {
     });
 
     it('onDeleteKeyDown should call deleteSelection from ClipboardService', () => {
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(rectangleSelectionService);
+        allowShortcutSpy.and.returnValue(true);
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
         service.onDeleteKeyDown(eventSpy);
         expect(clipboardServiceSpy.deleteSelection).toHaveBeenCalled();
     });
 
-    it('onDeleteKeyDown should not call cutSelection from ClipboardService if isShortcutAlled is false', () => {
+    it('onDeleteKeyDown should not call cutSelection from ClipboardService if isShortcutAllowed is false', () => {
         allowShortcutSpy.and.returnValue(false);
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue({} as Tool);
+        service.onDeleteKeyDown(eventSpy);
+        expect(clipboardServiceSpy.deleteSelection).not.toHaveBeenCalled();
+    });
+
+    it('onDeleteKeyDown should call deleteSelection from ClipboardService if current tool is rectangle service', () => {
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(rectangleSelectionService);
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        allowShortcutSpy.and.returnValue(true);
+
+        service.onDeleteKeyDown(eventSpy);
+        expect(clipboardServiceSpy.deleteSelection).toHaveBeenCalled();
+    });
+
+    it('onDeleteKeyDown should not call deleteSelection from ClipboardService if current tool not rectangle service', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        allowShortcutSpy.and.returnValue(true);
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue({} as Tool);
+
         service.onDeleteKeyDown(eventSpy);
         expect(clipboardServiceSpy.deleteSelection).not.toHaveBeenCalled();
     });

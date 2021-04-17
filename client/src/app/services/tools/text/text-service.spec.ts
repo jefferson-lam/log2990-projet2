@@ -76,12 +76,21 @@ describe('TextService', () => {
     });
 
     it('onMouseDown should set inUse property to true on left click', () => {
+        service.inUse = true;
         service.onMouseDown(mouseEvent);
         service.lockKeyboard = false;
         expect(service.inUse).toEqual(true);
     });
 
+    it('onMouseDown should set inUse property to true on left click', () => {
+        service.onMouseDown(mouseEvent);
+        service.inUse = true;
+        service.lockKeyboard = true;
+        expect(service.lockKeyboard).toEqual(true);
+    });
+
     it('onMouseDown should call drawTextOnCanvas if lockKeyboard is true and escape key false', () => {
+        service.inUse = true;
         service.lockKeyboard = true;
         service.escapeKeyUsed = false;
         service.placeHolderSpan.style.zIndex = '2';
@@ -92,6 +101,16 @@ describe('TextService', () => {
     });
 
     it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false and escape key true', () => {
+        service.inUse = false;
+        service.placeHolderSpan.style.zIndex = '2';
+
+        service.onMouseDown(mouseEvent);
+
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false and escape key true', () => {
+        service.inUse = true;
         service.lockKeyboard = false;
         service.escapeKeyUsed = true;
         service.placeHolderSpan.style.zIndex = '2';
@@ -102,6 +121,7 @@ describe('TextService', () => {
     });
 
     it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false or escape key true', () => {
+        service.inUse = true;
         service.lockKeyboard = false;
         service.escapeKeyUsed = false;
         service.placeHolderSpan.style.zIndex = '2';
@@ -111,70 +131,96 @@ describe('TextService', () => {
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp should not call executeCommand if mouse was not already down', () => {
-        service.inUse = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(executeSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseUp should not call executeCommand if escape false', () => {
-        service.escapeKeyUsed = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(executeSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseUp should not call executeCommand lock keyboard is true', () => {
-        service.lockKeyboard = true;
-        service.escapeKeyUsed = false;
-        service.inUse = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(executeSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseUp should not call executeCommand if both lock keyboard and escape key are true', () => {
-        service.lockKeyboard = true;
-        service.escapeKeyUsed = true;
-        service.inUse = true;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(executeSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseUp should set placeholder attributes if only lock keyboard is false', () => {
-        service.inUse = true;
-        service.escapeKeyUsed = true;
+    it('onMouseDown should not call drawTextOnCanvas if inUse false', () => {
+        const mouseSpy = {
+            offsetX: 25,
+            offsetY: 40,
+            button: MouseConstants.MouseButton.Forward,
+        } as MouseEvent;
         service.lockKeyboard = false;
+        service.escapeKeyUsed = false;
+
+        service.onMouseDown(mouseSpy);
+
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseDown should not call drawTextOnCanvas if lockKeyboard false', () => {
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = true;
+
+        service.onMouseDown(mouseEvent);
+
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseDown should call drawTextOnCanvas if lock lockKeyboard true and escapeKeyUsed false', () => {
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = false;
+
+        service.onMouseDown(mouseEvent);
+
+        expect(drawSpy).toHaveBeenCalled();
+        expect(service.lockKeyboard).toBeFalse();
+    });
+
+    it('onMouseUp should not call setSelectedText if mouse was not already down', () => {
+        service.inUse = false;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
+        expect(selectedTextSpy).not.toHaveBeenCalled();
+    });
 
-        expect(service.placeHolderSpan.style.zIndex).toEqual('2');
-        expect(service.placeHolderSpan.style.visibility).toEqual('visible');
-        expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
-        expect(service.placeHolderSpan.style.display).toEqual('block');
-        expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords[0].x + 'px');
-        expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords[0].y + 'px');
-        expect(service.lockKeyboard).toEqual(true);
-        expect(service.escapeKeyUsed).toEqual(false);
+    it('onMouseUp should not call setSelectedText lock keyboard is true', () => {
+        service.inUse = false;
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(selectedTextSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseUp should not call setSelectedText if both lock keyboard and escape key are true', () => {
+        service.inUse = true;
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(selectedTextSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseUp should call setSpanValues and setSelectedText if lock keyboard and escape use false', () => {
+        const setSpanSpy = spyOn(service, 'setSpanValues').and.callThrough();
+        service.inUse = true;
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(setSpanSpy).toHaveBeenCalled();
+        expect(selectedTextSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should call setSpanValues and setSelectedText if only lock keyboard is false', () => {
+        const setSpanSpy = spyOn(service, 'setSpanValues');
+
+        service.inUse = true;
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = true;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(setSpanSpy).toHaveBeenCalled();
         expect(selectedTextSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should set placeholder attributes if escaped key used is true', () => {
+        const setSpanSpy = spyOn(service, 'setSpanValues');
+
         service.inUse = true;
+        service.lockKeyboard = true;
         service.escapeKeyUsed = true;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
-
-        expect(service.placeHolderSpan.style.zIndex).toEqual('2');
-        expect(service.placeHolderSpan.style.visibility).toEqual('visible');
-        expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
-        expect(service.placeHolderSpan.style.display).toEqual('block');
-        expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords[0].x + 'px');
-        expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords[0].y + 'px');
-        expect(service.lockKeyboard).toEqual(true);
-        expect(service.escapeKeyUsed).toEqual(false);
+        expect(setSpanSpy).toHaveBeenCalled();
         expect(selectedTextSpy).toHaveBeenCalled();
     });
 
@@ -252,6 +298,25 @@ describe('TextService', () => {
         expect(rangeSpy).toHaveBeenCalled();
     });
 
+    it('setSpanValues should set right values of span', () => {
+        service.setSpanValues();
+
+        expect(service.placeHolderSpan.style.zIndex).toEqual('2');
+        expect(service.placeHolderSpan.style.visibility).toEqual('visible');
+        expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
+        expect(service.placeHolderSpan.style.display).toEqual('block');
+        expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords[0].x + 'px');
+        expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords[0].y + 'px');
+        expect(service.lockKeyboard).toEqual(false);
+        expect(service.escapeKeyUsed).toEqual(false);
+        expect(service.placeHolderSpan.style.fontSize).toEqual('20px');
+        expect(service.placeHolderSpan.style.position).toEqual('absolute');
+        expect(service.placeHolderSpan.style.textAlign).toEqual('');
+        expect(service.placeHolderSpan.style.fontFamily).toEqual('Arial');
+        expect(service.placeHolderSpan.style.fontWeight).toEqual('');
+        expect(service.placeHolderSpan.style.fontStyle).toEqual('');
+    });
+
     it('onKeyboardDown of wrong keypress should not call clearCanvas', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
 
@@ -315,4 +380,5 @@ describe('TextService', () => {
         service.setPrimaryColor(EXPECTED_RANDOM_COLOR);
         expect(service.primaryColor).toEqual(EXPECTED_RANDOM_COLOR);
     });
+    // tslint:disable-next-line:max-file-line-count
 });

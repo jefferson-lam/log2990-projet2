@@ -42,11 +42,19 @@
 
     <div id="textFormatSettings">
       <p> Format du texte </p>
-      <mat-radio-group id='formatText' [(ngModel)]='fontOptions' (change)='emitFontOptions()'>
-        <mat-radio-button id="normal" value='normal' color="warn" checked > Normal </mat-radio-button>
-        <mat-radio-button id="italic" value='italic' color="warn" > Italic </mat-radio-button>
-        <mat-radio-button id="bold" value='bold'  color="warn" > Gras </mat-radio-button>
-      </mat-radio-group>
+        <mat-checkbox
+          id="italic" value='italic' color="warn"
+          [(ngModel)]="textItalic"
+          (change)="emitFontStyle()">
+           Italic
+        </mat-checkbox>
+      <br>
+        <mat-checkbox
+          id="bold" value='bold'  color="warn"
+          [(ngModel)]="textBold"
+          (change)="emitFontWeight()">
+           Gras
+        </mat-checkbox>
     </div>
 
     <div id="colorPicker">
