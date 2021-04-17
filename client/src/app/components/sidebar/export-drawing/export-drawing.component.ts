@@ -87,11 +87,11 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
 
     setPopupSizes(): void {
         if (this.baseCanvas.height > this.baseCanvas.width) {
-            this.canvasStyleWidth = (this.baseCanvas.width / this.baseCanvas.height) * MAX_EXPORT_CANVAS_WIDTH + 'px';
+            this.canvasStyleWidth = (this.baseCanvas.width / this.baseCanvas.height) * MAX_EXPORT_CANVAS_HEIGHT + 'px';
             this.canvasStyleHeight = MAX_EXPORT_CANVAS_HEIGHT + 'px';
         } else {
             this.canvasStyleWidth = MAX_EXPORT_CANVAS_WIDTH + 'px';
-            this.canvasStyleHeight = (this.baseCanvas.height / this.baseCanvas.width) * MAX_EXPORT_CANVAS_HEIGHT + 'px';
+            this.canvasStyleHeight = (this.baseCanvas.height / this.baseCanvas.width) * MAX_EXPORT_CANVAS_WIDTH + 'px';
         }
     }
 

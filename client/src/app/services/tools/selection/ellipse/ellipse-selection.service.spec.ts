@@ -470,10 +470,9 @@ describe('EllipseToolSelectionService', () => {
         expect(service.isEscapeDown).toBeFalsy();
     });
 
-    it('undoSelection should not draw to base context if isFromClipboard is true', () => {
+    it('undoSelection should not call drawImage when isFromClipboard is true', () => {
         const sw = 75;
         const sh = 210;
-        service.isFromClipboard = true;
         service.isManipulating = true;
         service.cornerCoords = [
             { x: 25, y: 40 },
@@ -481,19 +480,10 @@ describe('EllipseToolSelectionService', () => {
         ];
         service.selectionWidth = sw;
         service.selectionHeight = sh;
+        service.isFromClipboard = true;
         service.undoSelection();
         expect(clipEllipseSpy).toHaveBeenCalled();
-        expect(baseCtxDrawImage).not.toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
-            0,
-            0,
-            service.selectionWidth,
-            service.selectionHeight,
-            service.cornerCoords[0].x,
-            service.cornerCoords[0].y,
-            service.selectionWidth,
-            service.selectionHeight,
-        );
+        expect(baseCtxDrawImage).not.toHaveBeenCalled();
         expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
         expect(service.isManipulating).toBeFalsy();

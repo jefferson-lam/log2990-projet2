@@ -31,7 +31,7 @@ describe('SidebarComponent', () => {
     let textStub: ToolStub;
     let textService: TextService;
     let rectangleSelectionServiceStub: RectangleSelectionService;
-    let clipboardServiceStub: ClipboardService;
+    let clipboardServiceStub: jasmine.SpyObj<ClipboardService>;
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
@@ -62,12 +62,12 @@ describe('SidebarComponent', () => {
             {} as ResizerHandlerService,
             rectangleStub as RectangleService,
         );
+        clipboardServiceStub = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'deleteSelection', 'pasteSelection']);
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject', 'textService']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<
             () => BehaviorSubject<Tool>
         >).and.returnValue(new BehaviorSubject<Tool>(toolManagerServiceSpy.currentTool));
-        clipboardServiceStub = new ClipboardService({} as DrawingService, toolManagerServiceSpy, {} as UndoRedoService, {} as ResizerHandlerService);
 
         textService = new TextService({} as DrawingService, {} as UndoRedoService);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'textService')?.get as jasmine.Spy<() => TextService>).and.returnValue(textService);
@@ -373,32 +373,22 @@ describe('SidebarComponent', () => {
     });
 
     it('clicking on copySelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
-        const copySpy = spyOn(clipboardServiceStub, 'copySelection').and.callFake(() => {
-            return;
-        });
         component.copySelection();
-        expect(copySpy).toHaveBeenCalled();
+        expect(clipboardServiceStub.copySelection).toHaveBeenCalled();
     });
 
     it('clicking on cutSelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
-        const cutSpy = spyOn(clipboardServiceStub, 'cutSelection').and.callFake(() => {
-            return;
-        });
         component.cutSelection();
-        expect(cutSpy).toHaveBeenCalled();
+        expect(clipboardServiceStub.cutSelection).toHaveBeenCalled();
     });
 
     it('clicking on deleteSelection should only copy if currentTool is one of the tool selection (rectangle)', () => {
-        const deleteSpy = spyOn(clipboardServiceStub, 'deleteSelection').and.callFake(() => {
-            return;
-        });
         component.deleteSelection();
-        expect(deleteSpy).toHaveBeenCalled();
+        expect(clipboardServiceStub.deleteSelection).toHaveBeenCalled();
     });
 
     it('clicking on pasteSelection should call clipboardService method', () => {
-        const pasteSpy = spyOn(clipboardServiceStub, 'pasteSelection');
         component.pasteSelection();
-        expect(pasteSpy).toHaveBeenCalled();
+        expect(clipboardServiceStub.pasteSelection).toHaveBeenCalled();
     });
 });

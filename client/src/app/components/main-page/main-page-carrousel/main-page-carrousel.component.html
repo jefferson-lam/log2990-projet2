@@ -1,8 +1,8 @@
-<div class="modal-dialog">
+<div class="modal-dialog" tabindex="1" (keydown.ArrowLeft)="showcasePreviousDrawing()" (keydown.ArrowRight)="showcaseNextDrawing()">
     <div id="topBar">
         <h1 mat-dialog-title id="titleTopBar">Carrousel</h1>
         <div *ngIf="tagErrorPresent" id="tagValidation">{{ tagErrorMessage }}</div>
-        <mat-form-field class="tagsList">
+        <mat-form-field class="tagsList" (keydown.ArrowLeft)="$event.stopPropagation()" (keydown.ArrowRight)="$event.stopPropagation()">
             <mat-label id="filterTag"> Filtrage par étiquette </mat-label>
             <mat-chip-list #chipList aria-label="Tag selection">
                 <mat-chip *ngFor="let tag of tagsInSearch" [selectable]="selectable" [removable]="removable" (removed)="removeTag(tag)">
@@ -21,7 +21,7 @@
 
     <div mat-dialog-content id="galleryPreview">
         <div id="galleryContainer" *ngIf="!this.deleted">
-            <div id="galleryShowcase" (keydown.arrowRight)="showcaseNextDrawing()" (keydown.arrowLeft)="showcasePreviousDrawing()">
+            <div id="galleryShowcase">
                 <mat-icon class="slideLeft" *ngIf="!imageNotInServer" (click)="showcasePreviousDrawing()">navigate_before</mat-icon>
                 <div class="gridContainerSpinner" *ngIf="drawingLoading">
                     <div id="spinnerAnimation"><mat-spinner color="warn" [diameter]="250"></mat-spinner></div>
