@@ -17,7 +17,6 @@ export class SidebarComponent {
     @Input() isUndoPossible: boolean;
     @Input() isRedoPossible: boolean;
     @Input() selectedTool: SidebarToolButton;
-    @Input() isCanvasEmpty: boolean;
     @Input() isMagnetismOptionsDisplayed: boolean;
     isGridOptionsDisplayed: boolean;
     shouldRun: boolean;
