@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SegmentIntersectionService } from '@app/services/helper/segment-intersection.service';
+import { SegmentIntersectionService } from '@app/services/helper/math/segment-intersection.service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { LassoSelectionCommand } from '@app/services/tools/selection/lasso/lasso-selection-command';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';

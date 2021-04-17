@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SegmentIntersectionService } from '@app/services/helper/segment-intersection.service';
+import { SegmentIntersectionService } from '@app/services/helper/math/segment-intersection.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { LineService } from '@app/services/tools/line/line-service';
