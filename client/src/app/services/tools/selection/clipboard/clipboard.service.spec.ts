@@ -3,6 +3,8 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import * as ToolManagerConstants from '@app/constants/tool-manager-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
+import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
@@ -14,54 +16,75 @@ describe('ClipboardService', () => {
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let toolManagerService: ToolManagerService;
     let canvasTestHelper: CanvasTestHelper;
-    let baseCtxStub: CanvasRenderingContext2D;
-    let selectionCtxStub: CanvasRenderingContext2D;
-    let rectangleSelectionService: RectangleSelectionService;
-    let ellipseSelectionService: EllipseSelectionService;
-    let undoRedoService: UndoRedoService;
+    let rectangleSelectionServiceStub: RectangleSelectionService;
+    let ellipseSelectionServiceStub: EllipseSelectionService;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let resizerHandlerServiceSpy: jasmine.SpyObj<ResizerHandlerService>;
-    let executeCommandSpy: jasmine.Spy;
 
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['setResizerPositions']);
+        drawServiceSpy = jasmine.createSpyObj(
+            'DrawingService',
+            ['clearCanvas'],
+            ['baseCtx', 'selectionCtx', 'selectionCanvas', 'previewSelectionCanvas'],
+        );
+        resizerHandlerServiceSpy = jasmine.createSpyObj('ResizerHandlerService', ['setResizerPositions', 'resetResizers']);
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['executeCommand']);
+
+        rectangleSelectionServiceStub = new RectangleSelectionService(
+            drawServiceSpy,
+            undoRedoServiceSpy,
+            resizerHandlerServiceSpy,
+            new RectangleService(drawServiceSpy, undoRedoServiceSpy),
+        );
+        spyOn(rectangleSelectionServiceStub, 'resetSelectedToolSettings');
+
+        ellipseSelectionServiceStub = new EllipseSelectionService(
+            drawServiceSpy,
+            undoRedoServiceSpy,
+            resizerHandlerServiceSpy,
+            new EllipseService(drawServiceSpy, undoRedoServiceSpy),
+        );
+        spyOn(ellipseSelectionServiceStub, 'resetSelectedToolSettings');
 
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
                 { provide: ResizerHandlerService, useValue: resizerHandlerServiceSpy },
+                { provide: RectangleSelectionService, useValue: rectangleSelectionServiceStub },
+                { provide: EllipseSelectionService, useValue: ellipseSelectionServiceStub },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
             ],
         });
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
-        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        selectionCtxStub = canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
-
         service = TestBed.inject(ClipboardService);
         toolManagerService = TestBed.inject(ToolManagerService);
-        rectangleSelectionService = TestBed.inject(RectangleSelectionService);
-        ellipseSelectionService = TestBed.inject(EllipseSelectionService);
-        undoRedoService = TestBed.inject(UndoRedoService);
 
-        executeCommandSpy = spyOn(undoRedoService, 'executeCommand');
-        service.currentTool = rectangleSelectionService;
-        // tslint:disable:no-string-literal
-        service['drawingService'].baseCtx = baseCtxStub;
-        service['drawingService'].selectionCtx = selectionCtxStub;
-        service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
-        service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
+        service.currentTool = rectangleSelectionServiceStub;
+        (Object.getOwnPropertyDescriptor(drawServiceSpy, 'baseCtx')?.get as jasmine.Spy<() => CanvasRenderingContext2D>).and.returnValue(
+            canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D,
+        );
+        (Object.getOwnPropertyDescriptor(drawServiceSpy, 'selectionCtx')?.get as jasmine.Spy<() => CanvasRenderingContext2D>).and.returnValue(
+            canvasTestHelper.selectionCanvas.getContext('2d') as CanvasRenderingContext2D,
+        );
+        (Object.getOwnPropertyDescriptor(drawServiceSpy, 'selectionCanvas')?.get as jasmine.Spy<() => HTMLCanvasElement>).and.returnValue(
+            canvasTestHelper.selectionCanvas as HTMLCanvasElement,
+        );
+        (Object.getOwnPropertyDescriptor(drawServiceSpy, 'previewSelectionCanvas')?.get as jasmine.Spy<() => HTMLCanvasElement>).and.returnValue(
+            canvasTestHelper.previewSelectionCanvas as HTMLCanvasElement,
+        );
     });
 
     it('currenttool should change to Rectangle if toolManagers subject changes', () => {
-        toolManagerService.currentToolSubject.next(rectangleSelectionService);
+        toolManagerService.currentToolSubject.next(rectangleSelectionServiceStub);
         expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
-        expect(service.currentTool).toEqual(rectangleSelectionService);
+        expect(service.currentTool).toEqual(rectangleSelectionServiceStub);
     });
 
     it('currenttool should change to Ellipse if toolManagers subject changes', () => {
-        toolManagerService.currentToolSubject.next(ellipseSelectionService);
+        toolManagerService.currentToolSubject.next(ellipseSelectionServiceStub);
         expect(service.currentTool).toBeInstanceOf(EllipseSelectionService);
-        expect(service.currentTool).toEqual(ellipseSelectionService);
+        expect(service.currentTool).toEqual(ellipseSelectionServiceStub);
     });
 
     it('should be created', () => {
@@ -76,7 +99,7 @@ describe('ClipboardService', () => {
     });
 
     it('copySelection should copy selection data to clipboard', () => {
-        const selectionCtxgetImageDataSpy = spyOn(selectionCtxStub, 'getImageData').and.callThrough();
+        const selectionCtxgetImageDataSpy = spyOn(drawServiceSpy.selectionCtx, 'getImageData').and.callThrough();
         service.copySelection();
         expect(selectionCtxgetImageDataSpy).toHaveBeenCalled();
         expect(selectionCtxgetImageDataSpy).toHaveBeenCalledWith(
@@ -95,9 +118,9 @@ describe('ClipboardService', () => {
             service.clipboard.data[i] = 1;
         }
 
-        const mouseDownSpy = spyOn(service.currentTool, 'onMouseDown').and.callThrough();
+        const confirmSelectionSpy = spyOn(service.currentTool, 'confirmSelection').and.callThrough();
         service.pasteSelection();
-        expect(mouseDownSpy).toHaveBeenCalled();
+        expect(confirmSelectionSpy).toHaveBeenCalled();
     });
 
     it('pasteSelection changes to selection tool used during copy', () => {
@@ -113,7 +136,7 @@ describe('ClipboardService', () => {
         for (let i = 0; i < service.clipboard.data.length; ++i) {
             service.clipboard.data[i] = 1;
         }
-        const putImageDataSpy = spyOn(selectionCtxStub, 'putImageData').and.callThrough();
+        const putImageDataSpy = spyOn(drawServiceSpy.selectionCtx, 'putImageData').and.callThrough();
         service.pasteSelection();
         expect(putImageDataSpy).toHaveBeenCalled();
     });
@@ -143,7 +166,7 @@ describe('ClipboardService', () => {
     });
 
     it('pasteSelection does nothing if clipboard is empty ', () => {
-        const putImageDataSpy = spyOn(selectionCtxStub, 'putImageData').and.callThrough();
+        const putImageDataSpy = spyOn(drawServiceSpy.selectionCtx, 'putImageData').and.callThrough();
         const someSpy = spyOn(service.clipboard.data, 'some').and.returnValue(false);
         service.pasteSelection();
         expect(someSpy).toHaveBeenCalled();
@@ -161,15 +184,19 @@ describe('ClipboardService', () => {
         expect(mouseDownSpy).not.toHaveBeenCalled();
     });
 
+    it('deleteSelection undoes active selection', () => {
+        service.deleteSelection();
+        expect(service.currentTool.isManipulating).toBeFalse();
+        expect(service.currentTool.isEscapeDown).toBeFalse();
+    });
+
     it('deleteSelection fills active selection using EllipseClipboardCommand ', () => {
-        service.currentTool = ellipseSelectionService;
-        const undoSpy = spyOn(service.currentTool, 'undoSelection');
+        service.currentTool = ellipseSelectionServiceStub;
         canvasTestHelper.selectionCanvas.width = 1;
         canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
-        expect(undoSpy).toHaveBeenCalled();
         expect(service.isCircle).toEqual(service.currentTool.isCircle);
-        expect(executeCommandSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
     it('deleteSelection fills active selection using RectangleClipboardCommand', () => {
@@ -178,15 +205,14 @@ describe('ClipboardService', () => {
         service.deleteSelection();
         expect(service.selectionHeight).toEqual(service.currentTool.selectionHeight);
         expect(service.selectionWidth).toEqual(service.currentTool.selectionWidth);
-        expect(executeCommandSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
     it('deleteSelection does nothing when there is no active selection ', () => {
         canvasTestHelper.selectionCanvas.width = 0;
         canvasTestHelper.selectionCanvas.height = 0;
-        const undoSpy = spyOn(service.currentTool, 'undoSelection');
         service.deleteSelection();
-        expect(undoSpy).not.toHaveBeenCalled();
+        expect(undoRedoServiceSpy.executeCommand).not.toHaveBeenCalled();
     });
 
     it('cutSelection calls copy and delete selection', () => {
@@ -198,13 +224,13 @@ describe('ClipboardService', () => {
     });
 
     it('copySelection should save last selection tool (ellipse)', () => {
-        service.currentTool = ellipseSelectionService;
+        service.currentTool = ellipseSelectionServiceStub;
         service.copySelection();
         expect(service.lastSelectionTool).toEqual(ToolManagerConstants.ELLIPSE_SELECTION_KEY);
     });
 
     it('copySelection should save last selection tool (rectangle)', () => {
-        service.currentTool = rectangleSelectionService;
+        service.currentTool = rectangleSelectionServiceStub;
         service.copySelection();
         expect(service.lastSelectionTool).toEqual(ToolManagerConstants.RECTANGLE_SELECTION_KEY);
     });

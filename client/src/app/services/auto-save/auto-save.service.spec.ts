@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { Command } from '@app/classes/command';
 import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AutoSaveService } from './auto-save.service';
 import SpyObj = jasmine.SpyObj;
 
@@ -20,6 +19,7 @@ describe('AutoSaveService', () => {
     let undoRedoServiceSpy: SpyObj<UndoRedoService>;
     let executeSpy: jasmine.Spy;
     let autoSaveSpy: jasmine.Spy;
+    let mockSubject: Subject<number[]>;
 
     const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
@@ -41,23 +41,13 @@ describe('AutoSaveService', () => {
         document.body.append(bottomResizer);
         document.body.append(cornerResizer);
 
-        undoRedoServiceSpy = jasmine.createSpyObj(
-            'UndoRedoService',
-            ['reset'],
-            ['pileSizeSource', 'pileSizeObservable', 'initialImage', 'resetCanvasSize'],
-        );
-        (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'pileSizeSource')?.get as jasmine.Spy<() => Subject<number[]>>).and.returnValue(
-            new Subject<number[]>(),
-        );
-        (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'pileSizeObservable')?.get as jasmine.Spy<() => Observable<number[]>>).and.returnValue(
-            undoRedoServiceSpy.pileSizeSource.asObservable(),
-        );
-        (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'resetCanvasSize')?.get as jasmine.Spy<() => Command>).and.returnValue(
-            new ResizerCommand(drawServiceSpy),
-        );
-        (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'initialImage')?.get as jasmine.Spy<() => HTMLImageElement>).and.returnValue(
-            new Image(),
-        );
+        mockSubject = new Subject<number[]>();
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['reset'], {
+            pileSizeSource: mockSubject,
+            pileSizeObservable: mockSubject.asObservable(),
+            resetCanvasSize: new ResizerCommand(drawServiceSpy),
+            initialImage: new Image(),
+        });
 
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['newDrawing'], ['canvas', 'baseCtx']);
         TestBed.configureTestingModule({
@@ -140,14 +130,11 @@ describe('AutoSaveService', () => {
         expect(autoSaveSpy).toHaveBeenCalled();
     });
 
-    it("loadDrawing should set undoRedoService.initialImage.src to '' and execute resetCanvasSize if not autosaved drawing", () => {
-        const srcSetSpy = spyOnProperty(undoRedoServiceSpy.initialImage, 'src', 'set');
+    it('loadDrawing should execute resetCanvasSize if not autosaved drawing', () => {
         localStorage.clear();
         service.loadDrawing();
 
         expect(executeSpy).toHaveBeenCalled();
-        expect(srcSetSpy).toHaveBeenCalled();
-        expect(srcSetSpy).toHaveBeenCalledWith('');
     });
 
     it('loadDrawing should call drawingService.newDrawing if not autosave', () => {
