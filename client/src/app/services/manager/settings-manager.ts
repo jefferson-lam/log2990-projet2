@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { ColorService } from '@app/services/color/color.service';
-import { AerosolService } from '../tools/aerosol/aerosol-service';
-import { PolygoneService } from '../tools/polygone/polygone-service';
 import { ToolManagerService } from './tool-manager-service';
 
 @Injectable({
@@ -36,21 +34,15 @@ export class SettingsManagerService {
     }
 
     setSidesCount(newSidesCount: number): void {
-        if (this.toolManager.currentTool instanceof PolygoneService) {
-            this.toolManager.currentTool.initNumberSides = newSidesCount;
-        }
+        this.toolManager.currentTool.initNumberSides = newSidesCount;
     }
 
     setWaterDropWidth(newSize: number): void {
-        if (this.toolManager.currentTool instanceof AerosolService) {
-            this.toolManager.currentTool.waterDropWidth = newSize;
-        }
+        this.toolManager.currentTool.waterDropWidth = newSize;
     }
 
     setEmissionCount(newEmissionCount: number): void {
-        if (this.toolManager.currentTool instanceof AerosolService) {
-            this.toolManager.currentTool.emissionCount = newEmissionCount;
-        }
+        this.toolManager.currentTool.emissionCount = newEmissionCount;
     }
 
     setToleranceValue(newToleranceValue: number): void {

@@ -3,7 +3,6 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseService } from './ellipse-service';
@@ -263,36 +262,6 @@ describe('EllipseService', () => {
         const RANDOM_TEST_WIDTH = 70;
         service.setLineWidth(RANDOM_TEST_WIDTH);
         expect(service.lineWidth).toEqual(EllipseConstants.MAX_BORDER_WIDTH);
-    });
-
-    it('setFillMode should change to FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.FILL_ONLY;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setFillMode should change to OUTLINE mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setFillMode should change to OUTLINE_FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE_FILL;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setPrimaryColor should change primary color to wanted color', () => {
-        const EXPECTED_RANDOM_COLOR = 'blue';
-        service.setPrimaryColor(EXPECTED_RANDOM_COLOR);
-        expect(service.primaryColor).toEqual(EXPECTED_RANDOM_COLOR);
-    });
-
-    it('setSecondaryColor should change secondary color to wanted color', () => {
-        const EXPECTED_RANDOM_COLOR = 'green';
-        service.setSecondaryColor(EXPECTED_RANDOM_COLOR);
-        expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
     });
 
     it('onToolChange should call onMouseUp', () => {
