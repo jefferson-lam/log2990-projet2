@@ -5,7 +5,7 @@ import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service
 import { MagnetismService } from './magnetism.service';
 
 // tslint:disable: no-magic-numbers
-fdescribe('MagnetismService', () => {
+describe('MagnetismService', () => {
     let service: MagnetismService;
     let canvasTestHelper: CanvasTestHelper;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
