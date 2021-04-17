@@ -7,40 +7,48 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class UndoRedoService {
-    undoPile: Command[] = [];
-    redoPile: Command[] = [];
+    undoPile: Command[];
+    redoPile: Command[];
+    isUndoAllowed: boolean;
+    isRedoAllowed: boolean;
 
     initialImage: HTMLImageElement | undefined;
     resetCanvasSize: Command;
 
-    pileSizeSource: Subject<number[]> = new BehaviorSubject<number[]>([this.undoPile.length, this.redoPile.length]);
-    pileSizeObservable: Observable<number[]> = this.pileSizeSource.asObservable();
+    private actionsAllowedSource: Subject<boolean[]>;
+    actionsAllowedObservable: Observable<boolean[]>;
 
     constructor(private drawingService: DrawingService) {
+        this.undoPile = [];
+        this.redoPile = [];
+        this.isUndoAllowed = false;
+        this.isRedoAllowed = false;
+        this.actionsAllowedSource = new BehaviorSubject([this.isUndoAllowed, this.isRedoAllowed]);
+        this.actionsAllowedObservable = this.actionsAllowedSource.asObservable();
         this.reset();
     }
 
     reset(): void {
         this.undoPile = [];
         this.redoPile = [];
-        this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
+        this.updateActionsAllowed(true);
     }
 
     executeCommand(command: Command): void {
         command.execute();
         this.undoPile.push(command);
         this.redoPile = [];
-        this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
+        this.updateActionsAllowed(true);
     }
 
     undo(): void {
-        if (this.undoPile.length === 0) return;
+        if (!this.isUndoAllowed) return;
         this.redoPile.push(this.undoPile.pop() as Command);
         this.refresh();
     }
 
     redo(): void {
-        if (this.redoPile.length === 0) return;
+        if (!this.isRedoAllowed) return;
         this.undoPile.push(this.redoPile.pop() as Command);
         this.refresh();
     }
@@ -52,11 +60,29 @@ export class UndoRedoService {
             this.drawingService.baseCtx.drawImage(this.initialImage, 0, 0, this.initialImage.width, this.initialImage.height);
         }
         this.undoPile.forEach((c) => c.execute());
-        this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
+        this.updateActionsAllowed(true);
     }
 
     isUndoPileEmpty(): boolean {
         if (this.undoPile.length) return false;
         return true;
+    }
+
+    isRedoPileEmpty(): boolean {
+        if (this.redoPile.length) return false;
+        return true;
+    }
+
+    updateActionsAllowed(isAllowed: boolean): void {
+        if (!isAllowed) {
+            this.isUndoAllowed = false;
+            this.isRedoAllowed = false;
+            this.actionsAllowedSource.next([this.isUndoAllowed, this.isRedoAllowed]);
+            return;
+        }
+        if (!this.isUndoPileEmpty()) this.isUndoAllowed = true;
+        if (!this.isRedoPileEmpty()) this.isRedoAllowed = true;
+
+        this.actionsAllowedSource.next([this.isUndoAllowed, this.isRedoAllowed]);
     }
 }
