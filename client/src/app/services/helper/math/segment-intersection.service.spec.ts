@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { SegmentIntersectionService } from './segment-intersection.service';
+import { SegmentIntersectionService } from '@app/services/helper/math/segment-intersection.service';
 
 // tslint:disable:no-any
 // tslint:disable:no-string-literal
