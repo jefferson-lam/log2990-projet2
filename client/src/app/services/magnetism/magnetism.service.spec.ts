@@ -5,15 +5,14 @@ import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service
 import { MagnetismService } from './magnetism.service';
 
 // tslint:disable: no-magic-numbers
-describe('MagnetismService', () => {
+fdescribe('MagnetismService', () => {
     let service: MagnetismService;
     let canvasTestHelper: CanvasTestHelper;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
     let magnetismSubjectSpy: jasmine.Spy;
 
     beforeEach(() => {
-        canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', [], ['squareWidth']);
-        (Object.getOwnPropertyDescriptor(canvasGridServiceSpy, 'squareWidth')?.get as jasmine.Spy<() => number>).and.returnValue(30);
+        canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', [], { squareWidth: 30 });
         TestBed.configureTestingModule({ providers: [{ provide: CanvasGridService, useValue: canvasGridServiceSpy }] });
         service = TestBed.inject(MagnetismService);
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
