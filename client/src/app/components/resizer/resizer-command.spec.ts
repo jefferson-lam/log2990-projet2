@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import createSpyObj = jasmine.createSpyObj;
 import { Subject } from 'rxjs';
 import { ResizerCommand } from './resizer-command';
+import createSpyObj = jasmine.createSpyObj;
 
 // tslint:disable: no-string-literal
 describe('ResizerCommand', () => {
@@ -127,12 +127,12 @@ describe('ResizerCommand', () => {
     it('placeResizers should set resizers positions', () => {
         service.placeResizers();
 
-        expect(service.sideResizer.style.left).toBe(service.previewWidth + 'px');
-        expect(service.sideResizer.style.top).toBe(service.previewHeight / 2 + 'px');
-        expect(service.cornerResizer.style.left).toBe(service.previewWidth + 'px');
-        expect(service.cornerResizer.style.top).toBe(service.previewHeight + 'px');
-        expect(service.bottomResizer.style.left).toBe(service.previewWidth / 2 + 'px');
-        expect(service.bottomResizer.style.top).toBe(service.previewHeight + 'px');
+        expect(service.sideResizer.style.left).toBe(service.baseCtx.canvas.width + 'px');
+        expect(service.sideResizer.style.top).toBe(service.baseCtx.canvas.height / 2 + 'px');
+        expect(service.cornerResizer.style.left).toBe(service.baseCtx.canvas.width + 'px');
+        expect(service.cornerResizer.style.top).toBe(service.baseCtx.canvas.height + 'px');
+        expect(service.bottomResizer.style.left).toBe(service.baseCtx.canvas.width / 2 + 'px');
+        expect(service.bottomResizer.style.top).toBe(service.baseCtx.canvas.height + 'px');
     });
 
     it('resizeBaseCanvas should set new canvas size', () => {
