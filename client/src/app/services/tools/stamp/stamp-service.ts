@@ -87,6 +87,7 @@ export class StampService extends Tool {
     }
 
     onMouseWheel(event: WheelEvent): void {
+        event.preventDefault();
         this.cornerCoords[ToolConstants.START_INDEX] = this.getPositionFromMouse(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.changeRotationAngle(event);
