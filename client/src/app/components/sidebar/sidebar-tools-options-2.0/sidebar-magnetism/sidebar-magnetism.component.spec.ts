@@ -12,14 +12,12 @@ describe('SidebarMagnetismComponent', () => {
     let magnetismServiceSpy: jasmine.SpyObj<MagnetismService>;
 
     beforeEach(async(() => {
-        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', [], ['isMagnetismOn', 'magnetismStateSubject', 'referenceResizerMode']);
-        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'magnetismStateSubject')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
-            new Subject<any>(),
-        );
-        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'isMagnetismOn')?.get as jasmine.Spy<() => boolean>).and.returnValue(false);
-        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'referenceResizerMode')?.get as jasmine.Spy<
-            () => MagnestismConstants.MagnetizedPoint
-        >).and.returnValue(MagnestismConstants.MagnetizedPoint.TOP_LEFT);
+        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', [], {
+            isMagnetismOn: false,
+            magnetismStateSubject: new Subject(),
+            referenceResizerMode: MagnestismConstants.MagnetizedPoint.TOP_LEFT,
+        });
+
         TestBed.configureTestingModule({
             declarations: [SidebarMagnetismComponent],
             providers: [{ provide: MagnetismService, useValue: magnetismServiceSpy }],
