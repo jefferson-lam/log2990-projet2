@@ -46,21 +46,21 @@ export abstract class Tool {
 
     setLineWidth(width: number): void {}
 
-    setFillMode(newFillMode: ToolConstants.FillMode): void {}
+    // setFillMode(newFillMode: ToolConstants.FillMode): void {}
 
     setJunctionRadius(newJunctionRadius: number): void {}
 
-    setWithJunction(hasJunction: boolean): void {}
+    // setWithJunction(hasJunction: boolean): void {}
 
-    setPrimaryColor(primaryColor: string): void {}
+    // setPrimaryColor(primaryColor: string): void {}
 
-    setSecondaryColor(secondaryColor: string): void {}
+    // setSecondaryColor(secondaryColor: string): void {}
 
-    setSidesCount(newSidesCount: number): void {}
+    // setSidesCount(newSidesCount: number): void {}
 
-    setWaterDropWidth(newSize: number): void {}
+    // setWaterDropWidth(newSize: number): void {}
 
-    setEmissionCount(newEmissionCount: number): void {}
+    // setEmissionCount(newEmissionCount: number): void {}
 
     setToleranceValue(newToleranceValue: number): void {}
 

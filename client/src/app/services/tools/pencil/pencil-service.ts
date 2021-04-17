@@ -24,10 +24,6 @@ export class PencilService extends Tool {
         this.previewCommand = new PencilCommand(drawingService.previewCtx, this);
     }
 
-    setPrimaryColor(color: string): void {
-        this.primaryColor = color;
-    }
-
     setLineWidth(width: number): void {
         if (width >= PencilConstants.MIN_SIZE_PENCIL && width <= PencilConstants.MAX_SIZE_PENCIL) {
             this.lineWidth = width;

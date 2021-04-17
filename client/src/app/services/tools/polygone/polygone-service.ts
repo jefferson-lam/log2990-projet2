@@ -87,26 +87,6 @@ export class PolygoneService extends Tool {
         }
     }
 
-    setLineWidth(width: number): void {
-        this.lineWidth = width;
-    }
-
-    setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.fillMode = newFillMode;
-    }
-
-    setSidesCount(newSidesCount: number): void {
-        this.initNumberSides = newSidesCount;
-    }
-
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
-    }
-
-    setSecondaryColor(newColor: string): void {
-        this.secondaryColor = newColor;
-    }
-
     private getRadiiXAndY(path: Vec2[]): number[] {
         let xRadius = Math.abs(path[PolygoneConstants.END_INDEX].x - path[PolygoneConstants.START_INDEX].x) / 2;
         let yRadius = Math.abs(path[PolygoneConstants.END_INDEX].y - path[PolygoneConstants.START_INDEX].y) / 2;

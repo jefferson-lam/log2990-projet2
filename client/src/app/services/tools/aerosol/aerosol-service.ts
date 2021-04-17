@@ -99,20 +99,9 @@ export class AerosolService extends Tool {
         this.pathData = [];
     }
 
-    setWaterDropWidth(width: number): void {
-        this.waterDropWidth = width;
-    }
-
-    setEmissionCount(newEmissionCount: number): void {
-        this.emissionCount = newEmissionCount;
-    }
-
+    // This setter is here because the settings manager provides for the different implementations of setLineWidth
     setLineWidth(width: number): void {
         this.lineWidth = width;
-    }
-
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
     }
 
     onToolChange(): void {
