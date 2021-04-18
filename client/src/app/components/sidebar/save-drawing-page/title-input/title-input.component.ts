@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import * as TitleInputConstants from '@app/constants/title-input-constants';
 import * as DatabaseConstants from '@common/validation/database-constants';
 
 @Component({
@@ -7,17 +8,24 @@ import * as DatabaseConstants from '@common/validation/database-constants';
     styleUrls: ['./title-input.component.scss'],
 })
 export class TitleInputComponent {
-    @Output() isTitleValidEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() isTitleValidEvent: EventEmitter<boolean>;
     title: string;
 
-    minLengthRequirement: string = 'Un titre est obligatoire.';
+    minLengthRequirement: string;
     minLengthDivClass: string;
 
-    maxLengthRequirement: string = `Doit avoir ${DatabaseConstants.MAX_TITLE_LENGTH} caractères ou moins.`;
+    maxLengthRequirement: string;
     maxLengthDivClass: string;
 
-    noSpecialCharacterRequirement: string = 'Ne peut pas contenir de caractères spéciaux.';
+    noSpecialCharacterRequirement: string;
     noSpecialCharacterDivClass: string;
+
+    constructor() {
+        this.isTitleValidEvent = new EventEmitter<boolean>();
+        this.minLengthRequirement = TitleInputConstants.MIN_LENGTH_REQUIREMENT;
+        this.maxLengthRequirement = TitleInputConstants.MAX_LENGTH_REQUIREMENT;
+        this.noSpecialCharacterRequirement = TitleInputConstants.NO_SPECIAL_CARACTER_REQUIREMENT;
+    }
 
     validateTitle(title: string): void {
         title = title.trim();

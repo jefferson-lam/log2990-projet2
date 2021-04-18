@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
-import { END_ANGLE, END_INDEX, ROTATION, START_ANGLE, START_INDEX } from '@app/constants/ellipse-constants';
+import { ROTATION } from '@app/constants/ellipse-constants';
+import { END_ANGLE, END_INDEX, START_ANGLE, START_INDEX } from '@app/constants/shapes-constants';
 import { ClipboardService } from './clipboard.service';
 import { EllipseClipboardCommand } from './ellipse-clipboard-command';
 

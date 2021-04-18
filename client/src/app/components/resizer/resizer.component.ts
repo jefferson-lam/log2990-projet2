@@ -3,7 +3,6 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular
 import { Command } from '@app/classes/command';
 import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import * as CanvasConstants from '@app/constants/canvas-constants';
-import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -16,19 +15,24 @@ export class ResizerComponent implements AfterViewInit {
     @Input() baseCtx: CanvasRenderingContext2D;
     @Input() previewCtx: CanvasRenderingContext2D;
 
-    isSideResizerDown: boolean = false;
-    isCornerResizerDown: boolean = false;
-    isBottomResizerDown: boolean = false;
+    isSideResizerDown: boolean;
+    isCornerResizerDown: boolean;
+    isBottomResizerDown: boolean;
 
     @ViewChild('sideResizer', { static: false }) sideResizer: ElementRef<HTMLElement>;
     @ViewChild('cornerResizer', { static: false }) cornerResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
 
-    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, public autoSaveService: AutoSaveService) {}
+    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService) {
+        this.isSideResizerDown = false;
+        this.isCornerResizerDown = false;
+        this.isBottomResizerDown = false;
+    }
 
     ngAfterViewInit(): void {
-        this.setResizerPositions();
-        this.autoSaveService.loadDrawing();
+        this.setSideResizerPosition();
+        this.setCornerResizerPosition();
+        this.setBottomResizerPosition();
     }
 
     /**
@@ -99,12 +103,6 @@ export class ResizerComponent implements AfterViewInit {
 
     onBottomResizerDown(): void {
         this.isBottomResizerDown = true;
-    }
-
-    private setResizerPositions(): void {
-        this.setSideResizerPosition();
-        this.setCornerResizerPosition();
-        this.setBottomResizerPosition();
     }
 
     private setBottomResizerPosition(): void {

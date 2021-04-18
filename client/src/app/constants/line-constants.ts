@@ -31,3 +31,5 @@ export const MIN_JUNCTION_RADIUS = 1;
 export const MIN_JUNCTION_TO_LINE_FACTOR = 4;
 
 export const DEFAULT_PRIMARY_COLOR = 'black';
+
+export const TICK_INTERVAL = 1;

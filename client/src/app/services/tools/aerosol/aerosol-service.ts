@@ -20,7 +20,7 @@ export class AerosolService extends Tool {
     randomAngle: number;
     randomRadius: number;
     emissionRate: number;
-    primaryColor: string = '#2F2A36';
+    primaryColor: string;
 
     previewCommand: AerosolCommand;
 
@@ -30,6 +30,7 @@ export class AerosolService extends Tool {
         this.lineWidth = AerosolConstants.INIT_LINE_WIDTH;
         this.emissionCount = AerosolConstants.INIT_EMISSION_COUNT;
         this.waterDropWidth = AerosolConstants.INIT_WATERDROP_WIDTH;
+        this.primaryColor = '#2F2A36';
         this.previewCommand = new AerosolCommand(drawingService.previewCtx, this);
     }
 

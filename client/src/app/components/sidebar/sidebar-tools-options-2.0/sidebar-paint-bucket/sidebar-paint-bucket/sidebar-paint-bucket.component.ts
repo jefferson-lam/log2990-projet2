@@ -18,8 +18,8 @@ export class SidebarPaintBucketComponent implements OnInit {
     constructor(public settingsManager: SettingsManagerService) {
         this.maxToleranceValue = PaintBucketConstants.MAX_TOLERANCE_VALUE;
         this.minToleranceValue = PaintBucketConstants.MIN_TOLERANCE_VALUE;
-        this.toleranceValue = PaintBucketConstants.DEFAULT_TOLERANCE_VALUE;
         this.tickInterval = 1;
+        this.toleranceValue = settingsManager.toolManager.paintBucketService.toleranceValue;
     }
 
     ngOnInit(): void {

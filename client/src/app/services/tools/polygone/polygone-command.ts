@@ -1,25 +1,26 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as PolygoneConstants from '@app/constants/polygone-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 
 export class PolygoneCommand extends Command {
-    initNumberSides: number;
+    numberSides: number;
     lineWidth: number;
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
 
     constructor(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService) {
         super();
+        this.cornerCoords = [];
         this.setValues(canvasContext, polygoneService);
     }
 
     execute(): void {
-        this.drawPolygone(this.ctx, this.cornerCoords, this.initNumberSides);
+        this.drawPolygone(this.ctx, this.cornerCoords, this.numberSides);
     }
 
     setValues(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService): void {
@@ -28,16 +29,16 @@ export class PolygoneCommand extends Command {
         this.primaryColor = polygoneService.primaryColor;
         this.secondaryColor = polygoneService.secondaryColor;
         this.lineWidth = polygoneService.lineWidth;
-        this.initNumberSides = polygoneService.initNumberSides;
+        this.numberSides = polygoneService.numberSides;
         Object.assign(this.cornerCoords, polygoneService.cornerCoords);
     }
 
     private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[], sides: number): void {
-        const polygoneCenter = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]);
+        const polygoneCenter = this.getPolygoneCenter(path[ShapeConstants.START_INDEX], path[ShapeConstants.END_INDEX]);
         const startX = polygoneCenter.x;
         const startY = polygoneCenter.y;
         const radiiXAndY = this.getRadiiXAndY(path);
-        const xRadius = radiiXAndY[EllipseConstants.X_INDEX];
+        const xRadius = radiiXAndY[ShapeConstants.X_INDEX];
         const radiusWithin = xRadius - this.lineWidth / 2;
         if (radiusWithin < 0) {
             return;
@@ -58,7 +59,7 @@ export class PolygoneCommand extends Command {
         secondaryColor: string,
         lineWidth: number,
     ): void {
-        const ANGLE_EVEN = PolygoneConstants.END_ANGLE / sides;
+        const ANGLE_EVEN = ShapeConstants.END_ANGLE / sides;
         ctx.beginPath();
         ctx.lineJoin = 'round';
         if (sides % 2 !== 0) {
@@ -102,8 +103,8 @@ export class PolygoneCommand extends Command {
     }
 
     getRadiiXAndY(path: Vec2[]): number[] {
-        let xRadius = Math.abs(path[PolygoneConstants.END_INDEX].x - path[PolygoneConstants.START_INDEX].x) / 2;
-        let yRadius = Math.abs(path[PolygoneConstants.END_INDEX].y - path[PolygoneConstants.START_INDEX].y) / 2;
+        let xRadius = Math.abs(path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x) / 2;
+        let yRadius = Math.abs(path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y) / 2;
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
         xRadius = yRadius = shortestSide;
 

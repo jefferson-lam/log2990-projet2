@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import * as AerosolConstants from '@app/constants/aerosol-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
@@ -9,23 +8,36 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
     styleUrls: ['./sidebar-aerosol.component.scss'],
 })
 export class SidebarAerosolComponent implements OnInit {
-    maxWidth: number = AerosolConstants.MAX_LINE_WIDTH;
-    minWidth: number = AerosolConstants.MIN_LINE_WIDTH;
-    maxWidthWaterDrop: number = AerosolConstants.MAX_WATERDROP_WIDTH;
-    minWidthWaterDrop: number = AerosolConstants.MIN_WATERDROP_WIDTH;
-    maxEmission: number = AerosolConstants.MAX_EMISSION;
-    minEmission: number = AerosolConstants.MIN_EMISSION;
-    tickInterval: number = AerosolConstants.TICK_INTERVAL;
-    toolSize: number = AerosolConstants.INIT_TOOL_SIZE;
-    waterDropSize: number = AerosolConstants.INIT_WATERDROP_WIDTH;
-    emissionCount: number = AerosolConstants.INIT_EMISSION_COUNT;
-    currentTool: Tool;
+    maxWidth: number;
+    minWidth: number;
+    maxWidthWaterDrop: number;
+    minWidthWaterDrop: number;
+    maxEmission: number;
+    minEmission: number;
+    tickInterval: number;
+    toolSize: number;
+    waterDropSize: number;
+    emissionCount: number;
 
-    @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() waterDropSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() numberOfEmissions: EventEmitter<number> = new EventEmitter();
+    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() waterDropSizeChanged: EventEmitter<number>;
+    @Output() numberOfEmissions: EventEmitter<number>;
 
-    constructor(public settingsManager: SettingsManagerService) {}
+    constructor(public settingsManager: SettingsManagerService) {
+        this.maxWidth = AerosolConstants.MAX_LINE_WIDTH;
+        this.minWidth = AerosolConstants.MIN_LINE_WIDTH;
+        this.maxWidthWaterDrop = AerosolConstants.MAX_WATERDROP_WIDTH;
+        this.minWidthWaterDrop = AerosolConstants.MIN_WATERDROP_WIDTH;
+        this.maxEmission = AerosolConstants.MAX_EMISSION;
+        this.minEmission = AerosolConstants.MIN_EMISSION;
+        this.tickInterval = AerosolConstants.TICK_INTERVAL;
+        this.toolSizeChanged = new EventEmitter();
+        this.waterDropSizeChanged = new EventEmitter();
+        this.numberOfEmissions = new EventEmitter();
+        this.toolSize = settingsManager.toolManager.aerosolService.lineWidth;
+        this.waterDropSize = settingsManager.toolManager.aerosolService.waterDropWidth;
+        this.emissionCount = settingsManager.toolManager.aerosolService.emissionCount;
+    }
 
     ngOnInit(): void {
         this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));
