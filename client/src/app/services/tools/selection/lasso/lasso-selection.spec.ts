@@ -227,24 +227,6 @@ describe('LassoSelectionService', () => {
         expect(service.isValidSegment).toBeTruthy();
     });
 
-    it('validateSegment should correctly return true if isIntersect is true', () => {
-        const isIntersectSpy = spyOn(service, 'isIntersect').and.callFake(() => {
-            return true;
-        });
-        const result = service.validateSegment(service.pathData[service.pathData.length - 1], service.pathData);
-        expect(isIntersectSpy).toHaveBeenCalled();
-        expect(result).toBeFalsy();
-    });
-
-    it('validateSegment should correctly return true if isIntersect is true', () => {
-        const isIntersectSpy = spyOn(service, 'isIntersect').and.callFake(() => {
-            return false;
-        });
-        const result = service.validateSegment(service.pathData[service.pathData.length - 1], service.pathData);
-        expect(isIntersectSpy).toHaveBeenCalled();
-        expect(result).toBeTruthy();
-    });
-
     it('onKeyboardDown with escape should set isEscapeDown to true', () => {
         const escapeKeyboardEvent = {
             key: 'Escape',

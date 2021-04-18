@@ -90,17 +90,13 @@ export class LassoSelectionService extends ToolSelectionService {
             this.lineService.linePathData[this.lineService.linePathData.length - 1] = mousePosition;
             this.isValidSegment = true;
         } else {
-            this.isValidSegment = this.validateSegment(this.pathData[this.pathData.length - 1], this.pathData);
+            this.isValidSegment = !this.isIntersect(this.pathData[this.pathData.length - 1], this.pathData);
         }
 
         this.drawingService.previewCtx.canvas.style.cursor = 'no-drop';
         if (this.isValidSegment) {
             this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
         }
-    }
-
-    validateSegment(point: Vec2, pathData: Vec2[]): boolean {
-        return !this.isIntersect(point, pathData);
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
