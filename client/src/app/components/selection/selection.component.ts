@@ -13,41 +13,39 @@ import { ResizerHandlerService } from '@app/services/tools/selection/resizer/res
     styleUrls: ['./selection.component.scss'],
 })
 export class SelectionComponent implements AfterViewInit {
-    @ViewChild('selectionCanvas', { static: false }) selectionCanvasRef: ElementRef<HTMLCanvasElement>;
-    @ViewChild('borderCanvas', { static: false }) borderCanvasRef: ElementRef<HTMLCanvasElement>;
-    @ViewChild('previewSelectionCanvas', { static: false }) previewSelectionCanvasRef: ElementRef<HTMLCanvasElement>;
-    @ViewChild('selectionBox', { static: false }) selectionContainer: ElementRef<HTMLCanvasElement>;
+    @ViewChild('leftResizer', { static: false }) private leftResizer: ElementRef<HTMLElement>;
+    @ViewChild('rightResizer', { static: false }) private rightResizer: ElementRef<HTMLElement>;
+    @ViewChild('bottomResizer', { static: false }) private bottomResizer: ElementRef<HTMLElement>;
+    @ViewChild('topResizer', { static: false }) private topResizer: ElementRef<HTMLElement>;
+    @ViewChild('topLeftResizer', { static: false }) private topLeftResizer: ElementRef<HTMLElement>;
+    @ViewChild('topRightResizer', { static: false }) private topRightResizer: ElementRef<HTMLElement>;
+    @ViewChild('bottomLeftResizer', { static: false }) private bottomLeftResizer: ElementRef<HTMLElement>;
+    @ViewChild('bottomRightResizer', { static: false }) private bottomRightResizer: ElementRef<HTMLElement>;
+
+    @ViewChild('selectionCanvas', { static: false }) private selectionCanvasRef: ElementRef<HTMLCanvasElement>;
+    @ViewChild('borderCanvas', { static: false }) private borderCanvasRef: ElementRef<HTMLCanvasElement>;
+    @ViewChild('previewSelectionCanvas', { static: false }) private previewSelectionCanvasRef: ElementRef<HTMLCanvasElement>;
+    @ViewChild('selectionBox', { static: false }) private selectionContainer: ElementRef<HTMLCanvasElement>;
     selectionCanvas: HTMLCanvasElement;
     borderCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
-
     // Not present on dom, used as reference to store outline
-    outlineSelectionCanvas: HTMLCanvasElement;
+    private outlineSelectionCanvas: HTMLCanvasElement;
 
-    @ViewChild('leftResizer', { static: false }) leftResizer: ElementRef<HTMLElement>;
-    @ViewChild('rightResizer', { static: false }) rightResizer: ElementRef<HTMLElement>;
-    @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
-    @ViewChild('topResizer', { static: false }) topResizer: ElementRef<HTMLElement>;
-    @ViewChild('topLeftResizer', { static: false }) topLeftResizer: ElementRef<HTMLElement>;
-    @ViewChild('topRightResizer', { static: false }) topRightResizer: ElementRef<HTMLElement>;
-    @ViewChild('bottomLeftResizer', { static: false }) bottomLeftResizer: ElementRef<HTMLElement>;
-    @ViewChild('bottomRightResizer', { static: false }) bottomRightResizer: ElementRef<HTMLElement>;
-
-    selectionCtx: CanvasRenderingContext2D;
-    borderCtx: CanvasRenderingContext2D;
+    private outlineSelectionCtx: CanvasRenderingContext2D;
+    private selectionCtx: CanvasRenderingContext2D;
+    private borderCtx: CanvasRenderingContext2D;
     previewSelectionCtx: CanvasRenderingContext2D;
 
-    outlineSelectionCtx: CanvasRenderingContext2D;
-
-    resizerDown: ResizerDown;
+    private resizerDown: ResizerDown;
     initialPosition: Vec2;
     bottomRight: Vec2;
 
     constructor(
         private magnetismService: MagnetismService,
         private drawingService: DrawingService,
+        private shortcutManager: ShortcutManagerService,
         public resizerHandlerService: ResizerHandlerService,
-        public shortcutManager: ShortcutManagerService,
     ) {
         this.initialPosition = { x: 0, y: 0 };
         this.bottomRight = { x: 0, y: 0 };
@@ -63,11 +61,6 @@ export class SelectionComponent implements AfterViewInit {
         });
 
         this.magnetismService.previewSelectionCanvas = this.previewSelectionCanvas;
-    }
-
-    resizeContainer(width: number, height: number): void {
-        this.selectionContainer.nativeElement.style.width = width + 'px';
-        this.selectionContainer.nativeElement.style.height = height + 'px';
     }
 
     onCanvasMove(didCanvasMove: boolean): void {
@@ -95,15 +88,6 @@ export class SelectionComponent implements AfterViewInit {
         this.previewSelectionCanvas.style.left = this.borderCanvas.style.left = this.selectionCanvas.style.left;
         this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
         event.source._dragRef.reset();
-    }
-
-    getTransformValues(element: HTMLElement): Vec2 {
-        const style = window.getComputedStyle(element);
-        const matrix = new WebKitCSSMatrix(style.transform);
-        return {
-            x: matrix.m41,
-            y: matrix.m42,
-        };
     }
 
     drawPreview(event: CdkDragMove): void {
@@ -141,39 +125,6 @@ export class SelectionComponent implements AfterViewInit {
         const scalingFactors = this.getScalingFactors();
         targetContext.scale(scalingFactors[0], scalingFactors[1]);
         targetContext.drawImage(sourceCanvas, 0, 0, scalingFactors[0] * targetContext.canvas.width, scalingFactors[1] * targetContext.canvas.height);
-    }
-
-    getScalingFactors(): number[] {
-        const scalingFactors = [1, 1];
-        scalingFactors[0] = this.getWidthScalingFactor();
-        scalingFactors[1] = this.getHeightScalingFactor();
-        return scalingFactors;
-    }
-
-    getWidthScalingFactor(): number {
-        const leftResizers = [ResizerDown.Left, ResizerDown.TopLeft, ResizerDown.BottomLeft];
-        const rightResizers = [ResizerDown.Right, ResizerDown.TopRight, ResizerDown.BottomRight];
-        if (rightResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.left, 10) !== this.initialPosition.x) {
-            // tslint:disable-next-line:no-magic-numbers
-            return -1;
-        } else if (leftResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.left, 10) === this.bottomRight.x) {
-            // tslint:disable-next-line:no-magic-numbers
-            return -1;
-        }
-        return 1;
-    }
-
-    getHeightScalingFactor(): number {
-        const topResizers = [ResizerDown.Top, ResizerDown.TopLeft, ResizerDown.TopRight];
-        const bottomResizers = [ResizerDown.Bottom, ResizerDown.BottomLeft, ResizerDown.BottomRight];
-        if (bottomResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.top, 10) !== this.initialPosition.y) {
-            // tslint:disable-next-line:no-magic-numbers
-            return -1;
-        } else if (topResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.top, 10) === this.bottomRight.y) {
-            // tslint:disable-next-line:no-magic-numbers
-            return -1;
-        }
-        return 1;
     }
 
     setInitialValues(resizer: number): void {
@@ -215,6 +166,53 @@ export class SelectionComponent implements AfterViewInit {
     correctPreviewCanvasPosition(): void {
         this.previewSelectionCanvas.style.left = this.borderCanvas.style.left = this.selectionCanvas.style.left;
         this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
+    }
+
+    private getTransformValues(element: HTMLElement): Vec2 {
+        const style = window.getComputedStyle(element);
+        const matrix = new WebKitCSSMatrix(style.transform);
+        return {
+            x: matrix.m41,
+            y: matrix.m42,
+        };
+    }
+
+    private resizeContainer(width: number, height: number): void {
+        this.selectionContainer.nativeElement.style.width = width + 'px';
+        this.selectionContainer.nativeElement.style.height = height + 'px';
+    }
+
+    private getScalingFactors(): number[] {
+        const scalingFactors = [1, 1];
+        scalingFactors[0] = this.getWidthScalingFactor();
+        scalingFactors[1] = this.getHeightScalingFactor();
+        return scalingFactors;
+    }
+
+    private getWidthScalingFactor(): number {
+        const leftResizers = [ResizerDown.Left, ResizerDown.TopLeft, ResizerDown.BottomLeft];
+        const rightResizers = [ResizerDown.Right, ResizerDown.TopRight, ResizerDown.BottomRight];
+        if (rightResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.left, 10) !== this.initialPosition.x) {
+            // tslint:disable-next-line:no-magic-numbers
+            return -1;
+        } else if (leftResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.left, 10) === this.bottomRight.x) {
+            // tslint:disable-next-line:no-magic-numbers
+            return -1;
+        }
+        return 1;
+    }
+
+    private getHeightScalingFactor(): number {
+        const topResizers = [ResizerDown.Top, ResizerDown.TopLeft, ResizerDown.TopRight];
+        const bottomResizers = [ResizerDown.Bottom, ResizerDown.BottomLeft, ResizerDown.BottomRight];
+        if (bottomResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.top, 10) !== this.initialPosition.y) {
+            // tslint:disable-next-line:no-magic-numbers
+            return -1;
+        } else if (topResizers.includes(this.resizerDown) && parseInt(this.previewSelectionCanvas.style.top, 10) === this.bottomRight.y) {
+            // tslint:disable-next-line:no-magic-numbers
+            return -1;
+        }
+        return 1;
     }
 
     private recalibrateCanvas(): void {
