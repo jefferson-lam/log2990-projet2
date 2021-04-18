@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EllipseCommand } from './ellipse-command';
@@ -175,8 +176,8 @@ describe('EllipseCommand', () => {
             TEST_X_RADIUS,
             TEST_Y_RADIUS,
             EllipseConstants.ROTATION,
-            EllipseConstants.START_ANGLE,
-            EllipseConstants.END_ANGLE,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
         );
 
         testCtx.strokeStyle = TEST_PRIMARY_COLOR;
@@ -209,8 +210,8 @@ describe('EllipseCommand', () => {
             TEST_X_RADIUS,
             TEST_Y_RADIUS,
             EllipseConstants.ROTATION,
-            EllipseConstants.START_ANGLE,
-            EllipseConstants.END_ANGLE,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
         );
 
         testCtx.strokeStyle = TEST_SECONDARY_COLOR;
@@ -241,8 +242,8 @@ describe('EllipseCommand', () => {
             TEST_X_RADIUS,
             TEST_Y_RADIUS,
             EllipseConstants.ROTATION,
-            EllipseConstants.START_ANGLE,
-            EllipseConstants.END_ANGLE,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
         );
 
         testCtx.strokeStyle = TEST_SECONDARY_COLOR;
@@ -259,8 +260,8 @@ describe('EllipseCommand', () => {
     });
 
     it('getEllipseCenter should set displacement to shortest side if isCircle', () => {
-        const start = command.cornerCoords[EllipseConstants.START_INDEX];
-        const end = command.cornerCoords[EllipseConstants.END_INDEX];
+        const start = command.cornerCoords[ShapeConstants.START_INDEX];
+        const end = command.cornerCoords[ShapeConstants.END_INDEX];
 
         const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
 
@@ -277,8 +278,8 @@ describe('EllipseCommand', () => {
     it('getRadiiXAndY should set radius to shortest side if isCircle', () => {
         command.isCircle = true;
 
-        const start = command.cornerCoords[EllipseConstants.START_INDEX];
-        const end = command.cornerCoords[EllipseConstants.END_INDEX];
+        const start = command.cornerCoords[ShapeConstants.START_INDEX];
+        const end = command.cornerCoords[ShapeConstants.END_INDEX];
 
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;

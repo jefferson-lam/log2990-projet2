@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as PolygoneConstants from '@app/constants/polygone-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolsConstants from '@app/constants/tool-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarPolygoneComponent } from './sidebar-polygone.component';
@@ -36,7 +37,7 @@ describe('SidebarPolygoneComponent', () => {
 
     it('emitToolSize should emit tool size', () => {
         const emitSpy = spyOn(polygoneComponent.toolSizeChanged, 'emit');
-        polygoneComponent.toolSize = PolygoneConstants.INIT_LINE_WIDTH;
+        polygoneComponent.toolSize = ShapeConstants.INITIAL_BORDER_WIDTH;
         polygoneComponent.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
     });

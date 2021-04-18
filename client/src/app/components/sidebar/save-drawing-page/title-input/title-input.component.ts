@@ -7,17 +7,24 @@ import * as DatabaseConstants from '@common/validation/database-constants';
     styleUrls: ['./title-input.component.scss'],
 })
 export class TitleInputComponent {
-    @Output() isTitleValidEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() isTitleValidEvent: EventEmitter<boolean>;
     title: string;
 
-    minLengthRequirement: string = 'Un titre est obligatoire.';
+    minLengthRequirement: string;
     minLengthDivClass: string;
 
-    maxLengthRequirement: string = `Doit avoir ${DatabaseConstants.MAX_TITLE_LENGTH} caractères ou moins.`;
+    maxLengthRequirement: string;
     maxLengthDivClass: string;
 
-    noSpecialCharacterRequirement: string = 'Ne peut pas contenir de caractères spéciaux.';
+    noSpecialCharacterRequirement: string;
     noSpecialCharacterDivClass: string;
+
+    constructor() {
+        this.isTitleValidEvent = new EventEmitter<boolean>();
+        this.minLengthRequirement = 'Un titre est obligatoire.';
+        this.maxLengthRequirement = `Doit avoir ${DatabaseConstants.MAX_TITLE_LENGTH} caractères ou moins.`;
+        this.noSpecialCharacterRequirement = 'Ne peut pas contenir de caractères spéciaux.';
+    }
 
     validateTitle(title: string): void {
         title = title.trim();

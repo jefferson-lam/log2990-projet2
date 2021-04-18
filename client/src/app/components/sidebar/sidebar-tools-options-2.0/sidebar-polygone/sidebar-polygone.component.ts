@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import * as PolygoneConstants from '@app/constants/polygone-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
@@ -9,21 +9,32 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
     styleUrls: ['./sidebar-polygone.component.scss'],
 })
 export class SidebarPolygoneComponent implements OnInit {
-    max: number = PolygoneConstants.MAX_LINE_WIDTH;
-    min: number = PolygoneConstants.MIN_LINE_WIDTH;
-    minPolygone: number = PolygoneConstants.MIN_SIDES_COUNT;
-    maxPolygone: number = PolygoneConstants.MAX_SIDES_COUNT;
-    tickInterval: number = PolygoneConstants.TICK_INTERVAL;
-    toolSize: number = PolygoneConstants.INIT_TOOL_SIZE;
-    polygoneSidesCount: number = PolygoneConstants.INIT_SIDES_COUNT;
+    max: number;
+    min: number;
+    minPolygone: number;
+    maxPolygone: number;
+    tickInterval: number;
+    toolSize: number;
+    polygoneSidesCount: number;
     fillMode: number | undefined;
-    currentTool: Tool;
 
-    @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() fillModeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() numberOfPolySides: EventEmitter<number> = new EventEmitter();
+    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() fillModeChanged: EventEmitter<number>;
+    @Output() numberOfPolySides: EventEmitter<number>;
 
-    constructor(public settingsManager: SettingsManagerService) {}
+    constructor(public settingsManager: SettingsManagerService) {
+        this.max = ShapeConstants.MAX_BORDER_WIDTH;
+        this.min = ShapeConstants.MIN_BORDER_WIDTH;
+        this.minPolygone = PolygoneConstants.MIN_SIDES_COUNT;
+        this.maxPolygone = PolygoneConstants.MAX_SIDES_COUNT;
+        this.tickInterval = ShapeConstants.TICK_INTERVAL;
+        this.toolSizeChanged = new EventEmitter();
+        this.fillModeChanged = new EventEmitter();
+        this.numberOfPolySides = new EventEmitter();
+        this.toolSize = settingsManager.toolManager.polygoneService.lineWidth;
+        this.fillMode = settingsManager.toolManager.polygoneService.fillMode;
+        this.polygoneSidesCount = settingsManager.toolManager.polygoneService.numberSides;
+    }
 
     ngOnInit(): void {
         this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));

@@ -15,7 +15,7 @@ export class ColorService {
     secondaryColorSource: Subject<Rgba>;
     secondaryObservable: Observable<Rgba>;
 
-    savedColors: Rgba[] = new Array();
+    savedColors: Rgba[];
     savedColorsSource: Subject<Rgba[]>;
     savedColorsObservable: Observable<Rgba[]>;
 
@@ -27,6 +27,7 @@ export class ColorService {
         this.secondaryColor = { red: 255, green: 255, blue: 255, alpha: 1 };
         this.secondaryColorSource = new BehaviorSubject<Rgba>(this.secondaryColor);
         this.secondaryObservable = this.secondaryColorSource.asObservable();
+        this.savedColors = new Array();
 
         const placeholder = { red: 255, green: 255, blue: 255, alpha: 1 };
         for (let i = 0; i < ColorConstants.MAX_SAVED_COLORS; i++) {

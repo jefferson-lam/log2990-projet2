@@ -16,15 +16,19 @@ export class ResizerComponent implements AfterViewInit {
     @Input() baseCtx: CanvasRenderingContext2D;
     @Input() previewCtx: CanvasRenderingContext2D;
 
-    isSideResizerDown: boolean = false;
-    isCornerResizerDown: boolean = false;
-    isBottomResizerDown: boolean = false;
+    isSideResizerDown: boolean;
+    isCornerResizerDown: boolean;
+    isBottomResizerDown: boolean;
 
     @ViewChild('sideResizer', { static: false }) sideResizer: ElementRef<HTMLElement>;
     @ViewChild('cornerResizer', { static: false }) cornerResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
 
-    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, public autoSaveService: AutoSaveService) {}
+    constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, public autoSaveService: AutoSaveService) {
+        this.isSideResizerDown = false;
+        this.isCornerResizerDown = false;
+        this.isBottomResizerDown = false;
+    }
 
     ngAfterViewInit(): void {
         this.sideResizer.nativeElement.style.left = this.baseCtx.canvas.width + 'px';

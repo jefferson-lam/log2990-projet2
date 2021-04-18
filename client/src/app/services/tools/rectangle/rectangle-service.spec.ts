@@ -3,7 +3,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -270,13 +270,13 @@ describe('RectangleService', () => {
     it('setLineWidth should change size of lineWidth to min width if width is lower than min', () => {
         const LOWER_TEST_WIDTH = -1;
         service.setLineWidth(LOWER_TEST_WIDTH);
-        expect(service.lineWidth).toEqual(RectangleConstants.MIN_BORDER_WIDTH);
+        expect(service.lineWidth).toEqual(ShapeConstants.MIN_BORDER_WIDTH);
     });
 
     it('setLineWidth should change size of lineWidth to max width if width is bigger than max', () => {
         const RANDOM_TEST_WIDTH = 70;
         service.setLineWidth(RANDOM_TEST_WIDTH);
-        expect(service.lineWidth).toEqual(RectangleConstants.MAX_BORDER_WIDTH);
+        expect(service.lineWidth).toEqual(ShapeConstants.MAX_BORDER_WIDTH);
     });
 
     it('setFillMode should change to FILL ONLY mode', () => {

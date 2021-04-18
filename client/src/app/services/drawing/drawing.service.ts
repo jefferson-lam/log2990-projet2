@@ -12,12 +12,16 @@ export class DrawingService {
     previewSelectionCtx: CanvasRenderingContext2D;
     borderCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
-    imageURL: string = '';
+    imageURL: string;
     selectionCanvas: HTMLCanvasElement;
     borderCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
+    canvasSizeSubject: Subject<number[]>;
 
-    canvasSizeSubject: Subject<number[]> = new Subject<number[]>();
+    constructor() {
+        this.imageURL = '';
+        this.canvasSizeSubject = new Subject<number[]>();
+    }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
