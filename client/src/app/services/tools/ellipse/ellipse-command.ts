@@ -11,11 +11,6 @@ export class EllipseCommand extends Command {
     primaryColor: string;
     secondaryColor: string;
     cornerCoords: Vec2[] = [];
-    centerX: number;
-    centerY: number;
-    xRadius: number;
-    yRadius: number;
-    borderColor: string;
 
     constructor(canvasContext: CanvasRenderingContext2D, ellipseService: EllipseService) {
         super();
@@ -37,23 +32,34 @@ export class EllipseCommand extends Command {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.getEllipseCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
-        this.getRadiiXAndY(path);
+        const ellipseCenter = this.getEllipseCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
+        const startX = ellipseCenter.x;
+        const startY = ellipseCenter.y;
 
-        this.borderColor = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (this.xRadius > this.lineWidth / 2 && this.yRadius > this.lineWidth / 2) {
-            this.xRadius -= this.lineWidth / 2;
-            this.yRadius -= this.lineWidth / 2;
-            this.drawTypeEllipse(ctx);
+        const radiiXAndY = this.getRadiiXAndY(path);
+        let xRadius = radiiXAndY[EllipseConstants.X_INDEX];
+        let yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
+        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
+        if (xRadius > this.lineWidth / 2 && yRadius > this.lineWidth / 2) {
+            xRadius -= this.lineWidth / 2;
+            yRadius -= this.lineWidth / 2;
+            this.drawTypeEllipse(ctx, startX, startY, xRadius, yRadius, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
         } else {
-            this.lineWidth = EllipseConstants.HIDDEN_BORDER_WIDTH;
-            this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
-            this.primaryColor = this.borderColor;
-            this.drawTypeEllipse(ctx);
+            this.drawTypeEllipse(
+                ctx,
+                startX,
+                startY,
+                xRadius,
+                yRadius,
+                ToolConstants.FillMode.OUTLINE_FILL,
+                borderColor,
+                borderColor,
+                EllipseConstants.HIDDEN_BORDER_WIDTH,
+            );
         }
     }
 
-    private getEllipseCenter(start: Vec2, end: Vec2, isCircle: boolean): void {
+    private getEllipseCenter(start: Vec2, end: Vec2, isCircle: boolean): Vec2 {
         let displacementX: number;
         let displacementY: number;
         const radiusX = Math.abs(end.x - start.x) / 2;
@@ -67,40 +73,44 @@ export class EllipseCommand extends Command {
         }
         const xVector = end.x - start.x;
         const yVector = end.y - start.y;
-        this.centerX = start.x + Math.sign(xVector) * displacementX;
-        this.centerY = start.y + Math.sign(yVector) * displacementY;
+        const centerX = start.x + Math.sign(xVector) * displacementX;
+        const centerY = start.y + Math.sign(yVector) * displacementY;
+        return { x: centerX, y: centerY };
     }
 
-    private drawTypeEllipse(ctx: CanvasRenderingContext2D): void {
+    private drawTypeEllipse(
+        ctx: CanvasRenderingContext2D,
+        startX: number,
+        startY: number,
+        xRadius: number,
+        yRadius: number,
+        fillMethod: number,
+        primaryColor: string,
+        secondaryColor: string,
+        lineWidth: number,
+    ): void {
         ctx.beginPath();
         ctx.setLineDash([]);
         ctx.lineJoin = 'round';
-        ctx.ellipse(
-            this.centerX,
-            this.centerY,
-            this.xRadius,
-            this.yRadius,
-            EllipseConstants.ROTATION,
-            EllipseConstants.START_ANGLE,
-            EllipseConstants.END_ANGLE,
-        );
+        ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, EllipseConstants.START_ANGLE, EllipseConstants.END_ANGLE);
 
-        ctx.strokeStyle = this.borderColor;
-        ctx.lineWidth = this.lineWidth;
+        ctx.strokeStyle = secondaryColor;
+        ctx.lineWidth = lineWidth;
         ctx.stroke();
-        if (this.fillMode !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = this.primaryColor;
+        if (fillMethod !== ToolConstants.FillMode.OUTLINE) {
+            ctx.fillStyle = primaryColor;
             ctx.fill();
         }
     }
 
-    private getRadiiXAndY(path: Vec2[]): void {
-        this.xRadius = Math.abs(path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x) / 2;
-        this.yRadius = Math.abs(path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y) / 2;
+    private getRadiiXAndY(path: Vec2[]): number[] {
+        let xRadius = Math.abs(path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x) / 2;
+        let yRadius = Math.abs(path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y) / 2;
 
         if (this.isCircle) {
-            const shortestSide = Math.min(Math.abs(this.xRadius), Math.abs(this.yRadius));
-            this.xRadius = this.yRadius = shortestSide;
+            const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
+            xRadius = yRadius = shortestSide;
         }
+        return [xRadius, yRadius];
     }
 }
