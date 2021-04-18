@@ -71,9 +71,8 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     onCanvasMove(didCanvasMove: boolean): void {
-        if (didCanvasMove) {
-            this.setCanvasPosition();
-        }
+        if (!didCanvasMove) return;
+        this.setCanvasPosition();
     }
 
     setCanvasPosition(): void {
@@ -118,28 +117,24 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     resizeSelectionCanvas(event: CdkDragEnd): void {
-        if (this.resizerHandlerService.inUse) {
-            this.resizerHandlerService.inUse = false;
-            event.source._dragRef.reset();
-            this.selectionCanvas.style.visibility = 'visible';
+        if (!this.resizerHandlerService.inUse) return;
+        this.resizerHandlerService.inUse = false;
+        event.source._dragRef.reset();
+        this.selectionCanvas.style.visibility = 'visible';
 
-            // Save drawing to preview canvas before drawing is wiped due to resizing
-            this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
-            this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
+        // Save drawing to preview canvas before drawing is wiped due to resizing
+        this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+        this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
 
-            this.recalibrateCanvasHeights();
-            this.recalibrateCanvasWidths();
-            this.recalibrateCanvasLefts();
-            this.recalibrateCanvasTops();
+        this.recalibrateCanvas();
 
-            // Clear the contents of the selectionCtx before redrawing the scaled image
-            this.selectionCtx.clearRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
+        // Clear the contents of the selectionCtx before redrawing the scaled image
+        this.selectionCtx.clearRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
 
-            // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
-            this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);
-            this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
-            this.previewSelectionCtx.clearRect(0, 0, this.previewSelectionCanvas.width, this.previewSelectionCanvas.height);
-        }
+        // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
+        this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);
+        this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
+        this.previewSelectionCtx.clearRect(0, 0, this.previewSelectionCanvas.width, this.previewSelectionCanvas.height);
     }
 
     drawWithScalingFactors(targetContext: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement): void {
@@ -222,17 +217,10 @@ export class SelectionComponent implements AfterViewInit {
         this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
     }
 
-    private recalibrateCanvasWidths(): void {
+    private recalibrateCanvas(): void {
         this.selectionCanvas.width = this.borderCanvas.width = this.previewSelectionCanvas.width;
-    }
-
-    private recalibrateCanvasHeights(): void {
         this.selectionCanvas.height = this.borderCanvas.height = this.previewSelectionCanvas.height;
-    }
-    private recalibrateCanvasLefts(): void {
         this.selectionCanvas.style.left = this.borderCanvas.style.left = this.previewSelectionCanvas.style.left;
-    }
-    private recalibrateCanvasTops(): void {
         this.selectionCanvas.style.top = this.borderCanvas.style.top = this.previewSelectionCanvas.style.top;
     }
 
