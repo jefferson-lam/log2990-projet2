@@ -34,10 +34,11 @@ mat-icon {
     cursor: pointer;
     position: relative;
     left: 0;
-    background-color: #ff7f50;
+    background-color: #ffab72;
     margin: 6px 6px 4px 6px;
     padding-top: 2px;
     border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 .options-sidebar li:hover {
     color: #607d8b;
@@ -60,6 +61,7 @@ mat-icon {
     margin: 6px 6px 4px 6px;
     padding-top: 2px;
     border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 .tools-sidebar li:hover {
     color: #607d8b;
@@ -85,10 +87,11 @@ mat-icon {
     cursor: pointer;
     position: relative;
     left: 0;
-    background-color: Gold;
+    background-color: #e07a5f;
     margin: 6px 6px 4px 6px;
     padding-top: 2px;
     border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .grid-magnet li:hover {
@@ -124,6 +127,8 @@ mat-drawer {
     width: 240px;
     overflow-y: hidden;
     display: flex;
+    // box-shadow: -1px -10px 10px 1px #1c496e;
+    box-shadow: rgb(25, 62, 95) 2px 2px 4px 0px inset;
 }
 mat-drawer-content {
     margin: 0 !important;
