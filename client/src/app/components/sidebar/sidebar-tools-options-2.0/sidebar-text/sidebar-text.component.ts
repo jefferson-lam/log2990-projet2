@@ -59,7 +59,7 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.textService.placeHolderSpan = document.createElement('span');
-        this.textService.placeHolderSpan.id = 'placeHolderSpan';
+        this.textService.placeHolderSpan.className = 'placeHolderSpan';
         this.textService.placeHolderSpan.style.position = 'absolute';
         this.textService.placeHolderSpan.setAttribute('role', 'textbox');
         this.textService.placeHolderSpan.contentEditable = 'true';

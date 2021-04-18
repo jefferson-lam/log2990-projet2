@@ -83,6 +83,8 @@ export class TextService extends Tool {
     }
 
     setSpanValues(): void {
+        this.placeHolderSpan.style.outline = '1px solid black';
+        this.placeHolderSpan.style.padding = '5px';
         this.placeHolderSpan.innerText = 'Ajoutez votre texte ici...';
 
         this.placeHolderSpan.style.left = this.cornerCoords.x + 'px';
@@ -99,8 +101,8 @@ export class TextService extends Tool {
         this.placeHolderSpan.style.lineHeight = this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION + 'px';
         this.placeHolderSpan.style.color = this.primaryColor;
         this.placeHolderSpan.style.zIndex = '2';
-        this.placeHolderSpan.style.border = '1px solid black';
         this.placeHolderSpan.style.whiteSpace = 'pre-line';
+        this.placeHolderSpan.style.minWidth = this.fontSize * TextConstants.MIN_BOX_WIDTH + 'px';
     }
 
     setFontFamily(fontFamily: string): void {

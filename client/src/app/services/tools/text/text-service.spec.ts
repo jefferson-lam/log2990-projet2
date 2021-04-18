@@ -209,6 +209,8 @@ describe('TextService', () => {
         expect(service.placeHolderSpan.style.fontFamily).toEqual('Arial');
         expect(service.placeHolderSpan.style.fontWeight).toEqual('');
         expect(service.placeHolderSpan.style.fontStyle).toEqual('');
+        expect(service.placeHolderSpan.style.outline).toEqual('black solid 1px');
+        expect(service.placeHolderSpan.style.padding).toEqual('5px');
     });
 
     it('setFontFamily should change family font', () => {
