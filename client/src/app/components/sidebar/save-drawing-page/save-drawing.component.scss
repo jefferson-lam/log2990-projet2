@@ -1,28 +1,36 @@
 .modal-dialog {
-    width: 400px;
-    height: 400px;
-    justify-content: space-between;
-    flex-direction: column;
+    width: 500px;
+    height: 600px;
+}
+#headerDiv {
     display: flex;
+    text-align: center;
+    justify-content: center;
+    align-self: center;
 }
 
-.mat-dialog-container {
-    overflow-y: hidden !important;
+#saveWindow {
+    justify-content: flex-start;
+    flex-direction: column;
+    display: flex;
+    align-content: space-between;
+    height: 100%;
+}
+#formDiv {
+    display: flex;
+    justify-content: space-between;
 }
 
 #buttonDiv {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    align-self: flex-end;
 }
 
 #saveButton {
     font-size: large;
     background-color: coral;
     width: 125px;
+    text-align: center;
 }
 
 #saveButton:hover {
