@@ -156,21 +156,10 @@ export class SelectionComponent implements AfterViewInit {
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
             this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
 
-            // Replace base canvas
-            this.selectionCanvas.style.top = this.previewSelectionCanvas.style.top;
-            this.selectionCanvas.style.left = this.previewSelectionCanvas.style.left;
-
-            // Replace border canvas
-            this.borderCanvas.style.left = this.selectionCanvas.style.left;
-            this.borderCanvas.style.top = this.selectionCanvas.style.top;
-
-            // Resize base canvas
-            this.selectionCanvas.width = this.previewSelectionCanvas.width;
-            this.selectionCanvas.height = this.previewSelectionCanvas.height;
-
-            // Resize border canvas
-            this.borderCanvas.width = this.previewSelectionCanvas.width;
-            this.borderCanvas.height = this.previewSelectionCanvas.height;
+            this.recalibrateCanvasHeights();
+            this.recalibrateCanvasWidths();
+            this.recalibrateCanvasLefts();
+            this.recalibrateCanvasTops();
 
             // Clear the contents of the selectionCtx before redrawing the scaled image
             this.selectionCtx.clearRect(0, 0, this.selectionCanvas.width, this.selectionCanvas.height);
@@ -235,12 +224,12 @@ export class SelectionComponent implements AfterViewInit {
         this.resizerHandlerService.setResizeStrategy(this.resizerDown);
     }
 
-    applyFocusBorderStyle(): void {
-        this.borderCanvas.style.border = '1px solid black';
+    applyFocusOutlineStyle(): void {
+        this.borderCanvas.style.outline = '1px solid black';
     }
 
-    applyFocusOutBorderStyle(): void {
-        this.borderCanvas.style.border = '1px dashed black';
+    applyFocusOutOutlineStyle(): void {
+        this.borderCanvas.style.outline = '1px dashed black';
     }
     @HostListener('window:keydown.shift')
     onShiftKeyDown(): void {
@@ -259,5 +248,19 @@ export class SelectionComponent implements AfterViewInit {
     correctPreviewCanvasPosition(): void {
         this.previewSelectionCanvas.style.left = this.borderCanvas.style.left = this.selectionCanvas.style.left;
         this.previewSelectionCanvas.style.top = this.borderCanvas.style.top = this.selectionCanvas.style.top;
+    }
+
+    private recalibrateCanvasWidths(): void {
+        this.selectionCanvas.width = this.borderCanvas.width = this.previewSelectionCanvas.width;
+    }
+
+    private recalibrateCanvasHeights(): void {
+        this.selectionCanvas.height = this.borderCanvas.height = this.previewSelectionCanvas.height;
+    }
+    private recalibrateCanvasLefts(): void {
+        this.selectionCanvas.style.left = this.borderCanvas.style.left = this.previewSelectionCanvas.style.left;
+    }
+    private recalibrateCanvasTops(): void {
+        this.selectionCanvas.style.top = this.borderCanvas.style.top = this.previewSelectionCanvas.style.top;
     }
 }

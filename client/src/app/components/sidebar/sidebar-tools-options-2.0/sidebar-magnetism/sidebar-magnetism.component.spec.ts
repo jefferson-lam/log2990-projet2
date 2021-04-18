@@ -12,14 +12,12 @@ describe('SidebarMagnetismComponent', () => {
     let magnetismServiceSpy: jasmine.SpyObj<MagnetismService>;
 
     beforeEach(async(() => {
-        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', [], ['isMagnetismOn', 'magnetismStateSubject', 'referenceResizerMode']);
-        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'magnetismStateSubject')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
-            new Subject<any>(),
-        );
-        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'isMagnetismOn')?.get as jasmine.Spy<() => boolean>).and.returnValue(false);
-        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'referenceResizerMode')?.get as jasmine.Spy<
-            () => MagnestismConstants.ResizerIndex
-        >).and.returnValue(MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX);
+        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', [], {
+            isMagnetismOn: false,
+            magnetismStateSubject: new Subject(),
+            referenceResizerMode: MagnestismConstants.MagnetizedPoint.TOP_LEFT,
+        });
+
         TestBed.configureTestingModule({
             declarations: [SidebarMagnetismComponent],
             providers: [{ provide: MagnetismService, useValue: magnetismServiceSpy }],
@@ -44,9 +42,9 @@ describe('SidebarMagnetismComponent', () => {
     });
 
     it('emission of referenceCornerChanged should change magnetismService.referenceResizerMode', () => {
-        component.referenceCornerChanged.emit(MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX);
+        component.magnetizedPointChanged.emit(MagnestismConstants.MagnetizedPoint.TOP_LEFT);
         // tslint:disable-next-line: no-string-literal
-        expect(component['magnetismService'].referenceResizerMode).toEqual(MagnestismConstants.ResizerIndex.TOP_LEFT_INDEX);
+        expect(component['magnetismService'].magnetizedPoint).toEqual(MagnestismConstants.MagnetizedPoint.TOP_LEFT);
     });
 
     it('canvasGridService.gridVisibility should change toggle state of toggle magnetism of magnetismToggle slider.', () => {
@@ -63,8 +61,8 @@ describe('SidebarMagnetismComponent', () => {
     });
 
     it('emitReferencePoint should emit component.referenceCornerChanged', () => {
-        const EXPECTED_MODE = MagnestismConstants.ResizerIndex.BOTTOM_MIDDLE_INDEX;
-        const referenceCornerChangedSpy = spyOn(component.referenceCornerChanged, 'emit');
+        const EXPECTED_MODE = MagnestismConstants.MagnetizedPoint.BOTTOM_MIDDLE;
+        const referenceCornerChangedSpy = spyOn(component.magnetizedPointChanged, 'emit');
         component.emitReferencePoint(EXPECTED_MODE);
         expect(referenceCornerChangedSpy).toHaveBeenCalledWith(EXPECTED_MODE);
     });

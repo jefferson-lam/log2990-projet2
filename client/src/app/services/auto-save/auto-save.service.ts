@@ -9,10 +9,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class AutoSaveService {
     constructor(public drawingService: DrawingService, public undoRedoService: UndoRedoService) {
-        this.undoRedoService.pileSizeObservable.subscribe((sizes: number[]) => {
-            if (sizes[0] + sizes[1] > 0) {
-                this.autoSaveDrawing();
-            }
+        this.undoRedoService.actionsAllowedObservable.subscribe((allowed: boolean[]) => {
+            if (allowed[0] || allowed[1]) this.autoSaveDrawing();
         });
     }
 
@@ -25,10 +23,7 @@ export class AutoSaveService {
     async loadDrawing(): Promise<void> {
         if (localStorage.getItem('autosave')) {
             this.undoRedoService.initialImage = new Image();
-            await new Promise((r) => {
-                (this.undoRedoService.initialImage as HTMLImageElement).onload = r;
-                (this.undoRedoService.initialImage as HTMLImageElement).src = localStorage.getItem('autosave') as string;
-            });
+            await this.loadLocalStorage();
 
             this.undoRedoService.resetCanvasSize = new ResizerCommand(
                 this.drawingService,
@@ -55,5 +50,12 @@ export class AutoSaveService {
         }
         this.undoRedoService.reset();
         this.autoSaveDrawing();
+    }
+
+    private async loadLocalStorage(): Promise<void> {
+        await new Promise((r) => {
+            (this.undoRedoService.initialImage as HTMLImageElement).onload = r;
+            (this.undoRedoService.initialImage as HTMLImageElement).src = localStorage.getItem('autosave') as string;
+        });
     }
 }

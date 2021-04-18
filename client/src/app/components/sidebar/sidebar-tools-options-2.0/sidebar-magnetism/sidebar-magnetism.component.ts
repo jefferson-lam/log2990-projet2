@@ -12,21 +12,24 @@ export class SidebarMagnetismComponent implements OnInit {
     @ViewChild('toggleMagnetism') magnetismToggle: MatSlideToggle;
 
     isMagnetismOn: boolean;
-    MAGNETISM_CORNERS: typeof MagnestismConstants.ResizerIndex;
+    MAGNETISM_CORNERS: typeof MagnestismConstants.MagnetizedPoint;
 
-    @Output() magnetismValueChanged: EventEmitter<boolean> = new EventEmitter();
-    @Output() referenceCornerChanged: EventEmitter<MagnestismConstants.ResizerIndex> = new EventEmitter();
+    @Output() magnetismValueChanged: EventEmitter<boolean>;
+    @Output() magnetizedPointChanged: EventEmitter<MagnestismConstants.MagnetizedPoint>;
 
-    constructor(public magnetismService: MagnetismService) {}
+    constructor(public magnetismService: MagnetismService) {
+        this.magnetismValueChanged = new EventEmitter();
+        this.magnetizedPointChanged = new EventEmitter();
+    }
 
     ngOnInit(): void {
         this.isMagnetismOn = this.magnetismService.isMagnetismOn;
-        this.MAGNETISM_CORNERS = MagnestismConstants.ResizerIndex;
+        this.MAGNETISM_CORNERS = MagnestismConstants.MagnetizedPoint;
         this.magnetismValueChanged.subscribe((isMagnetismOn: boolean) => {
             this.magnetismService.isMagnetismOn = isMagnetismOn;
         });
-        this.referenceCornerChanged.subscribe((newCorner: MagnestismConstants.ResizerIndex) => {
-            this.magnetismService.referenceResizerMode = newCorner;
+        this.magnetizedPointChanged.subscribe((newCorner: MagnestismConstants.MagnetizedPoint) => {
+            this.magnetismService.magnetizedPoint = newCorner;
         });
         this.magnetismService.magnetismStateSubject.asObservable().subscribe((magnetismState) => {
             this.magnetismToggle.checked = magnetismState;
@@ -37,7 +40,7 @@ export class SidebarMagnetismComponent implements OnInit {
         this.magnetismValueChanged.emit(this.isMagnetismOn);
     }
 
-    emitReferencePoint(referenceCorner: MagnestismConstants.ResizerIndex): void {
-        this.referenceCornerChanged.emit(referenceCorner);
+    emitReferencePoint(referenceCorner: MagnestismConstants.MagnetizedPoint): void {
+        this.magnetizedPointChanged.emit(referenceCorner);
     }
 }

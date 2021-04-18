@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constants';
 import { MouseButton } from '@app/constants/mouse-constants';
 import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
@@ -88,9 +89,10 @@ describe('EllipseToolSelectionService', () => {
         selectionCtxEllipseSpy = spyOn(selectionCtxStub, 'ellipse').and.callThrough();
         selectionCtxStrokeSpy = spyOn(selectionCtxStub, 'stroke').and.callThrough();
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 40,
             button: 0,
         } as MouseEvent;
     });
@@ -133,9 +135,10 @@ describe('EllipseToolSelectionService', () => {
     });
 
     it('onMouseUp should draw to selectionLayer', () => {
+        const offsetX = 150;
         const mouseUpEvent: MouseEvent = {
-            offsetX: 150,
-            offsetY: 200,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 200,
             button: 0,
         } as MouseEvent;
         const expectedEndVec2: Vec2 = { x: 150, y: 200 };

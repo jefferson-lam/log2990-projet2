@@ -10,7 +10,10 @@
     pointer-events: none;
     background: transparent;
     opacity: 0.5;
-    border: 1px dashed black;
+    border: none;
+    outline: black solid 1px;
+    padding: none;
+    margin: none;
 }
 
 #previewSelectionLayer {

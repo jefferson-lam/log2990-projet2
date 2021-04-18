@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
@@ -8,7 +7,6 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
-import { PencilCommand } from '@app/services/tools/pencil/pencil-command';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
@@ -32,29 +30,29 @@ describe('SidebarComponent', () => {
     let fixture: ComponentFixture<SidebarComponent>;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
-    let undoRedoService: UndoRedoService;
-    let mockCommand: Command;
-    let commandExecuteSpy: jasmine.Spy;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let selectToolSpy: jasmine.Spy;
-    let undoServiceSpy: jasmine.Spy;
-    let redoServiceSpy: jasmine.Spy;
     let selectionUndoSelectionSpy: jasmine.Spy;
-    let refreshSpy: jasmine.Spy;
     let redoButton: HTMLElement;
     let undoButton: HTMLElement;
 
     // tslint:disable:no-any
     // tslint:disable:max-file-line-count
     beforeEach(async(() => {
+        undoRedoServiceSpy = jasmine.createSpyObj(
+            'UndoRedoService',
+            ['refresh', 'executeCommand', 'undo', 'redo'],
+            ['isUndoAllowed', 'isRedoAllowed'],
+        );
         popupManagerSpy = jasmine.createSpyObj('PopupManagerService', ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp'], ['isPopupOpen']);
-        pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService);
-        eraserStub = new EraserService({} as DrawingService, {} as UndoRedoService);
-        lineStub = new LineService({} as DrawingService, {} as UndoRedoService);
-        rectangleStub = new RectangleService({} as DrawingService, {} as UndoRedoService);
-        ellipseStub = new EllipseService({} as DrawingService, {} as UndoRedoService);
+        pencilStub = new PencilService({} as DrawingService, undoRedoServiceSpy);
+        eraserStub = new EraserService({} as DrawingService, undoRedoServiceSpy);
+        lineStub = new LineService({} as DrawingService, undoRedoServiceSpy);
+        rectangleStub = new RectangleService({} as DrawingService, undoRedoServiceSpy);
+        ellipseStub = new EllipseService({} as DrawingService, undoRedoServiceSpy);
         rectangleSelectionServiceStub = new RectangleSelectionService(
             {} as DrawingService,
-            {} as UndoRedoService,
+            undoRedoServiceSpy,
             {} as ResizerHandlerService,
             rectangleStub as RectangleService,
         );
@@ -76,6 +74,7 @@ describe('SidebarComponent', () => {
                 { provide: ToolManagerService, useValue: toolManagerServiceSpy },
                 { provide: PopupManagerService, useValue: popupManagerSpy },
                 { provide: ClipboardService, useValue: clipboardServiceStub },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -85,15 +84,8 @@ describe('SidebarComponent', () => {
         fixture = TestBed.createComponent(SidebarComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-
-        undoRedoService = TestBed.inject(UndoRedoService);
-        mockCommand = new PencilCommand({} as CanvasRenderingContext2D, pencilStub as PencilService);
-        commandExecuteSpy = spyOn(mockCommand, 'execute');
         selectToolSpy = spyOn(component, 'onSelectTool').and.callThrough();
         component.toolManager.currentTool = pencilStub;
-        undoServiceSpy = spyOn(undoRedoService, 'undo').and.callThrough();
-        redoServiceSpy = spyOn(undoRedoService, 'redo').and.callThrough();
-        refreshSpy = spyOn(undoRedoService, 'refresh');
         redoButton = fixture.debugElement.nativeElement.querySelector('#redoButton');
         undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
         selectionUndoSelectionSpy = spyOn(rectangleSelectionServiceStub, 'undoSelection').and.callFake(() => {
@@ -232,9 +224,8 @@ describe('SidebarComponent', () => {
         expect(popupManagerSpy.openSavePopUp).toHaveBeenCalled();
     });
 
-    it('clicking on undo button when undo pile is not empty and tool is not used should call undoRedoService.undo', () => {
-        undoRedoService.executeCommand(mockCommand);
-        component.toolManager.currentTool.inUse = false;
+    it('clicking on undo button when isUndoAllowed should call undoRedoService.undo', () => {
+        (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'isUndoAllowed')?.get as jasmine.Spy<() => boolean>).and.returnValue(true);
 
         fixture.detectChanges();
         expect(undoButton).not.toHaveClass('unclickable');
@@ -242,26 +233,12 @@ describe('SidebarComponent', () => {
         undoButton.click();
         fixture.detectChanges();
 
-        expect(commandExecuteSpy).toHaveBeenCalled();
-        expect(undoServiceSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.undo).toHaveBeenCalled();
     });
 
     it('clicking on undo button when undo pile is empty should not be possible', () => {
+        fixture.detectChanges();
         expect(undoButton).toHaveClass('unclickable');
-    });
-
-    it('clicking on undo button when undo pile is not empty and tool is used should not call undoRedoService.undo', () => {
-        undoRedoService.executeCommand(mockCommand);
-        component.toolManager.currentTool.inUse = true;
-
-        fixture.detectChanges();
-        expect(undoButton).not.toHaveClass('unclickable');
-
-        undoButton.click();
-        fixture.detectChanges();
-
-        expect(commandExecuteSpy).toHaveBeenCalled();
-        expect(undoServiceSpy).not.toHaveBeenCalled();
     });
 
     it('clicking on undo button if currentTool is of SelectionService while is manipulating is false should call the undo pile', () => {
@@ -270,7 +247,7 @@ describe('SidebarComponent', () => {
             rectangleSelectionServiceStub,
         );
         component.undo();
-        expect(undoServiceSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.undo).toHaveBeenCalled();
     });
 
     it('clicking on undo button if currentTool is of SelectionService while is manipulating is true should not call the undo pile', () => {
@@ -281,47 +258,22 @@ describe('SidebarComponent', () => {
         component.undo();
         expect(selectionUndoSelectionSpy).toHaveBeenCalled();
         expect(component.isUndoSelection).toBeFalsy();
-        expect(undoServiceSpy).not.toHaveBeenCalled();
+        expect(undoRedoServiceSpy.undo).not.toHaveBeenCalled();
     });
 
-    it('clicking on redo button when redo pile is not empty and tool is not used should call undoRedoService.redo', () => {
-        refreshSpy.and.callFake(() => {
-            component.isRedoPossible = undoRedoService.redoPile.length !== 0;
-        });
-        undoRedoService.executeCommand(mockCommand);
-        undoRedoService.undo();
-        component.toolManager.currentTool.inUse = false;
-
+    it('clicking on redo button when redo is allowed should call undoRedoService.redo', () => {
+        (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'isRedoAllowed')?.get as jasmine.Spy<() => boolean>).and.returnValue(true);
         fixture.detectChanges();
         expect(redoButton).not.toHaveClass('unclickable');
 
         redoButton.click();
         fixture.detectChanges();
 
-        expect(commandExecuteSpy).toHaveBeenCalled();
-        expect(redoServiceSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.redo).toHaveBeenCalled();
     });
 
-    it('clicking on redo button when redo pile is empty should not be possible', () => {
+    it('clicking on redo button when redo is not allowed should not be possible', () => {
         expect(redoButton).toHaveClass('unclickable');
-    });
-
-    it('clicking on redo button when redo pile is not empty and tool is used should not call undoRedoService.redo', () => {
-        refreshSpy.and.callFake(() => {
-            component.isRedoPossible = undoRedoService.redoPile.length !== 0;
-        });
-        undoRedoService.executeCommand(mockCommand);
-        undoRedoService.undo();
-        component.toolManager.currentTool.inUse = true;
-
-        fixture.detectChanges();
-        expect(redoButton).not.toHaveClass('unclickable');
-
-        redoButton.click();
-        fixture.detectChanges();
-
-        expect(commandExecuteSpy).toHaveBeenCalled();
-        expect(redoServiceSpy).not.toHaveBeenCalled();
     });
 
     it('clicking on selectAll should change the currentTool to rectangleSelectionService and call its selectAll method', () => {
@@ -361,20 +313,15 @@ describe('SidebarComponent', () => {
         expect(component.isGridOptionsDisplayed).toBeTrue();
     });
 
-    it('openMagnetismOptions should set isMagnetismOptionsDisplayed to true if initially false', () => {
+    it('toggleMagnetismOptions should set isMagnetismOptionsDisplayed to true if initially false', () => {
         component.isMagnetismOptionsDisplayed = false;
-        component.openMagnetismOptions();
+        component.toggleMagnetismOptions();
         expect(component.isMagnetismOptionsDisplayed).toBeTrue();
     });
 
-    it('openMagnetismOptions should set isMagnetismOptionsDisplayed to false if initially true', () => {
+    it('toggleMagnetismOptions should set isMagnetismOptionsDisplayed to false if initially true', () => {
         component.isMagnetismOptionsDisplayed = true;
-        component.openMagnetismOptions();
-        expect(component.isMagnetismOptionsDisplayed).toBeFalse();
-    });
-
-    it('closeMagnetismOptions should set isMagnetismOptionsDisplayed to false', () => {
-        component.closeMagnetismeOptions();
+        component.toggleMagnetismOptions();
         expect(component.isMagnetismOptionsDisplayed).toBeFalse();
     });
 

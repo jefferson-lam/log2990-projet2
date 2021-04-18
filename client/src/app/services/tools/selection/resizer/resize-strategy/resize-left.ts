@@ -8,7 +8,7 @@ import * as CanvasConstants from '@app/constants/canvas-constants';
     providedIn: 'root',
 })
 export class ResizeLeft extends ResizeStrategy {
-    resize(event: CdkDragMove, isShiftDown?: boolean): void {
+    resizePreview(event: CdkDragMove, isShiftDown?: boolean): void {
         const pointerPosition = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN;
         // Mirrored to right
         if (pointerPosition > this.selectionComponent.bottomRight.x) {
@@ -19,9 +19,6 @@ export class ResizeLeft extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.width = this.selectionComponent.bottomRight.x - pointerPosition;
             this.selectionComponent.previewSelectionCanvas.style.left = pointerPosition + 'px';
         }
-        // Modify border canvas in consequence
-        this.selectionComponent.borderCanvas.width = this.selectionComponent.previewSelectionCanvas.width;
-        this.selectionComponent.borderCanvas.style.left = this.selectionComponent.previewSelectionCanvas.style.left;
         this.lastWidth = this.selectionComponent.previewSelectionCanvas.width;
     }
 
@@ -38,7 +35,7 @@ export class ResizeLeft extends ResizeStrategy {
             // Left side resizing
             this.selectionComponent.previewSelectionCanvas.style.left = reference.x - shortestSide + 'px';
         }
-        this.selectionComponent.borderCanvas.style.left = this.selectionComponent.previewSelectionCanvas.style.left;
+        this.recalibrateBorderCanvas();
         this.resizeSquare(false, shortestSide);
     }
 
@@ -54,6 +51,7 @@ export class ResizeLeft extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10) + difference + 'px';
         }
+        this.recalibrateBorderCanvas();
     }
 
     restoreLastDimensions(): void {

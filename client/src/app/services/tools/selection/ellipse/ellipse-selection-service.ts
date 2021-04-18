@@ -224,6 +224,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.resetSelectedToolSettings();
         this.resetCanvasState(this.drawingService.selectionCanvas);
         this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
         this.resizerHandlerService.resetResizers();
         this.isManipulating = false;
         this.isEscapeDown = false;
