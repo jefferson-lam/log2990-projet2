@@ -15,6 +15,11 @@
                         >save_alt</mat-icon
                     >
                 </li>
+                <li id="exportButton">
+                    <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
+                        >open_in_new</mat-icon
+                    >
+                </li>
                 <li id="selectAllButton">
                     <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
                 </li>
@@ -22,6 +27,8 @@
                 <li id="deleteButton">
                     <mat-icon matTooltip="Supprimer la sélection" [matTooltipPosition]="'right'" (click)="deleteSelection()">clear</mat-icon>
                 </li>
+            </ul>
+            <ul class="grid-magnet">
                 <li id="gridButton">
                     <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
                 </li>
@@ -48,11 +55,6 @@
                 <li id="redoButton" [class.unclickable]="!undoRedoService.isRedoAllowed" (click)="redo()">
                     <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
                 </li>
-                <li id="exportButton">
-                    <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
-                        >open_in_new</mat-icon
-                    >
-                </li>
                 <li id="cutButton">
                     <mat-icon matTooltip="Couper la sélection" [matTooltipPosition]="'right'" (click)="cutSelection()">content_cut</mat-icon>
                 </li>
@@ -61,6 +63,18 @@
                 </li>
                 <li id="pasteButton">
                     <mat-icon matTooltip="Coller la sélection" [matTooltipPosition]="'right'" (click)="pasteSelection()">content_paste</mat-icon>
+                </li>
+                <li class="blankButton">
+                    <mat-icon matTooltip="Options magnetisme (Touche M)" [matTooltipPosition]="'right'" (click)="toggleMagnetismOptions()">
+                        select_all
+                    </mat-icon>
+                </li>
+            </ul>
+            <ul class="grid-magnet">
+                <li id="magnetismButton">
+                    <mat-icon matTooltip="Options magnetisme (Touche M)" [matTooltipPosition]="'right'" (click)="toggleMagnetismOptions()">
+                        select_all
+                    </mat-icon>
                 </li>
             </ul>
             <ul class="tools-sidebar">
@@ -92,8 +106,11 @@
                 <app-sidebar-pipette class="sidebar-tool-options" *ngSwitchCase="'i'"></app-sidebar-pipette>
                 <app-sidebar-rectangle-selection class="sidebar-tool-options" *ngSwitchCase="'r'"></app-sidebar-rectangle-selection>
                 <app-sidebar-ellipse-selection class="sidebar-tool-options" *ngSwitchCase="'s'"></app-sidebar-ellipse-selection>
+                <app-sidebar-lasso-selection class="sidebar-tool-options" *ngSwitchCase="'v'"></app-sidebar-lasso-selection>
                 <app-sidebar-paint-bucket class="sidebar-tool-options" *ngSwitchCase="'b'"></app-sidebar-paint-bucket>
+                <app-sidebar-stamp class="sidebar-tool-options" *ngSwitchCase="'d'"> </app-sidebar-stamp>
                 <app-sidebar-grid class="sidebar-tool-options" *ngIf="isGridOptionsDisplayed"></app-sidebar-grid>
+                <app-sidebar-magnetism class="sidebar-tool-options" *ngIf="isMagnetismOptionsDisplayed"></app-sidebar-magnetism>
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

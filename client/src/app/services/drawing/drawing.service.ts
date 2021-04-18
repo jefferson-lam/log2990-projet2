@@ -10,9 +10,11 @@ export class DrawingService {
     gridCtx: CanvasRenderingContext2D;
     selectionCtx: CanvasRenderingContext2D;
     previewSelectionCtx: CanvasRenderingContext2D;
+    borderCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     imageURL: string = '';
     selectionCanvas: HTMLCanvasElement;
+    borderCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
 
     canvasSizeSubject: Subject<number[]> = new Subject<number[]>();

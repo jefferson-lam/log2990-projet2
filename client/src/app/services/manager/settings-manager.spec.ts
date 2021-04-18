@@ -22,6 +22,9 @@ describe('SettingsManagerService', () => {
             'setWaterDropWidth',
             'setEmissionCount',
             'setToleranceValue',
+            'setImageSource',
+            'setImageZoomFactor',
+            'setAngleRotation',
         ]);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools'], ['currentTool']);
         (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(toolSpy);
@@ -92,6 +95,24 @@ describe('SettingsManagerService', () => {
         const EXPECTED_TOLERANCE_VALUE = 75;
         service.setToleranceValue(EXPECTED_TOLERANCE_VALUE);
         expect(toolSpy.setToleranceValue).toHaveBeenCalled();
+    });
+
+    it('setImageSource should call setImageSource of toolManager', () => {
+        const EXPECTED_IMAGE_SOURCE = 'new_image_svg';
+        service.setImageSource(EXPECTED_IMAGE_SOURCE);
+        expect(toolSpy.setImageSource).toHaveBeenCalled();
+    });
+
+    it('setImageZoomFactor should call setImageZoomFactor of toolManager', () => {
+        const EXPECTED_ZOOM_FACTOR = 50;
+        service.setImageZoomFactor(EXPECTED_ZOOM_FACTOR);
+        expect(toolSpy.setImageZoomFactor).toHaveBeenCalled();
+    });
+
+    it('setAngleRotation should call setAngleRotation of toolManager', () => {
+        const EXPECTED_ANGLE = 50;
+        service.setAngleRotation(EXPECTED_ANGLE);
+        expect(toolSpy.setAngleRotation).toHaveBeenCalled();
     });
 
     it('calls setPrimaryColorsTools when size changed', async(() => {

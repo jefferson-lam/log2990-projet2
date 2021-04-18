@@ -1,0 +1,97 @@
+<div id="settingsContainer">
+    <h2 id="title">Options magnétisme</h2>
+    <div id="cornerSelectionDiv">
+        <mat-radio-group>
+            <mat-radio-button
+                id="topLeft"
+                value="MAGNETISM_CORNERS.TOP_LEFT"
+                color="warn"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.TOP_LEFT)"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.TOP_LEFT"
+            >
+                Supérieur gauche
+            </mat-radio-button>
+            <br />
+            <mat-radio-button
+                id="topMiddle"
+                value="MAGNETISM_CORNERS.TOP_MIDDLE"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.TOP_MIDDLE)"
+                color="warn"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.TOP_MIDDLE"
+            >
+                Supérieur milieu
+            </mat-radio-button>
+            <br />
+            <mat-radio-button
+                id="topRight"
+                value="MAGNETISM_CORNERS.TOP_RIGHT_INDEX"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.TOP_RIGHT)"
+                color="warn"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.TOP_RIGHT"
+            >
+                Supérieur droit </mat-radio-button
+            ><br />
+            <mat-radio-button
+                id="midLeft"
+                value="MAGNETISM_CORNERS.MID_LEFT_INDEX"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.MID_LEFT)"
+                color="warn"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.MID_LEFT"
+            >
+                Milieu gauche
+            </mat-radio-button>
+            <br />
+            <mat-radio-button
+                id="center"
+                value="MAGNETISM_CORNERS.CENTER_INDEX"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.CENTER)"
+                color="warn"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.CENTER"
+            >
+                Centre
+            </mat-radio-button>
+            <br />
+            <mat-radio-button
+                id="midRight"
+                value="MAGNETISM_CORNERS.MID_RIGHT_INDEX"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.MID_RIGHT)"
+                color="warn"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.MID_RIGHT"
+            >
+                Milieu droite </mat-radio-button
+            ><br />
+            <mat-radio-button
+                id="bottomLeft"
+                value="MAGNETISM_CORNERS.BOTTOM_LEFT_INDEX"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.BOTTOM_LEFT)"
+                color="warn"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.BOTTOM_LEFT"
+            >
+                Inférieur gauche
+            </mat-radio-button>
+            <br />
+            <mat-radio-button
+                id="bottomMiddle"
+                value="MAGNETISM_CORNERS.BOTTOM_MIDDLE_INDEX"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.BOTTOM_MIDDLE)"
+                color="warn"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.BOTTOM_MIDDLE"
+            >
+                Inférieur milieu
+            </mat-radio-button>
+            <br />
+            <mat-radio-button
+                id="bottomRight"
+                value="MAGNETISM_CORNERS.BOTTOM_RIGHT_INDEX"
+                (change)="emitReferencePoint(MAGNETISM_CORNERS.BOTTOM_RIGHT)"
+                color="warn"
+                [checked]="this.magnetismService.magnetizedPoint === MAGNETISM_CORNERS.BOTTOM_RIGHT"
+            >
+                Inférieur droit
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
+    <div id="toggleMagnetism">
+        <mat-slide-toggle #toggleMagnetism [(ngModel)]="isMagnetismOn" (change)="emitMagnetismValue()"> Magnétisme </mat-slide-toggle>
+    </div>
+</div>

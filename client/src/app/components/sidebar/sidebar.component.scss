@@ -50,9 +50,8 @@ mat-icon {
     list-style-type: none;
     padding: 0;
     width: 50px;
-    // position: absolute;
-    // top: 260px;
 }
+
 .tools-sidebar li {
     cursor: pointer;
     position: relative;
@@ -73,14 +72,42 @@ mat-icon {
     color: #ddd;
 }
 
+.grid-magnet {
+    margin: 0 0 16px -2px;
+    list-style-type: none;
+    padding: 0;
+    width: 50px;
+    justify-content: flex-start;
+}
+
+.grid-magnet li {
+    color: white;
+    cursor: pointer;
+    position: relative;
+    left: 0;
+    background-color: Gold;
+    margin: 6px 6px 4px 6px;
+    padding-top: 2px;
+    border-radius: 4px;
+}
+
+.grid-magnet li:hover {
+    color: #607d8b;
+    background-color: #ddd;
+    left: 0.1em;
+}
+
+.grid-magnet li:active {
+    background-color: #4682b4;
+    color: #ddd;
+}
+
 .selected {
     background-color: #4682b4;
     color: red;
 }
 
 .tools-option-container {
-    // position: absolute;
-    // margin-left: 100px;
     height: 100%;
     overflow: visible;
     -webkit-transition: all;
@@ -130,4 +157,8 @@ mat-drawer-content {
 .options-sidebar .unclickable {
     pointer-events: none;
     background-color: gray;
+}
+
+.blankButton {
+    visibility: hidden;
 }
