@@ -3,40 +3,63 @@
     padding: 0 5px 0 5px;
     background-color: #5f9ea0;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     position: fixed;
-    width: 45px;
+    min-width: 90px;
     height: calc(100vh - 0px);
     z-index: 1000;
 }
 
-.sidebar-container {
+#sidebar {
+    z-index: 3;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    margin-right: 5px;
 }
 
 mat-icon {
     position: center;
     margin-left: 7px;
-    margin-top: 2px;
+    margin-top: 4px;
+}
+
+.options-sidebar {
+    margin: 0 0 16px -2px;
+    list-style-type: none;
+    padding: 0;
+    width: 50px;
+    justify-content: flex-start;
+}
+.options-sidebar li {
+    color: white;
+    cursor: pointer;
+    position: relative;
+    left: 0;
+    background-color: #ff7f50;
+    margin: 6px 6px 4px 6px;
+    padding-top: 2px;
+    border-radius: 4px;
+}
+.options-sidebar li:hover {
+    color: #607d8b;
+    background-color: #ddd;
+    left: 0.1em;
 }
 
 .tools-sidebar {
-    margin: 0 0 0 -2px;
+    margin: 0 0 16px -2px;
     list-style-type: none;
     padding: 0;
-    width: 60px;
-    position: absolute;
-    top: 480px;
+    width: 50px;
+    // position: absolute;
+    // top: 260px;
 }
 .tools-sidebar li {
     cursor: pointer;
     position: relative;
     left: 0;
     background-color: #eee;
-    margin: 5px 16px 4px 6px;
-    padding-top: 3px;
+    margin: 6px 6px 4px 6px;
+    padding-top: 2px;
     border-radius: 4px;
 }
 .tools-sidebar li:hover {
@@ -54,31 +77,10 @@ mat-icon {
     background-color: #4682b4;
     color: red;
 }
-.options-sidebar {
-    margin: 0 0 0 -2px;
-    list-style-type: none;
-    padding: 0;
-    width: 60px;
-    position: absolute;
-}
-.options-sidebar li {
-    color: white;
-    cursor: pointer;
-    position: relative;
-    left: 0;
-    background-color: #ff7f50;
-    margin: 5px 16px 4px 6px;
-    padding-top: 3px;
-    border-radius: 4px;
-}
-.options-sidebar li:hover {
-    color: #607d8b;
-    background-color: #ddd;
-    left: 0.1em;
-}
+
 .tools-option-container {
-    position: absolute;
-    margin-left: 50px;
+    // position: absolute;
+    // margin-left: 100px;
     height: 100%;
     overflow: visible;
     -webkit-transition: all;
@@ -92,8 +94,9 @@ mat-icon {
 
 mat-drawer {
     background-color: #4682b4;
-    width: 250px;
+    width: 240px;
     overflow-y: hidden;
+    display: flex;
 }
 mat-drawer-content {
     margin: 0 !important;
@@ -117,10 +120,6 @@ mat-drawer-content {
     padding: 10px;
     font-family: 'Rubik', serif;
     overflow: hidden;
-}
-
-#sidebar {
-    z-index: 3;
 }
 
 .tools-option-container {
