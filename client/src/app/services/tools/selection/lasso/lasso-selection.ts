@@ -100,10 +100,7 @@ export class LassoSelectionService extends ToolSelectionService {
     }
 
     validateSegment(point: Vec2, pathData: Vec2[]): boolean {
-        return !(
-            this.isIntersect(point, pathData) ||
-            (this.arePointsEqual(point, this.initialPoint) && this.numSides < SelectionConstants.MINIMUM_LINE_LASSO)
-        );
+        return !this.isIntersect(point, pathData);
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
@@ -177,11 +174,7 @@ export class LassoSelectionService extends ToolSelectionService {
         if (numIntersections === 0) {
             return false;
         }
-        if (numIntersections === 1 && this.arePointsEqual(point, this.initialPoint)) {
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
 
     computeSelectionSize(pathData: Vec2[]): number[] {

@@ -240,12 +240,8 @@ describe('LassoSelectionService', () => {
         const isIntersectSpy = spyOn(service, 'isIntersect').and.callFake(() => {
             return false;
         });
-        const arePointsEqualSpy = spyOn<any>(service, 'arePointsEqual').and.callFake(() => {
-            return true;
-        });
         const result = service.validateSegment(service.pathData[service.pathData.length - 1], service.pathData);
         expect(isIntersectSpy).toHaveBeenCalled();
-        expect(arePointsEqualSpy).toHaveBeenCalled();
         expect(result).toBeTruthy();
     });
 
@@ -429,11 +425,6 @@ describe('LassoSelectionService', () => {
         expect(() => {
             service.onToolChange();
         }).not.toThrow();
-    });
-
-    it('isIntersect should return false if point is initialPoint', () => {
-        const result = service.isIntersect(service.initialPoint, service.pathData);
-        expect(result).toBeFalsy();
     });
 
     it('isIntersect should return false if new line does not intersect with current lines', () => {
