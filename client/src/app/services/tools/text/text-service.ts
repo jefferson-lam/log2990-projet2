@@ -87,7 +87,7 @@ export class TextService extends Tool {
 
     setSpanValues(): void {
         this.placeHolderSpan.id = 'placeHolderSpan';
-        this.placeHolderSpan.innerText = ' Ajoutez du texte ici... ';
+        this.placeHolderSpan.innerText = ' ';
 
         this.placeHolderSpan.style.left = this.cornerCoords.x + 'px';
         this.placeHolderSpan.style.top = this.cornerCoords.y + 'px';

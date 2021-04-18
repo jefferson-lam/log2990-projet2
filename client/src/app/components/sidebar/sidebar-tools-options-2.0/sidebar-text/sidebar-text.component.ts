@@ -71,7 +71,7 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         this.textService.placeHolderSpan.style.visibility = 'hidden';
         this.textService.placeHolderSpan.style.lineHeight = this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION + 'px';
         this.textService.placeHolderSpan.style.color = this.textService.primaryColor;
-        this.textService.placeHolderSpan.innerText = ' cacaca ';
+        this.textService.placeHolderSpan.innerText = ' ';
         this.textService.placeHolderSpan.style.zIndex = '2';
         this.textService.placeHolderSpan.style.border = '1px solid black';
         this.textService.placeHolderSpan.style.whiteSpace = 'pre-line';
