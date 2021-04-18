@@ -27,12 +27,7 @@ export class ResizerComponent implements AfterViewInit {
     constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService, public autoSaveService: AutoSaveService) {}
 
     ngAfterViewInit(): void {
-        this.sideResizer.nativeElement.style.left = this.baseCtx.canvas.width + 'px';
-        this.sideResizer.nativeElement.style.top = this.baseCtx.canvas.height / 2 + 'px';
-        this.cornerResizer.nativeElement.style.left = this.baseCtx.canvas.width + 'px';
-        this.cornerResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
-        this.bottomResizer.nativeElement.style.left = this.baseCtx.canvas.width / 2 + 'px';
-        this.bottomResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
+        this.setResizerPositions();
         this.autoSaveService.loadDrawing();
     }
 
@@ -104,5 +99,26 @@ export class ResizerComponent implements AfterViewInit {
 
     onBottomResizerDown(): void {
         this.isBottomResizerDown = true;
+    }
+
+    private setResizerPositions(): void {
+        this.setSideResizerPosition();
+        this.setCornerResizerPosition();
+        this.setBottomResizerPosition();
+    }
+
+    private setBottomResizerPosition(): void {
+        this.bottomResizer.nativeElement.style.left = this.baseCtx.canvas.width / 2 + 'px';
+        this.bottomResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
+    }
+
+    private setCornerResizerPosition(): void {
+        this.cornerResizer.nativeElement.style.left = this.baseCtx.canvas.width + 'px';
+        this.cornerResizer.nativeElement.style.top = this.baseCtx.canvas.height + 'px';
+    }
+
+    private setSideResizerPosition(): void {
+        this.sideResizer.nativeElement.style.left = this.baseCtx.canvas.width + 'px';
+        this.sideResizer.nativeElement.style.top = this.baseCtx.canvas.height / 2 + 'px';
     }
 }
