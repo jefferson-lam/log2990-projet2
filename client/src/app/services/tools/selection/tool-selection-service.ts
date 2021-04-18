@@ -59,13 +59,6 @@ export class ToolSelectionService extends Tool {
         this.selectionTool.onKeyboardUp(event);
     }
 
-    resetCanvasState(canvas: HTMLCanvasElement): void {
-        canvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
-        canvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
-        canvas.width = SelectionConstants.DEFAULT_WIDTH;
-        canvas.height = SelectionConstants.DEFAULT_HEIGHT;
-    }
-
     /**
      * Simple swap functions that will always place the top-left corner as the START_INDEX
      * and the bottom-right corner as the END_INDEX, no matter the orientation of the selection
@@ -145,6 +138,32 @@ export class ToolSelectionService extends Tool {
         this.selectionTool.setPrimaryColor(this.selectionToolPrimaryColor);
         this.selectionTool.setSecondaryColor(this.selectionToolSecondaryColor);
         this.drawingService.previewCtx.setLineDash([]);
+    }
+
+    setSelectionCanvasSize(width: number, height: number): void {
+        this.drawingService.selectionCanvas.width = width;
+        this.drawingService.selectionCanvas.height = height;
+        this.drawingService.previewSelectionCanvas.width = width;
+        this.drawingService.previewSelectionCanvas.height = height;
+        this.drawingService.borderCanvas.width = width;
+        this.drawingService.borderCanvas.height = height;
+    }
+
+    setSelectionCanvasPosition(topLeft: Vec2): void {
+        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+    }
+
+    resetCanvasState(canvas: HTMLCanvasElement): void {
+        canvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
+        canvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
+        canvas.width = SelectionConstants.DEFAULT_WIDTH;
+        canvas.height = SelectionConstants.DEFAULT_HEIGHT;
     }
 
     addScalarToVec2(point: Vec2, scalar: number): Vec2 {

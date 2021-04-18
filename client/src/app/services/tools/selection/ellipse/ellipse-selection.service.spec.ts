@@ -464,6 +464,8 @@ describe('EllipseToolSelectionService', () => {
     it('undoSelection should call appropriate functions to restore state', () => {
         const sw = 75;
         const sh = 210;
+        const left = 25;
+        const top = 40;
         service.isManipulating = true;
         service.pathData = [
             { x: 25, y: 40 },
@@ -479,8 +481,8 @@ describe('EllipseToolSelectionService', () => {
             0,
             service.selectionWidth,
             service.selectionHeight,
-            service.pathData[0].x,
-            service.pathData[0].y,
+            left,
+            top,
             service.selectionWidth,
             service.selectionHeight,
         );

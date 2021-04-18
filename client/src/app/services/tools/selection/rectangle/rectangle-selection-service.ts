@@ -51,25 +51,7 @@ export class RectangleSelectionService extends ToolSelectionService {
      */
     onMouseUp(event: MouseEvent): void {
         if (!this.inUse) return;
-        const mousePosition = this.getPositionFromMouse(event);
-        mousePosition.x = mousePosition.x > this.drawingService.canvas.width ? this.drawingService.canvas.width : mousePosition.x;
-        mousePosition.y = mousePosition.y > this.drawingService.canvas.height ? this.drawingService.canvas.height : mousePosition.y;
-        this.pathData[SelectionConstants.END_INDEX] = mousePosition;
-        this.rectangleService.inUse = false;
-        super.onMouseUp(event);
-        this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
-        this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
-        if (!this.validateSelectionHeightAndWidth()) {
-            return;
-        }
-        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
-        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
-        this.drawingService.borderCanvas.width = this.selectionWidth;
-        this.drawingService.borderCanvas.height = this.selectionHeight;
-        this.selectRectangle(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData, this.selectionWidth, this.selectionHeight);
-        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
-        this.inUse = false;
-        this.isManipulating = true;
+        this.initializeSelection(event);
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -111,12 +93,8 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.isShiftDown = false;
             } else if (event.key === 'Escape' && this.isEscapeDown) {
                 // Case where the user is still selecting.
-                this.resetCanvasState(this.drawingService.selectionCanvas);
-                this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-                this.resetCanvasState(this.drawingService.borderCanvas);
-                this.resetSelectedToolSettings();
+                this.resetSelection();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.inUse = false;
                 this.isEscapeDown = false;
             }
         } else if (this.isManipulating) {
@@ -133,11 +111,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
         this.selectionWidth = this.drawingService.canvas.width;
         this.selectionHeight = this.drawingService.canvas.height;
-        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
-        this.drawingService.borderCanvas.width = this.selectionWidth;
-        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
-        this.drawingService.borderCanvas.height = this.selectionHeight;
-
+        this.setSelectionCanvasSize(this.selectionWidth, this.selectionHeight);
         this.pathData = [
             { x: 0, y: 0 },
             { x: this.selectionWidth, y: this.selectionHeight },
@@ -164,14 +138,23 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    setSelectionCanvasPosition(topLeft: Vec2): void {
-        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
-        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+    initializeSelection(event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+        mousePosition.x = mousePosition.x > this.drawingService.canvas.width ? this.drawingService.canvas.width : mousePosition.x;
+        mousePosition.y = mousePosition.y > this.drawingService.canvas.height ? this.drawingService.canvas.height : mousePosition.y;
+        this.pathData[SelectionConstants.END_INDEX] = mousePosition;
+        this.rectangleService.inUse = false;
+        super.onMouseUp(event);
+        this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
+        this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
+        if (!this.validateSelectionHeightAndWidth()) {
+            return;
+        }
+        this.setSelectionCanvasSize(this.selectionWidth, this.selectionHeight);
+        this.selectRectangle(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData, this.selectionWidth, this.selectionHeight);
+        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
+        this.inUse = false;
+        this.isManipulating = true;
     }
 
     confirmSelection(): void {
@@ -187,11 +170,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.isShiftDown = false;
         this.rectangleService.isShiftDown = false;
         // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetCanvasState(this.drawingService.borderCanvas);
-        this.clearCorners(this.pathData);
-        this.resetSelectedToolSettings();
+        this.resetSelection();
         this.resizerHandlerService.resetResizers();
         this.isFromClipboard = false;
     }
@@ -213,13 +192,17 @@ export class RectangleSelectionService extends ToolSelectionService {
                 this.selectionHeight,
             );
         }
-        this.resetSelectedToolSettings();
+        this.resetSelection();
+        this.resizerHandlerService.resetResizers();
+    }
+
+    resetSelection(): void {
         this.resetCanvasState(this.drawingService.selectionCanvas);
         this.resetCanvasState(this.drawingService.previewSelectionCanvas);
         this.resetCanvasState(this.drawingService.borderCanvas);
-        this.resizerHandlerService.resetResizers();
+        this.resetSelectedToolSettings();
         this.isManipulating = false;
-        this.isEscapeDown = false;
+        this.inUse = false;
     }
 
     private fillRectangle(baseCtx: CanvasRenderingContext2D, pathData: Vec2[], selectionWidth: number, selectionHeight: number): void {
