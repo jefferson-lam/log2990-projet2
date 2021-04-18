@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { CursorManagerService } from '@app/services/manager/cursor-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject } from 'rxjs';
@@ -31,6 +32,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         public toolManager: ToolManagerService,
         public canvasGridService: CanvasGridService,
         public undoRedoService: UndoRedoService,
+        public cursorManager: CursorManagerService,
     ) {}
 
     ngAfterViewInit(): void {
@@ -55,20 +57,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
             this.canvasGridService.resize(size[0], size[1]);
         });
+
+        this.cursorManager.previewCanvas = this.previewCanvas.nativeElement;
         this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
             this.currentTool = tool;
-            this.changeCursor(tool);
+            this.cursorManager.changeCursor(tool);
         });
-    }
-
-    changeCursor(tool: Tool): void {
-        if (tool === this.toolManager.pencilService) {
-            this.previewCanvas.nativeElement.style.cursor = 'url(assets/pencil.png) 0 15, auto';
-        } else if (tool === this.toolManager.eraserService) {
-            this.previewCanvas.nativeElement.style.cursor = 'none';
-        } else {
-            this.previewCanvas.nativeElement.style.cursor = 'crosshair';
-        }
     }
 
     ngOnDestroy(): void {
@@ -85,16 +79,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.currentTool.onKeyboardUp(event);
     }
 
-    @HostListener('keypress', ['$event'])
-    onKeyboardPress(event: KeyboardEvent): void {
-        this.currentTool.onKeyboardPress(event);
-    }
-
-    @HostListener('click', ['$event'])
-    onMouseClick(event: MouseEvent): void {
-        this.currentTool.onMouseClick(event);
-    }
-
     @HostListener('dblclick', ['$event'])
     onMouseDoubleClick(event: MouseEvent): void {
         this.currentTool.onMouseDoubleClick(event);
@@ -103,6 +87,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     @HostListener('window:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);
+        this.cursorManager.onMouseMove(this.currentTool.getPositionFromMouse(event));
     }
 
     @HostListener('mousedown', ['$event'])
@@ -120,11 +105,18 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     @HostListener('window:mouseleave', ['$event'])
     onMouseLeave(event: MouseEvent): void {
         this.currentTool.onMouseLeave(event);
+        this.cursorManager.onMouseLeave();
     }
 
     @HostListener('window:mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.currentTool.onMouseEnter(event);
+        this.cursorManager.onMouseEnter();
+    }
+
+    @HostListener('mousewheel', ['$event'])
+    onMouseWheel(event: WheelEvent): void {
+        this.currentTool.onMouseWheel(event);
     }
 
     @HostListener('contextmenu', ['$event'])

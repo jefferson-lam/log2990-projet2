@@ -12,7 +12,9 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
@@ -35,7 +37,9 @@ export class ToolManagerService {
         public polygoneService: PolygoneService,
         public aerosolService: AerosolService,
         public pipetteService: PipetteService,
+        public lassoSelectionService: LassoSelectionService,
         public paintBucketService: PaintBucketService,
+        public stampService: StampService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -55,7 +59,9 @@ export class ToolManagerService {
             .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
             .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
             .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
-            .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService);
+            .set(ToolManagerConstants.LASSO_SELECTION_KEY, this.lassoSelectionService)
+            .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService)
+            .set(ToolManagerConstants.STAMP_KEY, this.stampService);
     }
 
     selectTool(keyShortcut: string): Tool {

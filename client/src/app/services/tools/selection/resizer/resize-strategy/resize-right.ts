@@ -8,7 +8,7 @@ import * as CanvasConstants from '@app/constants/canvas-constants';
     providedIn: 'root',
 })
 export class ResizeRight extends ResizeStrategy {
-    resize(event: CdkDragMove, isShiftDown?: boolean): void {
+    resizePreview(event: CdkDragMove, isShiftDown?: boolean): void {
         const pointerPosition = event.pointerPosition.x - CanvasConstants.LEFT_MARGIN;
         // Right side resizing
         if (pointerPosition > this.selectionComponent.initialPosition.x) {
@@ -35,30 +35,32 @@ export class ResizeRight extends ResizeStrategy {
             // Mirrored to left
             this.selectionComponent.previewSelectionCanvas.style.left = reference.x - shortestSide + 'px';
         }
+        this.recalibrateBorderCanvas();
         this.resizeSquare(false, shortestSide);
     }
 
     resizeSquare(combined: boolean = false, length?: number): void {
         if (length) {
-            this.selectionComponent.previewSelectionCanvas.width = length;
+            this.selectionComponent.previewSelectionCanvas.width = this.selectionComponent.borderCanvas.width = length;
         } else if (combined && this.selectionComponent.initialPosition.x > parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10)) {
             const shortestSide = Math.min(
                 this.selectionComponent.previewSelectionCanvas.width,
                 this.selectionComponent.previewSelectionCanvas.height,
             );
             const difference = this.selectionComponent.previewSelectionCanvas.width - shortestSide;
-            this.selectionComponent.previewSelectionCanvas.style.left =
+            this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10) + difference + 'px';
         }
+        this.recalibrateBorderCanvas();
     }
 
     restoreLastDimensions(): void {
         if (this.selectionComponent.initialPosition.x > parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10)) {
             const difference = this.selectionComponent.previewSelectionCanvas.width - this.lastWidth;
-            this.selectionComponent.previewSelectionCanvas.style.left =
+            this.selectionComponent.previewSelectionCanvas.style.left = this.selectionComponent.borderCanvas.style.left =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.left, 10) + difference + 'px';
         }
 
-        this.selectionComponent.previewSelectionCanvas.width = this.lastWidth;
+        this.selectionComponent.previewSelectionCanvas.width = this.selectionComponent.borderCanvas.width = this.lastWidth;
     }
 }

@@ -49,6 +49,16 @@ export class EditorComponent {
         this.shortcutManager.onCtrlZKeyDown(event);
     }
 
+    @HostListener('window:keydown.alt', ['$event'])
+    onAltDown(event: KeyboardEvent): void {
+        this.shortcutManager.onAltDown(event);
+    }
+
+    @HostListener('window:keyup.alt', ['$event'])
+    onAltUp(): void {
+        this.shortcutManager.onAltUp();
+    }
+
     @HostListener('window:keydown.control.c', ['$event'])
     onCtrlCKeyDown(event: KeyboardEvent): void {
         this.shortcutManager.onCtrlCKeyDown(event);
@@ -77,6 +87,11 @@ export class EditorComponent {
     @HostListener('window:keydown.+', ['$event'])
     onPlusKeyDown(): void {
         this.shortcutManager.onPlusKeyDown();
+    }
+
+    @HostListener('window:keydown.m', ['$event'])
+    onMKeyDown(): void {
+        this.shortcutManager.onMKeyDown();
     }
 
     @HostListener('window:keydown.=', ['$event'])

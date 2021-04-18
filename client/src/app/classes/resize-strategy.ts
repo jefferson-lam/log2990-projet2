@@ -15,13 +15,27 @@ export class ResizeStrategy {
         this.selectionComponent = component;
     }
 
-    resize(event: CdkDragMove, isShiftDown?: boolean): void {}
+    protected resizePreview(event: CdkDragMove, isShiftDown?: boolean): void {}
 
     resizeSquare(): void {
         const shortestSide = Math.min(this.selectionComponent.previewSelectionCanvas.width, this.selectionComponent.previewSelectionCanvas.height);
         this.selectionComponent.previewSelectionCanvas.width = shortestSide;
         this.selectionComponent.previewSelectionCanvas.height = shortestSide;
+
+        this.recalibrateBorderCanvas();
     }
 
     restoreLastDimensions(): void {}
+
+    resize(event: CdkDragMove, isShiftDown?: boolean): void {
+        this.resizePreview(event, isShiftDown);
+        this.recalibrateBorderCanvas();
+    }
+
+    protected recalibrateBorderCanvas(): void {
+        this.selectionComponent.borderCanvas.height = this.selectionComponent.previewSelectionCanvas.height;
+        this.selectionComponent.borderCanvas.style.top = this.selectionComponent.previewSelectionCanvas.style.top;
+        this.selectionComponent.borderCanvas.width = this.selectionComponent.previewSelectionCanvas.width;
+        this.selectionComponent.borderCanvas.style.left = this.selectionComponent.previewSelectionCanvas.style.left;
+    }
 }

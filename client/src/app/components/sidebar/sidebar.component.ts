@@ -15,7 +15,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class SidebarComponent {
     @Input() selectedTool: SidebarToolButton;
-    @Input() isGridOptionsDisplayed: boolean;
+    @Input() isMagnetismOptionsDisplayed: boolean;
+    isGridOptionsDisplayed: boolean;
     shouldRun: boolean;
     isUndoSelection: boolean;
 
@@ -32,7 +33,7 @@ export class SidebarComponent {
         { service: 'PipetteService', name: 'Pipette', icon: 'invert_colors', keyShortcut: 'i', helpShortcut: '(Touche I)' },
         { service: 'RectangleSelectionService', name: 'Rectangle de Selection', icon: 'blur_linear', keyShortcut: 'r', helpShortcut: '(Touche R)' },
         { service: 'EllipseSelectionService', name: 'Ellipse de selection', icon: 'blur_circular', keyShortcut: 's', helpShortcut: '(Touche S)' },
-        { service: 'SelectLassoService', name: 'Lasso polygonal', icon: 'gesture', keyShortcut: 'v', helpShortcut: '(Touche V)' },
+        { service: 'LassoSelectionService', name: 'Lasso polygonal', icon: 'gesture', keyShortcut: 'v', helpShortcut: '(Touche V)' },
         { service: 'PaintBucketService', name: 'Sceau de peinture', icon: 'format_color_fill', keyShortcut: 'b', helpShortcut: '(Touche B)' },
     ];
 
@@ -49,6 +50,8 @@ export class SidebarComponent {
             this.selectedTool = this.sidebarToolButtons.find((sidebarToolButton) => {
                 return sidebarToolButton.service === tool.constructor.name;
             }) as SidebarToolButton;
+            this.isMagnetismOptionsDisplayed = false;
+            this.isGridOptionsDisplayed = false;
         });
     }
 
@@ -70,6 +73,10 @@ export class SidebarComponent {
 
     openGridOptions(): void {
         this.isGridOptionsDisplayed = !this.isGridOptionsDisplayed;
+    }
+
+    toggleMagnetismOptions(): void {
+        this.isMagnetismOptionsDisplayed = !this.isMagnetismOptionsDisplayed;
     }
 
     undo(): void {

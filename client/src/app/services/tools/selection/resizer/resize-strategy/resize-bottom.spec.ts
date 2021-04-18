@@ -20,7 +20,10 @@ describe('ResizeHeightService', () => {
 
         resizeSquareSpy = spyOn(service, 'resizeSquare').and.callThrough();
 
-        service.selectionComponent = { previewSelectionCanvas: canvasTestHelper.previewSelectionCanvas } as SelectionComponent;
+        service.selectionComponent = {
+            previewSelectionCanvas: canvasTestHelper.previewSelectionCanvas,
+            borderCanvas: canvasTestHelper.borderCanvas,
+        } as SelectionComponent;
         service.selectionComponent.previewSelectionCanvas.height = CanvasConstants.DEFAULT_HEIGHT;
         service.selectionComponent.previewSelectionCanvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
         service.lastHeight = CanvasConstants.DEFAULT_HEIGHT + 1;
@@ -51,6 +54,8 @@ describe('ResizeHeightService', () => {
         service.selectionComponent.previewSelectionCanvas.height = 2;
         service.resize(moveEvent);
         expect(service.lastHeight).toBe(service.selectionComponent.previewSelectionCanvas.height);
+        expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
+        expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
 
     it('resize should set style.top and height of previewSelectionCanvas to appropriate values if cursor under initial top', () => {
@@ -60,6 +65,8 @@ describe('ResizeHeightService', () => {
         expect(service.selectionComponent.previewSelectionCanvas.height).toBe(
             moveEvent.pointerPosition.y - service.selectionComponent.initialPosition.y,
         );
+        expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
+        expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
 
     it('resize should set style.top and height of previewSelectionCanvas to appropriate values if cursor over initial top', () => {
@@ -69,6 +76,8 @@ describe('ResizeHeightService', () => {
         expect(service.selectionComponent.previewSelectionCanvas.height).toBe(
             service.selectionComponent.initialPosition.y - moveEvent.pointerPosition.y,
         );
+        expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
+        expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
 
     it('resizeHeight should set lastHeight to calculated height and call resizeSquare', () => {
@@ -77,18 +86,21 @@ describe('ResizeHeightService', () => {
         expect(service.lastHeight).toBe(Math.abs(moveEvent.pointerPosition.y - reference.y));
         expect(resizeSquareSpy).toHaveBeenCalled();
         expect(resizeSquareSpy).toHaveBeenCalledWith(false, moveEvent.pointerPosition.y);
+        expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
 
     it('resizeHeight should set style.top of previewSelectionCanvas to appropriate values if cursor under initial top', () => {
         service.selectionComponent.initialPosition.y = moveEvent.pointerPosition.y - 1;
         service.resizeHeight(moveEvent, reference);
         expect(service.selectionComponent.previewSelectionCanvas.style.top).toBe(reference.y + 'px');
+        expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
 
     it('resizeHeight should set style.top of previewSelectionCanvas to appropriate values if cursor over initial top', () => {
         service.selectionComponent.initialPosition.y = moveEvent.pointerPosition.y + 1;
         service.resizeHeight(moveEvent, reference);
         expect(service.selectionComponent.previewSelectionCanvas.style.top).toBe(reference.y - moveEvent.pointerPosition.y + 'px');
+        expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
 
     it('resizeSquare should do nothing if no arguments passed', () => {
@@ -111,6 +123,8 @@ describe('ResizeHeightService', () => {
         const expectedHeight = 123;
         service.resizeSquare(true, expectedHeight);
         expect(service.selectionComponent.previewSelectionCanvas.height).toBe(expectedHeight);
+        expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
+        expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
 
     it('resizeSquare should set style.top if combined and style.top over initial top', () => {
@@ -119,6 +133,7 @@ describe('ResizeHeightService', () => {
         const expectedTop = parseInt(service.selectionComponent.previewSelectionCanvas.style.top, 10) + difference + 'px';
         service.resizeSquare(true);
         expect(service.selectionComponent.previewSelectionCanvas.style.top).toBe(expectedTop);
+        expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
 
     it('resizeSquare should not set style.top if not combined and style.top over initial top', () => {
@@ -140,6 +155,7 @@ describe('ResizeHeightService', () => {
     it('restoreLastDimensions should set height to lastHeight', () => {
         service.restoreLastDimensions();
         expect(service.selectionComponent.previewSelectionCanvas.height).toBe(service.lastHeight);
+        expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
     });
 
     it('restoreLastDimensions should set style.top if style.top over initial top', () => {
@@ -148,5 +164,6 @@ describe('ResizeHeightService', () => {
         const expectedTop = parseInt(service.selectionComponent.previewSelectionCanvas.style.top, 10) + difference + 'px';
         service.restoreLastDimensions();
         expect(service.selectionComponent.previewSelectionCanvas.style.top).toBe(expectedTop);
+        expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
     });
 });

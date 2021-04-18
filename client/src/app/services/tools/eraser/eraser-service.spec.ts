@@ -24,7 +24,9 @@ describe('EraserService', () => {
     let undoRedoService: UndoRedoService;
 
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas'], {
+            previewCtx: jasmine.createSpyObj('CanvasRenderingContext2D', ['beginPath', 'rect', 'fillRect', 'stroke']),
+        });
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -93,6 +95,7 @@ describe('EraserService', () => {
     });
 
     it('onMouseMove should call setValues and execute previewcommand if mouse was already down', () => {
+        spyOn<any>(service, 'drawCursor');
         service.inUse = true;
 
         service.onMouseMove(mouseEvent);
@@ -101,6 +104,7 @@ describe('EraserService', () => {
     });
 
     it('onMouseMove should not call setValues and execute previewcommand if mouse was not already down', () => {
+        spyOn<any>(service, 'drawCursor');
         service.inUse = false;
 
         service.onMouseMove(mouseEvent);
@@ -108,14 +112,13 @@ describe('EraserService', () => {
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseMove should call moveCursor', () => {
-        const moveCursorSpy = spyOn<any>(service, 'moveCursor').and.callThrough();
+    it('onMouseMove should call drawCursor', () => {
+        const drawCursorSpy = spyOn<any>(service, 'drawCursor');
         service.mouseDownCoord = { x: 0, y: 0 };
         service.inUse = false;
 
         service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(moveCursorSpy).toHaveBeenCalled();
+        expect(drawCursorSpy).toHaveBeenCalled();
     });
 
     it('onMouseLeave should call executeCommand if mouse was down', () => {
@@ -166,6 +169,16 @@ describe('EraserService', () => {
         const size = EraserConstants.MAX_SIZE_ERASER + 1;
         service.setLineWidth(size);
         expect(service.lineWidth).toEqual(EraserConstants.MAX_SIZE_ERASER);
+    });
+
+    it('drawCursor should call canvas functions', () => {
+        service.drawCursor({ x: 0, y: 1 });
+
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawServiceSpy.previewCtx.beginPath).toHaveBeenCalled();
+        expect(drawServiceSpy.previewCtx.rect).toHaveBeenCalled();
+        expect(drawServiceSpy.previewCtx.fillRect).toHaveBeenCalled();
+        expect(drawServiceSpy.previewCtx.stroke).toHaveBeenCalled();
     });
 
     it('onToolChange should call onMouseUp', () => {

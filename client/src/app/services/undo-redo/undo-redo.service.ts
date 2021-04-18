@@ -18,11 +18,16 @@ export class UndoRedoService {
     private actionsAllowedSource: Subject<boolean[]>;
     actionsAllowedObservable: Observable<boolean[]>;
 
+    private pileSizeSource: Subject<number[]>;
+    pileSizeObservable: Observable<number[]>;
+
     constructor(private drawingService: DrawingService) {
         this.undoPile = [];
         this.redoPile = [];
         this.isUndoAllowed = false;
         this.isRedoAllowed = false;
+        this.pileSizeSource = new BehaviorSubject([this.undoPile.length, this.redoPile.length]);
+        this.pileSizeObservable = this.pileSizeSource.asObservable();
         this.actionsAllowedSource = new BehaviorSubject([this.isUndoAllowed, this.isRedoAllowed]);
         this.actionsAllowedObservable = this.actionsAllowedSource.asObservable();
         this.reset();
@@ -32,6 +37,7 @@ export class UndoRedoService {
         this.undoPile = [];
         this.redoPile = [];
         this.updateActionsAllowed(true);
+        this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
     }
 
     executeCommand(command: Command): void {
@@ -39,6 +45,7 @@ export class UndoRedoService {
         this.undoPile.push(command);
         this.redoPile = [];
         this.updateActionsAllowed(true);
+        this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
     }
 
     undo(): void {
@@ -61,6 +68,7 @@ export class UndoRedoService {
         }
         this.undoPile.forEach((c) => c.execute());
         this.updateActionsAllowed(true);
+        this.pileSizeSource.next([this.undoPile.length, this.redoPile.length]);
     }
 
     isUndoPileEmpty(): boolean {

@@ -1,13 +1,26 @@
 #selectionLayer {
     position: absolute;
     z-index: 12;
-    border: 1px dashed #000000;
+    border: none;
+}
+
+#borderLayer {
+    position: absolute;
+    z-index: 14;
+    pointer-events: none;
+    background: transparent;
+    opacity: 0.5;
+    border: none;
+    outline: black solid 1px;
+    padding: none;
+    margin: none;
 }
 
 #previewSelectionLayer {
     position: absolute;
     z-index: 13;
-    border: 1px dashed #000000;
+    border: none;
+    outline: none;
     background: transparent;
 }
 
