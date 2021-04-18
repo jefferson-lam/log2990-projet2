@@ -6,6 +6,7 @@ import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineCommand } from '@app/services/tools/line/line-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -14,6 +15,9 @@ export class LineService extends Tool {
     mousePosition: Vec2;
     initialPoint: Vec2;
     linePathData: Vec2[];
+    addPointSubject: Subject<Vec2>;
+    currentPointSubject: Subject<Vec2>;
+    removePointSubject: Subject<boolean>;
 
     previewCommand: LineCommand;
 
@@ -27,6 +31,9 @@ export class LineService extends Tool {
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
+        this.addPointSubject = new Subject<Vec2>();
+        this.currentPointSubject = new Subject<Vec2>();
+        this.removePointSubject = new Subject<boolean>();
         this.previewCommand = new LineCommand(drawingService.previewCtx, this);
         this.shiftDown = false;
         this.withJunction = false;
@@ -105,6 +112,7 @@ export class LineService extends Tool {
                     return;
                 }
                 this.linePathData.pop();
+                this.removePointSubject.next(true);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawPreview();
                 break;
@@ -118,8 +126,10 @@ export class LineService extends Tool {
             this.initialPoint = this.getPositionFromMouse(event);
             this.linePathData[LineConstants.STARTING_POINT] = this.initialPoint;
             this.linePathData.push(this.initialPoint);
+            this.addPointSubject.next(this.initialPoint);
         } else {
             this.linePathData.push(this.linePathData[this.linePathData.length - 1]);
+            this.addPointSubject.next(this.linePathData[this.linePathData.length - 1]);
             this.drawPreview();
         }
     }
@@ -144,6 +154,7 @@ export class LineService extends Tool {
         } else {
             this.linePathData[this.linePathData.length - 1] = this.mousePosition;
         }
+        this.currentPointSubject.next(this.linePathData[this.linePathData.length - 1]);
         this.drawPreview();
     }
 

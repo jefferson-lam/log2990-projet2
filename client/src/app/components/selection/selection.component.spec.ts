@@ -216,6 +216,7 @@ describe('SelectionComponent', () => {
     it('drawPreview should call drawWithScalingFactors and hide selectionCanvas if resizerHandlerService.inUse', () => {
         component.drawPreview(moveEvent);
         expect(drawScaledSpy).toHaveBeenCalled();
+        expect(drawScaledSpy).toHaveBeenCalledWith(component.borderCtx, component.outlineSelectionCanvas);
         expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
         expect(component.selectionCanvas.style.visibility).toBe('hidden');
     });
@@ -245,6 +246,7 @@ describe('SelectionComponent', () => {
     it('resizeSelectionCanvas should call drawWithScalingFactors and drawImage if resizerHandlerService.inUse', () => {
         component.resizeSelectionCanvas(endEvent);
         expect(drawScaledSpy).toHaveBeenCalled();
+        expect(drawScaledSpy).toHaveBeenCalledWith(component.borderCtx, component.outlineSelectionCanvas);
         expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
         expect(drawSelectionSpy).toHaveBeenCalled();
         expect(drawSelectionSpy).toHaveBeenCalledWith(component.previewSelectionCanvas, 0, 0);
@@ -365,10 +367,14 @@ describe('SelectionComponent', () => {
     });
 
     it('setInitialValues should set initialPosition, bottomRight, resizerDown and resizerHandlerService.inUse', () => {
+        const canvasWidth = 50;
+        const canvasHeight = 50;
         component.resizerHandlerService.inUse = false;
         component.resizerDown = ResizerDown.Bottom;
         component.previewSelectionCanvas.style.left = MOCK_POSITION.x + 'px';
         component.previewSelectionCanvas.style.top = MOCK_POSITION.y + 'px';
+        component.borderCanvas.width = canvasWidth;
+        component.borderCanvas.height = canvasHeight;
         const expectedInitial = {
             x: parseInt(component.previewSelectionCanvas.style.left, 10),
             y: parseInt(component.previewSelectionCanvas.style.top, 10),
@@ -378,6 +384,8 @@ describe('SelectionComponent', () => {
             y: expectedInitial.y + component.previewSelectionCanvas.height,
         };
         component.setInitialValues(ResizerDown.TopLeft);
+        expect(component.outlineSelectionCanvas.width).toEqual(component.borderCanvas.width);
+        expect(component.outlineSelectionCanvas.height).toEqual(component.borderCanvas.height);
         expect(component.resizerHandlerService.inUse).toBeTrue();
         expect(component.resizerDown).toBe(0);
         expect(component.initialPosition).toEqual(expectedInitial);
@@ -385,8 +393,14 @@ describe('SelectionComponent', () => {
     });
 
     it('setInitialValues should call resizerHandlerService.setResizeStrategy', () => {
+        const canvasWidth = 50;
+        const canvasHeight = 50;
         const setResizeStrategySpy = spyOn(component.resizerHandlerService, 'setResizeStrategy');
+        component.borderCanvas.width = canvasWidth;
+        component.borderCanvas.height = canvasHeight;
         component.setInitialValues(ResizerDown.TopLeft);
+        expect(component.outlineSelectionCanvas.width).toEqual(component.borderCanvas.width);
+        expect(component.outlineSelectionCanvas.height).toEqual(component.borderCanvas.height);
         expect(setResizeStrategySpy).toHaveBeenCalled();
         expect(setResizeStrategySpy).toHaveBeenCalledWith(ResizerDown.TopLeft);
     });

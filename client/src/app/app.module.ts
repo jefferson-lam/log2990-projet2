@@ -50,6 +50,7 @@ import { SidebarEllipseSelectionComponent } from './components/sidebar/sidebar-t
 import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-ellipse/sidebar-ellipse.component';
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
 import { SidebarGridComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-grid/sidebar-grid.component';
+import { SidebarLassoSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-lasso-selection/sidebar-lasso-selection/sidebar-lasso-selection.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
 import { SidebarMagnetismComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-magnetism/sidebar-magnetism.component';
 import { SidebarPaintBucketComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-paint-bucket/sidebar-paint-bucket/sidebar-paint-bucket.component';
@@ -92,6 +93,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         DirectionalMovementDirective,
         SidebarRectangleSelectionComponent,
         SidebarEllipseSelectionComponent,
+        SidebarLassoSelectionComponent,
         SidebarPaintBucketComponent,
         ExportCompletePageComponent,
         ExportErrorPageComponent,

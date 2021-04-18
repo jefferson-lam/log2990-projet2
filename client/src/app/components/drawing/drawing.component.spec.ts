@@ -7,6 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingComponent } from './drawing.component';
@@ -21,6 +22,7 @@ describe('DrawingComponent', () => {
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
     let lineStub: ToolStub;
+    let lassoSelectionStub: ToolStub;
     let stampStub: ToolStub;
 
     beforeEach(async(() => {
@@ -29,6 +31,7 @@ describe('DrawingComponent', () => {
         pencilStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         eraserStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         lineStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
+        lassoSelectionStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         stampStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
 
         TestBed.configureTestingModule({
@@ -39,6 +42,7 @@ describe('DrawingComponent', () => {
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
                 { provide: LineService, useValue: lineStub },
+                { provide: LassoSelectionService, useValue: lassoSelectionStub },
                 { provide: StampService, useValue: stampStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
