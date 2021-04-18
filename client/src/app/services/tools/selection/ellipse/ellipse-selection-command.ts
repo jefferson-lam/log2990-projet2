@@ -16,6 +16,7 @@ export class EllipseSelectionCommand extends Command {
         super();
         this.setValues(canvasContext, selectionCanvas, ellipseSelectionService);
     }
+
     setValues(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, ellipseSelectionService: EllipseSelectionService): void {
         this.ctx = canvasContext;
         this.cornerCoords = Object.assign([], ellipseSelectionService.cornerCoords);

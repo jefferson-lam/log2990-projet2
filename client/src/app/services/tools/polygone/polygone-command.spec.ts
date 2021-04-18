@@ -202,10 +202,11 @@ describe('PolygoneCommand', () => {
     });
 
     it('drawTypePolygone should change call ctx.moveTo for even sides', () => {
+        const EVEN_NUMBER = 4;
         command.radiusWithin = mockRadius;
         command.centerX = mockPoint.x;
         command.centerY = mockPoint.y;
-        command.initNumberSides = 4;
+        command.initNumberSides = EVEN_NUMBER;
         command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
         command.primaryColor = TEST_PRIM_COLOR;
         command.borderColor = TEST_PRIM_COLOR;

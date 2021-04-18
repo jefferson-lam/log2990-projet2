@@ -283,8 +283,8 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     private clipEllipseSelection(selectionCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D): void {
-        let start: Vec2 = {} as Vec2;
-        let radius: Vec2 = {} as Vec2;
+        const start: Vec2 = {} as Vec2;
+        const radius: Vec2 = {} as Vec2;
         start.x = radius.x = this.selectionWidth / 2;
         start.y = radius.y = this.selectionHeight / 2;
         this.clipEllipse(selectionCtx, { x: 0, y: 0 }, 2);
