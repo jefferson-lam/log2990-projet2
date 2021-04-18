@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
+import * as TagInputConstants from '@app/constants/tag-input-constants';
 import * as DatabaseConstants from '@common/validation/database-constants';
 
 @Component({
@@ -34,11 +35,11 @@ export class TagInputComponent {
         this.tags = new Array();
         this.isSavePossible = false;
         this.areTagsValidEvent = new EventEmitter<boolean>();
-        this.distinctTagsRequirement = 'Ne peut pas avoir deux étiquettes identiques.';
-        this.minLengthRequirement = `Doit avoir au moins ${DatabaseConstants.MIN_TAG_LENGTH} caractère.`;
-        this.maxLengthRequirement = `Doit avoir moins de ${DatabaseConstants.MAX_TAG_LENGTH} caractères.`;
-        this.noSpecialCharacterRequirement = 'Ne peut pas contenir de caractères spéciaux.';
-        this.maxTagsCountRequirement = `Ne peut pas avoir plus que ${DatabaseConstants.MAX_TAGS_COUNT} étiquettes.`;
+        this.distinctTagsRequirement = TagInputConstants.DISTINCT_TAGS_REQUIREMENT;
+        this.minLengthRequirement = TagInputConstants.MIN_LENGTH_REQUIREMENT;
+        this.maxLengthRequirement = TagInputConstants.MAX_LENGTH_REQUIREMENT;
+        this.noSpecialCharacterRequirement = TagInputConstants.NO_SPECIAL_CARACTER_REQUIREMENT;
+        this.maxTagsCountRequirement = TagInputConstants.MAX_TAGS_COUNT_REQUIREMENT;
     }
 
     addTag(tag: string): void {

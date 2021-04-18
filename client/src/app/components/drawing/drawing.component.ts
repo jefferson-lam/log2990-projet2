@@ -33,8 +33,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         public canvasGridService: CanvasGridService,
         public undoRedoService: UndoRedoService,
         public cursorManager: CursorManagerService,
-    ) {}
-    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService, public canvasGridService: CanvasGridService) {
+    ) {
         this.currentTool = toolManager.pencilService; // default value
         this.canvasSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
         this.previewCanvasSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
