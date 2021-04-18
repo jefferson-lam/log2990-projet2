@@ -54,37 +54,10 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.selectionCanvas = this.selectionCanvasRef.nativeElement;
-        this.borderCanvas = this.borderCanvasRef.nativeElement;
-        this.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
-
-        this.outlineSelectionCanvas = document.createElement('canvas');
-
-        this.selectionCtx = this.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
-        this.borderCtx = this.borderCanvas.getContext('2d') as CanvasRenderingContext2D;
-        this.previewSelectionCtx = this.previewSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
-
-        this.outlineSelectionCtx = this.outlineSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
-
-        this.drawingService.selectionCtx = this.selectionCtx;
-        this.drawingService.borderCtx = this.borderCtx;
-        this.drawingService.previewSelectionCtx = this.previewSelectionCtx;
-        this.drawingService.selectionCanvas = this.selectionCanvasRef.nativeElement;
-        this.drawingService.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
-        this.drawingService.borderCanvas = this.borderCanvas;
-
-        this.resizerHandlerService.resizers
-            .set(ResizerDown.TopLeft, this.topLeftResizer.nativeElement)
-            .set(ResizerDown.Left, this.leftResizer.nativeElement)
-            .set(ResizerDown.BottomLeft, this.bottomLeftResizer.nativeElement)
-            .set(ResizerDown.Bottom, this.bottomResizer.nativeElement)
-            .set(ResizerDown.BottomRight, this.bottomRightResizer.nativeElement)
-            .set(ResizerDown.Right, this.rightResizer.nativeElement)
-            .set(ResizerDown.TopRight, this.topRightResizer.nativeElement)
-            .set(ResizerDown.Top, this.topResizer.nativeElement);
-
-        this.resizerHandlerService.assignComponent(this);
-
+        this.assignCanvasValues();
+        this.assignContextValues();
+        this.propagateValuesToDrawingService();
+        this.assignResizerHandlerServiceValues();
         this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
             this.resizeContainer(size[0], size[1]);
         });
@@ -229,6 +202,7 @@ export class SelectionComponent implements AfterViewInit {
     applyFocusOutOutlineStyle(): void {
         this.borderCanvas.style.outline = '1px dashed black';
     }
+
     @HostListener('window:keydown.shift')
     onShiftKeyDown(): void {
         this.shortcutManager.selectionOnShiftKeyDown(this);
@@ -260,5 +234,42 @@ export class SelectionComponent implements AfterViewInit {
     }
     private recalibrateCanvasTops(): void {
         this.selectionCanvas.style.top = this.borderCanvas.style.top = this.previewSelectionCanvas.style.top;
+    }
+
+    private assignCanvasValues(): void {
+        this.selectionCanvas = this.selectionCanvasRef.nativeElement;
+        this.borderCanvas = this.borderCanvasRef.nativeElement;
+        this.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
+        this.outlineSelectionCanvas = document.createElement('canvas');
+    }
+
+    private assignContextValues(): void {
+        this.selectionCtx = this.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.borderCtx = this.borderCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.previewSelectionCtx = this.previewSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.outlineSelectionCtx = this.outlineSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+    }
+
+    private propagateValuesToDrawingService(): void {
+        this.drawingService.selectionCtx = this.selectionCtx;
+        this.drawingService.borderCtx = this.borderCtx;
+        this.drawingService.previewSelectionCtx = this.previewSelectionCtx;
+        this.drawingService.selectionCanvas = this.selectionCanvasRef.nativeElement;
+        this.drawingService.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
+        this.drawingService.borderCanvas = this.borderCanvas;
+    }
+
+    private assignResizerHandlerServiceValues(): void {
+        this.resizerHandlerService.resizers
+            .set(ResizerDown.TopLeft, this.topLeftResizer.nativeElement)
+            .set(ResizerDown.Left, this.leftResizer.nativeElement)
+            .set(ResizerDown.BottomLeft, this.bottomLeftResizer.nativeElement)
+            .set(ResizerDown.Bottom, this.bottomResizer.nativeElement)
+            .set(ResizerDown.BottomRight, this.bottomRightResizer.nativeElement)
+            .set(ResizerDown.Right, this.rightResizer.nativeElement)
+            .set(ResizerDown.TopRight, this.topRightResizer.nativeElement)
+            .set(ResizerDown.Top, this.topResizer.nativeElement);
+
+        this.resizerHandlerService.assignComponent(this);
     }
 }
