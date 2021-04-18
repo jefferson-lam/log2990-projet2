@@ -11,11 +11,15 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 export class SidebarPipetteComponent implements OnInit {
     ctx: CanvasRenderingContext2D;
     colorService: ColorService;
-    rawData: ImageData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-    previewData: ImageData = new ImageData(PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
-    inBound: boolean = false;
+    rawData: ImageData;
+    previewData: ImageData;
+    inBound: boolean;
 
-    constructor(public pipetteService: PipetteService) {}
+    constructor(public pipetteService: PipetteService) {
+        this.rawData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
+        this.previewData = new ImageData(PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
+        this.inBound = false;
+    }
 
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;

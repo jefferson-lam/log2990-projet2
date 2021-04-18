@@ -26,7 +26,7 @@ describe('RectangleClipboardCommandService', () => {
 
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
 
-        clipboardService.cornerCoords = [
+        clipboardService.pathData = [
             { x: 0, y: 0 },
             { x: TEST_X_OFFSET, y: TEST_Y_OFFSET },
         ] as Vec2[];
@@ -53,8 +53,8 @@ describe('RectangleClipboardCommandService', () => {
         command.execute();
         expect(baseCtxFillRectSpy).toHaveBeenCalled();
         expect(baseCtxFillRectSpy).toHaveBeenCalledWith(
-            command.cornerCoords[START_INDEX].x,
-            command.cornerCoords[START_INDEX].y,
+            command.pathData[START_INDEX].x,
+            command.pathData[START_INDEX].y,
             command.selectionWidth,
             command.selectionHeight,
         );

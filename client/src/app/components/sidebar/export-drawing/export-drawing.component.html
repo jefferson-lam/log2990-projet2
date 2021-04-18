@@ -13,7 +13,7 @@
         <img #exportImg [style.width]="canvasStyleWidth" [style.height]="canvasStyleHeight" />
     </div>
 
-    <mat-form-field>
+    <mat-form-field id="formWrapper">
         <mat-label for="filter">Filtre appliquée : </mat-label>
         <mat-select [(value)]="filter" (selectionChange)="applyFilter($event.value)" id="filter">
             <mat-option value="none">Aucun filtre</mat-option>
@@ -40,8 +40,8 @@
 
     <br />
 
-    <div mat-dialog-actions>
-        <button mat-button mat-dialog-close id="cancelButton">Fermer</button>
+    <div id="buttonDiv">
+        <button mat-button mat-dialog-close id="cancelButton">Annuler</button>
         <button mat-button mat-dialog-close id="saveButton" (click)="saveImage()">Exporter</button>
         <button mat-button mat-dialog-close id="imgurButton" (click)="exportToImgur()">Téléverser sur Imgur</button>
     </div>

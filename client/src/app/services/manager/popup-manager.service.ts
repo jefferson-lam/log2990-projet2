@@ -7,7 +7,6 @@ import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/e
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
-import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -59,10 +58,7 @@ export class PopupManagerService {
     openExportPopUp(): void {
         if (this.isPopUpOpen) return;
         this.toolManager.currentTool.onToolChange();
-        this.dialog.open(ExportDrawingComponent, {
-            maxWidth: MAX_WIDTH_FORM + 'px',
-            maxHeight: MAX_HEIGHT_FORM + 'px',
-        });
+        this.dialog.open(ExportDrawingComponent);
     }
 
     openNewDrawingPopUp(): void {

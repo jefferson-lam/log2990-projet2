@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import * as SaveDrawingConstants from '@app/constants/save-drawing-constants';
+import * as TagInputConstants from '@app/constants/tag-input-constants';
 import * as DatabaseConstants from '@common/validation/database-constants';
 
 @Component({
@@ -10,25 +11,36 @@ import * as DatabaseConstants from '@common/validation/database-constants';
 export class TagInputComponent {
     @ViewChild('tagInput') tagInput: ElementRef;
     currentTag: string;
-    tags: string[] = new Array();
+    tags: string[];
 
-    isSavePossible: boolean = false;
-    @Output() areTagsValidEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+    isSavePossible: boolean;
+    @Output() areTagsValidEvent: EventEmitter<boolean>;
 
-    distinctTagsRequirement: string = 'Ne peut pas avoir deux étiquettes identiques.';
+    distinctTagsRequirement: string;
     distinctTagsDivClass: string;
 
-    minLengthRequirement: string = `Doit avoir au moins ${DatabaseConstants.MIN_TAG_LENGTH} caractère.`;
+    minLengthRequirement: string;
     minLengthDivClass: string;
 
-    maxLengthRequirement: string = `Doit avoir moins de ${DatabaseConstants.MAX_TAG_LENGTH} caractères.`;
+    maxLengthRequirement: string;
     maxLengthDivClass: string;
 
-    noSpecialCharacterRequirement: string = 'Ne peut pas contenir de caractères spéciaux.';
+    noSpecialCharacterRequirement: string;
     noSpecialCharacterDivClass: string;
 
-    maxTagsCountRequirement: string = `Ne peut pas avoir plus que ${DatabaseConstants.MAX_TAGS_COUNT} étiquettes.`;
+    maxTagsCountRequirement: string;
     maxTagsCountDivClass: string;
+
+    constructor() {
+        this.tags = new Array();
+        this.isSavePossible = false;
+        this.areTagsValidEvent = new EventEmitter<boolean>();
+        this.distinctTagsRequirement = TagInputConstants.DISTINCT_TAGS_REQUIREMENT;
+        this.minLengthRequirement = TagInputConstants.MIN_LENGTH_REQUIREMENT;
+        this.maxLengthRequirement = TagInputConstants.MAX_LENGTH_REQUIREMENT;
+        this.noSpecialCharacterRequirement = TagInputConstants.NO_SPECIAL_CARACTER_REQUIREMENT;
+        this.maxTagsCountRequirement = TagInputConstants.MAX_TAGS_COUNT_REQUIREMENT;
+    }
 
     addTag(tag: string): void {
         tag = tag.trim();
@@ -36,6 +48,8 @@ export class TagInputComponent {
             this.tags.push(tag);
         }
         this.tagInput.nativeElement.value = '';
+        this.isSavePossible = false;
+        this.resetRequirements();
     }
 
     deleteTag(tag: string): void {
@@ -93,6 +107,20 @@ export class TagInputComponent {
         this.areTagsValidEvent.emit(!requirementViolated);
         this.isSavePossible = !requirementViolated;
         return !requirementViolated;
+    }
+
+    resetRequirementsOnFocusOut(tag: string): void {
+        if (this.tagIsShorterThanMinLength(tag)) {
+            this.resetRequirements();
+        }
+    }
+
+    resetRequirements(): void {
+        this.distinctTagsDivClass = 'Unrequested';
+        this.minLengthDivClass = 'Unrequested';
+        this.maxLengthDivClass = 'Unrequested';
+        this.noSpecialCharacterDivClass = 'Unrequested';
+        this.maxTagsCountDivClass = 'Unrequested';
     }
 
     private tagIsShorterThanMinLength(tag: string): boolean {

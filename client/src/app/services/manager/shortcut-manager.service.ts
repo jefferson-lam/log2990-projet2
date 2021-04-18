@@ -9,7 +9,9 @@ import { PopupManagerService } from '@app/services/manager/popup-manager.service
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
@@ -35,7 +37,7 @@ export class ShortcutManagerService {
 
     onKeyboardDown(event: KeyboardEvent): void {
         if (!this.isShortcutAllowed()) return;
-        if (event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b|t)$/)) {
+        if (event.key.match(/^(1|2|3|a|b|c|d|e|i|l|r|s|t|v)$/)) {
             this.toolManager.selectTool(event.key);
         }
     }
@@ -110,7 +112,9 @@ export class ShortcutManagerService {
         event.preventDefault();
         if (!this.isShortcutAllowed()) return;
         if (
-            (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) &&
+            (this.toolManager.currentTool instanceof RectangleSelectionService ||
+                this.toolManager.currentTool instanceof EllipseSelectionService ||
+                this.toolManager.currentTool instanceof LassoSelectionService) &&
             this.toolManager.currentTool.isManipulating
         ) {
             this.toolManager.currentTool.undoSelection();
@@ -167,6 +171,19 @@ export class ShortcutManagerService {
         this.magnetismService.toggleMagnetism();
     }
 
+    onAltDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (this.toolManager.currentTool instanceof StampService) {
+            this.toolManager.currentTool.changeRotationAngleOnAlt();
+        }
+    }
+
+    onAltUp(): void {
+        if (this.toolManager.currentTool instanceof StampService) {
+            this.toolManager.currentTool.changeRotationAngleNormal();
+        }
+    }
+
     onEscapeKeyDown(): void {
         if (this.popupManager.isPopUpOpen) return;
         this.toolManager.currentTool.onEscapeKeyDown();
@@ -192,7 +209,6 @@ export class ShortcutManagerService {
         await directive.delay(DirectionalMovementConstants.CONTINUOUS_PRESS_DELAY_MS);
         const numPixels = this.magnetismService.isMagnetismOn ? this.canvasGridService.squareWidth : DirectionalMovementConstants.NUM_PIXELS;
         directive.translateSelection(numPixels);
-
         directive.hasMovedOnce = false;
     }
 

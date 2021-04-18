@@ -43,6 +43,8 @@ export abstract class Tool {
 
     onMouseEnter(event: MouseEvent): void {}
 
+    onMouseWheel(event: WheelEvent): void {}
+
     onToolEnter(mousePosition: Vec2): void {}
 
     onToolChange(): void {}
@@ -77,7 +79,15 @@ export abstract class Tool {
 
     setTextItalic(fontStyle: string): void {}
 
+    setImageSource(newImageSource: string): void {}
+
+    setImageZoomFactor(newFactor: number): void {}
+
+    setAngleRotation(newAngle: number): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.x - CanvasConstants.LEFT_MARGIN, y: event.y };
     }
+
+    drawCursor(mousePosition: Vec2): void {}
 }

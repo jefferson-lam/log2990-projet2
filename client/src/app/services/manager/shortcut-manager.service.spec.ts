@@ -12,6 +12,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle-servic
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ShortcutManagerService } from './shortcut-manager.service';
@@ -20,6 +21,7 @@ import { ShortcutManagerService } from './shortcut-manager.service';
 describe('ShortcutManagerService', () => {
     let service: ShortcutManagerService;
     let rectangleSelectionService: RectangleSelectionService;
+    let stampService: StampService;
     let textService: TextService;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
@@ -82,6 +84,8 @@ describe('ShortcutManagerService', () => {
             new RectangleService({} as DrawingService, {} as UndoRedoService),
         );
         (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(rectangleSelectionService);
+
+        stampService = new StampService({} as DrawingService, {} as UndoRedoService);
 
         resizerHandlerServiceSpy = jasmine.createSpyObj(
             'ResizerHandlerService',
@@ -182,6 +186,44 @@ describe('ShortcutManagerService', () => {
         service.onGKeyDown();
 
         expect(canvasGridServiceSpy.toggleGrid).not.toHaveBeenCalled();
+    });
+
+    it('onAltDown should call changeRotationAngleOnAlt() from stampService', () => {
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(stampService);
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
+        const rotationSpy = spyOn(stampService, 'changeRotationAngleOnAlt').and.callFake(() => {
+            return;
+        });
+        service.onAltDown(eventSpy);
+        expect(rotationSpy).toHaveBeenCalled();
+    });
+
+    it('onAltUp should call changeRotationAngleNormal() from stampService', () => {
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(stampService);
+        const rotationSpy = spyOn(stampService, 'changeRotationAngleNormal').and.callFake(() => {
+            return;
+        });
+        service.onAltUp();
+
+        expect(rotationSpy).toHaveBeenCalled();
+    });
+
+    it('onAltDown should not call changeRotationAngleOnAlt() from stampService', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
+        const rotationSpy = spyOn(stampService, 'changeRotationAngleOnAlt').and.callFake(() => {
+            return;
+        });
+        service.onAltDown(eventSpy);
+        expect(rotationSpy).not.toHaveBeenCalled();
+    });
+
+    it('onAltUp should not call changeRotationAngleNormal() from stampService', () => {
+        const rotationSpy = spyOn(stampService, 'changeRotationAngleNormal').and.callFake(() => {
+            return;
+        });
+        service.onAltUp();
+
+        expect(rotationSpy).not.toHaveBeenCalled();
     });
 
     it('selectionOnShiftKeyDown should not call resizerHandlerService.functions and component.drawWithScalingFactors if isShortcutAllowed false and resizerHandlerService.inUse false', () => {

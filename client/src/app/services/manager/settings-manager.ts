@@ -49,6 +49,18 @@ export class SettingsManagerService {
         this.toolManager.currentTool.setToleranceValue(newToleranceValue);
     }
 
+    setImageSource(newSource: string): void {
+        this.toolManager.currentTool.setImageSource(newSource);
+    }
+
+    setImageZoomFactor(newFactor: number): void {
+        this.toolManager.currentTool.setImageZoomFactor(newFactor);
+    }
+
+    setAngleRotation(newAngle: number): void {
+        this.toolManager.currentTool.setAngleRotation(newAngle);
+    }
+
     setFontFamily(fontFamily: string): void {
         this.toolManager.currentTool.setFontFamily(fontFamily);
     }

@@ -21,6 +21,9 @@ export class SelectionComponent implements AfterViewInit {
     borderCanvas: HTMLCanvasElement;
     previewSelectionCanvas: HTMLCanvasElement;
 
+    // Not present on dom, used as reference to store outline
+    outlineSelectionCanvas: HTMLCanvasElement;
+
     @ViewChild('leftResizer', { static: false }) leftResizer: ElementRef<HTMLElement>;
     @ViewChild('rightResizer', { static: false }) rightResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
@@ -31,7 +34,11 @@ export class SelectionComponent implements AfterViewInit {
     @ViewChild('bottomRightResizer', { static: false }) bottomRightResizer: ElementRef<HTMLElement>;
 
     selectionCtx: CanvasRenderingContext2D;
+    borderCtx: CanvasRenderingContext2D;
     previewSelectionCtx: CanvasRenderingContext2D;
+
+    outlineSelectionCtx: CanvasRenderingContext2D;
+
     resizerDown: ResizerDown;
     initialPosition: Vec2;
     bottomRight: Vec2;
@@ -51,9 +58,16 @@ export class SelectionComponent implements AfterViewInit {
         this.borderCanvas = this.borderCanvasRef.nativeElement;
         this.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
 
+        this.outlineSelectionCanvas = document.createElement('canvas');
+
         this.selectionCtx = this.selectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.borderCtx = this.borderCanvas.getContext('2d') as CanvasRenderingContext2D;
         this.previewSelectionCtx = this.previewSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+        this.outlineSelectionCtx = this.outlineSelectionCanvas.getContext('2d') as CanvasRenderingContext2D;
+
         this.drawingService.selectionCtx = this.selectionCtx;
+        this.drawingService.borderCtx = this.borderCtx;
         this.drawingService.previewSelectionCtx = this.previewSelectionCtx;
         this.drawingService.selectionCanvas = this.selectionCanvasRef.nativeElement;
         this.drawingService.previewSelectionCanvas = this.previewSelectionCanvasRef.nativeElement;
@@ -125,6 +139,7 @@ export class SelectionComponent implements AfterViewInit {
             this.resizerHandlerService.resize(event);
             this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+            this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
             this.selectionCanvas.style.visibility = 'hidden';
         }
     }
@@ -137,6 +152,7 @@ export class SelectionComponent implements AfterViewInit {
 
             // Save drawing to preview canvas before drawing is wiped due to resizing
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
+            this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
 
             this.recalibrateCanvasHeights();
             this.recalibrateCanvasWidths();
@@ -148,6 +164,7 @@ export class SelectionComponent implements AfterViewInit {
 
             // Canvas resize wipes drawing -> copy drawing from preview layer to base layer
             this.selectionCtx.drawImage(this.previewSelectionCanvas, 0, 0);
+            this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
             this.previewSelectionCtx.clearRect(0, 0, this.previewSelectionCanvas.width, this.previewSelectionCanvas.height);
         }
     }
@@ -192,6 +209,9 @@ export class SelectionComponent implements AfterViewInit {
     }
 
     setInitialValues(resizer: number): void {
+        this.outlineSelectionCanvas.width = this.borderCanvas.width;
+        this.outlineSelectionCanvas.height = this.borderCanvas.height;
+        this.outlineSelectionCtx.drawImage(this.borderCanvas, 0, 0);
         this.resizerHandlerService.inUse = true;
         this.resizerDown = resizer;
         this.initialPosition = { x: parseInt(this.previewSelectionCanvas.style.left, 10), y: parseInt(this.previewSelectionCanvas.style.top, 10) };

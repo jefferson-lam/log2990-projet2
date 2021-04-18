@@ -16,14 +16,20 @@
     color: green;
     justify-content: center;
 }
+
 #exportCompleteHeader,
 #buttonDiv {
     display: flex;
     justify-content: center;
 }
 
-button {
+#closebutton {
     font-size: large;
     background-color: coral;
     width: 125px;
+}
+
+#closebutton:hover {
+    color: black;
+    background-color: slategrey;
 }

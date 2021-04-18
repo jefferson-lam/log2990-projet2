@@ -6,11 +6,11 @@
     <app-rgb-selector [initialColor]="color" (newColor)="color = $event"></app-rgb-selector>
     <div class="opacity-wrap">
         <span type="text">Opacité</span>
-        <mat-slider thumbLabel [step]="step" [min]="min" [max]="max" [(value)]="color.alpha"></mat-slider>
+        <mat-slider thumbLabel color="warn" [step]="step" [min]="min" [max]="max" [(value)]="color.alpha"></mat-slider>
     </div>
     <div class="final-options">
         <div class="color-preview" [ngStyle]="{ 'background-color': colorService.convertRgbaToString(color) }"></div>
-        <button mat-raised-button (click)="confirmColorPick()" id="confirmButton">Confirmer</button>
         <button mat-raised-button (click)="showOptions.emit(false)" id="cancelButton">Annuler</button>
+        <button mat-raised-button (click)="confirmColorPick()" id="confirmButton">Confirmer</button>
     </div>
 </div>

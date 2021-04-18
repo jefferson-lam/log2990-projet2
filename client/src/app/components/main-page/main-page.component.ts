@@ -14,9 +14,8 @@ import { BehaviorSubject } from 'rxjs';
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent implements OnInit {
-    readonly title: string = 'LOG2990';
-    message: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
+    readonly title: string;
+    message: BehaviorSubject<string>;
     ongoingDrawing: boolean;
 
     constructor(
@@ -26,7 +25,10 @@ export class MainPageComponent implements OnInit {
         public undoRedoService: UndoRedoService,
         public popupManager: PopupManagerService,
         public shortcutManager: ShortcutManagerService,
-    ) {}
+    ) {
+        this.title = 'LOG2990';
+        this.message = new BehaviorSubject<string>('');
+    }
 
     ngOnInit(): void {
         this.ongoingDrawing = false;

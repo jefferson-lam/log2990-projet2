@@ -3,7 +3,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as PolygoneConstants from '@app/constants/polygone-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -184,8 +184,8 @@ describe('PolygoneService', () => {
     });
 
     it('getRadiiXAndY should set expected x and y radius', () => {
-        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
-        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const start = service.cornerCoords[ShapeConstants.START_INDEX];
+        const end = service.cornerCoords[ShapeConstants.END_INDEX];
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;
         // tslint:disable:no-string-literal
@@ -204,7 +204,7 @@ describe('PolygoneService', () => {
     it('setSidesCount should change sides count', () => {
         const RANDOM_TEST_COUNT = 10;
         service.setSidesCount(RANDOM_TEST_COUNT);
-        expect(service.initNumberSides).toEqual(RANDOM_TEST_COUNT);
+        expect(service.numberSides).toEqual(RANDOM_TEST_COUNT);
     });
 
     it('setFillMode should change to FILL ONLY mode', () => {
@@ -246,8 +246,8 @@ describe('PolygoneService', () => {
     });
 
     it('getPolygoneCenter should set polygone center', () => {
-        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
-        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const start = service.cornerCoords[ShapeConstants.START_INDEX];
+        const end = service.cornerCoords[ShapeConstants.END_INDEX];
         const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
         const xVector = end.x - start.x;
         const yVector = end.y - start.y;
@@ -260,8 +260,8 @@ describe('PolygoneService', () => {
     });
 
     it('getRadiiXAndY should set radius to shortest side always', () => {
-        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
-        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const start = service.cornerCoords[ShapeConstants.START_INDEX];
+        const end = service.cornerCoords[ShapeConstants.END_INDEX];
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));

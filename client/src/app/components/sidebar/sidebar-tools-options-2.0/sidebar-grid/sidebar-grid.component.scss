@@ -1,30 +1,31 @@
 * {
-  font-family: 'Rubik', serif;
+    font-family: 'Rubik', serif;
 }
 
 #settingsContainer {
-  color: #eee;
-  margin-left: 10px;
+    color: #eee;
+    margin-left: 10px;
 }
 
 #title {
-  font-weight: bolder;
-  font-size: x-large;
+    font-weight: bolder;
+    font-size: x-large;
 }
 
 #widthSetting {
-  display: block;
+    display: block;
 }
 
-#toggleVisibility{
-  font-family: 'Rubik', serif;
+#toggleVisibility {
+    font-family: 'Rubik', serif;
 }
 
-#widthLine,#opacityCount {
-  margin-top: -5px;
+#widthLine,
+#opacityCount {
+    margin-top: -5px;
 }
 
 #drawingStyleOptions {
-  flex-direction: column-reverse;
-  margin-top: 10px;
+    flex-direction: column-reverse;
+    margin-top: 10px;
 }
