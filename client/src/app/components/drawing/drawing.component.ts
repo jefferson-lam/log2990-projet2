@@ -41,7 +41,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit(): void {
         this.assignContextValues();
-        this.propageValuesToDrawingService();
+        this.propagateValuesToDrawingService();
         this.canvasGridService.gridCtx = this.gridCtx;
 
         this.autoSaveService.loadDrawing();
@@ -123,7 +123,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
     }
 
-    private propageValuesToDrawingService(): void {
+    private propagateValuesToDrawingService(): void {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.gridCtx = this.gridCtx;
