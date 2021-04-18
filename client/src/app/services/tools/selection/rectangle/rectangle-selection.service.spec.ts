@@ -131,7 +131,7 @@ describe('RectangleSelectionService', () => {
             y: 200,
             button: 0,
         } as MouseEvent;
-        const expectedEndVec2: Vec2 = { x: 150, y: 200 };
+        const expectedEndVec2: Vec2 = { x: 100, y: 100 };
         service.onMouseDown(mouseEvent);
         service.onMouseUp(mouseUpEvent);
         expect(service.rectangleService.inUse).toBeFalsy();
