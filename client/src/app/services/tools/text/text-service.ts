@@ -48,6 +48,8 @@ export class TextService extends Tool {
 
     onMouseUp(): void {
         if (!this.inUse) return;
+        // method 2
+        this.placeHolderSpan.focus();
         this.setSelectedText();
     }
 
@@ -61,7 +63,9 @@ export class TextService extends Tool {
         this.setSpanValues();
         this.lockKeyboard = true;
         this.escapeKeyUsed = false;
-        this.placeHolderSpan.focus();
+        // method 1
+        // this.placeHolderSpan.focus();
+        // (this.placeHolderSpan as HTMLInputElement).select();
     }
 
     drawTextOnCanvas(): void {
@@ -83,7 +87,7 @@ export class TextService extends Tool {
 
     setSpanValues(): void {
         this.placeHolderSpan.id = 'placeHolderSpan';
-        this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
+        this.placeHolderSpan.innerText = ' Ajoutez du texte ici... ';
 
         this.placeHolderSpan.style.left = this.cornerCoords.x + 'px';
         this.placeHolderSpan.style.top = this.cornerCoords.y + 'px';
