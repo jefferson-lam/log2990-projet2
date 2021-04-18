@@ -19,7 +19,7 @@ export class PolygoneCommand extends Command {
     }
 
     execute(): void {
-        this.drawPolygone(this.ctx, this.cornerCoords, this.initNumberSides);
+        this.drawPolygone(this.ctx, this.cornerCoords);
     }
 
     setValues(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService): void {
@@ -32,7 +32,7 @@ export class PolygoneCommand extends Command {
         Object.assign(this.cornerCoords, polygoneService.cornerCoords);
     }
 
-    private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[], sides: number): void {
+    private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         const polygoneCenter = this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]);
         const startX = polygoneCenter.x;
         const startY = polygoneCenter.y;
@@ -44,7 +44,7 @@ export class PolygoneCommand extends Command {
         }
         const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
 
-        this.drawTypePolygone(ctx, radiusWithin, startX, startY, sides, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
+        this.drawTypePolygone(ctx, radiusWithin, startX, startY, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
     }
 
     private drawTypePolygone(
@@ -52,17 +52,16 @@ export class PolygoneCommand extends Command {
         radiusWithin: number,
         startX: number,
         startY: number,
-        sides: number,
         fillMethod: number,
         primaryColor: string,
         secondaryColor: string,
         lineWidth: number,
     ): void {
-        const ANGLE_EVEN = PolygoneConstants.END_ANGLE / sides;
+        const ANGLE_EVEN = PolygoneConstants.END_ANGLE / this.initNumberSides;
         ctx.beginPath();
         ctx.lineJoin = 'round';
-        if (sides % 2 !== 0) {
-            for (let i = 0; i < sides; i++) {
+        if (this.initNumberSides % 2 !== 0) {
+            for (let i = 0; i < this.initNumberSides; i++) {
                 ctx.lineTo(
                     startX + radiusWithin * Math.cos(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
                     startY + radiusWithin * Math.sin(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
@@ -70,7 +69,7 @@ export class PolygoneCommand extends Command {
             }
         } else {
             ctx.moveTo(startX + radiusWithin, startY);
-            for (let i = 0; i < sides; i++) {
+            for (let i = 0; i < this.initNumberSides; i++) {
                 ctx.lineTo(startX + radiusWithin * Math.cos(ANGLE_EVEN * i), startY + radiusWithin * Math.sin(ANGLE_EVEN * i));
             }
         }
