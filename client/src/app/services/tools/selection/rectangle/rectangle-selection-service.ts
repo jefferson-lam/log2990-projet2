@@ -132,6 +132,9 @@ export class RectangleSelectionService extends ToolSelectionService {
     }
 
     selectAll(): void {
+        if (this.isManipulating) {
+            this.confirmSelection();
+        }
         this.selectionWidth = this.drawingService.canvas.width;
         this.selectionHeight = this.drawingService.canvas.height;
         this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;

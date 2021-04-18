@@ -331,6 +331,20 @@ describe('RectangleSelectionService', () => {
         expect(service.isEscapeDown).toBeFalsy();
     });
 
+    it('selectAll if isManipulating should confirmSelection with calling procedure', () => {
+        const confirmSelectionSpy = spyOn(service, 'confirmSelection');
+        service.isManipulating = true;
+        service.selectAll();
+        expect(confirmSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('selectAll if isManipulating false should confirmSelection with calling procedure without calling confirmSelection', () => {
+        const confirmSelectionSpy = spyOn(service, 'confirmSelection');
+        service.isManipulating = false;
+        service.selectAll();
+        expect(confirmSelectionSpy).not.toHaveBeenCalled();
+    });
+
     it('selectAll should correctly set selectionWidth and selectionHeight', () => {
         const expectedWidth = 100;
         const expectedHeight = 100;
