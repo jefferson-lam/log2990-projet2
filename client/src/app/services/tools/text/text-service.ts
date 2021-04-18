@@ -21,6 +21,8 @@ export class TextService extends Tool {
     spanWidth: number;
     escapeKeyUsed: boolean;
     lockKeyboard: boolean;
+    hasWeightChanged: boolean;
+    hasStyleChanged: boolean;
     private hasTextBoxBeenCreated: boolean;
 
     placeHolderSpan: HTMLSpanElement;
@@ -32,8 +34,13 @@ export class TextService extends Tool {
         this.primaryColor = '#b5cf60';
         this.fontSize = TextConstants.INIT_FONT_SIZE;
         this.fontFamily = 'Arial';
+        this.fontStyle = 'normal';
+        this.fontWeight = 'normal';
+        this.textAlign = 'center';
         this.escapeKeyUsed = false;
         this.lockKeyboard = false;
+        this.hasStyleChanged = false;
+        this.hasWeightChanged = false;
         this.cornerCoords = { x: 0, y: 0 };
         this.hasTextBoxBeenCreated = false;
     }
@@ -83,10 +90,10 @@ export class TextService extends Tool {
     }
 
     setSpanValues(): void {
-        this.placeHolderSpan.style.outline = '1px solid black';
-        this.placeHolderSpan.style.padding = '5px';
         this.placeHolderSpan.innerText = 'Ajoutez votre texte ici...';
 
+        this.placeHolderSpan.style.outline = '1px solid black';
+        this.placeHolderSpan.style.padding = '5px';
         this.placeHolderSpan.style.left = this.cornerCoords.x + 'px';
         this.placeHolderSpan.style.top = this.cornerCoords.y + 'px';
         this.placeHolderSpan.style.display = 'block';
@@ -124,11 +131,13 @@ export class TextService extends Tool {
     setTextBold(textBold: string): void {
         this.fontWeight = textBold;
         this.placeHolderSpan.style.fontWeight = textBold;
+        this.hasWeightChanged = textBold === 'bold';
     }
 
     setTextItalic(textItalic: string): void {
         this.fontStyle = textItalic;
         this.placeHolderSpan.style.fontStyle = textItalic;
+        this.hasStyleChanged = textItalic === 'italic';
     }
 
     setPrimaryColor(newColor: string): void {
@@ -141,6 +150,7 @@ export class TextService extends Tool {
     onToolChange(): void {
         if (this.lockKeyboard && !this.escapeKeyUsed) {
             this.drawTextOnCanvas();
+            this.hasTextBoxBeenCreated = false;
             this.lockKeyboard = false;
         }
     }
