@@ -3,8 +3,10 @@
 }
 
 #exportCanvasContainer {
-    max-width: 830px;
-    max-height: 560px;
+    max-width: 860px;
+    max-height: 600px;
+    text-align: center;
+    display: block;
 }
 
 #exportCanvas {
@@ -18,18 +20,16 @@
 
 #buttonDiv {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
 }
 
 #saveButton,
-#cancelButton,
-#imgurButton {
+#cancelButton {
     align-content: center;
     font-size: large;
     background-color: coral;
-    width: 125px;
-    margin: 10px;
+    margin: auto;
+    width: 210px;
 }
 
 #saveButton:hover,
@@ -39,10 +39,20 @@
     background-color: slategrey;
 }
 
+::ng-deep .modal-dialog {
+    mat-dialog-container {
+        overflow-y: hidden;
+    }
+}
+
 .modal-dialog {
     justify-content: space-between;
     flex-direction: column;
     display: flex;
+    max-width: 900px;
+    max-height: 900px;
+    min-width: 650px;
+    min-height: 400px;
 }
 
 .mat-dialog-title {
@@ -51,4 +61,13 @@
 
 img {
     border: 1px solid black;
+}
+
+#imgurButton {
+    align-content: center;
+    font-size: large;
+    color: #1cb76d;
+    background-color: #34373c;
+    margin: auto;
+    width: 210px;
 }
