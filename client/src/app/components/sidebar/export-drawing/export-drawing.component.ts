@@ -5,7 +5,6 @@ import * as ExportDrawingConstants from '@app/constants/export-drawing-constants
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ImgurService } from '@app/services/imgur/imgur.service';
-import { Message } from '@common/communication/message';
 import { ExportCompletePageComponent } from './export-complete-page/export-complete-page.component';
 import { ExportErrorPageComponent } from './export-error-page/export-error-page.component';
 
@@ -30,8 +29,6 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
     type: string;
     name: string;
     filter: string;
-
-    request: Message = { title: 'Error', body: '' };
 
     url: string;
     popUpToggle: ExportDrawingConstants.PopUpToggle;

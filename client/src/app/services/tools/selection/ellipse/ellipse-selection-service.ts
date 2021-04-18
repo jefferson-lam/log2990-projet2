@@ -1,30 +1,32 @@
 import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constants';
+import * as EllipseConstants from '@app/constants/ellipse-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { EllipseSelectionCommand } from '@app/services/tools/selection/ellipse/ellipse-selection-command';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+// tslint:disable:max-file-line-count
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseSelectionService extends ToolSelectionService {
-    inUse: boolean = false;
-    isManipulating: boolean = false;
+    inUse: boolean;
+    isManipulating: boolean;
     transformValues: Vec2;
-    isCircle: boolean = false;
-    isShiftDown: boolean = false;
-    isEscapeDown: boolean = false;
-    pathData: Vec2[] = new Array<Vec2>(2);
-    selectionHeight: number = 0;
-    selectionWidth: number = 0;
-    isFromClipboard: boolean = false;
+    isCircle: boolean;
+    isShiftDown: boolean;
+    isEscapeDown: boolean;
+    pathData: Vec2[];
+    selectionHeight: number;
+    selectionWidth: number;
+    isFromClipboard: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -33,6 +35,15 @@ export class EllipseSelectionService extends ToolSelectionService {
         public ellipseService: EllipseService,
     ) {
         super(drawingService, undoRedoService, resizerHandlerService, ellipseService);
+        this.inUse = false;
+        this.isManipulating = false;
+        this.isCircle = false;
+        this.isShiftDown = false;
+        this.isEscapeDown = false;
+        this.pathData = new Array<Vec2>(ShapeConstants.DIMENSION);
+        this.selectionHeight = 0;
+        this.selectionWidth = 0;
+        this.isFromClipboard = false;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -47,37 +58,32 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.inUse) {
-            this.pathData[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
-            this.ellipseService.inUse = false;
-            super.onMouseUp(event);
-            this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
-            this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
-            if (!this.validateSelectionHeightAndWidth()) {
-                return;
-            }
-            this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
-            this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
-            this.drawingService.borderCanvas.width = this.selectionWidth;
-            this.drawingService.borderCanvas.height = this.selectionHeight;
-            this.selectEllipse(
-                this.drawingService.selectionCtx,
-                this.drawingService.baseCtx,
-                this.pathData,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
-            this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
-            this.inUse = false;
-            this.isManipulating = true;
+        if (!this.inUse) return;
+        const mousePosition = this.getPositionFromMouse(event);
+        mousePosition.x = mousePosition.x > this.drawingService.canvas.width ? this.drawingService.canvas.width : mousePosition.x;
+        mousePosition.y = mousePosition.y > this.drawingService.canvas.height ? this.drawingService.canvas.height : mousePosition.y;
+        this.pathData[SelectionConstants.END_INDEX] = mousePosition;
+        this.ellipseService.inUse = false;
+        super.onMouseUp(event);
+        this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
+        this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
+        if (!this.validateSelectionHeightAndWidth()) {
+            return;
         }
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+        this.drawingService.borderCanvas.width = this.selectionWidth;
+        this.drawingService.borderCanvas.height = this.selectionHeight;
+        this.selectEllipse(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData, this.selectionWidth, this.selectionHeight);
+        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
+        this.inUse = false;
+        this.isManipulating = true;
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.inUse) {
-            this.pathData[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
-            super.onMouseMove(event);
-        }
+        if (!this.inUse) return;
+        this.pathData[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
+        super.onMouseMove(event);
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -153,7 +159,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         const xRadius = radiiXAndY[0];
         const yRadius = radiiXAndY[1];
         ctx.beginPath();
-        ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, ShapeConstants.START_ANGLE, ShapeConstants.END_ANGLE);
         ctx.fillStyle = 'white';
         ctx.fill();
     }
@@ -172,14 +178,30 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(start.x, start.y);
-        ctx.ellipse(startX, startY, xRadius + offset, yRadius + offset, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(
+            startX,
+            startY,
+            xRadius + offset,
+            yRadius + offset,
+            EllipseConstants.ROTATION,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
+        );
         ctx.clip();
     }
 
     drawOutlineEllipse(ctx: CanvasRenderingContext2D, startX: number, startY: number, radiusX: number, radiusY: number, offset: number): void {
         ctx.beginPath();
         ctx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
-        ctx.ellipse(startX, startY, radiusX + offset, radiusY + offset, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(
+            startX,
+            startY,
+            radiusX + offset,
+            radiusY + offset,
+            EllipseConstants.ROTATION,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
+        );
         ctx.stroke();
     }
 

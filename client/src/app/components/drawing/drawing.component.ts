@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, V
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { CursorManagerService } from '@app/services/manager/cursor-manager.service';
@@ -22,18 +23,24 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private gridCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
-    private previewCanvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
-    private gridCanvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
+    private canvasSize: Vec2;
+    private previewCanvasSize: Vec2;
+    private gridCanvasSize: Vec2;
 
     @Input() currentTool: Tool;
     constructor(
         private drawingService: DrawingService,
+        private autoSaveService: AutoSaveService,
         public toolManager: ToolManagerService,
         public canvasGridService: CanvasGridService,
-        public undoRedoService: UndoRedoService,
+        private undoRedoService: UndoRedoService,
         public cursorManager: CursorManagerService,
-    ) {}
+    ) {
+        this.currentTool = toolManager.pencilService; // default value
+        this.canvasSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
+        this.previewCanvasSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
+        this.gridCanvasSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
+    }
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -63,6 +70,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.currentTool = tool;
             this.cursorManager.changeCursor(tool);
         });
+        this.autoSaveService.loadDrawing();
     }
 
     ngOnDestroy(): void {

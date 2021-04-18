@@ -3,22 +3,32 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { CursorManagerService } from '@app/services/manager/cursor-manager.service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Subject } from 'rxjs';
 import { DrawingComponent } from './drawing.component';
 
 class ToolStub extends Tool {}
 
+// tslint:disable:no-string-literal
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
-    let drawingStub: DrawingService;
-    let undoRedoStub: UndoRedoService;
+    let autoSaveServiceSpy: jasmine.SpyObj<AutoSaveService>;
+    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let cursorManagerSpy: jasmine.SpyObj<CursorManagerService>;
+    let gridServiceSpy: jasmine.SpyObj<CanvasGridService>;
+
+    // let drawingStub: DrawingService;
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
     let lineStub: ToolStub;
@@ -26,24 +36,33 @@ describe('DrawingComponent', () => {
     let stampStub: ToolStub;
 
     beforeEach(async(() => {
-        drawingStub = new DrawingService();
-        undoRedoStub = new UndoRedoService(drawingStub);
-        pencilStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
-        eraserStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
-        lineStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
-        lassoSelectionStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
-        stampStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
+        autoSaveServiceSpy = jasmine.createSpyObj('AutoSaveService', ['loadDrawing']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', [''], { canvasSizeSubject: new Subject() });
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['updateActionsAllowed']);
+        cursorManagerSpy = jasmine.createSpyObj('CursorManagerService', ['changeCursor', 'onMouseEnter', 'onMouseMove', 'onMouseLeave']);
+        gridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize']);
+
+        // drawingStub = new DrawingService();
+        pencilStub = new ToolStub(drawingServiceSpy, undoRedoServiceSpy);
+        eraserStub = new ToolStub(drawingServiceSpy, undoRedoServiceSpy);
+        lineStub = new ToolStub(drawingServiceSpy, undoRedoServiceSpy);
+        lassoSelectionStub = new ToolStub(drawingServiceSpy, undoRedoServiceSpy);
+        stampStub = new ToolStub(drawingServiceSpy, undoRedoServiceSpy);
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
             providers: [
-                { provide: DrawingService, useValue: drawingStub },
-                { provide: UndoRedoService, useValue: undoRedoStub },
+                { provide: DrawingService, useValue: drawingServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
                 { provide: LineService, useValue: lineStub },
                 { provide: LassoSelectionService, useValue: lassoSelectionStub },
                 { provide: StampService, useValue: stampStub },
+                { provide: AutoSaveService, useValue: autoSaveServiceSpy },
+                { provide: CanvasGridService, useValue: gridServiceSpy },
+                { provide: CursorManagerService, useValue: cursorManagerSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -57,6 +76,12 @@ describe('DrawingComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('ngAfterViewInit should call loadDrawing of autoSaveService', () => {
+        component.ngAfterViewInit();
+
+        expect(autoSaveServiceSpy.loadDrawing).toHaveBeenCalled();
     });
 
     it('should initialize baseCanvas with a white background', () => {

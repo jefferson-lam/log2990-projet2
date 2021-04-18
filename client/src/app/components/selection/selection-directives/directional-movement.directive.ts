@@ -6,11 +6,15 @@ import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.s
     selector: '[appDirectionalMovement]',
 })
 export class DirectionalMovementDirective {
-    keyPressed: Map<string, number> = new Map();
-    hasMovedOnce: boolean = false;
-    @Output() canvasMovement: EventEmitter<boolean> = new EventEmitter();
+    keyPressed: Map<string, number>;
+    hasMovedOnce: boolean;
+    @Output() canvasMovement: EventEmitter<boolean>;
 
-    constructor(private element: ElementRef, public shortcutManager: ShortcutManagerService) {}
+    constructor(private element: ElementRef, public shortcutManager: ShortcutManagerService) {
+        this.keyPressed = new Map();
+        this.hasMovedOnce = false;
+        this.canvasMovement = new EventEmitter();
+    }
 
     @HostListener('keydown.ArrowLeft', ['$event'])
     @HostListener('keydown.ArrowDown', ['$event'])

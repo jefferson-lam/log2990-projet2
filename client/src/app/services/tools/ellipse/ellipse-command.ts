@@ -1,6 +1,7 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import * as EllipseConstants from '@app/constants/ellipse-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 
@@ -10,10 +11,11 @@ export class EllipseCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
 
     constructor(canvasContext: CanvasRenderingContext2D, ellipseService: EllipseService) {
         super();
+        this.cornerCoords = [];
         this.setValues(canvasContext, ellipseService);
     }
 
@@ -32,13 +34,13 @@ export class EllipseCommand extends Command {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const ellipseCenter = this.getEllipseCenter(path[EllipseConstants.START_INDEX], path[EllipseConstants.END_INDEX], this.isCircle);
+        const ellipseCenter = this.getEllipseCenter(path[ShapeConstants.START_INDEX], path[ShapeConstants.END_INDEX], this.isCircle);
         const startX = ellipseCenter.x;
         const startY = ellipseCenter.y;
 
         const radiiXAndY = this.getRadiiXAndY(path);
-        let xRadius = radiiXAndY[EllipseConstants.X_INDEX];
-        let yRadius = radiiXAndY[EllipseConstants.Y_INDEX];
+        let xRadius = radiiXAndY[ShapeConstants.X_INDEX];
+        let yRadius = radiiXAndY[ShapeConstants.Y_INDEX];
         const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
         if (xRadius > this.lineWidth / 2 && yRadius > this.lineWidth / 2) {
             xRadius -= this.lineWidth / 2;
@@ -92,7 +94,7 @@ export class EllipseCommand extends Command {
         ctx.beginPath();
         ctx.setLineDash([]);
         ctx.lineJoin = 'round';
-        ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, EllipseConstants.START_ANGLE, EllipseConstants.END_ANGLE);
+        ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, ShapeConstants.START_ANGLE, ShapeConstants.END_ANGLE);
 
         ctx.strokeStyle = secondaryColor;
         ctx.lineWidth = lineWidth;
@@ -104,8 +106,8 @@ export class EllipseCommand extends Command {
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {
-        let xRadius = Math.abs(path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x) / 2;
-        let yRadius = Math.abs(path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y) / 2;
+        let xRadius = Math.abs(path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x) / 2;
+        let yRadius = Math.abs(path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y) / 2;
 
         if (this.isCircle) {
             const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));

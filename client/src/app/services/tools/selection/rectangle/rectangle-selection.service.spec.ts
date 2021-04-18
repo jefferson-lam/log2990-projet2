@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
-import { END_INDEX, START_INDEX } from '@app/constants/ellipse-constants';
+import { END_INDEX, START_INDEX } from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
@@ -131,7 +131,7 @@ describe('RectangleSelectionService', () => {
             y: 200,
             button: 0,
         } as MouseEvent;
-        const expectedEndVec2: Vec2 = { x: 150, y: 200 };
+        const expectedEndVec2: Vec2 = { x: 100, y: 100 };
         service.onMouseDown(mouseEvent);
         service.onMouseUp(mouseUpEvent);
         expect(service.rectangleService.inUse).toBeFalsy();
@@ -329,6 +329,20 @@ describe('RectangleSelectionService', () => {
         expect(parentResetSelectedToolSettingsSpy).not.toHaveBeenCalled();
         expect(service.isManipulating).toBeTruthy();
         expect(service.isEscapeDown).toBeFalsy();
+    });
+
+    it('selectAll if isManipulating should confirmSelection with calling procedure', () => {
+        const confirmSelectionSpy = spyOn(service, 'confirmSelection');
+        service.isManipulating = true;
+        service.selectAll();
+        expect(confirmSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('selectAll if isManipulating false should confirmSelection with calling procedure without calling confirmSelection', () => {
+        const confirmSelectionSpy = spyOn(service, 'confirmSelection');
+        service.isManipulating = false;
+        service.selectAll();
+        expect(confirmSelectionSpy).not.toHaveBeenCalled();
     });
 
     it('selectAll should correctly set selectionWidth and selectionHeight', () => {

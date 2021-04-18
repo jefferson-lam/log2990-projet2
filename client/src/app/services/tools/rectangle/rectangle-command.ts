@@ -1,6 +1,6 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 
@@ -10,7 +10,7 @@ export class RectangleCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
 
     constructor(canvasContext: CanvasRenderingContext2D, rectangleService: RectangleService) {
         super();
@@ -24,6 +24,7 @@ export class RectangleCommand extends Command {
         this.primaryColor = rectangleService.primaryColor;
         this.secondaryColor = rectangleService.secondaryColor;
         this.lineWidth = rectangleService.lineWidth;
+        this.cornerCoords = [];
         this.cornerCoords = Object.assign([], rectangleService.cornerCoords);
     }
 
@@ -32,8 +33,8 @@ export class RectangleCommand extends Command {
     }
 
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        let width = path[RectangleConstants.END_INDEX].x - path[RectangleConstants.START_INDEX].x;
-        let height = path[RectangleConstants.END_INDEX].y - path[RectangleConstants.START_INDEX].y;
+        let width = path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x;
+        let height = path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y;
         if (this.isSquare) {
             const shortestSide = Math.min(Math.abs(width), Math.abs(height));
             width = Math.sign(width) * shortestSide;
@@ -51,7 +52,7 @@ export class RectangleCommand extends Command {
                 width,
                 height,
                 ToolConstants.FillMode.OUTLINE_FILL,
-                RectangleConstants.MIN_BORDER_WIDTH,
+                ShapeConstants.MIN_BORDER_WIDTH,
                 borderColor,
                 borderColor,
             );
@@ -70,8 +71,8 @@ export class RectangleCommand extends Command {
     ): void {
         ctx.beginPath();
         ctx.lineJoin = 'miter';
-        const startX = path[RectangleConstants.START_INDEX].x + (Math.sign(width) * lineWidth) / 2;
-        const startY = path[RectangleConstants.START_INDEX].y + (Math.sign(height) * lineWidth) / 2;
+        const startX = path[ShapeConstants.START_INDEX].x + (Math.sign(width) * lineWidth) / 2;
+        const startY = path[ShapeConstants.START_INDEX].y + (Math.sign(height) * lineWidth) / 2;
         ctx.rect(startX, startY, width, height);
 
         ctx.strokeStyle = borderColor;

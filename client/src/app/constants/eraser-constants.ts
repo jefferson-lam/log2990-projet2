@@ -8,3 +8,9 @@ export enum CornerIndex {
     BOTTOM_LAST,
     TOP_LAST,
 }
+
+export const MAX_ERASER_WIDTH = 200;
+
+export const MIN_ERASER_WIDTH = 5;
+
+export const TICK_INTERVAL = 1;

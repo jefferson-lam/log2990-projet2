@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { RectangleCommand } from '@app/services/tools/rectangle/rectangle-command';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
@@ -84,8 +84,8 @@ describe('RectangleCommand', () => {
     });
 
     it('drawRectangle should call drawTypeRectangle with unchanged width & height if smaller or equal to lineWidth', () => {
-        const width = command.cornerCoords[RectangleConstants.END_INDEX].x - command.cornerCoords[RectangleConstants.START_INDEX].x;
-        const height = command.cornerCoords[RectangleConstants.END_INDEX].y - command.cornerCoords[RectangleConstants.START_INDEX].y;
+        const width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
+        const height = command.cornerCoords[ShapeConstants.END_INDEX].y - command.cornerCoords[ShapeConstants.START_INDEX].y;
 
         command.isSquare = false;
         command.lineWidth = width;
@@ -101,15 +101,15 @@ describe('RectangleCommand', () => {
             width,
             height,
             ToolConstants.FillMode.OUTLINE_FILL,
-            RectangleConstants.MIN_BORDER_WIDTH,
+            ShapeConstants.MIN_BORDER_WIDTH,
             command.primaryColor,
             command.primaryColor,
         );
     });
 
     it('drawRectangle should call drawTypeRectangle with shortestSide of width & height if smaller or equal to lineWidth and isSquare', () => {
-        let width = command.cornerCoords[RectangleConstants.END_INDEX].x - command.cornerCoords[RectangleConstants.START_INDEX].x;
-        let height = command.cornerCoords[RectangleConstants.END_INDEX].y - command.cornerCoords[RectangleConstants.START_INDEX].y;
+        let width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
+        let height = command.cornerCoords[ShapeConstants.END_INDEX].y - command.cornerCoords[ShapeConstants.START_INDEX].y;
 
         const shortestSide = Math.min(Math.abs(width), Math.abs(height));
         width = Math.sign(width) * shortestSide;
@@ -129,15 +129,15 @@ describe('RectangleCommand', () => {
             width,
             height,
             ToolConstants.FillMode.OUTLINE_FILL,
-            RectangleConstants.MIN_BORDER_WIDTH,
+            ShapeConstants.MIN_BORDER_WIDTH,
             command.primaryColor,
             command.primaryColor,
         );
     });
 
     it('drawRectangle should call drawTypeRectangle with changed width & height if bigger than lineWidth', () => {
-        const width = command.cornerCoords[RectangleConstants.END_INDEX].x - command.cornerCoords[RectangleConstants.START_INDEX].x;
-        const height = command.cornerCoords[RectangleConstants.END_INDEX].y - command.cornerCoords[RectangleConstants.START_INDEX].y;
+        const width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
+        const height = command.cornerCoords[ShapeConstants.END_INDEX].y - command.cornerCoords[ShapeConstants.START_INDEX].y;
 
         command.isSquare = false;
         command.lineWidth = Math.min(Math.abs(height), Math.abs(width)) - 1;
@@ -195,7 +195,7 @@ describe('RectangleCommand', () => {
         testCtx.lineJoin = 'miter';
         testCtx.rect(START_X, START_Y, TEST_X_OFFSET, TEST_Y_OFFSET);
         testCtx.strokeStyle = TEST_SECONDARY_COLOR;
-        testCtx.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
+        testCtx.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
         testCtx.stroke();
         testCtx.fillStyle = TEST_SECONDARY_COLOR;
         testCtx.fill();
@@ -216,7 +216,7 @@ describe('RectangleCommand', () => {
         testCtx.beginPath();
         testCtx.lineJoin = 'miter';
         testCtx.strokeStyle = TEST_SECONDARY_COLOR;
-        testCtx.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
+        testCtx.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
         testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
         testCtx.stroke();
 

@@ -69,7 +69,7 @@
     <mat-drawer-container class="tools-option-container">
         <mat-drawer [mode]="'side'" class="sidenav" [opened]="true" [disableClose]="true">
             <mat-drawer-content [ngSwitch]="selectedTool.keyShortcut">
-                <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="'c'"> </app-sidebar-pencil>
+                <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="'c'"></app-sidebar-pencil>
                 <app-sidebar-eraser class="sidebar-tool-options" *ngSwitchCase="'e'"></app-sidebar-eraser>
                 <app-sidebar-rectangle class="sidebar-tool-options" *ngSwitchCase="'1'"></app-sidebar-rectangle>
                 <app-sidebar-ellipse class="sidebar-tool-options" *ngSwitchCase="'2'"></app-sidebar-ellipse>
