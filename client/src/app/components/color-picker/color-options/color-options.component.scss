@@ -27,31 +27,33 @@
     margin-top: 5px;
 }
 
-.opacity-wrap{
-  color: black;
-  margin-top: 10px;
-  margin-left: 10px;
+.opacity-wrap {
+    color: black;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
-#confirmButton,#cancelButton{
-  text-align: center;
-  margin: 0 auto;
-  padding: 0;
-  display: inline-block;
-  width: 80px;
-  margin-left: 8px;
-  background-color:  #5f9ea0;
+#confirmButton,
+#cancelButton {
+    text-align: center;
+    margin: 0 auto;
+    padding: 0;
+    display: inline-block;
+    width: 80px;
+    margin-left: 8px;
+    background-color: coral;
 }
 
-#confirmButton:hover , #cancelButton:hover{
-  color: #607d8b;
-  background-color: #ddd;
+#confirmButton:hover,
+#cancelButton:hover {
+    color: black;
+    background-color: slategrey;
 }
 
-#colorPalette{
-  margin-left: 10px;
+#colorPalette {
+    margin-left: 10px;
 }
 
-#colorSlider{
-  margin-right: 10px;
+#colorSlider {
+    margin-right: 10px;
 }
