@@ -30,6 +30,13 @@ describe('TagValidatorComponent', () => {
         expect(component.tags.length).toBeGreaterThan(0);
     });
 
+    it('addTag should call resetRequirements', () => {
+        const testTag = 'testTag';
+        const resetSpy = spyOn(component, 'resetRequirements');
+        component.addTag(testTag);
+        expect(resetSpy).toHaveBeenCalled();
+    });
+
     it('deleteTag should remove tag from tags if it exists.', () => {
         const testTag = 'testTag';
         component.tags.push(testTag);
@@ -189,5 +196,30 @@ describe('TagValidatorComponent', () => {
         }
         component.addTag(testTag);
         expect(component.tags.length).toEqual(RANDOM_AMOUNT + 1);
+    });
+
+    it('resetRequirementsOnFocusOut should call resetRequirements if tag is shorter than minimum allowed', () => {
+        const testTag = '';
+        const resetSpy = spyOn(component, 'resetRequirements');
+
+        component.resetRequirementsOnFocusOut(testTag);
+        expect(resetSpy).toHaveBeenCalled();
+    });
+
+    it('resetRequirementsOnFocusOut should not call resetRequirements if tag is longer than minimum allowed', () => {
+        const testTag = 'test';
+        const resetSpy = spyOn(component, 'resetRequirements');
+
+        component.resetRequirementsOnFocusOut(testTag);
+        expect(resetSpy).not.toHaveBeenCalled();
+    });
+
+    it('resetRequirements should set classes to Unrequested', () => {
+        component.resetRequirements();
+        expect(component.distinctTagsDivClass).toEqual('Unrequested');
+        expect(component.minLengthDivClass).toEqual('Unrequested');
+        expect(component.maxLengthDivClass).toEqual('Unrequested');
+        expect(component.noSpecialCharacterDivClass).toEqual('Unrequested');
+        expect(component.maxTagsCountDivClass).toEqual('Unrequested');
     });
 });

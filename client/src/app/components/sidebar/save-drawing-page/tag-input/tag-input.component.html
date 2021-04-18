@@ -1,8 +1,10 @@
-<mat-form-field appearance="fill">
-    <mat-label>Tags</mat-label>
-    <input #tagInput matInput (input)="validateTag(tagInput.value)" />
-</mat-form-field>
-<input id="addTagButton" [disabled]="!isSavePossible" type="button" value="Ajouter un tag" (click)="addTag(tagInput.value)" #tagInput />
+<div id="inputDiv">
+    <mat-form-field appearance="fill" id="tagFormField">
+        <mat-label>Tags</mat-label>
+        <input #tagInput matInput (focusout)="resetRequirementsOnFocusOut(tagInput.value)" (input)="validateTag(tagInput.value)" />
+    </mat-form-field>
+    <button mat-button id="addTagButton" [disabled]="!isSavePossible" (click)="addTag(tagInput.value)">Ajouter un tag</button>
+</div>
 <div>
     <div #distinctTagsDiv [className]="distinctTagsDivClass">{{ distinctTagsRequirement }}</div>
     <div #minLengthDiv [className]="minLengthDivClass">{{ minLengthRequirement }}</div>
@@ -10,8 +12,8 @@
     <div #noSpecialCharacterDiv [className]="noSpecialCharacterDivClass">{{ noSpecialCharacterRequirement }}</div>
     <div #maxTagsCountDiv [className]="maxTagsCountDivClass">{{ maxTagsCountRequirement }}</div>
 </div>
-<div class="tagDiv" *ngFor="let tag of tags">
-    <div class="tag">
+<div class="tagDiv">
+    <div class="tag" *ngFor="let tag of tags">
         <p class="tagLabel">{{ tag }}</p>
         <button class="tagDeleteButton" (click)="deleteTag(tag)">
             <mat-icon [inline]="true">clear</mat-icon>

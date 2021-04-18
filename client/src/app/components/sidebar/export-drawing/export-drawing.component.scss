@@ -3,8 +3,10 @@
 }
 
 #exportCanvasContainer {
-    max-width: 830px;
-    max-height: 560px;
+    max-width: 860px;
+    max-height: 600px;
+    text-align: center;
+    display: block;
 }
 
 #exportCanvas {
@@ -12,8 +14,18 @@
     display: none;
 }
 
+#formWrapper {
+    margin-top: 20px;
+}
+
+#buttonDiv {
+    display: flex;
+    justify-content: space-between;
+}
+
 #saveButton,
-#cancelButton {
+#cancelButton,
+#imgurButton {
     align-content: center;
     font-size: large;
     background-color: coral;
@@ -21,26 +33,33 @@
     width: 210px;
 }
 
-#imgurButton {
-    align-content: center;
-    font-size: large;
-    color: #1cb76d;
-    background-color: #34373c;
-    margin: auto;
-    width: 210px;
+#saveButton:hover,
+#cancelButton:hover,
+#imgurButton:hover {
+    color: black;
+    background-color: slategrey;
+}
+
+::ng-deep .modal-dialog {
+    mat-dialog-container {
+        overflow-y: hidden;
+    }
 }
 
 .modal-dialog {
     justify-content: space-between;
     flex-direction: column;
     display: flex;
+    max-width: 900px;
+    max-height: 900px;
+    min-width: 650px;
+    min-height: 400px;
 }
 
 .mat-dialog-title {
     text-align: center;
-    font-family: 'Rubik', serif;
 }
 
 img {
-  border: 1px solid black;
+    border: 1px solid black;
 }

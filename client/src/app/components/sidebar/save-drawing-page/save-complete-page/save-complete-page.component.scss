@@ -1,3 +1,14 @@
+#wrapper {
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
+}
+
+#saveCompleteHeader {
+    display: flex;
+    justify-content: center;
+}
+
 #completeDiv {
     display: flex;
     justify-content: center;
@@ -10,14 +21,20 @@
     color: green;
     justify-content: center;
 }
-#saveCompleteHeader,
+
 #buttonDiv {
     display: flex;
     justify-content: center;
+    margin-top: 50px;
 }
 
-button {
+#closebutton {
     font-size: large;
     background-color: coral;
     width: 125px;
+}
+
+#closebutton:hover {
+    color: black;
+    background-color: slategrey;
 }
