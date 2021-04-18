@@ -37,6 +37,7 @@ export class TagInputComponent {
         }
         this.tagInput.nativeElement.value = '';
         this.isSavePossible = false;
+        this.resetRequirements();
     }
 
     deleteTag(tag: string): void {
@@ -94,6 +95,20 @@ export class TagInputComponent {
         this.areTagsValidEvent.emit(!requirementViolated);
         this.isSavePossible = !requirementViolated;
         return !requirementViolated;
+    }
+
+    resetRequirementsOnFocusOut(tag: string): void {
+        if (this.tagIsShorterThanMinLength(tag)) {
+            this.resetRequirements();
+        }
+    }
+
+    resetRequirements(): void {
+        this.distinctTagsDivClass = 'Unrequested';
+        this.minLengthDivClass = 'Unrequested';
+        this.maxLengthDivClass = 'Unrequested';
+        this.noSpecialCharacterDivClass = 'Unrequested';
+        this.maxTagsCountDivClass = 'Unrequested';
     }
 
     private tagIsShorterThanMinLength(tag: string): boolean {
