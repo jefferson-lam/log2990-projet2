@@ -134,12 +134,10 @@ export class SelectionComponent implements AfterViewInit {
         };
     }
 
-    // Scale to virtual -> virtual to preview
     drawPreview(event: CdkDragMove): void {
         if (this.resizerHandlerService.inUse) {
             this.resizerHandlerService.resize(event);
             this.resizerHandlerService.setResizerPositions(this.previewSelectionCanvas);
-            // Set virtual canvas to previewSelectionCanvas size
             this.drawWithScalingFactors(this.previewSelectionCtx, this.selectionCanvas);
             this.drawWithScalingFactors(this.borderCtx, this.outlineSelectionCanvas);
             this.selectionCanvas.style.visibility = 'hidden';

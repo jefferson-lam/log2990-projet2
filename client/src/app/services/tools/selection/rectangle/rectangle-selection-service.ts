@@ -50,30 +50,26 @@ export class RectangleSelectionService extends ToolSelectionService {
      * are drawn onto a third canvas, and we will the afromentioned rectangle with white pixels.
      */
     onMouseUp(event: MouseEvent): void {
-        if (this.inUse) {
-            this.pathData[SelectionConstants.END_INDEX] = this.getPositionFromMouse(event);
-            this.rectangleService.inUse = false;
-            super.onMouseUp(event);
-            this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
-            this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
-            if (!this.validateSelectionHeightAndWidth()) {
-                return;
-            }
-            this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
-            this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
-            this.drawingService.borderCanvas.width = this.selectionWidth;
-            this.drawingService.borderCanvas.height = this.selectionHeight;
-            this.selectRectangle(
-                this.drawingService.selectionCtx,
-                this.drawingService.baseCtx,
-                this.pathData,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
-            this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
-            this.inUse = false;
-            this.isManipulating = true;
+        if (!this.inUse) return;
+        const mousePosition = this.getPositionFromMouse(event);
+        mousePosition.x = mousePosition.x > this.drawingService.canvas.width ? this.drawingService.canvas.width : mousePosition.x;
+        mousePosition.y = mousePosition.y > this.drawingService.canvas.height ? this.drawingService.canvas.height : mousePosition.y;
+        this.pathData[SelectionConstants.END_INDEX] = mousePosition;
+        this.rectangleService.inUse = false;
+        super.onMouseUp(event);
+        this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
+        this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
+        if (!this.validateSelectionHeightAndWidth()) {
+            return;
         }
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+        this.drawingService.borderCanvas.width = this.selectionWidth;
+        this.drawingService.borderCanvas.height = this.selectionHeight;
+        this.selectRectangle(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData, this.selectionWidth, this.selectionHeight);
+        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
+        this.inUse = false;
+        this.isManipulating = true;
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -132,6 +128,9 @@ export class RectangleSelectionService extends ToolSelectionService {
     }
 
     selectAll(): void {
+        if (this.isManipulating) {
+            this.confirmSelection();
+        }
         this.selectionWidth = this.drawingService.canvas.width;
         this.selectionHeight = this.drawingService.canvas.height;
         this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
