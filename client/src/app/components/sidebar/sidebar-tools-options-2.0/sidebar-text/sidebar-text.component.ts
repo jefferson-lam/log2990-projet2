@@ -109,4 +109,8 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
         }
         this.textItalicChanged.emit(this.fontStyle);
     }
+
+    preventMenuClose(event: MouseEvent): void {
+        event.stopPropagation();
+    }
 }

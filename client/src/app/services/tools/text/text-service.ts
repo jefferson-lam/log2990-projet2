@@ -50,7 +50,7 @@ export class TextService extends Tool {
         if (!this.inUse) return;
         // method 2
         this.placeHolderSpan.focus();
-        this.setSelectedText();
+        // this.setSelectedText();
     }
 
     onEscapeKeyDown(): void {
@@ -66,6 +66,7 @@ export class TextService extends Tool {
         // method 1
         // this.placeHolderSpan.focus();
         // (this.placeHolderSpan as HTMLInputElement).select();
+        // this.setSelectedText();
     }
 
     drawTextOnCanvas(): void {
