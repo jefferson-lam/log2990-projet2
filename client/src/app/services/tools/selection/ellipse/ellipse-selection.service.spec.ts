@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { END_ANGLE, ROTATION, START_ANGLE } from '@app/constants/ellipse-constants';
+import * as SelectionConstants from '@app/constants/selection-constants';
 import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
@@ -399,7 +400,7 @@ describe('EllipseToolSelectionService', () => {
         ];
         service.selectionWidth = sw;
         service.selectionHeight = sh;
-        service.clipEllipse(baseCtxStub, service.cornerCoords[0], sh, sw, 0);
+        service.clipEllipse(baseCtxStub, service.cornerCoords[0], 0);
         expect(baseCtxEllipseSpy).toHaveBeenCalled();
         expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
@@ -418,9 +419,9 @@ describe('EllipseToolSelectionService', () => {
         const expectedStartY = 145;
         const xRadius = 37.5;
         const yRadius = 105;
-        const expectedXRadius = 39.5;
-        const expectedYRadius = 107;
-        service.drawOutlineEllipse(selectionCtxStub, expectedStartX, expectedStartY, xRadius, yRadius, 2);
+        const expectedXRadius = xRadius + SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET;
+        const expectedYRadius = yRadius + SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET;
+        service.drawOutlineEllipse(selectionCtxStub, { x: expectedStartX, y: expectedStartY }, { x: xRadius, y: yRadius });
         expect(selectionCtxEllipseSpy).toHaveBeenCalled();
         expect(selectionCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,

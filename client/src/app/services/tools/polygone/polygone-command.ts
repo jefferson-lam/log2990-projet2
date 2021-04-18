@@ -23,7 +23,7 @@ export class PolygoneCommand extends Command {
     }
 
     execute(): void {
-        this.drawPolygone(this.ctx, this.cornerCoords);
+        this.drawPolygone(this.ctx);
     }
 
     setValues(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService): void {
@@ -36,10 +36,10 @@ export class PolygoneCommand extends Command {
         Object.assign(this.cornerCoords, polygoneService.cornerCoords);
     }
 
-    private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.getPolygoneCenter(path[PolygoneConstants.START_INDEX], path[PolygoneConstants.END_INDEX]);
+    private drawPolygone(ctx: CanvasRenderingContext2D): void {
+        this.getPolygoneCenter(this.cornerCoords[PolygoneConstants.START_INDEX], this.cornerCoords[PolygoneConstants.END_INDEX]);
 
-        const xRadius = this.getRadiiX(path);
+        const xRadius = this.getRadiiX(this.cornerCoords);
         this.radiusWithin = xRadius - this.lineWidth / 2;
         if (this.radiusWithin < 0) {
             return;
@@ -92,7 +92,7 @@ export class PolygoneCommand extends Command {
         this.centerY = start.y + Math.sign(yVector) * displacementY;
     }
 
-    getRadiiX(path: Vec2[]): number {
+    private getRadiiX(path: Vec2[]): number {
         let xRadius = Math.abs(path[PolygoneConstants.END_INDEX].x - path[PolygoneConstants.START_INDEX].x) / 2;
         const yRadius = Math.abs(path[PolygoneConstants.END_INDEX].y - path[PolygoneConstants.START_INDEX].y) / 2;
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));

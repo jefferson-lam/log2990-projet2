@@ -62,13 +62,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
             this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
 
-            this.selectRectangle(
-                this.drawingService.selectionCtx,
-                this.drawingService.baseCtx,
-                this.cornerCoords,
-                this.selectionWidth,
-                this.selectionHeight,
-            );
+            this.selectRectangle(this.drawingService.selectionCtx, this.drawingService.baseCtx);
             this.setSelectionCanvasPosition(this.cornerCoords[SelectionConstants.START_INDEX]);
             this.inUse = false;
             this.isManipulating = true;
@@ -139,13 +133,7 @@ export class RectangleSelectionService extends ToolSelectionService {
             { x: this.selectionWidth, y: this.selectionHeight },
         ];
 
-        this.selectRectangle(
-            this.drawingService.selectionCtx,
-            this.drawingService.baseCtx,
-            this.cornerCoords,
-            this.selectionWidth,
-            this.selectionHeight,
-        );
+        this.selectRectangle(this.drawingService.selectionCtx, this.drawingService.baseCtx);
         this.setSelectionCanvasPosition({ x: SelectionConstants.DEFAULT_LEFT_POSITION, y: SelectionConstants.DEFAULT_TOP_POSITION });
 
         this.inUse = false;
@@ -221,14 +209,14 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.isEscapeDown = false;
     }
 
-    private fillRectangle(baseCtx: CanvasRenderingContext2D, cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): void {
+    private fillRectangle(baseCtx: CanvasRenderingContext2D): void {
         // Erase the contents on the base canvas
         baseCtx.fillStyle = 'white';
         baseCtx.fillRect(
-            cornerCoords[SelectionConstants.START_INDEX].x,
-            cornerCoords[SelectionConstants.START_INDEX].y,
-            selectionWidth,
-            selectionHeight,
+            this.cornerCoords[SelectionConstants.START_INDEX].x,
+            this.cornerCoords[SelectionConstants.START_INDEX].y,
+            this.selectionWidth,
+            this.selectionHeight,
         );
     }
 
@@ -241,7 +229,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.cornerCoords = this.validateCornerCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
         if (this.isSquare) {
             const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
-            this.cornerCoords = this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight, shortestSide);
+            this.cornerCoords = this.computeSquareCoords(this.cornerCoords, this.selectionWidth, this.selectionHeight);
             this.selectionHeight = this.selectionWidth = shortestSide;
         }
         this.selectionWidth = Math.abs(this.selectionWidth);
@@ -249,25 +237,19 @@ export class RectangleSelectionService extends ToolSelectionService {
         return true;
     }
 
-    private selectRectangle(
-        selectionCtx: CanvasRenderingContext2D,
-        baseCtx: CanvasRenderingContext2D,
-        cornerCoords: Vec2[],
-        selectionWidth: number,
-        selectionHeight: number,
-    ): void {
+    private selectRectangle(selectionCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D): void {
         this.drawingService.selectionCanvas.style.visibility = 'visible';
         selectionCtx.drawImage(
             baseCtx.canvas,
-            cornerCoords[SelectionConstants.START_INDEX].x,
-            cornerCoords[SelectionConstants.START_INDEX].y,
-            selectionWidth,
-            selectionHeight,
+            this.cornerCoords[SelectionConstants.START_INDEX].x,
+            this.cornerCoords[SelectionConstants.START_INDEX].y,
+            this.selectionWidth,
+            this.selectionHeight,
             0,
             0,
-            selectionWidth,
-            selectionHeight,
+            this.selectionWidth,
+            this.selectionHeight,
         );
-        this.fillRectangle(baseCtx, cornerCoords, selectionWidth, selectionHeight);
+        this.fillRectangle(baseCtx);
     }
 }

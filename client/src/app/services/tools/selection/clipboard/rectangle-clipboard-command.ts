@@ -21,16 +21,16 @@ export class RectangleClipboardCommand extends Command {
     }
 
     execute(): void {
-        this.fillRectangle(this.ctx, this.cornerCoords, this.selectionWidth, this.selectionHeight);
+        this.fillRectangle(this.ctx);
     }
 
-    private fillRectangle(baseCtx: CanvasRenderingContext2D, cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): void {
+    private fillRectangle(baseCtx: CanvasRenderingContext2D): void {
         baseCtx.fillStyle = 'white';
         baseCtx.fillRect(
-            cornerCoords[SelectionConstants.START_INDEX].x,
-            cornerCoords[SelectionConstants.START_INDEX].y,
-            selectionWidth,
-            selectionHeight,
+            this.cornerCoords[SelectionConstants.START_INDEX].x,
+            this.cornerCoords[SelectionConstants.START_INDEX].y,
+            this.selectionWidth,
+            this.selectionHeight,
         );
     }
 }
