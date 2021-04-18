@@ -24,7 +24,8 @@
 }
 
 #saveButton,
-#cancelButton {
+#cancelButton,
+#imgurButton {
     align-content: center;
     font-size: large;
     background-color: coral;
@@ -61,13 +62,4 @@
 
 img {
     border: 1px solid black;
-}
-
-#imgurButton {
-    align-content: center;
-    font-size: large;
-    color: #1cb76d;
-    background-color: #34373c;
-    margin: auto;
-    width: 210px;
 }
