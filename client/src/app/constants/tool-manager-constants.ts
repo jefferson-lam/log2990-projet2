@@ -21,3 +21,5 @@ export const POLYGONE_KEY = '3';
 export const LASSO_SELECTION_KEY = 'v';
 
 export const PAINT_BUCKET_KEY = 'b';
+
+export const STAMP_KEY = 'd';

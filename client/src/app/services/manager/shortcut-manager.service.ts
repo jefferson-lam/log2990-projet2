@@ -11,6 +11,7 @@ import { ClipboardService } from '@app/services/tools/selection/clipboard/clipbo
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
@@ -36,7 +37,7 @@ export class ShortcutManagerService {
 
     onKeyboardDown(event: KeyboardEvent): void {
         if (!this.isShortcutAllowed()) return;
-        if (event.key.match(/^(1|2|3|a|c|e|i|l|r|s|b|v)$/)) {
+        if (event.key.match(/^(1|2|3|a|b|c|d|e|i|l|r|s|v)$/)) {
             this.toolManager.selectTool(event.key);
         }
     }
@@ -168,6 +169,19 @@ export class ShortcutManagerService {
         this.magnetismService.toggleMagnetism();
     }
 
+    onAltDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (this.toolManager.currentTool instanceof StampService) {
+            this.toolManager.currentTool.changeRotationAngleOnAlt();
+        }
+    }
+
+    onAltUp(): void {
+        if (this.toolManager.currentTool instanceof StampService) {
+            this.toolManager.currentTool.changeRotationAngleNormal();
+        }
+    }
+
     async selectionMovementOnArrowDown(event: KeyboardEvent, directive: DirectionalMovementDirective): Promise<void> {
         event.preventDefault();
         if (!this.isShortcutAllowed()) return;
@@ -186,10 +200,8 @@ export class ShortcutManagerService {
 
         directive.hasMovedOnce = true;
         await directive.delay(DirectionalMovementConstants.CONTINUOUS_PRESS_DELAY_MS);
-        if (directive.keyPressed.get(event.key)) {
-            const numPixels = this.magnetismService.isMagnetismOn ? this.canvasGridService.squareWidth : DirectionalMovementConstants.NUM_PIXELS;
-            directive.translateSelection(numPixels);
-        }
+        const numPixels = this.magnetismService.isMagnetismOn ? this.canvasGridService.squareWidth : DirectionalMovementConstants.NUM_PIXELS;
+        directive.translateSelection(numPixels);
         directive.hasMovedOnce = false;
     }
 

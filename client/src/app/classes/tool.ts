@@ -25,10 +25,6 @@ export abstract class Tool {
 
     onKeyboardUp(event: KeyboardEvent): void {}
 
-    onKeyboardPress(event: KeyboardEvent): void {}
-
-    onMouseClick(event: MouseEvent): void {}
-
     onMouseDoubleClick(event: MouseEvent): void {}
 
     onMouseDown(event: MouseEvent): void {}
@@ -40,6 +36,8 @@ export abstract class Tool {
     onMouseLeave(event: MouseEvent): void {}
 
     onMouseEnter(event: MouseEvent): void {}
+
+    onMouseWheel(event: WheelEvent): void {}
 
     onToolEnter(mousePosition: Vec2): void {}
 
@@ -65,7 +63,15 @@ export abstract class Tool {
 
     setToleranceValue(newToleranceValue: number): void {}
 
+    setImageSource(newImageSource: string): void {}
+
+    setImageZoomFactor(newFactor: number): void {}
+
+    setAngleRotation(newAngle: number): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.x - CanvasConstants.LEFT_MARGIN, y: event.y };
     }
+
+    drawCursor(mousePosition: Vec2): void {}
 }
