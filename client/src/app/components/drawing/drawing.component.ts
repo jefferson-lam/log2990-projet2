@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, V
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { CursorManagerService } from '@app/services/manager/cursor-manager.service';
@@ -29,9 +30,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     @Input() currentTool: Tool;
     constructor(
         private drawingService: DrawingService,
+        private autoSaveService: AutoSaveService,
         public toolManager: ToolManagerService,
         public canvasGridService: CanvasGridService,
-        public undoRedoService: UndoRedoService,
+        private undoRedoService: UndoRedoService,
         public cursorManager: CursorManagerService,
     ) {
         this.currentTool = toolManager.pencilService; // default value
@@ -68,6 +70,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.currentTool = tool;
             this.cursorManager.changeCursor(tool);
         });
+        this.autoSaveService.loadDrawing();
     }
 
     ngOnDestroy(): void {
