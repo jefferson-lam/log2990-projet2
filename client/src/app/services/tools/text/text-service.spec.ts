@@ -205,10 +205,10 @@ describe('TextService', () => {
         expect(service.escapeKeyUsed).toEqual(false);
         expect(service.placeHolderSpan.style.fontSize).toEqual('20px');
         expect(service.placeHolderSpan.style.position).toEqual('absolute');
-        expect(service.placeHolderSpan.style.textAlign).toEqual('');
+        expect(service.placeHolderSpan.style.textAlign).toEqual('center');
         expect(service.placeHolderSpan.style.fontFamily).toEqual('Arial');
-        expect(service.placeHolderSpan.style.fontWeight).toEqual('');
-        expect(service.placeHolderSpan.style.fontStyle).toEqual('');
+        expect(service.placeHolderSpan.style.fontWeight).toEqual('normal');
+        expect(service.placeHolderSpan.style.fontStyle).toEqual('normal');
         expect(service.placeHolderSpan.style.outline).toEqual('black solid 1px');
         expect(service.placeHolderSpan.style.padding).toEqual('5px');
     });
@@ -278,5 +278,14 @@ describe('TextService', () => {
         service.escapeKeyUsed = false;
         service.onToolChange();
         expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onToolChange should set hasTextBoxBeenCreated and lockKeyboard false if lockKeyboard and escapeKeyUsed', () => {
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = false;
+        const textSpy = service['hasTextBoxBeenCreated'];
+        service.onToolChange();
+        expect(service.lockKeyboard).toBeFalse();
+        expect(textSpy).toBeFalse();
     });
 });
