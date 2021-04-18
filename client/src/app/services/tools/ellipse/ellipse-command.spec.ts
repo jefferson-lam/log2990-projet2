@@ -107,10 +107,10 @@ describe('EllipseCommand', () => {
         const drawTypeSpy = spyOn<any>(command, 'drawTypeEllipse');
 
         command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
-        command.centerX = mockPoint.x;
-        command.centerY = mockPoint.y;
-        command.xRadius = mockRadii[0];
-        command.yRadius = mockRadii[1];
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
+        command.radiiPosition.x = mockRadii[0];
+        command.radiiPosition.y = mockRadii[1];
         command.borderColor = command.primaryColor;
         command.lineWidth = EllipseConstants.HIDDEN_BORDER_WIDTH;
 
@@ -132,10 +132,10 @@ describe('EllipseCommand', () => {
 
         command.fillMode = ToolConstants.FillMode.FILL_ONLY;
         command.lineWidth = mockRadii[0];
-        command.centerX = mockPoint.x;
-        command.centerY = mockPoint.y;
-        command.xRadius = mockRadii[0] - command.lineWidth / 2;
-        command.yRadius = mockRadii[1] - command.lineWidth / 2;
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
+        command.radiiPosition.x = mockRadii[0] - command.lineWidth / 2;
+        command.radiiPosition.y = mockRadii[1] - command.lineWidth / 2;
         command.borderColor = command.primaryColor;
 
         // tslint:disable:no-string-literal
@@ -257,8 +257,8 @@ describe('EllipseCommand', () => {
         // tslint:disable:no-string-literal
         command['getEllipseCenter'](start, end, true);
 
-        expect(command.centerX).toEqual(start.x + Math.sign(xVector) * shortestSide);
-        expect(command.centerY).toEqual(start.y + Math.sign(yVector) * shortestSide);
+        expect(command.centerPosition.x).toEqual(start.x + Math.sign(xVector) * shortestSide);
+        expect(command.centerPosition.y).toEqual(start.y + Math.sign(yVector) * shortestSide);
     });
 
     it('getRadiiXAndY should set radius to shortest side if isCircle', () => {
@@ -275,7 +275,7 @@ describe('EllipseCommand', () => {
         // tslint:disable:no-string-literal
         command['getRadiiXAndY'](command.cornerCoords);
 
-        expect(command.xRadius).toEqual(shortestSide);
-        expect(command.yRadius).toEqual(shortestSide);
+        expect(command.radiiPosition.x).toEqual(shortestSide);
+        expect(command.radiiPosition.y).toEqual(shortestSide);
     });
 });

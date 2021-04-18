@@ -11,15 +11,15 @@ export class EllipseCommand extends Command {
     primaryColor: string;
     secondaryColor: string;
     cornerCoords: Vec2[] = [];
-    centerX: number;
-    centerY: number;
-    xRadius: number;
-    yRadius: number;
+    centerPosition: Vec2;
+    radiiPosition: Vec2;
     borderColor: string;
 
     constructor(canvasContext: CanvasRenderingContext2D, ellipseService: EllipseService) {
         super();
         this.setValues(canvasContext, ellipseService);
+        this.centerPosition = {} as Vec2;
+        this.radiiPosition = {} as Vec2;
     }
 
     execute(): void {
@@ -41,9 +41,9 @@ export class EllipseCommand extends Command {
         this.getRadiiXAndY(path);
 
         this.borderColor = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (this.xRadius > this.lineWidth / 2 && this.yRadius > this.lineWidth / 2) {
-            this.xRadius -= this.lineWidth / 2;
-            this.yRadius -= this.lineWidth / 2;
+        if (this.radiiPosition.x > this.lineWidth / 2 && this.radiiPosition.y > this.lineWidth / 2) {
+            this.radiiPosition.x -= this.lineWidth / 2;
+            this.radiiPosition.y -= this.lineWidth / 2;
             this.drawTypeEllipse(ctx);
         } else {
             this.lineWidth = EllipseConstants.HIDDEN_BORDER_WIDTH;
@@ -67,8 +67,8 @@ export class EllipseCommand extends Command {
         }
         const xVector = end.x - start.x;
         const yVector = end.y - start.y;
-        this.centerX = start.x + Math.sign(xVector) * displacementX;
-        this.centerY = start.y + Math.sign(yVector) * displacementY;
+        this.centerPosition.x = start.x + Math.sign(xVector) * displacementX;
+        this.centerPosition.y = start.y + Math.sign(yVector) * displacementY;
     }
 
     private drawTypeEllipse(ctx: CanvasRenderingContext2D): void {
@@ -76,10 +76,10 @@ export class EllipseCommand extends Command {
         ctx.setLineDash([]);
         ctx.lineJoin = 'round';
         ctx.ellipse(
-            this.centerX,
-            this.centerY,
-            this.xRadius,
-            this.yRadius,
+            this.centerPosition.x,
+            this.centerPosition.y,
+            this.radiiPosition.x,
+            this.radiiPosition.y,
             EllipseConstants.ROTATION,
             EllipseConstants.START_ANGLE,
             EllipseConstants.END_ANGLE,
@@ -95,12 +95,12 @@ export class EllipseCommand extends Command {
     }
 
     private getRadiiXAndY(path: Vec2[]): void {
-        this.xRadius = Math.abs(path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x) / 2;
-        this.yRadius = Math.abs(path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y) / 2;
+        this.radiiPosition.x = Math.abs(path[EllipseConstants.END_INDEX].x - path[EllipseConstants.START_INDEX].x) / 2;
+        this.radiiPosition.y = Math.abs(path[EllipseConstants.END_INDEX].y - path[EllipseConstants.START_INDEX].y) / 2;
 
         if (this.isCircle) {
-            const shortestSide = Math.min(Math.abs(this.xRadius), Math.abs(this.yRadius));
-            this.xRadius = this.yRadius = shortestSide;
+            const shortestSide = Math.min(Math.abs(this.radiiPosition.x), Math.abs(this.radiiPosition.y));
+            this.radiiPosition.x = this.radiiPosition.y = shortestSide;
         }
     }
 }

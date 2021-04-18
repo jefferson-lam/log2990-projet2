@@ -159,8 +159,8 @@ describe('PolygoneCommand', () => {
 
     it('drawTypePolygone should change fillStyle and fill if not FillMode.OUTLINE', () => {
         command.radiusWithin = mockRadius;
-        command.centerX = mockPoint.x;
-        command.centerY = mockPoint.y;
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
         command.initNumberSides = PolygoneConstants.MIN_SIDES_COUNT;
         command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
         command.primaryColor = TEST_PRIM_COLOR;
@@ -174,8 +174,8 @@ describe('PolygoneCommand', () => {
 
     it('drawTypePolygone should not change fillStyle and fill if FillMode.OUTLINE', () => {
         command.radiusWithin = mockRadius;
-        command.centerX = mockPoint.x;
-        command.centerY = mockPoint.y;
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
         command.initNumberSides = PolygoneConstants.MIN_SIDES_COUNT;
         command.fillMode = ToolConstants.FillMode.OUTLINE;
         command.primaryColor = TEST_PRIM_COLOR;
@@ -189,8 +189,8 @@ describe('PolygoneCommand', () => {
 
     it('drawTypePolygone should call ctx lineTo for odd sides', () => {
         command.radiusWithin = mockRadius;
-        command.centerX = mockPoint.x;
-        command.centerY = mockPoint.y;
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
         command.initNumberSides = PolygoneConstants.MIN_SIDES_COUNT;
         command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
         command.primaryColor = TEST_PRIM_COLOR;
@@ -204,8 +204,8 @@ describe('PolygoneCommand', () => {
     it('drawTypePolygone should change call ctx.moveTo for even sides', () => {
         const EVEN_NUMBER = 4;
         command.radiusWithin = mockRadius;
-        command.centerX = mockPoint.x;
-        command.centerY = mockPoint.y;
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
         command.initNumberSides = EVEN_NUMBER;
         command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
         command.primaryColor = TEST_PRIM_COLOR;
@@ -218,17 +218,7 @@ describe('PolygoneCommand', () => {
 
     it('drawTypePolygone should change call ctx.lineTo for even sides', () => {
         const lineSpy = spyOn(testCtx, 'lineTo');
-        command['drawTypePolygone'](
-            testCtx,
-            // mockRadius,
-            // mockPoint.x,
-            // mockPoint.y,
-            // evenNumber,
-            // ToolConstants.FillMode.OUTLINE_FILL,
-            // TEST_PRIM_COLOR,
-            // TEST_PRIM_COLOR,
-            // TEST_LINE_WIDTH,
-        );
+        command['drawTypePolygone'](testCtx);
         expect(lineSpy).toHaveBeenCalled();
     });
 
@@ -242,8 +232,8 @@ describe('PolygoneCommand', () => {
         // tslint:disable:no-string-literal
         command['getPolygoneCenter'](start, end);
 
-        expect(command.centerX).toEqual(start.x + Math.sign(xVector) * shortestSide);
-        expect(command.centerY).toEqual(start.y + Math.sign(yVector) * shortestSide);
+        expect(command.centerPosition.x).toEqual(start.x + Math.sign(xVector) * shortestSide);
+        expect(command.centerPosition.y).toEqual(start.y + Math.sign(yVector) * shortestSide);
     });
 
     it('getRadiiXAndY should set radius to shortest side always', () => {

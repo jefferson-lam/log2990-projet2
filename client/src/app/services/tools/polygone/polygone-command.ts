@@ -13,13 +13,13 @@ export class PolygoneCommand extends Command {
     borderColor: string;
     cornerCoords: Vec2[] = [];
 
-    centerX: number;
-    centerY: number;
+    centerPosition: Vec2;
     radiusWithin: number;
 
     constructor(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService) {
         super();
         this.setValues(canvasContext, polygoneService);
+        this.centerPosition = {} as Vec2;
     }
 
     execute(): void {
@@ -55,16 +55,19 @@ export class PolygoneCommand extends Command {
         if (this.initNumberSides % 2 !== 0) {
             for (let i = 0; i < this.initNumberSides; i++) {
                 ctx.lineTo(
-                    this.centerX +
+                    this.centerPosition.x +
                         this.radiusWithin * Math.cos(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
-                    this.centerY +
+                    this.centerPosition.y +
                         this.radiusWithin * Math.sin(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
                 );
             }
         } else {
-            ctx.moveTo(this.centerX + this.radiusWithin, this.centerY);
+            ctx.moveTo(this.centerPosition.x + this.radiusWithin, this.centerPosition.y);
             for (let i = 0; i < this.initNumberSides; i++) {
-                ctx.lineTo(this.centerX + this.radiusWithin * Math.cos(ANGLE_EVEN * i), this.centerY + this.radiusWithin * Math.sin(ANGLE_EVEN * i));
+                ctx.lineTo(
+                    this.centerPosition.x + this.radiusWithin * Math.cos(ANGLE_EVEN * i),
+                    this.centerPosition.y + this.radiusWithin * Math.sin(ANGLE_EVEN * i),
+                );
             }
         }
         ctx.closePath();
@@ -88,8 +91,8 @@ export class PolygoneCommand extends Command {
 
         const xVector = end.x - start.x;
         const yVector = end.y - start.y;
-        this.centerX = start.x + Math.sign(xVector) * displacementX;
-        this.centerY = start.y + Math.sign(yVector) * displacementY;
+        this.centerPosition.x = start.x + Math.sign(xVector) * displacementX;
+        this.centerPosition.y = start.y + Math.sign(yVector) * displacementY;
     }
 
     private getRadiiX(path: Vec2[]): number {
