@@ -20,7 +20,7 @@
             <p>Style du texte</p>
             <mat-form-field appearance="legacy" id="styleText">
                 <label>
-                    <select matNativeControl required [(ngModel)]="fontFamily" (change)="emitFontFamily()" (mouseup)="preventMenuClose($event)">
+                    <select matNativeControl required [(ngModel)]="fontFamily" (change)="emitFontFamily()" (mouseup)="$event.stopPropagation()">
                         <option value="Arial" id="style0">Arial</option>
                         <option value="Comic Sans MS" id="style1">Comic Sans MS</option>
                         <option value="Roboto" id="style2">Roboto</option>

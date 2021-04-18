@@ -48,9 +48,7 @@ export class TextService extends Tool {
 
     onMouseUp(): void {
         if (!this.inUse) return;
-        // method 2
         this.placeHolderSpan.focus();
-        // this.setSelectedText();
     }
 
     onEscapeKeyDown(): void {
@@ -63,10 +61,6 @@ export class TextService extends Tool {
         this.setSpanValues();
         this.lockKeyboard = true;
         this.escapeKeyUsed = false;
-        // method 1
-        // this.placeHolderSpan.focus();
-        // (this.placeHolderSpan as HTMLInputElement).select();
-        // this.setSelectedText();
     }
 
     drawTextOnCanvas(): void {
@@ -76,14 +70,6 @@ export class TextService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.placeHolderSpan.style.visibility = 'hidden';
         this.lockKeyboard = false;
-    }
-
-    setSelectedText(): void {
-        const selection = window.getSelection() as Selection;
-        const range = document.createRange();
-        range.selectNodeContents(this.placeHolderSpan);
-        selection.removeAllRanges();
-        selection.addRange(range);
     }
 
     setSpanValues(): void {

@@ -17,7 +17,6 @@ describe('TextService', () => {
 
     let executeSpy: jasmine.Spy;
     let drawSpy: jasmine.Spy;
-    let selectedTextSpy: jasmine.Spy;
     let setSpanValuesSpy: jasmine.Spy;
 
     let undoRedoService: UndoRedoService;
@@ -41,7 +40,6 @@ describe('TextService', () => {
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
         drawSpy = spyOn(service, 'drawTextOnCanvas');
-        selectedTextSpy = spyOn(service, 'setSelectedText');
         setSpanValuesSpy = spyOn(service, 'setSpanValues');
 
         service.cornerCoords = { x: 0, y: 0 };
@@ -136,16 +134,18 @@ describe('TextService', () => {
         expect(createTextBoxSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should not call setSelectedText if not inUse', () => {
+    it('onMouseUp should not focus text box if not inUse', () => {
+        const focusSpy = spyOn(service.placeHolderSpan, 'focus');
         service.inUse = false;
         service.onMouseUp();
-        expect(selectedTextSpy).not.toHaveBeenCalled();
+        expect(focusSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp should call setSelectedText if inUse', () => {
+    it('onMouseUp should focus text box if inUse', () => {
+        const focusSpy = spyOn(service.placeHolderSpan, 'focus');
         service.inUse = true;
         service.onMouseUp();
-        expect(selectedTextSpy).toHaveBeenCalled();
+        expect(focusSpy).toHaveBeenCalled();
     });
 
     it('onEscapeKeyDown should set placeHolderSpan.style.display to none and escapeKeyUsed to true', () => {
@@ -165,12 +165,10 @@ describe('TextService', () => {
         expect(setSpanValuesSpy).toHaveBeenCalled();
     });
 
-    it('createTextBox should set lockKeyboard to true, escapeKeyUsed to false and focus on placeHolderSpan', () => {
-        const focusSpy = spyOn(service.placeHolderSpan, 'focus');
+    it('createTextBox should set lockKeyboard to true, escapeKeyUsed to false', () => {
         service.createTextBox(mouseEvent);
         expect(service.lockKeyboard).toBeTrue();
         expect(service.escapeKeyUsed).toBeFalse();
-        expect(focusSpy).toHaveBeenCalled();
     });
 
     it('drawTextOnCanvas should call multiple functions and call new command', () => {
@@ -184,24 +182,13 @@ describe('TextService', () => {
         expect(service.lockKeyboard).toBeFalse();
     });
 
-    it('setSelectedText should call getSelection, createRange', () => {
-        selectedTextSpy.and.callThrough();
-        const getSelectionSpy = spyOn(window, 'getSelection').and.callThrough();
-        const rangeSpy = spyOn(document, 'createRange').and.callThrough();
-
-        service.setSelectedText();
-
-        expect(getSelectionSpy).toHaveBeenCalled();
-        expect(rangeSpy).toHaveBeenCalled();
-    });
-
     it('setSpanValues should set right values of span', () => {
         setSpanValuesSpy.and.callThrough();
         service.setSpanValues();
 
         expect(service.placeHolderSpan.style.zIndex).toEqual('2');
         expect(service.placeHolderSpan.style.visibility).toEqual('visible');
-        expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
+        expect(service.placeHolderSpan.innerText).toEqual(' ');
         expect(service.placeHolderSpan.style.display).toEqual('block');
         expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords.x + 'px');
         expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords.y + 'px');
