@@ -12,12 +12,10 @@ export class TextCommand extends Command {
     fontFamily: string;
     text: string;
     splitText: string[];
-    textWidth: number;
-    textHeight: number;
     spanLeftPosition: number;
     spanTopPosition: number;
 
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2;
 
     constructor(canvasContext: CanvasRenderingContext2D, textService: TextService) {
         super();
@@ -36,13 +34,11 @@ export class TextCommand extends Command {
         this.textAlign = textService.placeHolderSpan.style.textAlign;
         this.fontWeight = textService.placeHolderSpan.style.fontWeight;
         this.fontFamily = textService.placeHolderSpan.style.fontFamily;
-        this.textWidth = textService.textWidth;
-        this.textHeight = textService.textHeight;
         this.spanLeftPosition = textService.placeHolderSpan.clientWidth;
         this.spanTopPosition = textService.placeHolderSpan.clientHeight;
 
         this.text = textService.placeHolderSpan.innerText;
-        Object.assign(this.cornerCoords, textService.cornerCoords);
+        this.cornerCoords = Object.assign([], textService.cornerCoords);
     }
 
     writeText(ctx: CanvasRenderingContext2D): void {
@@ -68,9 +64,9 @@ export class TextCommand extends Command {
 
     fillTextOnCanvas(ctx: CanvasRenderingContext2D, index: number): void {
         const textPosition = {
-            x: this.textWidth + this.adjustTextAlignWidth(this.textAlign),
+            x: this.cornerCoords.x + this.adjustTextAlignWidth(this.textAlign),
             y:
-                this.textHeight +
+                this.cornerCoords.y +
                 this.fontSize +
                 -TextConstants.LINE_HEIGHT_CONVERSION * 2 +
                 (this.spanTopPosition / (this.splitText.length / index) + 1),

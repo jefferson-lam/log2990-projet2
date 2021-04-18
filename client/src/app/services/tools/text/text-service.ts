@@ -7,7 +7,6 @@ import * as TextConstants from '@app/constants/text-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextCommand } from '@app/services/tools/text/text-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -19,77 +18,59 @@ export class TextService extends Tool {
     fontFamily: string;
     fontWeight: string;
     textAlign: string;
-    textWidth: number;
-    textHeight: number;
     spanWidth: number;
     escapeKeyUsed: boolean;
     lockKeyboard: boolean;
 
-    primaryColorChanged: Subject<string> = new Subject<string>();
     placeHolderSpan: HTMLSpanElement;
-    cornerCoords: Vec2[];
+    cornerCoords: Vec2;
     previewCommand: TextCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
-        const MAX_PATH_DATA_SIZE = 2;
         this.primaryColor = '#b5cf60';
         this.fontSize = TextConstants.INIT_FONT_SIZE;
         this.fontFamily = 'Arial';
         this.escapeKeyUsed = false;
         this.lockKeyboard = false;
-        this.cornerCoords = new Array<Vec2>(MAX_PATH_DATA_SIZE);
-        this.clearCornerCoords();
+        this.cornerCoords = { x: 0, y: 0 };
     }
 
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (!this.inUse) return;
-        if (!this.lockKeyboard || this.escapeKeyUsed) {
-            this.cornerCoords[TextConstants.START_INDEX] = this.getPositionFromMouse(event);
-            this.textWidth = this.cornerCoords[TextConstants.START_INDEX].x;
-            this.textHeight = this.cornerCoords[TextConstants.START_INDEX].y;
-        }
         if (this.lockKeyboard && !this.escapeKeyUsed) {
             this.drawTextOnCanvas();
-            this.lockKeyboard = false;
+            return;
         }
+        this.createTextBox(event);
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(): void {
         if (!this.inUse) return;
-        if (!this.lockKeyboard || this.escapeKeyUsed) {
-            this.setSpanValues();
-            this.cornerCoords[TextConstants.END_INDEX] = this.getPositionFromMouse(event);
-            this.lockKeyboard = true;
-            this.escapeKeyUsed = false;
-            this.placeHolderSpan.focus();
-            this.setSelectedText();
-        }
+        this.setSelectedText();
     }
 
-    onMouseLeave(event: MouseEvent): void {
-        if (this.inUse) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        }
+    onEscapeKeyDown(): void {
+        this.placeHolderSpan.style.display = 'none';
+        this.escapeKeyUsed = true;
     }
 
-    onMouseEnter(event: MouseEvent): void {
-        if (event.buttons === MouseConstants.PRIMARY_BUTTON && this.inUse) {
-            this.inUse = event.button === MouseConstants.MouseButton.Left;
-        } else {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.inUse = false;
-        }
+    createTextBox(event: MouseEvent): void {
+        this.cornerCoords = this.getPositionFromMouse(event);
+        this.setSpanValues();
+        this.lockKeyboard = true;
+        this.escapeKeyUsed = false;
+        this.placeHolderSpan.focus();
     }
 
     drawTextOnCanvas(): void {
         const command: Command = new TextCommand(this.drawingService.baseCtx, this);
         this.undoRedoService.executeCommand(command);
         this.inUse = false;
-        this.clearCornerCoords();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.placeHolderSpan.style.visibility = 'hidden';
+        this.lockKeyboard = false;
     }
 
     setSelectedText(): void {
@@ -104,8 +85,8 @@ export class TextService extends Tool {
         this.placeHolderSpan.id = 'placeHolderSpan';
         this.placeHolderSpan.innerText = 'Ajoutez du texte ici...';
 
-        this.placeHolderSpan.style.left = this.cornerCoords[TextConstants.START_INDEX].x + 'px';
-        this.placeHolderSpan.style.top = this.cornerCoords[TextConstants.START_INDEX].y + 'px';
+        this.placeHolderSpan.style.left = this.cornerCoords.x + 'px';
+        this.placeHolderSpan.style.top = this.cornerCoords.y + 'px';
         this.placeHolderSpan.style.display = 'block';
         this.placeHolderSpan.style.zIndex = '2';
         this.placeHolderSpan.style.visibility = 'visible';
@@ -153,10 +134,6 @@ export class TextService extends Tool {
         if (this.placeHolderSpan !== undefined) {
             this.placeHolderSpan.style.color = newColor;
         }
-    }
-
-    private clearCornerCoords(): void {
-        this.cornerCoords.fill({ x: 0, y: 0 });
     }
 
     onToolChange(): void {

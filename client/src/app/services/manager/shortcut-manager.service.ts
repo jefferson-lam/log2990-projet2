@@ -9,7 +9,6 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
@@ -193,10 +192,8 @@ export class ShortcutManagerService {
     }
 
     onEscapeKeyDown(): void {
-        if (this.toolManager.currentTool instanceof TextService && !this.popupManager.isPopUpOpen) {
-            this.toolManager.currentTool.placeHolderSpan.style.display = 'none';
-            this.toolManager.currentTool.escapeKeyUsed = true;
-        }
+        if (this.popupManager.isPopUpOpen) return;
+        this.toolManager.currentTool.onEscapeKeyDown();
     }
 
     async selectionMovementOnArrowDown(event: KeyboardEvent, directive: DirectionalMovementDirective): Promise<void> {

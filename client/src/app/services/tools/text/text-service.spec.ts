@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { Vec2 } from '@app/classes/vec2';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -17,8 +17,8 @@ describe('TextService', () => {
 
     let executeSpy: jasmine.Spy;
     let drawSpy: jasmine.Spy;
-    let clearCornerSpy: jasmine.Spy;
     let selectedTextSpy: jasmine.Spy;
+    let setSpanValuesSpy: jasmine.Spy;
 
     let undoRedoService: UndoRedoService;
 
@@ -42,22 +42,19 @@ describe('TextService', () => {
         executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
         drawSpy = spyOn(service, 'drawTextOnCanvas');
         selectedTextSpy = spyOn(service, 'setSelectedText');
+        setSpanValuesSpy = spyOn(service, 'setSpanValues');
 
-        // tslint:disable-next-line:no-any
-        clearCornerSpy = spyOn<any>(service, 'clearCornerCoords');
-        service.cornerCoords = [
-            { x: 0, y: 0 },
-            { x: 0, y: 0 },
-        ];
+        service.cornerCoords = { x: 0, y: 0 };
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service.placeHolderSpan = document.createElement('span');
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 40,
             button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
     });
@@ -66,34 +63,26 @@ describe('TextService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('onMouseDown should set mouseDownCoord to correct position', () => {
-        const expectedResult: Vec2 = { x: 25, y: 40 };
-        service.inUse = true;
-        service.lockKeyboard = false;
-        service.onMouseDown(mouseEvent);
-        expect(service.textWidth).toEqual(expectedResult.x);
-        expect(service.textHeight).toEqual(expectedResult.y);
-    });
-
     it('onMouseDown should set inUse property to true on left click', () => {
-        service.inUse = true;
+        service.inUse = false;
         service.onMouseDown(mouseEvent);
-        service.lockKeyboard = false;
         expect(service.inUse).toEqual(true);
     });
 
-    it('onMouseDown should set inUse property to true on left click', () => {
-        service.onMouseDown(mouseEvent);
-        service.inUse = true;
-        service.lockKeyboard = true;
-        expect(service.lockKeyboard).toEqual(true);
+    it('onMouseDown should not call anything if not inUse', () => {
+        const rightClick = { button: MouseConstants.MouseButton.Right } as MouseEvent;
+        const createTextBoxSpy = spyOn(service, 'createTextBox');
+        service.inUse = false;
+
+        service.onMouseDown(rightClick);
+
+        expect(drawSpy).not.toHaveBeenCalled();
+        expect(createTextBoxSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseDown should call drawTextOnCanvas if lockKeyboard is true and escape key false', () => {
-        service.inUse = true;
+    it('onMouseDown should call drawTextOnCanvas() if inUse, lockKeyBoard and not escapeKeyUsed', () => {
         service.lockKeyboard = true;
         service.escapeKeyUsed = false;
-        service.placeHolderSpan.style.zIndex = '2';
 
         service.onMouseDown(mouseEvent);
 
@@ -110,42 +99,6 @@ describe('TextService', () => {
     });
 
     it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false and escape key true', () => {
-        service.inUse = true;
-        service.lockKeyboard = false;
-        service.escapeKeyUsed = true;
-        service.placeHolderSpan.style.zIndex = '2';
-
-        service.onMouseDown(mouseEvent);
-
-        expect(drawSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false or escape key true', () => {
-        service.inUse = true;
-        service.lockKeyboard = false;
-        service.escapeKeyUsed = false;
-        service.placeHolderSpan.style.zIndex = '2';
-
-        service.onMouseDown(mouseEvent);
-
-        expect(drawSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseDown should not call drawTextOnCanvas if inUse false', () => {
-        const mouseSpy = {
-            offsetX: 25,
-            offsetY: 40,
-            button: MouseConstants.MouseButton.Forward,
-        } as MouseEvent;
-        service.lockKeyboard = false;
-        service.escapeKeyUsed = false;
-
-        service.onMouseDown(mouseSpy);
-
-        expect(drawSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseDown should not call drawTextOnCanvas if lockKeyboard false', () => {
         service.lockKeyboard = false;
         service.escapeKeyUsed = true;
 
@@ -154,127 +107,70 @@ describe('TextService', () => {
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseDown should call drawTextOnCanvas if lock lockKeyboard true and escapeKeyUsed false', () => {
+    it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false and escape key false', () => {
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = false;
+
+        service.onMouseDown(mouseEvent);
+
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseDown should not call drawTextOnCanvas if lockKeyboard and escape key are true', () => {
         service.lockKeyboard = true;
+        service.escapeKeyUsed = true;
+
+        service.onMouseDown(mouseEvent);
+
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseDown should call createTextBox if inUse and (not lockKeyBoard or escapeKeyUsed)', () => {
+        const createTextBoxSpy = spyOn(service, 'createTextBox');
+        service.lockKeyboard = false;
         service.escapeKeyUsed = false;
 
         service.onMouseDown(mouseEvent);
 
-        expect(drawSpy).toHaveBeenCalled();
-        expect(service.lockKeyboard).toBeFalse();
+        expect(drawSpy).not.toHaveBeenCalled();
+        expect(createTextBoxSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should not call setSelectedText if mouse was not already down', () => {
+    it('onMouseUp should not call setSelectedText if not inUse', () => {
         service.inUse = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
+        service.onMouseUp();
         expect(selectedTextSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp should not call setSelectedText lock keyboard is true', () => {
-        service.inUse = false;
-        service.lockKeyboard = true;
-        service.escapeKeyUsed = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(selectedTextSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseUp should not call setSelectedText if both lock keyboard and escape key are true', () => {
+    it('onMouseUp should call setSelectedText if inUse', () => {
         service.inUse = true;
-        service.lockKeyboard = true;
-        service.escapeKeyUsed = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(selectedTextSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseUp should call setSpanValues and setSelectedText if lock keyboard and escape use false', () => {
-        const setSpanSpy = spyOn(service, 'setSpanValues').and.callThrough();
-        service.inUse = true;
-        service.lockKeyboard = false;
-        service.escapeKeyUsed = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(setSpanSpy).toHaveBeenCalled();
+        service.onMouseUp();
         expect(selectedTextSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should call setSpanValues and setSelectedText if only lock keyboard is false', () => {
-        const setSpanSpy = spyOn(service, 'setSpanValues');
-
-        service.inUse = true;
-        service.lockKeyboard = false;
-        service.escapeKeyUsed = true;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(setSpanSpy).toHaveBeenCalled();
-        expect(selectedTextSpy).toHaveBeenCalled();
+    it('onEscapeKeyDown should set placeHolderSpan.style.display to none and escapeKeyUsed to true', () => {
+        service.onEscapeKeyDown();
+        expect(service.placeHolderSpan.style.display).toBe('none');
+        expect(service.escapeKeyUsed).toBeTrue();
     });
 
-    it('onMouseUp should set placeholder attributes if escaped key used is true', () => {
-        const setSpanSpy = spyOn(service, 'setSpanValues');
-
-        service.inUse = true;
-        service.lockKeyboard = true;
-        service.escapeKeyUsed = true;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.onMouseUp(mouseEvent);
-        expect(setSpanSpy).toHaveBeenCalled();
-        expect(selectedTextSpy).toHaveBeenCalled();
+    it('createTextBox should set mouseDownCoord to correct position', () => {
+        service.createTextBox(mouseEvent);
+        expect(service.cornerCoords.x).toEqual(mouseEvent.x - CanvasConstants.LEFT_MARGIN);
+        expect(service.cornerCoords.y).toEqual(mouseEvent.y);
     });
 
-    it('onMouseLeave should clear canvas if inUse is true', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.inUse = true;
-        service.onMouseLeave(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    it('createTextBox should call setSpanValues', () => {
+        service.createTextBox(mouseEvent);
+        expect(setSpanValuesSpy).toHaveBeenCalled();
     });
 
-    it('onMouseLeave should not clear canvas if inUse is false', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.inUse = false;
-        service.onMouseLeave(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-    });
-
-    it('onMouseEnter should make service.mouseDown true if left mouse was pressed and mouse was pressed before leaving', () => {
-        const mouseEnterEvent = {
-            offsetX: 25,
-            offsetY: 40,
-            buttons: MouseConstants.PRIMARY_BUTTON,
-        } as MouseEvent;
-        service.inUse = true;
-        service.onMouseEnter(mouseEnterEvent);
-        expect(service.inUse).toEqual(false);
-    });
-
-    it('onMouseEnter should make service.mouseDown false if left mouse was pressed and mouse was not pressed before leaving', () => {
-        const mouseEnterEvent = {
-            offsetX: 25,
-            offsetY: 40,
-            buttons: 1,
-        } as MouseEvent;
-        service.inUse = false;
-        service.onMouseEnter(mouseEnterEvent);
-        expect(service.inUse).toEqual(false);
-    });
-
-    it('onMouseEnter should make service.mouseDown false if left mouse was not pressed and mouse was not pressed before leaving', () => {
-        const mouseEnterEvent = {
-            offsetX: 25,
-            offsetY: 40,
-            buttons: 0,
-        } as MouseEvent;
-        service.inUse = false;
-        service.onMouseEnter(mouseEnterEvent);
-        expect(service.inUse).toEqual(false);
-    });
-
-    it('drawTextOnCanvas should call clearCornerCoords', () => {
-        drawSpy.and.callThrough();
-        service.drawTextOnCanvas();
-        expect(clearCornerSpy).toHaveBeenCalled();
+    it('createTextBox should set lockKeyboard to true, escapeKeyUsed to false and focus on placeHolderSpan', () => {
+        const focusSpy = spyOn(service.placeHolderSpan, 'focus');
+        service.createTextBox(mouseEvent);
+        expect(service.lockKeyboard).toBeTrue();
+        expect(service.escapeKeyUsed).toBeFalse();
+        expect(focusSpy).toHaveBeenCalled();
     });
 
     it('drawTextOnCanvas should call multiple functions and call new command', () => {
@@ -285,6 +181,7 @@ describe('TextService', () => {
         expect(service.inUse).toEqual(false);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(service.placeHolderSpan.style.visibility).toEqual('hidden');
+        expect(service.lockKeyboard).toBeFalse();
     });
 
     it('setSelectedText should call getSelection, createRange', () => {
@@ -299,14 +196,15 @@ describe('TextService', () => {
     });
 
     it('setSpanValues should set right values of span', () => {
+        setSpanValuesSpy.and.callThrough();
         service.setSpanValues();
 
         expect(service.placeHolderSpan.style.zIndex).toEqual('2');
         expect(service.placeHolderSpan.style.visibility).toEqual('visible');
         expect(service.placeHolderSpan.innerText).toEqual('Ajoutez du texte ici...');
         expect(service.placeHolderSpan.style.display).toEqual('block');
-        expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords[0].x + 'px');
-        expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords[0].y + 'px');
+        expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords.x + 'px');
+        expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords.y + 'px');
         expect(service.lockKeyboard).toEqual(false);
         expect(service.escapeKeyUsed).toEqual(false);
         expect(service.placeHolderSpan.style.fontSize).toEqual('20px');
@@ -315,34 +213,6 @@ describe('TextService', () => {
         expect(service.placeHolderSpan.style.fontFamily).toEqual('Arial');
         expect(service.placeHolderSpan.style.fontWeight).toEqual('');
         expect(service.placeHolderSpan.style.fontStyle).toEqual('');
-    });
-
-    it('onKeyboardDown of wrong keypress should not call clearCanvas', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-
-        const keyEvent = {
-            key: 'g',
-        } as KeyboardEvent;
-
-        service.onKeyboardDown(keyEvent);
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-    });
-
-    it('onToolChange should call drawTextOnCanvas', () => {
-        service.lockKeyboard = true;
-        service.escapeKeyUsed = false;
-        service.onToolChange();
-        expect(service.lockKeyboard).toBeFalse();
-        expect(drawSpy).toHaveBeenCalled();
-        expect(service.lockKeyboard).toEqual(false);
-    });
-
-    it('onToolChange should not call drawTextOnCanvas', () => {
-        service.lockKeyboard = false;
-        service.escapeKeyUsed = true;
-        service.onToolChange();
-        expect(service.lockKeyboard).toBeFalse();
-        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('setFontFamily should change family font', () => {
@@ -381,5 +251,34 @@ describe('TextService', () => {
         expect(service.primaryColor).toEqual(EXPECTED_RANDOM_COLOR);
         expect(service.placeHolderSpan.style.color).toEqual(EXPECTED_RANDOM_COLOR);
     });
-    // tslint:disable-next-line:max-file-line-count
+
+    it('onToolChange should call drawTextOnCanvas if lockKeyboard and not escapeKeyUsed', () => {
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = false;
+        service.onToolChange();
+        expect(service.lockKeyboard).toBeFalse();
+        expect(drawSpy).toHaveBeenCalled();
+        expect(service.lockKeyboard).toEqual(false);
+    });
+
+    it('onToolChange should not call drawTextOnCanvas if not lockKeyboard and escapeKeyUsed', () => {
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = true;
+        service.onToolChange();
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onToolChange should not call drawTextOnCanvas if lockKeyboard and escapeKeyUsed', () => {
+        service.lockKeyboard = true;
+        service.escapeKeyUsed = true;
+        service.onToolChange();
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('onToolChange should not call drawTextOnCanvas if not lockKeyboard and not escapeKeyUsed', () => {
+        service.lockKeyboard = false;
+        service.escapeKeyUsed = false;
+        service.onToolChange();
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
 });

@@ -25,9 +25,6 @@ describe('TextCommand', () => {
     const BLUE_VALUE = 202;
     const TEST_PRIM_COLOR = `rgb(${RED_VALUE}, ${GREEN_VALUE}, ${BLUE_VALUE})`;
 
-    const END_X = 10;
-    const END_Y = 15;
-
     beforeEach(() => {
         textService = new TextService({} as DrawingService, {} as UndoRedoService);
         TestBed.configureTestingModule({
@@ -50,8 +47,7 @@ describe('TextCommand', () => {
         textService.setTextBold(TEST_FONT_WEIGHT);
         textService.setTextItalic(TEST_ITALIC);
 
-        textService.cornerCoords[0] = { x: 0, y: 0 };
-        textService.cornerCoords[1] = { x: END_X, y: END_Y };
+        textService.cornerCoords = { x: 0, y: 0 };
 
         command = new TextCommand(baseCtxStub, textService);
         command.splitText = TEST_SPLIT_TEXT;
@@ -77,8 +73,8 @@ describe('TextCommand', () => {
         expect(command.textAlign).toEqual(textService.placeHolderSpan.style.textAlign);
         expect(command.fontWeight).toEqual(textService.placeHolderSpan.style.fontWeight);
         expect(command.fontFamily).toEqual(textService.placeHolderSpan.style.fontFamily);
-        expect(command.textWidth).toEqual(textService.textWidth);
-        expect(command.textHeight).toEqual(textService.textHeight);
+        expect(command.cornerCoords.x).toEqual(textService.cornerCoords.x);
+        expect(command.cornerCoords.y).toEqual(textService.cornerCoords.y);
         expect(command.spanLeftPosition).toEqual(textService.placeHolderSpan.clientWidth);
         expect(command.spanTopPosition).toEqual(textService.placeHolderSpan.clientHeight);
         expect(command.text).toEqual(textService.placeHolderSpan.innerText);

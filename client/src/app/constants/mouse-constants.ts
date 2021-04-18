@@ -7,5 +7,3 @@ export enum MouseButton {
 }
 
 export const NO_BUTTON_PRESSED = 0;
-
-export const PRIMARY_BUTTON = 1;

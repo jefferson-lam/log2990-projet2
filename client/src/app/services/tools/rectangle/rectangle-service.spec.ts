@@ -131,7 +131,7 @@ describe('RectangleService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: MouseConstants.PRIMARY_BUTTON,
+            buttons: MouseConstants.MouseButton.Middle,
         } as MouseEvent;
         service.inUse = true;
 
@@ -143,7 +143,7 @@ describe('RectangleService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: MouseConstants.PRIMARY_BUTTON,
+            buttons: MouseConstants.MouseButton.Middle,
         } as MouseEvent;
         service.inUse = false;
 

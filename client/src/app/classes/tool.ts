@@ -27,6 +27,8 @@ export abstract class Tool {
 
     onKeyboardPress(event: KeyboardEvent): void {}
 
+    onEscapeKeyDown(): void {}
+
     onMouseClick(event: MouseEvent): void {}
 
     onMouseDoubleClick(event: MouseEvent): void {}
