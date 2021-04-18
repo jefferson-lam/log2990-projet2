@@ -3,6 +3,7 @@ import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as SelectionConstants from '@app/constants/selection-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { RectangleSelectionCommand } from '@app/services/tools/selection/rectangle/rectangle-selection-command';
@@ -15,15 +16,15 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class RectangleSelectionService extends ToolSelectionService {
     transformValues: Vec2;
-    isSquare: boolean = false;
-    isShiftDown: boolean = false;
-    isEscapeDown: boolean = false;
-    pathData: Vec2[] = new Array<Vec2>(2);
-    inUse: boolean = false;
-    isManipulating: boolean = false;
-    selectionHeight: number = 0;
-    selectionWidth: number = 0;
-    isFromClipboard: boolean = false;
+    isSquare: boolean;
+    isShiftDown: boolean;
+    isEscapeDown: boolean;
+    pathData: Vec2[];
+    inUse: boolean;
+    isManipulating: boolean;
+    selectionHeight: number;
+    selectionWidth: number;
+    isFromClipboard: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -32,6 +33,15 @@ export class RectangleSelectionService extends ToolSelectionService {
         public rectangleService: RectangleService,
     ) {
         super(drawingService, undoRedoService, resizerHandlerService, rectangleService);
+        this.isSquare = false;
+        this.inUse = false;
+        this.isManipulating = false;
+        this.isShiftDown = false;
+        this.isEscapeDown = false;
+        this.pathData = new Array<Vec2>(ShapeConstants.DIMENSION);
+        this.selectionHeight = 0;
+        this.selectionWidth = 0;
+        this.isFromClipboard = false;
     }
 
     onMouseDown(event: MouseEvent): void {

@@ -8,22 +8,28 @@ import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.s
     styleUrls: ['./rgb-selector.component.scss'],
 })
 export class RgbSelectorComponent implements OnChanges {
-    red: number = 0;
-    green: number = 0;
-    blue: number = 0;
-    invalidInput: boolean = false;
+    red: number;
+    green: number;
+    blue: number;
+    invalidInput: boolean;
 
     @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
     @ViewChild('greenInput', { static: false }) greenInput: ElementRef<HTMLInputElement>;
     @ViewChild('blueInput', { static: false }) blueInput: ElementRef<HTMLInputElement>;
 
-    @Input()
-    initialColor: Rgba = { red: 255, green: 255, blue: 255, alpha: 1 };
+    @Input() initialColor: Rgba;
 
-    @Output()
-    newColor: EventEmitter<Rgba> = new EventEmitter();
+    @Output() newColor: EventEmitter<Rgba>;
 
-    constructor(public shortcutManager: ShortcutManagerService) {}
+    constructor(public shortcutManager: ShortcutManagerService) {
+        this.red = 0;
+        this.green = 0;
+        this.blue = 0;
+        this.invalidInput = false;
+        this.initialColor = { red: 255, green: 255, blue: 255, alpha: 1 };
+        this.newColor = new EventEmitter();
+        this.invalidInput = false;
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.initialColor) {

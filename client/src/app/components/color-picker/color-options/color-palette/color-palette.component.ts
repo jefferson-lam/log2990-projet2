@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
+import { Vec2 } from '@app/classes/vec2';
 import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from '@app/services/color/color.service';
 
@@ -11,8 +12,8 @@ import { ColorService } from '@app/services/color/color.service';
 export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     // Base code provided by Lukas Marx (https://malcoded.com/posts/angular-color-picker/)
     ctx: CanvasRenderingContext2D;
-    mousedown: boolean = false;
-    selectedPosition: { x: number; y: number };
+    mousedown: boolean;
+    selectedPosition: Vec2;
 
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
@@ -20,9 +21,12 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     @Input() currentOpacity: number;
     @Input() hue: Rgba;
 
-    @Output() color: EventEmitter<Rgba> = new EventEmitter<Rgba>();
+    @Output() color: EventEmitter<Rgba>;
 
-    constructor(public colorService: ColorService) {}
+    constructor(public colorService: ColorService) {
+        this.mousedown = false;
+        this.color = new EventEmitter<Rgba>();
+    }
 
     ngAfterViewInit(): void {
         this.draw();

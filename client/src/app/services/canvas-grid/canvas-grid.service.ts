@@ -8,12 +8,15 @@ import { Subject } from 'rxjs';
 export class CanvasGridService {
     opacityValue: number;
     squareWidth: number;
-    isGridDisplayed: boolean = false;
+    isGridDisplayed: boolean;
     gridCtx: CanvasRenderingContext2D;
-    gridVisibilitySubject: Subject<boolean> = new Subject<boolean>();
-    squareWidthSubject: Subject<number> = new Subject<number>();
+    gridVisibilitySubject: Subject<boolean>;
+    squareWidthSubject: Subject<number>;
 
     constructor() {
+        this.isGridDisplayed = false;
+        this.gridVisibilitySubject = new Subject<boolean>();
+        this.squareWidthSubject = new Subject<number>();
         this.setValues();
     }
 

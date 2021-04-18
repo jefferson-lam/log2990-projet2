@@ -212,14 +212,6 @@ describe('ResizerComponent', () => {
         expect(component.isCornerResizerDown).toEqual(true);
     });
 
-    it('ngAfterViewInit should call loadDrawing of autoSaveService', () => {
-        const loadSpy = spyOn(component.autoSaveService, 'loadDrawing');
-
-        component.ngAfterViewInit();
-
-        expect(loadSpy).toHaveBeenCalled();
-    });
-
     it('setPreviewSize should set width if isSideResizerDown and over min value', () => {
         component.isSideResizerDown = true;
         const cdkDragMove = {

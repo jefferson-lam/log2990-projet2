@@ -9,7 +9,7 @@ export class RectangleSelectionCommand extends Command {
     selectionHeight: number;
     transformValues: Vec2;
     isSquare: boolean;
-    pathData: Vec2[] = [];
+    pathData: Vec2[];
     selectionCanvas: HTMLCanvasElement;
     isFromClipboard: boolean;
 

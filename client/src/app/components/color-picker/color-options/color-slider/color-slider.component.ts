@@ -9,19 +9,20 @@ import { ColorService } from '@app/services/color/color.service';
 })
 export class ColorSliderComponent implements AfterViewInit {
     ctx: CanvasRenderingContext2D;
-    mousedown: boolean = false;
+    mousedown: boolean;
     selectedHeight: number;
-
-    constructor(public colorService: ColorService) {}
 
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
 
-    @Input()
-    rgbSelectorColor: Rgba;
+    @Input() rgbSelectorColor: Rgba;
 
-    @Output()
-    hue: EventEmitter<Rgba> = new EventEmitter();
+    @Output() hue: EventEmitter<Rgba>;
+
+    constructor(public colorService: ColorService) {
+        this.mousedown = false;
+        this.hue = new EventEmitter();
+    }
 
     ngAfterViewInit(): void {
         this.drawSlider();

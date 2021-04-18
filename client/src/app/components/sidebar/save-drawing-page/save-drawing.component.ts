@@ -17,13 +17,13 @@ export class SaveDrawingComponent implements AfterViewInit {
     @ViewChild('tagInput') private tagInput: TagInputComponent;
     @ViewChild('titleInput') private titleInput: TitleInputComponent;
 
-    resultMessage: string = '';
-    saveProgressEnum: typeof SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress;
-    saveProgress: SaveDrawingConstants.SaveProgress = SaveDrawingConstants.SaveProgress.CHOOSING_SETTING;
-    request: Message = { title: 'Error', body: '' };
-    isTitleValid: boolean = false;
-    areTagsValid: boolean = true;
-    isSavePossible: boolean = false;
+    resultMessage: string;
+    saveProgressEnum: typeof SaveDrawingConstants.SaveProgress;
+    saveProgress: SaveDrawingConstants.SaveProgress;
+    request: Message;
+    isTitleValid: boolean;
+    areTagsValid: boolean;
+    isSavePossible: boolean;
 
     imageURL: string;
 
@@ -32,7 +32,15 @@ export class SaveDrawingComponent implements AfterViewInit {
         private localServerService: LocalServerService,
         private drawingService: DrawingService,
         @Inject(MatDialogRef) private dialogRef: MatDialogRef<SaveDrawingComponent>,
-    ) {}
+    ) {
+        this.resultMessage = '';
+        this.saveProgressEnum = SaveDrawingConstants.SaveProgress;
+        this.saveProgress = SaveDrawingConstants.SaveProgress.CHOOSING_SETTING;
+        this.request = { title: 'Error', body: '' };
+        this.isTitleValid = false;
+        this.areTagsValid = true;
+        this.isSavePossible = false;
+    }
 
     ngAfterViewInit(): void {
         this.imageURL = this.drawingService.canvas.toDataURL();

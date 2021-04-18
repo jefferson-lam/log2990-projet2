@@ -4,15 +4,16 @@ import * as EraserConstants from '@app/constants/eraser-constants';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 
 export class EraserCommand extends Command {
-    private path: Vec2[] = [];
+    private path: Vec2[];
     private lineWidth: number;
-    private preview: boolean = false;
+    private preview: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, eraserService: EraserService) {
         super();
         this.ctx = canvasContext;
         this.path = Object.assign([], eraserService.pathData);
         this.lineWidth = eraserService.lineWidth;
+        this.preview = false;
     }
 
     setValues(canvasContext: CanvasRenderingContext2D, eraserService: EraserService): void {
