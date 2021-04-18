@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import { LEFT_MARGIN } from '@app/constants/canvas-constants';
 import { MouseButton } from '@app/constants/mouse-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
@@ -70,8 +71,8 @@ describe('LassoSelectionService', () => {
         service.numSides = 2;
 
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
+            x: 25,
+            y: 40,
             button: MouseButton.Left,
         } as MouseEvent;
     });
@@ -142,8 +143,10 @@ describe('LassoSelectionService', () => {
 
     it('onMouseDown should start new path if passes initial validation and called first time', () => {
         service.inUse = false;
+        service.isValidSegment = true;
+        service.isManipulating = false;
         service.onMouseDown(mouseEvent);
-        expect(service.initialPoint).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
+        expect(service.initialPoint).toEqual({ x: mouseEvent.x - LEFT_MARGIN, y: mouseEvent.y });
         expect(service.pathData).toEqual([service.initialPoint, service.initialPoint]);
         expect(service.inUse).toBeTruthy();
     });
@@ -200,9 +203,10 @@ describe('LassoSelectionService', () => {
     });
 
     it('onMouseMove should with 1 segment should set valid to false if mouse is equal to initial point', () => {
+        const mousePositionX = 394;
         const initialMouseEvent = {
-            offsetX: 394,
-            offsetY: 432,
+            x: mousePositionX + LEFT_MARGIN,
+            y: 432,
         } as MouseEvent;
         service.inUse = true;
         service.numSides = 1;
@@ -212,14 +216,14 @@ describe('LassoSelectionService', () => {
 
     it('onMouseMove with 1 segment should set next line to mousePosition if inside 20px of initial', () => {
         const initialMouseEvent = {
-            offsetX: 400,
-            offsetY: 432,
+            x: 400,
+            y: 432,
         } as MouseEvent;
         service.inUse = true;
         service.numSides = 1;
         service.pathData[service.pathData.length - 1] = service.initialPoint;
         service.onMouseMove(initialMouseEvent);
-        expect(service.pathData[service.pathData.length - 1]).toEqual({ x: initialMouseEvent.offsetX, y: initialMouseEvent.offsetY });
+        expect(service.pathData[service.pathData.length - 1]).toEqual({ x: initialMouseEvent.x - LEFT_MARGIN, y: initialMouseEvent.y });
         expect(service.isValidSegment).toBeTruthy();
     });
 
