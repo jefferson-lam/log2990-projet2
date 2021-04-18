@@ -20,7 +20,14 @@
             <p>Style du texte</p>
             <mat-form-field appearance="legacy" id="styleText">
                 <label>
-                    <select matNativeControl required [(ngModel)]="fontFamily" (change)="emitFontFamily()" (mouseup)="$event.stopPropagation()">
+                    <select
+                        matNativeControl
+                        required
+                        [(ngModel)]="fontFamily"
+                        (change)="emitFontFamily()"
+                        (mouseup)="$event.stopPropagation()"
+                        ngDefaultControl
+                    >
                         <option value="Arial" id="style0">Arial</option>
                         <option value="Comic Sans MS" id="style1">Comic Sans MS</option>
                         <option value="Roboto" id="style2">Roboto</option>
@@ -33,7 +40,7 @@
 
         <div id="alignmentSettings">
             <p>Alignement du texte</p>
-            <mat-radio-group id="alignmentText" [(ngModel)]="textAlign" (change)="emitTexAlign()">
+            <mat-radio-group id="alignmentText" [(ngModel)]="textAlign" (change)="emitTexAlign()" ngDefaultControl>
                 <mat-radio-button id="leftValue" value="left" color="warn" checked> Gauche </mat-radio-button>
                 <mat-radio-button id="center" value="center" color="warn"> Centre </mat-radio-button>
                 <mat-radio-button id="right" value="right" color="warn"> Droite </mat-radio-button>
@@ -42,9 +49,13 @@
 
         <div id="textFormatSettings">
             <p>Format du texte</p>
-            <mat-checkbox id="italic" value="italic" color="warn" [(ngModel)]="textItalic" (change)="emitFontStyle()"> Italic </mat-checkbox>
+            <mat-checkbox id="italic" value="italic" color="warn" [(ngModel)]="textItalic" (change)="emitFontStyle()" ngDefaultControl>
+                Italic
+            </mat-checkbox>
             <br />
-            <mat-checkbox id="bold" value="bold" color="warn" [(ngModel)]="textBold" (change)="emitFontWeight()"> Gras </mat-checkbox>
+            <mat-checkbox id="bold" value="bold" color="warn" [(ngModel)]="textBold" (change)="emitFontWeight()" ngDefaultControl>
+                Gras
+            </mat-checkbox>
         </div>
 
         <div id="colorPicker">

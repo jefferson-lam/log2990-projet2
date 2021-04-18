@@ -1,5 +1,14 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSliderModule } from '@angular/material/slider';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ColorHistoryComponent } from '@app/components/color-picker/color-history/color-history.component';
+import { ColorPickerComponent } from '@app/components/color-picker/color-picker.component';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { TextService } from '@app/services/tools/text/text-service';
 import { SidebarTextComponent } from './sidebar-text.component';
@@ -21,8 +30,18 @@ describe('SidebarTextComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [SidebarTextComponent],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA],
+            imports: [
+                FormsModule,
+                MatSliderModule,
+                ReactiveFormsModule,
+                MatButtonModule,
+                MatFormFieldModule,
+                MatInputModule,
+                MatRadioModule,
+                MatIconModule,
+                BrowserAnimationsModule,
+            ],
+            declarations: [SidebarTextComponent, ColorPickerComponent, ColorHistoryComponent],
         }).compileComponents();
     }));
 
