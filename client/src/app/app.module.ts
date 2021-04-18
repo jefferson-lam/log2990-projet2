@@ -58,6 +58,7 @@ import { SidebarPipetteComponent } from './components/sidebar/sidebar-tools-opti
 import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-polygone/sidebar-polygone.component';
 import { SidebarRectangleSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle-selection/sidebar-rectangle-selection/sidebar-rectangle-selection.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
+import { SidebarStampComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-stamp/sidebar-stamp.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
@@ -96,6 +97,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         ExportErrorPageComponent,
         SidebarGridComponent,
         SidebarMagnetismComponent,
+        SidebarStampComponent,
     ],
     entryComponents: [MainPageCarrouselComponent, ExportCompletePageComponent],
     imports: [
@@ -128,6 +130,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         MatProgressSpinnerModule,
         MatSlideToggleModule,
     ],
+    providers: [],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -7,6 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from '@app/services/tools/eraser/eraser-service';
 import { LineService } from '@app/services/tools/line/line-service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingComponent } from './drawing.component';
 
@@ -20,6 +21,7 @@ describe('DrawingComponent', () => {
     let pencilStub: ToolStub;
     let eraserStub: ToolStub;
     let lineStub: ToolStub;
+    let stampStub: ToolStub;
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
@@ -27,6 +29,7 @@ describe('DrawingComponent', () => {
         pencilStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         eraserStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
         lineStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
+        stampStub = new ToolStub({} as DrawingService, {} as UndoRedoService);
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
@@ -36,6 +39,7 @@ describe('DrawingComponent', () => {
                 { provide: PencilService, useValue: pencilStub },
                 { provide: EraserService, useValue: eraserStub },
                 { provide: LineService, useValue: lineStub },
+                { provide: StampService, useValue: stampStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -73,8 +77,7 @@ describe('DrawingComponent', () => {
     });
 
     it('should get pencilStub', () => {
-        const currentTool = component.currentTool;
-        expect(currentTool).toEqual(pencilStub);
+        expect(component.currentTool).toEqual(pencilStub);
     });
 
     it(" should call the tool's mouse move when receiving a mouse move event", () => {
@@ -101,15 +104,6 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
-    it("should call the tool's keyboard press when receiving a keyboard press event", () => {
-        const keyboardEvent = {} as KeyboardEvent;
-        const keyboardEventSpy = spyOn(pencilStub, 'onKeyboardPress').and.callThrough();
-        component.onKeyboardPress(keyboardEvent);
-
-        expect(keyboardEventSpy).toHaveBeenCalled();
-        expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
-    });
-
     it("should call the tool's keyboard down when receiving a keyboard down event", () => {
         const keyboardEvent = {} as KeyboardEvent;
         const keyboardEventSpy = spyOn(pencilStub, 'onKeyboardDown').and.callThrough();
@@ -126,15 +120,6 @@ describe('DrawingComponent', () => {
 
         expect(keyboardEventSpy).toHaveBeenCalled();
         expect(keyboardEventSpy).toHaveBeenCalledWith(keyboardEvent);
-    });
-
-    it("should call the tool's mouse click when receiving a mouse click event", () => {
-        const mouseEvent = {} as MouseEvent;
-        const mouseEventSpy = spyOn(pencilStub, 'onMouseClick').and.callThrough();
-        component.onMouseClick(mouseEvent);
-
-        expect(mouseEventSpy).toHaveBeenCalled();
-        expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
     });
 
     it("should call the tool's mouse double click when receiving a mouse double click event", () => {
@@ -164,25 +149,20 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(mouseEvent);
     });
 
+    it(" should call the tool's mouse wheel when receiving a mouse wheel event", () => {
+        const wheelEvent = {} as WheelEvent;
+        const wheelEventSpy = spyOn(stampStub, 'onMouseWheel').and.callThrough();
+        component.currentTool = stampStub;
+        component.onMouseWheel(wheelEvent);
+
+        expect(wheelEventSpy).toHaveBeenCalled();
+        expect(wheelEventSpy).toHaveBeenCalledWith(wheelEvent);
+    });
+
     it('should call onContextmenu when receiving a contextmenu event', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault']);
         component.onContextMenu(eventSpy);
 
         expect(eventSpy.preventDefault).toHaveBeenCalled();
-    });
-
-    it('changeCursor should set cursor to none if eraserService selected', () => {
-        component.changeCursor(eraserStub);
-        expect(component.previewCanvas.nativeElement.style.cursor).toBe('none');
-    });
-
-    it('changeCursor should set cursor to pencil-icon if pencilService selected', () => {
-        component.changeCursor(pencilStub);
-        expect(component.previewCanvas.nativeElement.style.cursor).toBe('url("assets/pencil.png") 0 15, auto');
-    });
-
-    it('changeCursor should set cursor to crosshair if not eraser or pencil selected', () => {
-        component.changeCursor(lineStub);
-        expect(component.previewCanvas.nativeElement.style.cursor).toBe('crosshair');
     });
 });

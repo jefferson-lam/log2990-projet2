@@ -43,6 +43,8 @@ describe('EditorComponent', () => {
             'onEqualKeyDown',
             'onKeyboardDown',
             'onMKeyDown',
+            'onAltUp',
+            'onAltDown',
         ]);
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService, {} as UndoRedoService);
@@ -207,25 +209,36 @@ describe('EditorComponent', () => {
         expect(shortcutManagerSpy.onKeyboardDown).not.toHaveBeenCalled();
     });
 
-    it('ctrl+c should call copySelection from ClipboardService', () => {
+    it('alt key down should call shortcutManager.onAltDown', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
+        component.onAltDown(eventSpy);
+        expect(shortcutManagerSpy.onAltDown).toHaveBeenCalledWith(eventSpy);
+    });
+
+    it('alt key up should call shortcutManager.onAltUp', () => {
+        component.onAltUp();
+        expect(shortcutManagerSpy.onAltUp).toHaveBeenCalled();
+    });
+
+    it('ctrl+c should call shortcutManager.onCtrlCKeyDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyC', key: 'c' });
         component.onCtrlCKeyDown(eventSpy);
         expect(shortcutManagerSpy.onCtrlCKeyDown).toHaveBeenCalled();
     });
 
-    it('ctrl+x should call cutSelection from ClipboardService', () => {
+    it('ctrl+x should call shortcutManager.onCtrlXKeyDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyX', key: 'x' });
         component.onCtrlXKeyDown(eventSpy);
         expect(shortcutManagerSpy.onCtrlXKeyDown).toHaveBeenCalled();
     });
 
-    it('ctrl+v should call pasteSelection from ClipboardService', () => {
+    it('ctrl+v should call shortcutManager.onCtrlVKeyDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyV', key: 'v' });
         component.onCtrlVKeyDown(eventSpy);
         expect(shortcutManagerSpy.onCtrlVKeyDown).toHaveBeenCalled();
     });
 
-    it('delete should call deleteSelection from ClipboardService', () => {
+    it('delete should call shortcutManager.onDeleteKeyDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
         component.onDeleteKeyDown(eventSpy);
         expect(shortcutManagerSpy.onDeleteKeyDown).toHaveBeenCalled();
