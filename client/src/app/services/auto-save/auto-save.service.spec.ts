@@ -8,6 +8,7 @@ import { AutoSaveService } from './auto-save.service';
 import SpyObj = jasmine.SpyObj;
 
 // tslint:disable: no-any
+// tslint:disable:no-string-literal
 describe('AutoSaveService', () => {
     let service: AutoSaveService;
     let drawServiceSpy: SpyObj<DrawingService>;
@@ -49,8 +50,8 @@ describe('AutoSaveService', () => {
 
         mockSubject = new Subject<number[]>();
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['reset'], {
-            pileSizeSource: mockSubject,
-            pileSizeObservable: mockSubject.asObservable(),
+            actionsAllowedSource: mockSubject,
+            actionsAllowedObservable: mockSubject.asObservable(),
             resetCanvasSize: resizerCommandSpy,
             initialImage: new Image(),
         });
@@ -79,14 +80,14 @@ describe('AutoSaveService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should call autoSaveDrawing if pile size changes and both are not empty', () => {
-        service.undoRedoService.pileSizeSource.next([1, 1]);
+    it('should call autoSaveDrawing if undo and redo are allowed', () => {
+        service.undoRedoService['actionsAllowedSource'].next([true, true]);
 
         expect(autoSaveSpy).toHaveBeenCalled();
     });
 
-    it('should not call autoSaveDrawing if pile size changes and both are empty', () => {
-        service.undoRedoService.pileSizeSource.next([0, 0]);
+    it('should not call autoSaveDrawing if undo and redo not allowed', () => {
+        service.undoRedoService['actionsAllowedSource'].next([false, false]);
 
         expect(autoSaveSpy).not.toHaveBeenCalled();
     });

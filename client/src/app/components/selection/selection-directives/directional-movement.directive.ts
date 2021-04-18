@@ -45,18 +45,18 @@ export class DirectionalMovementDirective {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    translateSelection(): void {
+    translateSelection(numPixels: number = DirectionalMovementConstants.NUM_PIXELS): void {
         if (this.keyPressed.get('ArrowLeft')) {
-            this.translateLeft(DirectionalMovementConstants.NUM_PIXELS);
+            this.translateLeft(numPixels);
         }
         if (this.keyPressed.get('ArrowUp')) {
-            this.translateUp(DirectionalMovementConstants.NUM_PIXELS);
+            this.translateUp(numPixels);
         }
         if (this.keyPressed.get('ArrowRight')) {
-            this.translateRight(DirectionalMovementConstants.NUM_PIXELS);
+            this.translateRight(numPixels);
         }
         if (this.keyPressed.get('ArrowDown')) {
-            this.translateDown(DirectionalMovementConstants.NUM_PIXELS);
+            this.translateDown(numPixels);
         }
         this.canvasMovement.emit(true);
     }

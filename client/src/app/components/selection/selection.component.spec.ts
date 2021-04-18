@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { ResizerDown } from '@app/constants/resize-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { SelectionComponent } from './selection.component';
@@ -19,6 +20,7 @@ describe('SelectionComponent', () => {
     let drawScaledSpy: jasmine.Spy;
     let drawSelectionSpy: jasmine.Spy;
     let drawImagePreviewSpy: jasmine.Spy;
+    let magnetismServiceSpy: jasmine.SpyObj<MagnetismService>;
     let resizeSpy: jasmine.Spy;
     let resetDragSpy: jasmine.Spy;
     const drawingService: DrawingService = new DrawingService();
@@ -29,11 +31,15 @@ describe('SelectionComponent', () => {
     const MOCK_POSITION = { x: 10, y: 10 };
 
     beforeEach(async(() => {
+        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['magnetizeSelection'], ['isMagnetismOn']);
+        magnetismServiceSpy.magnetizeSelection.and.returnValue({ x: 0, y: 0 });
+        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'isMagnetismOn')?.get as jasmine.Spy<() => boolean>).and.returnValue(false);
         shortcutManagerSpy = jasmine.createSpyObj('ShortcutManagerService', ['selectionOnShiftKeyDown', 'selectionOnShiftKeyUp']);
         TestBed.configureTestingModule({
             declarations: [SelectionComponent],
             providers: [
                 { provide: DrawingService, useValue: drawingService },
+                { provide: MagnetismService, useValue: magnetismServiceSpy },
                 { provide: ShortcutManagerService, useValue: shortcutManagerSpy },
             ],
         }).compileComponents();
@@ -116,6 +122,8 @@ describe('SelectionComponent', () => {
         component.setCanvasPosition();
         expect(component.selectionCanvas.style.top).toEqual(expectedTop);
         expect(component.selectionCanvas.style.left).toEqual(expectedLeft);
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
     });
 
     it('resetPreviewSelectionCanvas should correctly set previewSelectionCanvas new position and reset CdkDragEnd event', () => {
@@ -123,10 +131,21 @@ describe('SelectionComponent', () => {
         component.previewSelectionCanvas.style.top = '500px';
         component.selectionCanvas.style.top = '700px';
         component.selectionCanvas.style.left = '800px';
+        component.borderCanvas.style.left = '900px';
+        component.borderCanvas.style.top = '250px';
         component.resetPreviewSelectionCanvas(endEvent);
         expect(component.previewSelectionCanvas.style.top).toEqual(component.selectionCanvas.style.top);
         expect(component.previewSelectionCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
         expect(resetDragSpy).toHaveBeenCalled();
+    });
+
+    it('setCanvasPosition should call magnetismService.magnetizeSelection if magnetismService.isMagnetisOn is true', () => {
+        (Object.getOwnPropertyDescriptor(magnetismServiceSpy, 'isMagnetismOn')?.get as jasmine.Spy<() => boolean>).and.returnValue(true);
+        component.setCanvasPosition();
+        expect(magnetismServiceSpy.magnetizeSelection).toHaveBeenCalled();
+        expect(setResizerPositionsSpy).toHaveBeenCalled();
     });
 
     it('getTransformValues returns the correct transform values', () => {
@@ -217,6 +236,10 @@ describe('SelectionComponent', () => {
         expect(resizerHandlerService.inUse).toBeFalse();
         expect(resetDragSpy).toHaveBeenCalled();
         expect(component.selectionCanvas.style.visibility).toBe('visible');
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.borderCanvas.width).toEqual(component.selectionCanvas.width);
+        expect(component.borderCanvas.height).toEqual(component.selectionCanvas.height);
     });
 
     it('resizeSelectionCanvas should call drawWithScalingFactors and drawImage if resizerHandlerService.inUse', () => {
@@ -235,6 +258,10 @@ describe('SelectionComponent', () => {
         expect(component.selectionCanvas.style.left).toBe(component.previewSelectionCanvas.style.left);
         expect(component.selectionCanvas.width).toBe(component.previewSelectionCanvas.width);
         expect(component.selectionCanvas.height).toBe(component.previewSelectionCanvas.height);
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.borderCanvas.width).toEqual(component.selectionCanvas.width);
+        expect(component.borderCanvas.height).toEqual(component.selectionCanvas.height);
     });
 
     it('resizeSelectionCanvas should fill selectionCtx with white if resizerHandlerService.inUse', () => {
@@ -364,6 +391,16 @@ describe('SelectionComponent', () => {
         expect(setResizeStrategySpy).toHaveBeenCalledWith(ResizerDown.TopLeft);
     });
 
+    it('applyFocusOutlineStyle should apply correct css changes to borderCanvas', () => {
+        component.applyFocusOutlineStyle();
+        expect(component.borderCanvas.style.outline).toEqual('black solid 1px');
+    });
+
+    it('applyfocusOutOutlineStyle should apply correct css change to previewSelectionCanvas', () => {
+        component.applyFocusOutOutlineStyle();
+        expect(component.borderCanvas.style.outline).toEqual('black dashed 1px');
+    });
+
     it('onShiftKeyDown should call shortcutManager.selectionOnShiftKeyDown', () => {
         component.onShiftKeyDown();
         expect(shortcutManagerSpy.selectionOnShiftKeyDown).toHaveBeenCalled();
@@ -374,5 +411,19 @@ describe('SelectionComponent', () => {
         component.onShiftKeyUp();
         expect(shortcutManagerSpy.selectionOnShiftKeyUp).toHaveBeenCalled();
         expect(shortcutManagerSpy.selectionOnShiftKeyUp).toHaveBeenCalledWith(component);
+    });
+
+    it('correctPreviewCanvasPosition should set previewCanvas and borderCanvas left and top styles to those of selectionCanvas.', () => {
+        component.selectionCanvas.style.left = '100px';
+        component.selectionCanvas.style.top = '150px';
+        component.borderCanvas.style.left = '300px';
+        component.borderCanvas.style.top = '225px';
+        component.previewSelectionCanvas.style.top = '400px';
+        component.previewSelectionCanvas.style.left = '405px';
+        component.correctPreviewCanvasPosition();
+        expect(component.previewSelectionCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.previewSelectionCanvas.style.top).toEqual(component.selectionCanvas.style.top);
+        expect(component.borderCanvas.style.left).toEqual(component.selectionCanvas.style.left);
+        expect(component.borderCanvas.style.top).toEqual(component.selectionCanvas.style.top);
     });
 });

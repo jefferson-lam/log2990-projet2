@@ -90,6 +90,7 @@ export class ClipboardService {
         this.currentTool.resetSelectedToolSettings();
         this.currentTool.resetCanvasState(this.drawingService.selectionCanvas);
         this.currentTool.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.currentTool.resetCanvasState(this.drawingService.borderCanvas);
         this.currentTool.resizerHandlerService.resetResizers();
         this.currentTool.isManipulating = false;
         this.currentTool.isEscapeDown = false;
@@ -116,11 +117,15 @@ export class ClipboardService {
         this.drawingService.previewSelectionCanvas.width = this.clipboard.width;
         this.drawingService.selectionCanvas.height = this.clipboard.height;
         this.drawingService.selectionCanvas.width = this.clipboard.width;
+        this.drawingService.borderCanvas.height = this.clipboard.height;
+        this.drawingService.borderCanvas.width = this.clipboard.width;
 
         this.drawingService.selectionCanvas.style.left = 0 + 'px';
         this.drawingService.selectionCanvas.style.top = 0 + 'px';
         this.drawingService.previewSelectionCanvas.style.left = 0 + 'px';
         this.drawingService.previewSelectionCanvas.style.top = 0 + 'px';
+        this.drawingService.borderCanvas.style.left = '0px';
+        this.drawingService.borderCanvas.style.top = '0px';
     }
 
     private changeToSelectionTool(lastSelectionTool: string): void {

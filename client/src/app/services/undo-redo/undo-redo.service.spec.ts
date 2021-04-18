@@ -9,6 +9,7 @@ export class CommandStub extends Command {
     }
 }
 
+// tslint:disable:no-string-literal
 describe('UndoRedoService', () => {
     let service: UndoRedoService;
     let mockPile: Command[];
@@ -19,6 +20,7 @@ describe('UndoRedoService', () => {
     let undoPushSpy: jasmine.Spy;
     let redoPopSpy: jasmine.Spy;
     let redoPushSpy: jasmine.Spy;
+    let updateSpy: jasmine.Spy;
 
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -34,19 +36,19 @@ describe('UndoRedoService', () => {
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        // tslint:disable:no-string-literal
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub;
 
         mockEmptyPile = [];
         mockPile = [commandStub];
         refreshSpy = spyOn(service, 'refresh').and.callThrough();
-        emitSpy = spyOn(service.pileSizeSource, 'next');
+        emitSpy = spyOn(service['actionsAllowedSource'], 'next');
 
         undoPopSpy = spyOn(service.undoPile, 'pop');
         undoPushSpy = spyOn(service.undoPile, 'push');
         redoPopSpy = spyOn(service.redoPile, 'pop');
         redoPushSpy = spyOn(service.redoPile, 'push');
+        updateSpy = spyOn(service, 'updateActionsAllowed');
     });
 
     it('should be created', () => {
@@ -60,10 +62,11 @@ describe('UndoRedoService', () => {
         expect(service.redoPile).toEqual(mockEmptyPile);
     });
 
-    it('reset should emit empty size of piles', () => {
+    it('reset should call updateActionsAllowed with true', () => {
         service.reset();
 
-        expect(emitSpy).toHaveBeenCalledWith([0, 0]);
+        expect(updateSpy).toHaveBeenCalled();
+        expect(updateSpy).toHaveBeenCalledWith(true);
     });
 
     it('executeCommand should push command on undoPile', () => {
@@ -74,17 +77,18 @@ describe('UndoRedoService', () => {
         expect(undoPushSpy).toHaveBeenCalledWith(commandStub);
     });
 
-    it('executeCommand should emit new pile sizes', () => {
+    it('executeCommand should call updateActionsAllowed with true', () => {
         Object.assign(service.undoPile, mockEmptyPile);
         Object.assign(service.redoPile, mockEmptyPile);
 
         service.executeCommand(commandStub);
 
-        expect(emitSpy).toHaveBeenCalledWith([service.undoPile.length, service.redoPile.length]);
+        expect(updateSpy).toHaveBeenCalled();
+        expect(updateSpy).toHaveBeenCalledWith(true);
     });
 
-    it('undo should return if undoPile is empty', () => {
-        service.undoPile = mockEmptyPile;
+    it('undo should return if !isUndoAllowed', () => {
+        service.isUndoAllowed = false;
         service.undo();
 
         expect(undoPopSpy).not.toHaveBeenCalled();
@@ -92,24 +96,23 @@ describe('UndoRedoService', () => {
         expect(refreshSpy).not.toHaveBeenCalled();
     });
 
-    it('undo should push popped command on redoPile if undoPile is not empty', () => {
-        Object.assign(service.undoPile, mockPile);
-        Object.assign(service.redoPile, mockEmptyPile);
+    it('undo should push popped command on redoPile if isUndoAllowed', () => {
+        service.isUndoAllowed = true;
         service.undo();
 
         expect(undoPopSpy).toHaveBeenCalled();
         expect(redoPushSpy).toHaveBeenCalled();
     });
 
-    it('undo should call refresh if undoPile is not empty', () => {
-        Object.assign(service.undoPile, mockPile);
+    it('undo should call refresh if isUndoAllowed', () => {
+        service.isUndoAllowed = true;
         service.undo();
 
         expect(refreshSpy).toHaveBeenCalled();
     });
 
-    it('redo should return if redoPile is empty', () => {
-        Object.assign(service.redoPile, mockEmptyPile);
+    it('redo should return if !isRedoAllowed', () => {
+        service.isRedoAllowed = false;
         service.redo();
 
         expect(redoPopSpy).not.toHaveBeenCalled();
@@ -117,30 +120,28 @@ describe('UndoRedoService', () => {
         expect(refreshSpy).not.toHaveBeenCalled();
     });
 
-    it('redo should push popped command on undoPile if redoPile is not empty', () => {
-        Object.assign(service.redoPile, mockPile);
-        Object.assign(service.undoPile, mockEmptyPile);
+    it('redo should push popped command on undoPile if isRedoAllowed', () => {
+        service.isRedoAllowed = true;
         service.redo();
 
         expect(redoPopSpy).toHaveBeenCalled();
         expect(undoPushSpy).toHaveBeenCalled();
     });
 
-    it('redo should call refresh if redoPile is not empty', () => {
-        Object.assign(service.redoPile, mockPile);
+    it('redo should call refresh if isRedoAllowed', () => {
+        service.isRedoAllowed = true;
         service.redo();
 
         expect(refreshSpy).toHaveBeenCalled();
     });
 
-    it('refresh should emit pile sizes', () => {
+    it('refresh should call updateActions allowed with true', () => {
         refreshSpy.and.callThrough();
-        Object.assign(service.undoPile, mockEmptyPile);
-        Object.assign(service.redoPile, mockEmptyPile);
 
         service.refresh();
 
-        expect(emitSpy).toHaveBeenCalledWith([service.undoPile.length, service.redoPile.length]);
+        expect(updateSpy).toHaveBeenCalled();
+        expect(updateSpy).toHaveBeenCalledWith(true);
     });
 
     it('refresh should clear base canvas', () => {
@@ -194,5 +195,87 @@ describe('UndoRedoService', () => {
         service.undoPile = [{} as Command];
         const result = service.isUndoPileEmpty();
         expect(result).toBeFalse();
+    });
+
+    it('isRedoPileEmpty should return true if redo pile is empty', () => {
+        service.redoPile = [];
+        const result = service.isRedoPileEmpty();
+        expect(result).toBeTrue();
+    });
+
+    it('isRedoPileEmpty should return false if redo pile is not empty', () => {
+        service.redoPile = [{} as Command];
+        const result = service.isRedoPileEmpty();
+        expect(result).toBeFalse();
+    });
+
+    it('updateActionsAllowed should set both isUndoAllowed and isRedoAllowed to false if called with false', () => {
+        updateSpy.and.callThrough();
+        service.isRedoAllowed = true;
+        service.isUndoAllowed = true;
+
+        service.updateActionsAllowed(false);
+
+        expect(service.isUndoAllowed).toBeFalse();
+        expect(service.isRedoAllowed).toBeFalse();
+        expect(emitSpy).toHaveBeenCalled();
+        expect(emitSpy).toHaveBeenCalledWith([service.isUndoAllowed, service.isRedoAllowed]);
+    });
+
+    it('updateActionsAllowed should set both isUndoAllowed and isRedoAllowed to true if called with true and piles not empty', () => {
+        spyOn(service, 'isUndoPileEmpty').and.callFake(() => {
+            return false;
+        });
+        spyOn(service, 'isRedoPileEmpty').and.callFake(() => {
+            return false;
+        });
+        updateSpy.and.callThrough();
+        service.isRedoAllowed = false;
+        service.isUndoAllowed = false;
+
+        service.updateActionsAllowed(true);
+
+        expect(service.isUndoAllowed).toBeTrue();
+        expect(service.isRedoAllowed).toBeTrue();
+        expect(emitSpy).toHaveBeenCalled();
+        expect(emitSpy).toHaveBeenCalledWith([service.isUndoAllowed, service.isRedoAllowed]);
+    });
+
+    it('updateActionsAllowed should set only isUndoAllowed to true if called with true and undo pile not empty', () => {
+        spyOn(service, 'isUndoPileEmpty').and.callFake(() => {
+            return false;
+        });
+        spyOn(service, 'isRedoPileEmpty').and.callFake(() => {
+            return true;
+        });
+        updateSpy.and.callThrough();
+        service.isRedoAllowed = false;
+        service.isUndoAllowed = false;
+
+        service.updateActionsAllowed(true);
+
+        expect(service.isUndoAllowed).toBeTrue();
+        expect(service.isRedoAllowed).toBeFalse();
+        expect(emitSpy).toHaveBeenCalled();
+        expect(emitSpy).toHaveBeenCalledWith([service.isUndoAllowed, service.isRedoAllowed]);
+    });
+
+    it('updateActionsAllowed should set only isRedoAllowed to true if called with true and redo pile not empty', () => {
+        spyOn(service, 'isUndoPileEmpty').and.callFake(() => {
+            return true;
+        });
+        spyOn(service, 'isRedoPileEmpty').and.callFake(() => {
+            return false;
+        });
+        updateSpy.and.callThrough();
+        service.isRedoAllowed = false;
+        service.isUndoAllowed = false;
+
+        service.updateActionsAllowed(true);
+
+        expect(service.isUndoAllowed).toBeFalse();
+        expect(service.isRedoAllowed).toBeTrue();
+        expect(emitSpy).toHaveBeenCalled();
+        expect(emitSpy).toHaveBeenCalledWith([service.isUndoAllowed, service.isRedoAllowed]);
     });
 });

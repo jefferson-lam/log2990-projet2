@@ -51,6 +51,7 @@ import { SidebarEllipseComponent } from './components/sidebar/sidebar-tools-opti
 import { SidebarEraserComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-eraser/sidebar-eraser.component';
 import { SidebarGridComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-grid/sidebar-grid.component';
 import { SidebarLineComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-line/sidebar-line.component';
+import { SidebarMagnetismComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-magnetism/sidebar-magnetism.component';
 import { SidebarPaintBucketComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-paint-bucket/sidebar-paint-bucket/sidebar-paint-bucket.component';
 import { SidebarPencilComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pencil/sidebar-pencil.component';
 import { SidebarPipetteComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-pipette/sidebar-pipette.component';
@@ -95,6 +96,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         ExportCompletePageComponent,
         ExportErrorPageComponent,
         SidebarGridComponent,
+        SidebarMagnetismComponent,
         SidebarTextComponent,
     ],
     entryComponents: [MainPageCarrouselComponent, ExportCompletePageComponent],

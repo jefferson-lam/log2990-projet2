@@ -66,6 +66,7 @@ describe('EllipseToolSelectionService', () => {
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].previewSelectionCanvas = canvasTestHelper.previewSelectionCanvas;
+        service['drawingService'].borderCanvas = canvasTestHelper.borderCanvas;
 
         parentMouseDownSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseDown');
         parentMouseUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseUp');
@@ -185,6 +186,8 @@ describe('EllipseToolSelectionService', () => {
         expect(drawServiceSpy.selectionCanvas.height).toEqual(expectedHeight);
         expect(drawServiceSpy.selectionCanvas.style.left).toEqual('25px');
         expect(drawServiceSpy.selectionCanvas.style.top).toEqual('40px');
+        expect(drawServiceSpy.borderCanvas.style.left).toEqual(drawServiceSpy.selectionCanvas.style.left);
+        expect(drawServiceSpy.borderCanvas.style.top).toEqual(drawServiceSpy.selectionCanvas.style.top);
         expect(resizerHandlerServiceSpy.setResizerPositions).toHaveBeenCalled();
         expect(service.inUse).toBeFalsy();
         expect(service.isManipulating).toBeTruthy();

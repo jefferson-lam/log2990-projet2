@@ -12,10 +12,10 @@
             <li>
                 <mat-icon id="save-drawing-button" matTooltip="Sauvegarder" [matTooltipPosition]="'right'" (click)="saveDrawing()">save_alt</mat-icon>
             </li>
-            <li id="undoButton" [class.unclickable]="!isUndoPossible" (click)="undo()">
+            <li id="undoButton" [class.unclickable]="!undoRedoService.isUndoAllowed" (click)="undo()">
                 <mat-icon matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
             </li>
-            <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
+            <li id="redoButton" [class.unclickable]="!undoRedoService.isRedoAllowed" (click)="redo()">
                 <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
             </li>
             <li id="exportButton">
@@ -40,6 +40,9 @@
             </li>
             <li id="gridButton">
                 <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
+            </li>
+            <li id="magnetismButton">
+                <mat-icon matTooltip="Options magnetisme" [matTooltipPosition]="'right'" (click)="toggleMagnetismOptions()"> select_all </mat-icon>
             </li>
         </ul>
         <ul class="tools-sidebar">
@@ -73,6 +76,7 @@
                 <app-sidebar-paint-bucket class="sidebar-tool-options" *ngSwitchCase="'b'"></app-sidebar-paint-bucket>
                 <app-sidebar-text class="sidebar-tool-options" *ngSwitchCase="'t'"> </app-sidebar-text>
                 <app-sidebar-grid class="sidebar-tool-options" *ngIf="isGridOptionsDisplayed"></app-sidebar-grid>
+                <app-sidebar-magnetism class="sidebar-tool-options" *ngIf="isMagnetismOptionsDisplayed"></app-sidebar-magnetism>
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

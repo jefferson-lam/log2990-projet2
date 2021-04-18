@@ -8,7 +8,7 @@ import * as CanvasConstants from '@app/constants/canvas-constants';
     providedIn: 'root',
 })
 export class ResizeTop extends ResizeStrategy {
-    resize(event: CdkDragMove, isShiftDown?: boolean): void {
+    resizePreview(event: CdkDragMove, isShiftDown?: boolean): void {
         // Mirrored to bottom
         if (event.pointerPosition.y > this.selectionComponent.bottomRight.y) {
             this.selectionComponent.previewSelectionCanvas.style.top = this.selectionComponent.bottomRight.y + 'px';
@@ -33,6 +33,7 @@ export class ResizeTop extends ResizeStrategy {
             // Resizing top
             this.selectionComponent.previewSelectionCanvas.style.top = reference.y - shortestSide + 'px';
         }
+        this.recalibrateBorderCanvas();
         this.resizeSquare(false, shortestSide);
     }
 
@@ -48,15 +49,16 @@ export class ResizeTop extends ResizeStrategy {
             this.selectionComponent.previewSelectionCanvas.style.top =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.top, 10) + difference + 'px';
         }
+        this.recalibrateBorderCanvas();
     }
 
     restoreLastDimensions(): void {
         if (this.selectionComponent.bottomRight.y > parseInt(this.selectionComponent.previewSelectionCanvas.style.top, 10)) {
             const difference = this.selectionComponent.previewSelectionCanvas.height - this.lastHeight;
-            this.selectionComponent.previewSelectionCanvas.style.top =
+            this.selectionComponent.previewSelectionCanvas.style.top = this.selectionComponent.borderCanvas.style.top =
                 parseInt(this.selectionComponent.previewSelectionCanvas.style.top, 10) + difference + 'px';
         }
 
-        this.selectionComponent.previewSelectionCanvas.height = this.lastHeight;
+        this.selectionComponent.previewSelectionCanvas.height = this.selectionComponent.borderCanvas.height = this.lastHeight;
     }
 }
