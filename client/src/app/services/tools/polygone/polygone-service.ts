@@ -87,6 +87,11 @@ export class PolygoneService extends Tool {
         }
     }
 
+    // This setter is here to conform to the implementation in settings manager
+    setLineWidth(width: number): void {
+        this.lineWidth = width;
+    }
+
     private getRadiiXAndY(path: Vec2[]): number[] {
         let xRadius = Math.abs(path[PolygoneConstants.END_INDEX].x - path[PolygoneConstants.START_INDEX].x) / 2;
         let yRadius = Math.abs(path[PolygoneConstants.END_INDEX].y - path[PolygoneConstants.START_INDEX].y) / 2;
