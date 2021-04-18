@@ -148,6 +148,15 @@ describe('TextService', () => {
         expect(focusSpy).toHaveBeenCalled();
     });
 
+    it('onMouseUp should not call setSelected text if text box has been created before', () => {
+        // tslint:disable-next-line: no-any
+        const setSelectedTextSpy = spyOn<any>(service, 'setSelectedText');
+        service['hasTextBoxBeenCreated'] = true;
+        service.inUse = true;
+        service.onMouseUp();
+        expect(setSelectedTextSpy).not.toHaveBeenCalled();
+    });
+
     it('onEscapeKeyDown should set placeHolderSpan.style.display to none and escapeKeyUsed to true', () => {
         service.onEscapeKeyDown();
         expect(service.placeHolderSpan.style.display).toBe('none');
@@ -188,7 +197,7 @@ describe('TextService', () => {
 
         expect(service.placeHolderSpan.style.zIndex).toEqual('2');
         expect(service.placeHolderSpan.style.visibility).toEqual('visible');
-        expect(service.placeHolderSpan.innerText).toEqual(' ');
+        expect(service.placeHolderSpan.innerText).toEqual('Ajoutez votre texte ici...');
         expect(service.placeHolderSpan.style.display).toEqual('block');
         expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords.x + 'px');
         expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords.y + 'px');

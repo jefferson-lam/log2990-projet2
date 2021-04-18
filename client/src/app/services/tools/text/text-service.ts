@@ -21,6 +21,7 @@ export class TextService extends Tool {
     spanWidth: number;
     escapeKeyUsed: boolean;
     lockKeyboard: boolean;
+    private hasTextBoxBeenCreated: boolean;
 
     placeHolderSpan: HTMLSpanElement;
     cornerCoords: Vec2;
@@ -34,6 +35,7 @@ export class TextService extends Tool {
         this.escapeKeyUsed = false;
         this.lockKeyboard = false;
         this.cornerCoords = { x: 0, y: 0 };
+        this.hasTextBoxBeenCreated = false;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -47,8 +49,15 @@ export class TextService extends Tool {
     }
 
     onMouseUp(): void {
-        if (!this.inUse) return;
+        if (!this.inUse) {
+            this.hasTextBoxBeenCreated = false;
+            return;
+        }
         this.placeHolderSpan.focus();
+        if (!this.hasTextBoxBeenCreated) {
+            this.setSelectedText();
+        }
+        this.hasTextBoxBeenCreated = true;
     }
 
     onEscapeKeyDown(): void {
@@ -61,6 +70,7 @@ export class TextService extends Tool {
         this.setSpanValues();
         this.lockKeyboard = true;
         this.escapeKeyUsed = false;
+        this.setSelectedText();
     }
 
     drawTextOnCanvas(): void {
@@ -73,8 +83,7 @@ export class TextService extends Tool {
     }
 
     setSpanValues(): void {
-        this.placeHolderSpan.id = 'placeHolderSpan';
-        this.placeHolderSpan.innerText = ' ';
+        this.placeHolderSpan.innerText = 'Ajoutez votre texte ici...';
 
         this.placeHolderSpan.style.left = this.cornerCoords.x + 'px';
         this.placeHolderSpan.style.top = this.cornerCoords.y + 'px';
@@ -132,5 +141,13 @@ export class TextService extends Tool {
             this.drawTextOnCanvas();
             this.lockKeyboard = false;
         }
+    }
+
+    private setSelectedText(): void {
+        const selection = window.getSelection() as Selection;
+        const range = document.createRange();
+        range.selectNodeContents(this.placeHolderSpan);
+        selection.removeAllRanges();
+        selection.addRange(range);
     }
 }
