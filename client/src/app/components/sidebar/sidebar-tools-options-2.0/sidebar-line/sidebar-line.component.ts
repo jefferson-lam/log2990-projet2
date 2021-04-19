@@ -17,7 +17,7 @@ export class SidebarLineComponent implements OnInit {
     withJunction: boolean;
     junctionRadius: number | undefined;
 
-    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() private toolSizeChanged: EventEmitter<number>;
     @Output() withJunctionChanged: EventEmitter<boolean>;
     @Output() junctionRadiusChanged: EventEmitter<number>;
 
