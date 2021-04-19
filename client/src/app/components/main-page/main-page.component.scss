@@ -21,12 +21,12 @@
 .team-name {
     margin-top: 0.25em;
     margin-bottom: 0.25em;
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-self: center;
-  font-size: medium;
-  font-family: Rubik, serif;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-self: center;
+    font-size: medium;
+    font-family: Rubik, serif;
 }
 
 .header-item {
@@ -62,13 +62,13 @@
 #main-title {
     margin-top: 180px;
     font-family: 'Rubik', serif;
-    font-size: calc(0.5em + 6vw) ;
+    font-size: calc(0.5em + 6vw);
     font-weight: 900;
-    letter-spacing:0.1em;
+    letter-spacing: 0.1em;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: #b1eeee;
-    text-shadow: 0 0 #00b7b7, 8px 8px #0c1d34;
+    //-webkit-text-stroke-width: 1px;
+    //-webkit-text-stroke-color: #4682b4;
+    text-shadow: 0 0 #f0f3bd, 8px 8px #0c1d34;
 }
 
 #creation-button {
@@ -86,8 +86,13 @@
     font-size: large;
 }
 
-#carousel-button:hover, #creation-button:hover, #continue-button:hover{
-  color: beige;
-  background-color: #0c3164;
+#carousel-button:hover,
+#creation-button:hover,
+#continue-button:hover {
+    color: beige;
+    background-color: #0c3164;
 }
 
+a {
+    text-decoration: none;
+}
