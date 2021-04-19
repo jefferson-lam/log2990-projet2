@@ -3,6 +3,7 @@ import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { ColorHistoryComponent } from './color-history.component';
 
+// tslint:disable: no-string-literal
 describe('ColorHistoryComponent', () => {
     let component: ColorHistoryComponent;
     let fixture: ComponentFixture<ColorHistoryComponent>;
@@ -67,13 +68,13 @@ describe('ColorHistoryComponent', () => {
     });
 
     it('should call draw after view init', () => {
-        const ctxFillRectSpy = spyOn(component.ctx, 'fillRect');
+        const ctxFillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.ngAfterViewInit();
         expect(ctxFillRectSpy).toHaveBeenCalled();
     });
 
     it('should fill history with set colors if savedColors is not empty', () => {
-        const ctxFillRectSpy = spyOn(component.ctx, 'fillRect');
+        const ctxFillRectSpy = spyOn(component['ctx'], 'fillRect');
         const convertRgbaStringSpy = spyOn(colorService, 'convertRgbaToString');
         component.ngAfterViewInit();
         expect(convertRgbaStringSpy).toHaveBeenCalled();
@@ -82,7 +83,7 @@ describe('ColorHistoryComponent', () => {
 
     it('should fill history with default colors if savedColors is empty', () => {
         component.savedColors = new Array();
-        const ctxFillRectSpy = spyOn(component.ctx, 'fillRect');
+        const ctxFillRectSpy = spyOn(component['ctx'], 'fillRect');
         const convertRgbaStringSpy = spyOn(colorService, 'convertRgbaToString');
         component.ngAfterViewInit();
         expect(convertRgbaStringSpy).not.toHaveBeenCalled();
