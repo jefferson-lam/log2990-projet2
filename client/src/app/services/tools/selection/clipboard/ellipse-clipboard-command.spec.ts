@@ -97,7 +97,7 @@ describe('EllipseClipboardCommandService', () => {
         // tslint:disable:no-string-literal
         const radii = command['getRadiiXAndY'](command.pathData);
 
-        expect(radii[0]).toEqual(shortestSide);
-        expect(radii[1]).toEqual(shortestSide);
+        expect(radii.x).toEqual(shortestSide);
+        expect(radii.y).toEqual(shortestSide);
     });
 });

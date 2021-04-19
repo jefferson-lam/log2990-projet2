@@ -93,7 +93,8 @@ export class ToolSelectionService extends Tool {
      * Ensures that no matter how the user starts his selection, that the
      * cornerCoords will match the ones displayed on screen.
      */
-    computeSquareCoords(cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number, shortestSide: number): Vec2[] {
+    computeSquareCoords(cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): Vec2[] {
+        const shortestSide = Math.min(Math.abs(selectionWidth), Math.abs(selectionHeight));
         if (selectionWidth < 0 && selectionHeight < 0) {
             cornerCoords[0] = this.addScalarToVec2(cornerCoords[1], -shortestSide);
         } else if (selectionWidth < 0) {
@@ -101,10 +102,10 @@ export class ToolSelectionService extends Tool {
                 cornerCoords[0] = this.addScalarToVec2(cornerCoords[1], -shortestSide);
             }
         } else if (selectionHeight < 0) {
-            if (shortestSide === selectionHeight) {
-                cornerCoords[1] = this.addScalarToVec2(cornerCoords[0], shortestSide);
-            } else if (shortestSide === selectionWidth) {
+            if (shortestSide === selectionWidth) {
                 cornerCoords[0] = this.addScalarToVec2(cornerCoords[1], -shortestSide);
+            } else {
+                cornerCoords[1] = this.addScalarToVec2(cornerCoords[0], shortestSide);
             }
         }
         return cornerCoords;

@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { ROTATION } from '@app/constants/ellipse-constants';
 import { MouseButton } from '@app/constants/mouse-constants';
-import { END_INDEX, START_INDEX } from '@app/constants/selection-constants';
+import { DRAWN_ELLIPSE_RADIUS_OFFSET, END_INDEX, START_INDEX } from '@app/constants/selection-constants';
 import { END_ANGLE, START_ANGLE } from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
@@ -439,9 +439,9 @@ describe('EllipseToolSelectionService', () => {
         const expectedStartY = 145;
         const xRadius = 37.5;
         const yRadius = 105;
-        const expectedXRadius = 39.5;
-        const expectedYRadius = 107;
-        service.drawOutlineEllipse(selectionCtxStub, expectedStartX, expectedStartY, xRadius, yRadius, 2);
+        const expectedXRadius = xRadius + DRAWN_ELLIPSE_RADIUS_OFFSET;
+        const expectedYRadius = yRadius + DRAWN_ELLIPSE_RADIUS_OFFSET;
+        service.drawOutlineEllipse(selectionCtxStub, { x: expectedStartX, y: expectedStartY }, { x: xRadius, y: yRadius });
         expect(selectionCtxEllipseSpy).toHaveBeenCalled();
         expect(selectionCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
