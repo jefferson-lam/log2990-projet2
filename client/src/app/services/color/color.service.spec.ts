@@ -4,6 +4,7 @@ import { Rgba } from '@app/classes/rgba';
 import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from './color.service';
 
+// tslint:disable: no-string-literal
 describe('ColorService', () => {
     let service: ColorService;
     let newColor: Rgba;
@@ -31,7 +32,7 @@ describe('ColorService', () => {
     });
 
     it('getPrimaryColor() should return service.primaryColor', () => {
-        service.primaryColor = colorPlaceholderBlack;
+        service['primaryColor'] = colorPlaceholderBlack;
 
         expect(service.getPrimaryColor()).toEqual(colorPlaceholderBlackString);
     });
@@ -43,31 +44,31 @@ describe('ColorService', () => {
     });
 
     it('getSecondaryColor() should return service.secondaryColor', () => {
-        service.secondaryColor = colorPlaceholderBlack;
+        service['secondaryColor'] = colorPlaceholderBlack;
 
         expect(service.getSecondaryColor()).toEqual(colorPlaceholderBlackString);
     });
 
     it('should set new value to primaryColor', () => {
         service.setPrimaryColor(newColor);
-        expect(service.primaryColor).toEqual(newColor);
+        expect(service['primaryColor']).toEqual(newColor);
     });
 
     it('should set new value to secondaryColor', () => {
         service.setSecondaryColor(newColor);
-        expect(service.secondaryColor).toEqual(newColor);
+        expect(service['secondaryColor']).toEqual(newColor);
     });
 
     it('should change primary color alpha attribute', () => {
         const alpha = 0.24;
         service.changePrimaryOpacity(alpha);
-        expect(service.primaryColor.alpha).toEqual(alpha);
+        expect(service['primaryColor'].alpha).toEqual(alpha);
     });
 
     it('should change secondary color alpha attribute', () => {
         const alpha = 0.35;
         service.changeSecondaryOpacity(alpha);
-        expect(service.secondaryColor.alpha).toEqual(alpha);
+        expect(service['secondaryColor'].alpha).toEqual(alpha);
     });
 
     it('getColorAtPosition should call getImageData', () => {

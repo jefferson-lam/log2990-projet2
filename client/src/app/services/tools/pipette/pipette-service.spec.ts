@@ -208,17 +208,17 @@ describe('PipetteService', () => {
     });
 
     it('setPrimaryColor should set primary color if color is not transparent', () => {
-        colorService.primaryColor = colorPlaceholderBlack;
+        colorService['primaryColor'] = colorPlaceholderBlack;
 
         service.setPrimaryColorAsRgba(newColor);
-        expect(colorService.primaryColor).toEqual(newColor);
+        expect(colorService['primaryColor']).toEqual(newColor);
     });
 
     it('setPrimaryColor should not set primary color if color is transparent', () => {
-        colorService.primaryColor = colorPlaceholderBlack;
+        colorService['primaryColor'] = colorPlaceholderBlack;
 
         service.setPrimaryColorAsRgba(colorPlaceholderTransparent);
-        expect(colorService.primaryColor).toEqual(colorPlaceholderBlack);
+        expect(colorService['primaryColor']).toEqual(colorPlaceholderBlack);
     });
 
     it('setSecondaryColor should call colorService.setSecondaryColor if color is not transparent', () => {
@@ -240,17 +240,17 @@ describe('PipetteService', () => {
     });
 
     it('setSecondaryColor should set secondary color if color is not transparent', () => {
-        colorService.secondaryColor = colorPlaceholderBlack;
+        colorService['secondaryColor'] = colorPlaceholderBlack;
 
         service.setSecondaryColorAsRgba(newColor);
-        expect(colorService.secondaryColor).toEqual(newColor);
+        expect(colorService['secondaryColor']).toEqual(newColor);
     });
 
     it('setSecondaryColor should set secondary color if color is not transparent', () => {
-        colorService.secondaryColor = colorPlaceholderBlack;
+        colorService['secondaryColor'] = colorPlaceholderBlack;
 
         service.setSecondaryColorAsRgba(colorPlaceholderTransparent);
-        expect(colorService.secondaryColor).toEqual(colorPlaceholderBlack);
+        expect(colorService['secondaryColor']).toEqual(colorPlaceholderBlack);
     });
 
     it('onToolChange should call setInBound', () => {
