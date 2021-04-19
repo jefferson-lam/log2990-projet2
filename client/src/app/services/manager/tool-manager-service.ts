@@ -99,4 +99,10 @@ export class ToolManagerService {
             .set(ToolManagerConstants.STAMP_KEY, this.stampService)
             .set(ToolManagerConstants.TEXT_KEY, this.textService);
     }
+
+    scrolled(top: number, left: number): void {
+        this.keyBindings.forEach((tool) => {
+            tool.onScroll(top, left);
+        });
+    }
 }

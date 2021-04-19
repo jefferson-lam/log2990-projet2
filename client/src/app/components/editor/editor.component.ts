@@ -1,5 +1,7 @@
+import { CdkScrollable, ScrollDispatcher } from '@angular/cdk/scrolling';
 import { Component, HostListener } from '@angular/core';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 
 @Component({
     selector: 'app-editor',
@@ -7,7 +9,13 @@ import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.s
     styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent {
-    constructor(public shortcutManager: ShortcutManagerService) {}
+    constructor(public shortcutManager: ShortcutManagerService, private toolManager: ToolManagerService, private scroller: ScrollDispatcher) {
+        this.scroller.scrolled().subscribe((element) => {
+            if (element instanceof CdkScrollable) {
+                this.toolManager.scrolled(element.measureScrollOffset('left'), element.measureScrollOffset('top'));
+            }
+        });
+    }
 
     @HostListener('window:keydown.g', ['$event'])
     onGKeyDown(): void {

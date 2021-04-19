@@ -18,10 +18,12 @@ export abstract class Tool {
     mouseDown: boolean;
     inUse: boolean;
     name: string;
+    scroll: Vec2;
 
     constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {
         this.inUse = false;
         this.mouseDown = false;
+        this.scroll = { x: 0, y: 0 };
     }
 
     onKeyboardDown(event: KeyboardEvent): void {}
@@ -30,7 +32,7 @@ export abstract class Tool {
 
     onEscapeKeyDown(): void {}
 
-    onMouseClick(event: MouseEvent): void {}
+    onMouseClick(): void {}
 
     onMouseDoubleClick(event: MouseEvent): void {}
 
@@ -46,7 +48,7 @@ export abstract class Tool {
 
     onMouseWheel(event: WheelEvent): void {}
 
-    onToolEnter(mousePosition: Vec2): void {}
+    onToolEnter(): void {}
 
     onToolChange(): void {}
 
@@ -86,8 +88,12 @@ export abstract class Tool {
 
     setAngleRotation(newAngle: number): void {}
 
+    onScroll(left: number, top: number): void {
+        this.scroll = { x: left, y: top };
+    }
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
-        return { x: event.x - CanvasConstants.LEFT_MARGIN, y: event.y };
+        return { x: event.x - CanvasConstants.LEFT_MARGIN + this.scroll.x, y: event.y + this.scroll.y };
     }
 
     drawCursor(mousePosition: Vec2): void {}
