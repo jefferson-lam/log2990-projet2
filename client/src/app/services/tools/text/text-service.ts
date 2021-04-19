@@ -92,24 +92,10 @@ export class TextService extends Tool {
     setSpanValues(): void {
         this.placeHolderSpan.innerText = 'Ajoutez votre texte ici...';
 
-        this.placeHolderSpan.style.outline = '1px solid black';
-        this.placeHolderSpan.style.padding = '5px';
-        this.placeHolderSpan.style.left = this.cornerCoords.x + 'px';
-        this.placeHolderSpan.style.top = this.cornerCoords.y + 'px';
-        this.placeHolderSpan.style.display = 'block';
-        this.placeHolderSpan.style.zIndex = '2';
-        this.placeHolderSpan.style.visibility = 'visible';
-        this.placeHolderSpan.style.fontSize = this.fontSize + 'px';
-        this.placeHolderSpan.style.position = 'absolute';
-        this.placeHolderSpan.style.textAlign = this.textAlign;
-        this.placeHolderSpan.style.fontFamily = this.fontFamily;
-        this.placeHolderSpan.style.fontWeight = this.fontWeight;
-        this.placeHolderSpan.style.fontStyle = this.fontStyle;
-        this.placeHolderSpan.style.lineHeight = this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION + 'px';
-        this.placeHolderSpan.style.color = this.primaryColor;
-        this.placeHolderSpan.style.zIndex = '2';
-        this.placeHolderSpan.style.whiteSpace = 'pre-line';
-        this.placeHolderSpan.style.minWidth = this.fontSize * TextConstants.MIN_BOX_WIDTH + 'px';
+        this.setSpanPosition();
+        this.setSpanCss();
+        this.setSpanFont();
+        this.setSpanTextOptions();
     }
 
     setFontFamily(fontFamily: string): void {
@@ -161,5 +147,34 @@ export class TextService extends Tool {
         range.selectNodeContents(this.placeHolderSpan);
         selection.removeAllRanges();
         selection.addRange(range);
+    }
+
+    private setSpanFont(): void {
+        this.placeHolderSpan.style.fontSize = this.fontSize + 'px';
+        this.placeHolderSpan.style.fontFamily = this.fontFamily;
+        this.placeHolderSpan.style.fontWeight = this.fontWeight;
+        this.placeHolderSpan.style.fontStyle = this.fontStyle;
+    }
+
+    private setSpanCss(): void {
+        this.placeHolderSpan.style.outline = '1px solid black';
+        this.placeHolderSpan.style.padding = '5px';
+        this.placeHolderSpan.style.display = 'block';
+        this.placeHolderSpan.style.zIndex = '2';
+        this.placeHolderSpan.style.visibility = 'visible';
+        this.placeHolderSpan.style.position = 'absolute';
+        this.placeHolderSpan.style.minWidth = this.fontSize * TextConstants.MIN_BOX_WIDTH + 'px';
+    }
+
+    private setSpanPosition(): void {
+        this.placeHolderSpan.style.left = this.cornerCoords.x + 'px';
+        this.placeHolderSpan.style.top = this.cornerCoords.y + 'px';
+    }
+
+    private setSpanTextOptions(): void {
+        this.placeHolderSpan.style.textAlign = this.textAlign;
+        this.placeHolderSpan.style.lineHeight = this.fontSize * TextConstants.LINE_HEIGHT_CONVERSION + 'px';
+        this.placeHolderSpan.style.color = this.primaryColor;
+        this.placeHolderSpan.style.whiteSpace = 'pre-line';
     }
 }

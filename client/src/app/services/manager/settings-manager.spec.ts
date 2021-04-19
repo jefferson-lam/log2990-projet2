@@ -30,7 +30,6 @@ describe('SettingsManagerService', () => {
             'setTextAlign',
             'setTextBold',
             'setTextItalic',
-            'setInputFromKeyboard',
         ]);
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools'], ['currentTool']);
         (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(toolSpy);
