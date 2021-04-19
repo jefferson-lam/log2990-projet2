@@ -38,7 +38,7 @@ describe('SidebarGridComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         squareWidthSubscribeSpy = spyOn(component['squareWidthChanged'], 'subscribe');
-        opacityValueSubscribeSpy = spyOn(component.opacityValueChanged, 'subscribe');
+        opacityValueSubscribeSpy = spyOn(component['opacityValueChanged'], 'subscribe');
         visibilityValueSubscribeSpy = spyOn(component.visibilityValueChanged, 'subscribe');
     });
 
@@ -74,7 +74,7 @@ describe('SidebarGridComponent', () => {
     });
 
     it('emitOpacityValue should emit specified value', () => {
-        const emitSpy = spyOn(component.opacityValueChanged, 'emit');
+        const emitSpy = spyOn(component['opacityValueChanged'], 'emit');
         component.emitOpacityValue();
         expect(emitSpy).toHaveBeenCalledWith(component.opacityValue);
     });
@@ -93,7 +93,7 @@ describe('SidebarGridComponent', () => {
 
     it('emission of opacityValueChanged should call setOpacityValue with specified opacity', () => {
         const INPUT_OPACITY = 0.5;
-        component.opacityValueChanged.emit(INPUT_OPACITY);
+        component['opacityValueChanged'].emit(INPUT_OPACITY);
         expect(canvasGridServiceSpy.setOpacityValue).toHaveBeenCalledWith(INPUT_OPACITY);
     });
 

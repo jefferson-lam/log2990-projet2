@@ -24,7 +24,7 @@ export class SidebarGridComponent implements OnInit {
     @ViewChild('widthSlider') private widthSlider: MatSlider;
 
     @Output() private squareWidthChanged: EventEmitter<number>;
-    @Output() opacityValueChanged: EventEmitter<number>;
+    @Output() private opacityValueChanged: EventEmitter<number>;
     @Output() visibilityValueChanged: EventEmitter<boolean>;
 
     constructor(public canvasGridService: CanvasGridService) {
