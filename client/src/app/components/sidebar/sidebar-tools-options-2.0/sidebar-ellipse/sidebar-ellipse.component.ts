@@ -14,7 +14,7 @@ export class SidebarEllipseComponent implements OnInit {
     toolSize: number | undefined;
     fillMode: number | undefined;
 
-    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() private toolSizeChanged: EventEmitter<number>;
     @Output() fillModeChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
