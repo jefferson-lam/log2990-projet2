@@ -10,6 +10,7 @@ import * as DatabaseConstants from '@common/validation/database-constants';
 export class TitleInputComponent {
     @Output() isTitleValidEvent: EventEmitter<boolean>;
     title: string;
+    unsatisfiedRequirements: number;
 
     minLengthRequirement: string;
     minLengthDivClass: string;
@@ -30,36 +31,39 @@ export class TitleInputComponent {
 
     validateTitle(title: string): void {
         title = title.trim();
-        let unsatisfiedRequirements = 0;
-        // Change class for min length requirement
-        if (this.tagIsShorterThanMinLength(title)) {
-            this.minLengthDivClass = 'Failed';
-            unsatisfiedRequirements++;
-        } else {
-            this.minLengthDivClass = 'Satisfied';
-        }
+        this.unsatisfiedRequirements = 0;
 
-        // Change class for max length requirement
-        if (this.tagIsLongerThanMaxLength(title)) {
-            this.maxLengthDivClass = 'Failed';
-            unsatisfiedRequirements++;
-        } else {
-            this.maxLengthDivClass = 'Satisfied';
-        }
+        this.minLengthTitleValidator(title);
+        this.maxLengthTitleValidator(title);
+        this.characterTitleValidator(title);
 
-        // Change class for ascii only characters requirement
-        if (this.tagHasSpecialCharacters(title)) {
-            this.noSpecialCharacterDivClass = 'Failed';
-            unsatisfiedRequirements++;
-        } else {
-            this.noSpecialCharacterDivClass = 'Satisfied';
-        }
-
-        if (unsatisfiedRequirements > 0) {
+        if (this.unsatisfiedRequirements > 0) {
             this.isTitleValidEvent.emit(false);
         } else {
             this.title = title;
             this.isTitleValidEvent.emit(true);
+        }
+    }
+
+    minLengthTitleValidator(title: string): void {
+        this.minLengthDivClass = 'Satisfied';
+        if (this.tagIsShorterThanMinLength(title)) {
+            this.minLengthDivClass = 'Failed';
+            this.unsatisfiedRequirements++;
+        }
+    }
+    maxLengthTitleValidator(title: string): void {
+        this.maxLengthDivClass = 'Satisfied';
+        if (this.tagIsLongerThanMaxLength(title)) {
+            this.maxLengthDivClass = 'Failed';
+            this.unsatisfiedRequirements++;
+        }
+    }
+    characterTitleValidator(title: string): void {
+        this.noSpecialCharacterDivClass = 'Satisfied';
+        if (this.tagHasSpecialCharacters(title)) {
+            this.noSpecialCharacterDivClass = 'Failed';
+            this.unsatisfiedRequirements++;
         }
     }
 
