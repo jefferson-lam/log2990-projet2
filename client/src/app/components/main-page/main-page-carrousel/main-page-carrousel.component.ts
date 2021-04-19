@@ -26,7 +26,6 @@ export class MainPageCarrouselComponent {
     tagErrorMessage: string;
     serverErrorMessage: string;
     deleted: boolean;
-    noValidDrawing: boolean;
     selectable: boolean;
     removable: boolean;
     deleteClick: boolean;
@@ -53,7 +52,6 @@ export class MainPageCarrouselComponent {
         this.tagErrorMessage = '';
         this.serverErrorMessage = '';
         this.deleted = false;
-        this.noValidDrawing = false;
         this.selectable = true;
         this.removable = true;
         this.separatorKeysCodes = [ENTER, COMMA];
@@ -98,9 +96,7 @@ export class MainPageCarrouselComponent {
     }
 
     showcasePreviousDrawing(): void {
-        this.noValidDrawing = false;
         if (this.showCasedDrawings.length === 0) {
-            this.noValidDrawing = true;
             return;
         }
         // Determine new drawingCounter value
@@ -115,9 +111,7 @@ export class MainPageCarrouselComponent {
 
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;
-        this.noValidDrawing = false;
         if (this.showCasedDrawings.length === 0) {
-            this.noValidDrawing = true;
             return;
         }
         if (this.drawingCounter + this.showCasedDrawings.length >= this.previewDrawings.length) {
@@ -210,7 +204,6 @@ export class MainPageCarrouselComponent {
                 for (const drawing of drawingsWithMatchingTags) {
                     await this.addDrawingToDisplay(drawing._id, drawing);
                 }
-                this.noValidDrawing = this.showCasedDrawings.length === 0;
             } catch (error) {
                 this.setErrorInServer("Le serveur n'est pas disponible.");
             } finally {
@@ -226,7 +219,6 @@ export class MainPageCarrouselComponent {
             for (const drawing of drawingsWithMatchingTags) {
                 await this.addDrawingToDisplay(drawing._id, drawing);
             }
-            this.noValidDrawing = this.showCasedDrawings.length === 0;
         } catch (error) {
             this.setErrorInServer("Le serveur n'est pas disponible.");
         } finally {

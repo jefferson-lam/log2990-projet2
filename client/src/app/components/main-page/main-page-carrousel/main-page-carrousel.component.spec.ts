@@ -3,17 +3,17 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 import { DatabaseService } from '@app/services/database/database.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
 import { of, Subject } from 'rxjs';
 import { MainPageCarrouselComponent } from './main-page-carrousel.component';
 
 import SpyObj = jasmine.SpyObj;
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 // tslint:disable: max-file-line-count
 // tslint:disable: no-string-literal
 describe('MainPageCarrouselComponent', () => {
@@ -294,7 +294,6 @@ describe('MainPageCarrouselComponent', () => {
         const popSpy = spyOn(component.showCasedDrawings, 'pop');
         component.showCasedDrawings = [];
         component.showcasePreviousDrawing();
-        expect(component.noValidDrawing).toBeTrue();
         expect(popSpy).not.toHaveBeenCalled();
     });
 
@@ -337,11 +336,9 @@ describe('MainPageCarrouselComponent', () => {
 
     it('showCaseNextDrawing should not move to any drawing whatsoever if number of drawings in showcase is 0.', () => {
         component.showCasedDrawings = [];
-        component.noValidDrawing = false;
 
         component.showcaseNextDrawing();
 
-        expect(component.noValidDrawing).toBeTrue();
         expect(component.showCasedDrawings.length).toEqual(0);
     });
 
