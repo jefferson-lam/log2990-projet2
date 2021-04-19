@@ -181,7 +181,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
         if (!this.isFromClipboard) {
             this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
+                this.originalImageCanvas,
                 0,
                 0,
                 this.selectionWidth,
@@ -237,6 +237,17 @@ export class RectangleSelectionService extends ToolSelectionService {
     ): void {
         this.drawingService.selectionCanvas.style.visibility = 'visible';
         selectionCtx.drawImage(
+            baseCtx.canvas,
+            pathData[SelectionConstants.START_INDEX].x,
+            pathData[SelectionConstants.START_INDEX].y,
+            selectionWidth,
+            selectionHeight,
+            0,
+            0,
+            selectionWidth,
+            selectionHeight,
+        );
+        this.originalImageCtx.drawImage(
             baseCtx.canvas,
             pathData[SelectionConstants.START_INDEX].x,
             pathData[SelectionConstants.START_INDEX].y,

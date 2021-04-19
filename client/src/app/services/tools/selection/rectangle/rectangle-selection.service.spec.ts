@@ -438,7 +438,7 @@ describe('RectangleSelectionService', () => {
         service.selectionHeight = sh;
         service.undoSelection();
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
-        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(selectionCtxStub.canvas, 0, 0, sw, sh, left, top, sw, sh);
+        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(service.originalImageCanvas, 0, 0, sw, sh, left, top, sw, sh);
         expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
         expect(service.isManipulating).toBeFalsy();

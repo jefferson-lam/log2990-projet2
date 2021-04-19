@@ -476,7 +476,7 @@ describe('EllipseToolSelectionService', () => {
         service.undoSelection();
         expect(clipEllipseSpy).toHaveBeenCalled();
         expect(baseCtxDrawImage).toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
+            service.originalImageCanvas,
             0,
             0,
             service.selectionWidth,

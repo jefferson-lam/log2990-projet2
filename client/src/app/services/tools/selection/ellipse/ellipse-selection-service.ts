@@ -196,7 +196,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.clipEllipse(this.drawingService.baseCtx, this.pathData[0], this.selectionHeight, this.selectionWidth, 1);
         if (!this.isFromClipboard) {
             this.drawingService.baseCtx.drawImage(
-                this.drawingService.selectionCanvas,
+                this.originalImageCanvas,
                 0,
                 0,
                 this.selectionWidth,
@@ -276,6 +276,17 @@ export class EllipseSelectionService extends ToolSelectionService {
         selectionHeight: number,
     ): void {
         this.clipEllipseSelection(selectionCtx, baseCtx, pathData, selectionWidth, selectionHeight);
+        this.originalImageCtx.drawImage(
+            baseCtx.canvas,
+            pathData[SelectionConstants.START_INDEX].x,
+            pathData[SelectionConstants.START_INDEX].y,
+            selectionWidth,
+            selectionHeight,
+            0,
+            0,
+            selectionWidth,
+            selectionHeight,
+        );
         this.fillEllipse(baseCtx, pathData, this.isCircle);
     }
 
