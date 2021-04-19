@@ -57,7 +57,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.refreshCanvas();
     }
 
-    changeWhiteToAlpha(imgData: ImageData): void {
+    private changeWhiteToAlpha(imgData: ImageData): void {
         // tslint:disable-next-line:no-magic-numbers
         for (let i = 0; i < imgData.data.length; i += 4) {
             if (imgData.data[i] === MAX_RGB_VALUE && imgData.data[i + 1] === MAX_RGB_VALUE && imgData.data[i + 2] === MAX_RGB_VALUE) {

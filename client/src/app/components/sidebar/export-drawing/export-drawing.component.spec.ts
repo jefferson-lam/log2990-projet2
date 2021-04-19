@@ -14,6 +14,7 @@ import { ExportDrawingComponent } from './export-drawing.component';
 import { ExportErrorPageComponent } from './export-error-page/export-error-page.component';
 
 // tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('ExportDrawingComponent', () => {
     let component: ExportDrawingComponent;
     let fixture: ComponentFixture<ExportDrawingComponent>;
@@ -29,7 +30,6 @@ describe('ExportDrawingComponent', () => {
     beforeEach(async(() => {
         drawingStub = new DrawingService();
         imgurStub = new ImgurService();
-        // tslint:disable:no-any
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
         (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
             new Subject<any>(),
@@ -37,7 +37,6 @@ describe('ExportDrawingComponent', () => {
         (Object.getOwnPropertyDescriptor(dialogSpy, 'afterAllClosed')?.get as jasmine.Spy<() => Observable<void>>).and.returnValue(
             dialogSpy['_afterAllClosedAtThisLevel'].asObservable(),
         );
-        // tslint:enable:no-any
         TestBed.configureTestingModule({
             imports: [FormsModule],
             declarations: [ExportDrawingComponent],
@@ -80,7 +79,7 @@ describe('ExportDrawingComponent', () => {
         testCtx.fillRect(0, 0, 1, 1);
         let imgData = testCtx.getImageData(0, 0, testCanvas.width, testCanvas.height);
 
-        component.changeWhiteToAlpha(imgData);
+        component['changeWhiteToAlpha'](imgData);
 
         imgData = component['exportCtx'].getImageData(0, 0, 1, 1);
         for (const rgbValue of imgData.data) {
@@ -100,7 +99,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('refreshCanvas should call changeWhiteToAlpha if passed argument true', () => {
-        const changeWhiteToAlphaSpy = spyOn(component, 'changeWhiteToAlpha');
+        const changeWhiteToAlphaSpy = spyOn<any>(component, 'changeWhiteToAlpha');
 
         component.refreshCanvas(true);
 
