@@ -34,7 +34,7 @@ export class MainPageCarrouselComponent {
 
     private drawingCounter: number;
     private showCasedDrawings: ImageFormat[];
-    previewDrawings: ImageFormat[];
+    private previewDrawings: ImageFormat[];
 
     constructor(
         private database: DatabaseService,

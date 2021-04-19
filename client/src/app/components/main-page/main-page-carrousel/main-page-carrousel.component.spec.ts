@@ -109,7 +109,7 @@ describe('MainPageCarrouselComponent', () => {
 
     it('showcasePreviewDrawing should set drawing counter to previewDrawings.length -1 if drawingCounter currently at 0', () => {
         component['drawingCounter'] = 0;
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -120,7 +120,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
         ];
-        const EXPECTED_DRAWING_COUNTER = component.previewDrawings.length - 1;
+        const EXPECTED_DRAWING_COUNTER = component['previewDrawings'].length - 1;
         const EXPECTED_SHOWCASED_DRAWINGS = [
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
@@ -134,7 +134,7 @@ describe('MainPageCarrouselComponent', () => {
     it('showcasePreviewDrawing should set drawing counter to drawingCounter - 1 if drawingCounter not 0', () => {
         const TEST_START_DRAWING_COUNTER = 2;
         component['drawingCounter'] = TEST_START_DRAWING_COUNTER;
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -157,13 +157,13 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('showcaseNextDrawing should set drawing counter to 0 if drawingCounter currently at previewDrawings.length - 1', () => {
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component['drawingCounter'] = component.previewDrawings.length - 1;
+        component['drawingCounter'] = component['previewDrawings'].length - 1;
         component['showCasedDrawings'] = [
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
@@ -181,7 +181,7 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('showcaseNextDrawing should set drawingCounter to drawingCounter+1 if drawingCounter smaller than previewDrawings.length - showcasedDrawings.length', () => {
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -206,7 +206,7 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('addTag should add tag if tag exists', () => {
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', tags: ['test', 'test2'], id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', tags: ['test'], id: '3' },
@@ -222,7 +222,7 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('addTag should not add tag if tag does not exist', () => {
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -343,7 +343,7 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('deleteDrawing should throw error when calling dropDrawing from database', fakeAsync(() => {
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -363,7 +363,7 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
 
-        const spySplice = spyOn(component.previewDrawings, 'splice');
+        const spySplice = spyOn(component['previewDrawings'], 'splice');
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
@@ -371,7 +371,7 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('deleteDrawing should throw error when timeout has occured', fakeAsync(() => {
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -391,7 +391,7 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
 
-        const spySplice = spyOn(component.previewDrawings, 'splice');
+        const spySplice = spyOn(component['previewDrawings'], 'splice');
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
@@ -399,7 +399,7 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('deleteDrawing should throw error when calling deleteDrawing from local-server', fakeAsync(() => {
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -419,7 +419,7 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
 
-        const spySplice = spyOn(component.previewDrawings, 'splice');
+        const spySplice = spyOn(component['previewDrawings'], 'splice');
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
@@ -427,7 +427,7 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('deleteDrawing should delete selected drawing', fakeAsync(() => {
-        component.previewDrawings = [
+        component['previewDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -439,7 +439,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
         ];
-        const spySplice = spyOn(component.previewDrawings, 'splice');
+        const spySplice = spyOn(component['previewDrawings'], 'splice');
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
@@ -447,7 +447,7 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('deleteDrawing should delete drawing when there is only one', fakeAsync(() => {
-        component.previewDrawings = [{ image: '', name: '', id: '1' }];
+        component['previewDrawings'] = [{ image: '', name: '', id: '1' }];
         component['showCasedDrawings'] = [{ image: '', name: '', id: '1' }];
         const spySplice = spyOn(component['showCasedDrawings'], 'splice');
 
@@ -474,7 +474,7 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('removeTag should catch error getDrawings in resetShowcasedDrawings', fakeAsync(() => {
-        component.previewDrawings = [{ image: '', name: '', id: '1' }];
+        component['previewDrawings'] = [{ image: '', name: '', id: '1' }];
         component['showCasedDrawings'] = [{ image: '', name: '', id: '1' }];
         databaseServiceSpy.getDrawings.and.returnValue(
             of({
