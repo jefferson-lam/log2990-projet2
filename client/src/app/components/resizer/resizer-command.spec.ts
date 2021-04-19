@@ -50,7 +50,7 @@ describe('ResizerCommand', () => {
         service = TestBed.inject(ResizerCommand);
 
         canvasSizeSubject = spyOn(drawingServiceSpy.canvasSizeSubject, 'next');
-        previewCtxDrawImageSpy = spyOn(service.previewCtx, 'drawImage').and.callThrough();
+        previewCtxDrawImageSpy = spyOn(service['previewCtx'], 'drawImage').and.callThrough();
         baseCtxDrawImageSpy = spyOn(service['baseCtx'], 'drawImage').and.callThrough();
 
         service.previewWidth = CanvasConstants.MIN_WIDTH_CANVAS;
@@ -145,7 +145,7 @@ describe('ResizerCommand', () => {
     it('resizePreviewCanvas should set new canvas size', () => {
         service.resizePreviewCanvas();
 
-        expect(service.previewCtx.canvas.width).toBe(service.previewWidth);
-        expect(service.previewCtx.canvas.height).toBe(service.previewHeight);
+        expect(service['previewCtx'].canvas.width).toBe(service.previewWidth);
+        expect(service['previewCtx'].canvas.height).toBe(service.previewHeight);
     });
 });
