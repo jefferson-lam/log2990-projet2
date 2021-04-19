@@ -81,7 +81,7 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
         this.emitRotateAngle();
     }
 
-    resetBorders(): void {
+    private resetBorders(): void {
         this.relaxedEgg.nativeElement.style.border = '';
         this.sleepyEgg.nativeElement.style.border = '';
         this.hungryEgg.nativeElement.style.border = '';

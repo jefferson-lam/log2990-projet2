@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { SidebarStampComponent } from './sidebar-stamp.component';
 
 // tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('SidebarStampComponent', () => {
     let stampServiceSpy: jasmine.SpyObj<StampService>;
     let stampComponent: SidebarStampComponent;
@@ -103,13 +104,13 @@ describe('SidebarStampComponent', () => {
     });
 
     it('changeBorderIndicator should call resetBorders', () => {
-        const resetBorderSpy = spyOn(stampComponent, 'resetBorders');
+        const resetBorderSpy = spyOn<any>(stampComponent, 'resetBorders');
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
         expect(resetBorderSpy).toHaveBeenCalled();
     });
 
     it("resetBorders should set all border styles to ''", () => {
-        stampComponent.resetBorders();
+        stampComponent['resetBorders']();
         // tslint:disable-next-line: no-string-literal
         expect(stampComponent['relaxedEgg'].nativeElement.style.border).toBe('');
         expect(stampComponent['sleepyEgg'].nativeElement.style.border).toBe('');
@@ -120,7 +121,7 @@ describe('SidebarStampComponent', () => {
     });
 
     it('changeBorderIndicator should call resetBorders', () => {
-        const resetBorderSpy = spyOn(stampComponent, 'resetBorders');
+        const resetBorderSpy = spyOn<any>(stampComponent, 'resetBorders');
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
         expect(resetBorderSpy).toHaveBeenCalled();
     });
