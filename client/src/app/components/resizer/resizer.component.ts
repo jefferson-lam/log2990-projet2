@@ -20,7 +20,7 @@ export class ResizerComponent implements AfterViewInit {
     isBottomResizerDown: boolean;
 
     @ViewChild('sideResizer', { static: false }) private sideResizer: ElementRef<HTMLElement>;
-    @ViewChild('cornerResizer', { static: false }) cornerResizer: ElementRef<HTMLElement>;
+    @ViewChild('cornerResizer', { static: false }) private cornerResizer: ElementRef<HTMLElement>;
     @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
 
     constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService) {
