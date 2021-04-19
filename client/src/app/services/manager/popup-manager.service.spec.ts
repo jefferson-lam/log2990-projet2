@@ -18,17 +18,21 @@ describe('PopupManagerService', () => {
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let routerSpy: jasmine.SpyObj<Router>;
     let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let pileSizeSubject: Subject<number[]>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let onToolChangeSpy: jasmine.Spy;
     let baseCanvas: HTMLCanvasElement;
     let carrousselSubject: Subject<any>;
     let discardSubject: Subject<boolean>;
     let setSpy: jasmine.Spy;
-    let emptyCanvasSpy: jasmine.Spy;
     const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
 
     beforeEach(() => {
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['reset', 'isUndoPileEmpty']);
+        pileSizeSubject = new Subject<number[]>();
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['reset', 'isUndoPileEmpty'], {
+            initialImage: undefined,
+            pileSizeObservable: pileSizeSubject.asObservable(),
+        });
         toolManagerSpy = jasmine.createSpyObj('ToolManagerService', [], ['currentTool']);
         (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue({
             // tslint:disable-next-line:no-empty
@@ -69,11 +73,34 @@ describe('PopupManagerService', () => {
         discardSubject = new Subject();
         setSpy = spyOn(localStorage, 'setItem');
         onToolChangeSpy = spyOn(toolManagerSpy.currentTool, 'onToolChange');
-        emptyCanvasSpy = spyOn(service, 'isCanvasEmpty');
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    it('when pile size changes newDrawingPossible is set false if undoPile empty and initialImage undefined', () => {
+        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(true);
+        pileSizeSubject.next([0, 0]);
+
+        expect(service.newDrawingPossible).toBeFalse();
+    });
+
+    it('when pile size changes newDrawingPossible is set true if undoPile empty and initialImage not undefined', () => {
+        (Object.getOwnPropertyDescriptor(undoRedoServiceSpy, 'initialImage')?.get as jasmine.Spy<() => HTMLImageElement | undefined>).and.returnValue(
+            new Image(),
+        );
+        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(true);
+        pileSizeSubject.next([0, 0]);
+
+        expect(service.newDrawingPossible).toBeTrue();
+    });
+
+    it('when pile size changes newDrawingPossible is set true if undoPile not empty and initialImage undefined', () => {
+        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(false);
+        pileSizeSubject.next([1, 0]);
+
+        expect(service.newDrawingPossible).toBeTrue();
     });
 
     it('when all popups are closed, isPopUpOpen is set to false', () => {
@@ -224,38 +251,25 @@ describe('PopupManagerService', () => {
         expect(dialogSpy.open).not.toHaveBeenCalled();
     });
 
-    it("openNewDrawingPopUp should call onToolChange if undoPile isn't empty and pop up isn't open", () => {
-        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(false);
+    it("openNewDrawingPopUp should call onToolChange if newDrawingPossible and pop up isn't open", () => {
+        service.newDrawingPossible = true;
         service.openNewDrawingPopUp();
 
-        expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
         expect(onToolChangeSpy).toHaveBeenCalled();
     });
 
-    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile isn't empty, no initialImage and pop up isn't open", () => {
-        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(false);
+    it("openNewDrawingPopUp should open NewDrawingBoxComponent if newDrawingPossible and pop up isn't open", () => {
+        service.newDrawingPossible = true;
         service.openNewDrawingPopUp();
 
-        expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
     });
 
-    it("openNewDrawingPopUp should open NewDrawingBoxComponent if undoPile is empty, canvas is not empty and pop up isn't open", () => {
-        service.undoRedoService.initialImage = new Image();
-        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(true);
+    it('openNewDrawingPopUp should not open anything if newDrawingPossible false', () => {
+        service.newDrawingPossible = false;
         service.openNewDrawingPopUp();
 
-        expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(NewDrawingBoxComponent);
-    });
-
-    it('openNewDrawingPopUp should not open anything if undoPile is empty, canvas is empty and pop up is not open', () => {
-        undoRedoServiceSpy.isUndoPileEmpty.and.returnValue(true);
-        service.openNewDrawingPopUp();
-
-        expect(undoRedoServiceSpy.isUndoPileEmpty).toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
     });
 
@@ -268,55 +282,19 @@ describe('PopupManagerService', () => {
         expect(service.isPopUpOpen).toBeTrue();
     });
 
-    it("openSavePopUp should open SaveDrawingComponent if canvas isn't empty and pop up isn't open", () => {
-        emptyCanvasSpy.and.returnValue(false);
+    it("openSavePopUp should open SaveDrawingComponent if pop up isn't open", () => {
         service.openSavePopUp();
 
         expect(onToolChangeSpy).toHaveBeenCalled();
-        expect(emptyCanvasSpy).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalledWith(SaveDrawingComponent);
-    });
-
-    it('openSavePopUp should not open anything if canvas is empty', () => {
-        emptyCanvasSpy.and.returnValue(true);
-        service.openSavePopUp();
-
-        expect(emptyCanvasSpy).toHaveBeenCalled();
-        expect(dialogSpy.open).not.toHaveBeenCalled();
-        expect(service.isPopUpOpen).toBeFalse();
     });
 
     it('openSavePopUp should not open anything if pop up is open', () => {
         service.isPopUpOpen = true;
         service.openSavePopUp();
 
-        expect(emptyCanvasSpy).not.toHaveBeenCalled();
         expect(dialogSpy.open).not.toHaveBeenCalled();
         expect(service.isPopUpOpen).toBeTrue();
-    });
-
-    it('isCanvasEmpty should return true if canvas only white', () => {
-        emptyCanvasSpy.and.callThrough();
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        const returnValue = service.isCanvasEmpty();
-
-        expect(returnValue).toBeTrue();
-    });
-
-    it('isCanvasEmpty should return false if something has been drawn', () => {
-        emptyCanvasSpy.and.callThrough();
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        const returnValue = service.isCanvasEmpty();
-
-        expect(returnValue).toBeFalse();
     });
 });

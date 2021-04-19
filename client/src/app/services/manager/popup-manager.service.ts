@@ -6,7 +6,6 @@ import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
-import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -15,8 +14,17 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class PopupManagerService {
     isPopUpOpen: boolean;
+    newDrawingPossible: boolean;
 
     constructor(public dialog: MatDialog, public undoRedoService: UndoRedoService, public toolManager: ToolManagerService, public router: Router) {
+        this.newDrawingPossible = this.undoRedoService.initialImage !== undefined;
+        this.undoRedoService.pileSizeObservable.subscribe(() => {
+            if (this.undoRedoService.isUndoPileEmpty() && this.undoRedoService.initialImage === undefined) {
+                this.newDrawingPossible = false;
+                return;
+            }
+            this.newDrawingPossible = true;
+        });
         this.isPopUpOpen = false;
         this.dialog.afterAllClosed.subscribe(() => {
             this.isPopUpOpen = false;
@@ -60,24 +68,14 @@ export class PopupManagerService {
 
     openNewDrawingPopUp(): void {
         if (this.isPopUpOpen) return;
-        if (!this.undoRedoService.isUndoPileEmpty() || this.undoRedoService.initialImage !== undefined) {
-            this.toolManager.currentTool.onToolChange();
-            this.dialog.open(NewDrawingBoxComponent);
-        }
+        if (!this.newDrawingPossible) return;
+        this.toolManager.currentTool.onToolChange();
+        this.dialog.open(NewDrawingBoxComponent);
     }
 
     openSavePopUp(): void {
-        if (this.isPopUpOpen || this.isCanvasEmpty()) return;
+        if (this.isPopUpOpen) return;
         this.toolManager.currentTool.onToolChange();
         this.dialog.open(SaveDrawingComponent);
-    }
-
-    isCanvasEmpty(): boolean {
-        // Thanks to user Kaiido on stackoverflow.com
-        // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank/17386803#comment96825186_17386803
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        const baseCtx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
-        const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
-        return !pixelBuffer.some((color) => color !== WHITE_RGBA_DECIMAL);
     }
 }
