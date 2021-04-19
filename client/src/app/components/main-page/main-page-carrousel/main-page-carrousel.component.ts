@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -19,7 +19,6 @@ import * as ServerConstants from '@common/validation/server-constants';
     styleUrls: ['./main-page-carrousel.component.scss'],
 })
 export class MainPageCarrouselComponent {
-    @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
     @Input() newTagAdded: boolean;
     @Input() deleteDrawingTrue: boolean;
 
