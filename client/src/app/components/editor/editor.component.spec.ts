@@ -42,6 +42,7 @@ describe('EditorComponent', () => {
             'onPlusKeyDown',
             'onEqualKeyDown',
             'onKeyboardDown',
+            'onEscapeKeyDown',
             'onMKeyDown',
             'onAltUp',
             'onAltDown',
@@ -218,6 +219,11 @@ describe('EditorComponent', () => {
     it('alt key up should call shortcutManager.onAltUp', () => {
         component.onAltUp();
         expect(shortcutManagerSpy.onAltUp).toHaveBeenCalled();
+    });
+
+    it('onEscapeKeyDown should call shortcutManager.onEscapeKeyDown', () => {
+        component.onEscapeKeyDown();
+        expect(shortcutManagerSpy.onEscapeKeyDown).toHaveBeenCalled();
     });
 
     it('ctrl+c should call shortcutManager.onCtrlCKeyDown', () => {

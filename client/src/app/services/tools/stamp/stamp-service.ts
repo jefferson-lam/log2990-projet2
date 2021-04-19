@@ -66,7 +66,7 @@ export class StampService extends Tool {
     }
 
     onMouseEnter(event: MouseEvent): void {
-        if (event.buttons === MouseConstants.PRIMARY_BUTTON && this.inUse) {
+        if (event.buttons === MouseConstants.MouseButton.Middle && this.inUse) {
             this.inUse = true;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);

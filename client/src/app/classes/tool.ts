@@ -25,6 +25,12 @@ export abstract class Tool {
 
     onKeyboardUp(event: KeyboardEvent): void {}
 
+    onKeyboardPress(event: KeyboardEvent): void {}
+
+    onEscapeKeyDown(): void {}
+
+    onMouseClick(event: MouseEvent): void {}
+
     onMouseDoubleClick(event: MouseEvent): void {}
 
     onMouseDown(event: MouseEvent): void {}
@@ -62,6 +68,16 @@ export abstract class Tool {
     setEmissionCount(newEmissionCount: number): void {}
 
     setToleranceValue(newToleranceValue: number): void {}
+
+    setFontFamily(fontFamily: string): void {}
+
+    setFontSize(fontSize: number): void {}
+
+    setTextAlign(textAlign: string): void {}
+
+    setTextBold(fontWeight: string): void {}
+
+    setTextItalic(fontStyle: string): void {}
 
     setImageSource(newImageSource: string): void {}
 
