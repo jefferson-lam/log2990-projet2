@@ -110,8 +110,7 @@ export class LassoSelectionService extends ToolSelectionService {
         super.onKeyboardUp(event);
         if (event.key !== 'Escape') return;
         if (this.inUse) {
-            this.resetSelection();
-            this.isEscapeDown = false;
+            this.resetProperties();
         } else if (this.isManipulating) {
             this.confirmSelection();
             this.clearPath();
@@ -158,7 +157,7 @@ export class LassoSelectionService extends ToolSelectionService {
         if (this.isManipulating) {
             this.confirmSelection();
         } else if (this.inUse) {
-            this.resetSelection();
+            this.resetProperties();
             this.lineService.onToolChange();
         }
     }
@@ -170,9 +169,7 @@ export class LassoSelectionService extends ToolSelectionService {
         };
         const command: Command = new LassoSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
         this.undoRedoService.executeCommand(command);
-        this.resetSelection();
-        this.resizerHandlerService.resetResizers();
-        this.isManipulating = false;
+        this.resetProperties();
     }
 
     initializeSelection(): void {
@@ -204,27 +201,7 @@ export class LassoSelectionService extends ToolSelectionService {
                 this.selectionHeight,
             );
         }
-        this.resetSelectedToolSettings();
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetCanvasState(this.drawingService.borderCanvas);
-        this.resizerHandlerService.resetResizers();
-        this.isManipulating = false;
-        this.isEscapeDown = false;
-        this.isConnected = false;
-    }
-
-    resetSelection(): void {
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetCanvasState(this.drawingService.borderCanvas);
-        this.resetSelectedToolSettings();
-        // Erase the rectangle drawn as a preview of selection
-        this.clearPath();
-        this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
-        this.numSides = 0;
-        this.isValidSegment = true;
-        this.inUse = false;
+        this.resetProperties();
     }
 
     private selectLasso(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
@@ -295,5 +272,20 @@ export class LassoSelectionService extends ToolSelectionService {
 
     private arePointsEqual(point1: Vec2, point2: Vec2): boolean {
         return point1.x === point2.x && point1.y === point2.y;
+    }
+
+    private resetProperties(): void {
+        this.resetAllCanvasState();
+        this.resetSelectedToolSettings();
+        this.clearPath();
+        this.resizerHandlerService.resetResizers();
+        this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
+        this.numSides = 0;
+        this.isValidSegment = true;
+        this.inUse = false;
+        this.isManipulating = false;
+        this.isEscapeDown = false;
+        this.isFromClipboard = false;
+        this.isConnected = false;
     }
 }

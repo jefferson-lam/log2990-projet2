@@ -59,19 +59,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onMouseUp(event: MouseEvent): void {
         if (!this.inUse) return;
-        this.lockMouseInsideCanvas(event);
-        this.ellipseService.inUse = false;
-        super.onMouseUp(event);
-
-        this.computeSelectionDimensions();
-        if (!this.validateSelectionHeightAndWidth()) return;
-        this.recalibrateCanvasDimensions();
-
-        this.selectEllipse(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData);
-        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
-
-        this.inUse = false;
-        this.isManipulating = true;
+        this.initializeSelection(event);
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -194,6 +182,22 @@ export class EllipseSelectionService extends ToolSelectionService {
             ShapeConstants.END_ANGLE,
         );
         ctx.stroke();
+    }
+
+    initializeSelection(event: MouseEvent): void {
+        this.lockMouseInsideCanvas(event);
+        this.ellipseService.inUse = false;
+        super.onMouseUp(event);
+
+        this.computeSelectionDimensions();
+        if (!this.validateSelectionHeightAndWidth()) return;
+        this.setSelectionCanvasSize(this.selectionWidth, this.selectionHeight);
+
+        this.selectEllipse(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData);
+        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
+
+        this.inUse = false;
+        this.isManipulating = true;
     }
 
     confirmSelection(): void {
@@ -326,14 +330,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
     }
 
-    private recalibrateCanvasDimensions(): void {
-        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
-        this.drawingService.borderCanvas.width = this.selectionWidth;
-
-        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
-        this.drawingService.borderCanvas.height = this.selectionHeight;
-    }
-
     private resetProperties(): void {
         this.resetAllCanvasState();
         this.clearCorners(this.pathData);
@@ -343,11 +339,5 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.isManipulating = false;
         this.isCircle = false;
         this.isShiftDown = false;
-    }
-
-    private resetAllCanvasState(): void {
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetCanvasState(this.drawingService.borderCanvas);
     }
 }

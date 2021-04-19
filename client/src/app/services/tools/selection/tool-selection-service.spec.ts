@@ -435,4 +435,11 @@ describe('ToolSelectionService', () => {
         service.onToolChange();
         expect(service.resizerHandlerService.inUse).toBeFalse();
     });
+
+    it('resetAllCanvasState should call resetCanvasState for all canvases', () => {
+        const resetCanvasStateSpy = spyOn(service, 'resetCanvasState');
+        service.resetAllCanvasState();
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
+        expect(resetCanvasStateSpy).toHaveBeenCalledWith(previewCtxStub.canvas);
+    });
 });

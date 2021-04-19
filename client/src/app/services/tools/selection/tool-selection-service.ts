@@ -192,4 +192,10 @@ export class ToolSelectionService extends Tool {
     onToolChange(): void {
         this.resizerHandlerService.inUse = false;
     }
+
+    resetAllCanvasState(): void {
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
+    }
 }

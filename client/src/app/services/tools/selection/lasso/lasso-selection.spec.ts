@@ -257,7 +257,7 @@ describe('LassoSelectionService', () => {
     });
 
     it('onKeyboardUp should call resetSelection if in use and escape', () => {
-        const resetSelectionSpy = spyOn(service, 'resetSelection').and.callThrough();
+        const resetSelectionSpy = spyOn<any>(service, 'resetProperties').and.callThrough();
         const escapeKeyboardEvent = {
             key: 'Escape',
         } as KeyboardEvent;
@@ -419,7 +419,7 @@ describe('LassoSelectionService', () => {
     });
 
     it('onToolChange should resetSelection if still use', () => {
-        const resetSelectionSpy = spyOn(service, 'resetSelection');
+        const resetSelectionSpy = spyOn<any>(service, 'resetProperties');
         service.inUse = true;
         service.onToolChange();
         expect(resetSelectionSpy).toHaveBeenCalled();
