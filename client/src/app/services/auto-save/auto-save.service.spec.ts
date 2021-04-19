@@ -70,7 +70,7 @@ describe('AutoSaveService', () => {
             canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D,
         );
 
-        autoSaveSpy = spyOn(service, 'autoSaveDrawing');
+        autoSaveSpy = spyOn<any>(service, 'autoSaveDrawing');
         loadLocalStorageSpy = spyOn<any>(service, 'loadLocalStorage').and.callFake(() => {
             (service.undoRedoService.initialImage as HTMLImageElement).src = mockImageURL;
         });
@@ -95,7 +95,7 @@ describe('AutoSaveService', () => {
     it('autoSaveDrawing should do nothing if canvas is not declared', () => {
         autoSaveSpy.and.callThrough();
         const setSpy = spyOn(localStorage, 'setItem');
-        service.autoSaveDrawing();
+        service['autoSaveDrawing']();
         expect(setSpy).not.toHaveBeenCalled();
     });
 
@@ -108,7 +108,7 @@ describe('AutoSaveService', () => {
         const dataUrlSpy = spyOn(drawServiceSpy.canvas, 'toDataURL').and.callFake(() => {
             return mockImageURL;
         });
-        service.autoSaveDrawing();
+        service['autoSaveDrawing']();
         expect(dataUrlSpy).toHaveBeenCalled();
         expect(setSpy).toHaveBeenCalled();
         expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
