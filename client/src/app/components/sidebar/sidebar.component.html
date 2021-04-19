@@ -6,26 +6,26 @@
                     <mat-icon id="return-button" matTooltip="Retour" [matTooltipPosition]="'right'" routerLink="/home">backspace</mat-icon>
                 </li>
                 <li>
-                    <mat-icon id="save-drawing-button" matTooltip="Sauvegarder" [matTooltipPosition]="'right'" (click)="saveDrawing()"
+                    <mat-icon id="save-drawing-button" matTooltip="Sauvegarder (Ctrl-S)" [matTooltipPosition]="'right'" (click)="saveDrawing()"
                         >save_alt</mat-icon
                     >
                 </li>
                 <li id="undoButton" [class.unclickable]="!undoRedoService.isUndoAllowed" (click)="undo()">
-                    <mat-icon matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
+                    <mat-icon matTooltip="Annuler (Ctrl-Z)" [matTooltipPosition]="'right'">undo</mat-icon>
                 </li>
                 <li id="selectAllButton">
-                    <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
+                    <mat-icon matTooltip="Tout sélectionner (Ctrl-A)" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
                 </li>
                 <li id="copyButton">
-                    <mat-icon matTooltip="Copier la sélection" [matTooltipPosition]="'right'" (click)="copySelection()">content_copy</mat-icon>
+                    <mat-icon matTooltip="Copier la sélection (Ctrl-C)" [matTooltipPosition]="'right'" (click)="copySelection()">content_copy</mat-icon>
                 </li>
                 <li id="cutButton">
-                    <mat-icon matTooltip="Couper la sélection" [matTooltipPosition]="'right'" (click)="cutSelection()">content_cut</mat-icon>
+                    <mat-icon matTooltip="Couper la sélection (Ctrl-X)" [matTooltipPosition]="'right'" (click)="cutSelection()">content_cut</mat-icon>
                 </li>
             </ul>
             <ul class="grid-magnet">
                 <li id="gridButton">
-                    <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
+                    <mat-icon matTooltip="Options grille (Touche G)" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
                 </li>
             </ul>
             <ul class="tools-sidebar">
@@ -45,34 +45,32 @@
         <div id="right-column">
             <ul class="options-sidebar">
                 <li>
-                    <mat-icon id="new-drawing-button" matTooltip="Nouveau dessin" [matTooltipPosition]="'right'" (click)="openNewDrawing()"
+                    <mat-icon id="new-drawing-button" matTooltip="Nouveau dessin (Ctrl-O)" [matTooltipPosition]="'right'" (click)="openNewDrawing()"
                         >add_box</mat-icon
                     >
                 </li>
                 <li id="exportButton">
-                    <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
+                    <mat-icon id="export-drawing-button" matTooltip="Exporter dessin (Ctrl-E)" [matTooltipPosition]="'right'" (click)="exportDrawing()"
                         >open_in_new</mat-icon
                     >
                 </li>
                 <li id="redoButton" [class.unclickable]="!undoRedoService.isRedoAllowed" (click)="redo()">
-                    <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
+                    <mat-icon matTooltip="Recommencer (Ctrl-Shift-Z)" [matTooltipPosition]="'right'">redo</mat-icon>
                 </li>
                 <li id="deleteButton">
-                    <mat-icon matTooltip="Supprimer la sélection" [matTooltipPosition]="'right'" (click)="deleteSelection()">clear</mat-icon>
+                    <mat-icon matTooltip="Supprimer la sélection (Touche Del)" [matTooltipPosition]="'right'" (click)="deleteSelection()">clear</mat-icon>
                 </li>
 
                 <li id="pasteButton">
-                    <mat-icon matTooltip="Coller la sélection" [matTooltipPosition]="'right'" (click)="pasteSelection()">content_paste</mat-icon>
+                    <mat-icon matTooltip="Coller la sélection (Ctrl-V)" [matTooltipPosition]="'right'" (click)="pasteSelection()">content_paste</mat-icon>
                 </li>
                 <li class="blankButton">
-                    <mat-icon matTooltip="Options magnetisme (Touche M)" [matTooltipPosition]="'right'" (click)="toggleMagnetismOptions()">
-                        select_all
-                    </mat-icon>
+                    <mat-icon> select_all </mat-icon>
                 </li>
             </ul>
             <ul class="grid-magnet">
                 <li id="magnetismButton">
-                    <mat-icon matTooltip="Options magnetisme (Touche M)" [matTooltipPosition]="'right'" (click)="toggleMagnetismOptions()">
+                    <mat-icon matTooltip="Options magnétisme (Touche M)" [matTooltipPosition]="'right'" (click)="toggleMagnetismOptions()">
                         select_all
                     </mat-icon>
                 </li>
