@@ -9,9 +9,9 @@ export class ResizerCommand extends Command {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
 
-    sideResizer: HTMLElement;
-    cornerResizer: HTMLElement;
-    bottomResizer: HTMLElement;
+    private sideResizer: HTMLElement;
+    private cornerResizer: HTMLElement;
+    private bottomResizer: HTMLElement;
 
     previewWidth: number;
     previewHeight: number;
