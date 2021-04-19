@@ -12,6 +12,9 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class ToolSelectionService extends Tool {
+    originalImageCanvas: HTMLCanvasElement;
+    originalImageCtx: CanvasRenderingContext2D;
+
     selectionTool: Tool;
     // Save selectionTool's lineWidth here and fillMode.
     selectionToolLineWidth: number;
@@ -27,6 +30,8 @@ export class ToolSelectionService extends Tool {
     ) {
         super(drawingService, undoRedoService);
         this.selectionTool = selectionTool;
+        this.originalImageCanvas = document.createElement('canvas');
+        this.originalImageCtx = this.originalImageCanvas.getContext('2d') as CanvasRenderingContext2D;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -147,6 +152,8 @@ export class ToolSelectionService extends Tool {
         this.drawingService.previewSelectionCanvas.height = height;
         this.drawingService.borderCanvas.width = width;
         this.drawingService.borderCanvas.height = height;
+        this.originalImageCanvas.width = width;
+        this.originalImageCanvas.height = height;
     }
 
     setSelectionCanvasPosition(topLeft: Vec2): void {
