@@ -20,7 +20,7 @@ export class SidebarPolygoneComponent implements OnInit {
 
     @Output() private toolSizeChanged: EventEmitter<number>;
     @Output() private fillModeChanged: EventEmitter<number>;
-    @Output() numberOfPolySides: EventEmitter<number>;
+    @Output() private numberOfPolySides: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.max = ShapeConstants.MAX_BORDER_WIDTH;
