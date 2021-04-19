@@ -39,6 +39,7 @@ export class ToolSelectionService extends Tool {
     undoSelection(): void {}
 
     onMouseDown(event: MouseEvent): void {
+        this.setSelectionSettings();
         this.selectionTool.onMouseDown(event);
     }
 
