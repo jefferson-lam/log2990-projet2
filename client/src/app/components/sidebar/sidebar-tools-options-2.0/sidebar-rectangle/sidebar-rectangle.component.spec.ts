@@ -4,6 +4,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarRectangleComponent } from './sidebar-rectangle.component';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('SidebarRectangleComponent', () => {
     let component: SidebarRectangleComponent;
     let fixture: ComponentFixture<SidebarRectangleComponent>;
@@ -23,7 +24,7 @@ describe('SidebarRectangleComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        toolSizeChangedSubscribeSpy = spyOn(component.toolSizeChanged, 'subscribe');
+        toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
         fillModeChangedSubscribeSpy = spyOn(component.fillModeChanged, 'subscribe');
     });
 
@@ -32,7 +33,7 @@ describe('SidebarRectangleComponent', () => {
     });
 
     it('emitToolSize should emit tool size', () => {
-        const emitSpy = spyOn(component.toolSizeChanged, 'emit');
+        const emitSpy = spyOn(component['toolSizeChanged'], 'emit');
         component.toolSize = 0;
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
