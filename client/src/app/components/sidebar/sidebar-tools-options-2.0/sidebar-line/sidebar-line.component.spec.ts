@@ -28,7 +28,7 @@ describe('SidebarLineComponent', () => {
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
         toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
-        withJunctionChangedSubcribeSpy = spyOn(component.withJunctionChanged, 'subscribe');
+        withJunctionChangedSubcribeSpy = spyOn(component['withJunctionChanged'], 'subscribe');
         junctionRadiusChangedSubscribeSpy = spyOn(component.junctionRadiusChanged, 'subscribe');
     });
 
@@ -44,7 +44,7 @@ describe('SidebarLineComponent', () => {
     });
 
     it('emitWithJunction should set boolean ', () => {
-        const emitSpy = spyOn(component.withJunctionChanged, 'emit');
+        const emitSpy = spyOn(component['withJunctionChanged'], 'emit');
         component.emitWithJunction();
         expect(emitSpy).toHaveBeenCalled();
     });
