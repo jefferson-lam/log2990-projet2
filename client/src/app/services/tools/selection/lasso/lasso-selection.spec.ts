@@ -431,6 +431,12 @@ describe('LassoSelectionService', () => {
         }).not.toThrow();
     });
 
+    it('onToolEnter should call parents onToolEnter', () => {
+        const parentOnToolEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onToolEnter');
+        service.onToolEnter();
+        expect(parentOnToolEnterSpy).toHaveBeenCalled();
+    });
+
     it('isIntersect should return false if new line does not intersect with current lines', () => {
         const result = service.isIntersect(service.pathData[service.pathData.length - 1], service.pathData);
         expect(result).toBeFalsy();

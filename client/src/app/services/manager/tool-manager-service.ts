@@ -77,6 +77,7 @@ export class ToolManagerService {
         if (this.currentTool !== newTool) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.currentTool.onToolChange();
+            newTool.onToolEnter();
         }
         return newTool;
     }

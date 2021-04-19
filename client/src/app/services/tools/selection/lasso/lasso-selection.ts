@@ -152,6 +152,10 @@ export class LassoSelectionService extends ToolSelectionService {
         return [maxWidth - minWidth, maxHeight - minHeight];
     }
 
+    onToolEnter(): void {
+        super.onToolEnter();
+    }
+
     onToolChange(): void {
         super.onToolChange();
         if (this.isManipulating) {
@@ -276,7 +280,6 @@ export class LassoSelectionService extends ToolSelectionService {
 
     private resetProperties(): void {
         this.resetAllCanvasState();
-        this.resetSelectedToolSettings();
         this.clearPath();
         this.resizerHandlerService.resetResizers();
         this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
