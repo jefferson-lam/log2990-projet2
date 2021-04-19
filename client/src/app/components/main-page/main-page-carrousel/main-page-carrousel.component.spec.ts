@@ -108,7 +108,7 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('showcasePreviewDrawing should set drawing counter to previewDrawings.length -1 if drawingCounter currently at 0', () => {
-        component.drawingCounter = 0;
+        component['drawingCounter'] = 0;
         component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
@@ -127,13 +127,13 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '2' },
         ];
         component.showcasePreviousDrawing();
-        expect(component.drawingCounter).toEqual(EXPECTED_DRAWING_COUNTER);
+        expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
         expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('showcasePreviewDrawing should set drawing counter to drawingCounter - 1 if drawingCounter not 0', () => {
         const TEST_START_DRAWING_COUNTER = 2;
-        component.drawingCounter = TEST_START_DRAWING_COUNTER;
+        component['drawingCounter'] = TEST_START_DRAWING_COUNTER;
         component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
@@ -152,7 +152,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
         component.showcasePreviousDrawing();
-        expect(component.drawingCounter).toEqual(EXPECTED_DRAWING_COUNTER);
+        expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
         expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
@@ -163,7 +163,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component.drawingCounter = component.previewDrawings.length - 1;
+        component['drawingCounter'] = component.previewDrawings.length - 1;
         component.showCasedDrawings = [
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
@@ -176,7 +176,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
         ];
         component.showcaseNextDrawing();
-        expect(component.drawingCounter).toEqual(EXPECTED_DRAWING_COUNTER);
+        expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
         expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
@@ -193,7 +193,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
         ];
         const START_DRAWING_COUNTER = 0; // smaller than previewDrawings.length - showCaasedDrawings.length
-        component.drawingCounter = START_DRAWING_COUNTER;
+        component['drawingCounter'] = START_DRAWING_COUNTER;
         const EXPECTED_DRAWING_COUNTER = 1;
         const EXPECTED_SHOWCASED_DRAWINGS = [
             { image: '', name: '', id: '2' },
@@ -201,7 +201,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
         component.showcaseNextDrawing();
-        expect(component.drawingCounter).toEqual(EXPECTED_DRAWING_COUNTER);
+        expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
         expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
