@@ -20,7 +20,6 @@ export class TagInputComponent {
         this.isSavePossible = false;
     }
     @ViewChild('tagInput') private tagInput: ElementRef;
-    currentTag: string;
     tags: string[];
     isSavePossible: boolean;
     unsatisfiedRequirements: number;
