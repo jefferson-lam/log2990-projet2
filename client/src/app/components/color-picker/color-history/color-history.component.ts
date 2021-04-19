@@ -10,7 +10,7 @@ import { ColorService } from '@app/services/color/color.service';
 })
 export class ColorHistoryComponent implements AfterViewInit, OnInit {
     private ctx: CanvasRenderingContext2D;
-    primary: Rgba;
+    private primary: Rgba;
     secondary: Rgba;
     @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 
