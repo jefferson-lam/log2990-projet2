@@ -15,8 +15,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     mousedown: boolean;
     selectedPosition: Vec2;
 
-    @ViewChild('canvas', { static: true })
-    canvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 
     @Input() currentOpacity: number;
     @Input() hue: Rgba;
