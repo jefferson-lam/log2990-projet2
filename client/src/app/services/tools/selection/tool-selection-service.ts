@@ -21,6 +21,7 @@ export class ToolSelectionService extends Tool {
     selectionToolFillMode: ToolConstants.FillMode;
     selectionToolPrimaryColor: string;
     selectionToolSecondaryColor: string;
+    isManipulating: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -33,6 +34,10 @@ export class ToolSelectionService extends Tool {
         this.originalImageCanvas = document.createElement('canvas');
         this.originalImageCtx = this.originalImageCanvas.getContext('2d') as CanvasRenderingContext2D;
     }
+
+    // implemented in child classes
+    // tslint:disable-next-line:no-empty
+    undoSelection(): void {}
 
     onMouseDown(event: MouseEvent): void {
         this.getSelectedToolSettings();

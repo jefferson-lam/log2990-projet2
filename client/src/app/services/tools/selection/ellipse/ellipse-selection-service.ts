@@ -59,7 +59,19 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onMouseUp(event: MouseEvent): void {
         if (!this.inUse) return;
-        this.initializeSelection(event);
+        this.lockMouseInsideCanvas(event);
+        this.ellipseService.inUse = false;
+        super.onMouseUp(event);
+
+        this.computeSelectionDimensions();
+        if (!this.validateSelectionHeightAndWidth()) return;
+        this.recalibrateCanvasDimensions();
+
+        this.selectEllipse(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData);
+        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
+
+        this.inUse = false;
+        this.isManipulating = true;
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -100,9 +112,11 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.isCircle = false;
                 this.isShiftDown = false;
             } else if (event.key === 'Escape' && this.isEscapeDown) {
-                this.resetSelection();
+                this.resetAllCanvasState();
+                this.resetSelectedToolSettings();
                 // Erase the rectangle drawn as a preview of selection
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.inUse = false;
                 this.isEscapeDown = false;
             }
         } else if (this.isManipulating) {
@@ -141,10 +155,10 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.fill();
     }
 
-    clipEllipse(ctx: CanvasRenderingContext2D, start: Vec2, height: number, width: number, offset: number): void {
+    clipEllipse(ctx: CanvasRenderingContext2D, start: Vec2, offset: number): void {
         const end: Vec2 = {
-            x: start.x + width,
-            y: start.y + height,
+            x: start.x + this.selectionWidth,
+            y: start.y + this.selectionHeight,
         };
         const ellipseCenter = this.getEllipseCenter(start, end, this.isCircle);
         const startX = ellipseCenter.x;
@@ -190,37 +204,12 @@ export class EllipseSelectionService extends ToolSelectionService {
         };
         const command: Command = new EllipseSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
         this.undoRedoService.executeCommand(command);
-        this.isManipulating = false;
-        this.isCircle = false;
-        this.isShiftDown = false;
-        // Reset selection canvas to {w=0, h=0}, {top=0, left=0} and transform values
-        this.resetSelection();
-        this.resizerHandlerService.resetResizers();
-        this.isFromClipboard = false;
-    }
-
-    initializeSelection(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        mousePosition.x = mousePosition.x > this.drawingService.canvas.width ? this.drawingService.canvas.width : mousePosition.x;
-        mousePosition.y = mousePosition.y > this.drawingService.canvas.height ? this.drawingService.canvas.height : mousePosition.y;
-        this.pathData[SelectionConstants.END_INDEX] = mousePosition;
-        this.ellipseService.inUse = false;
-        super.onMouseUp(event);
-        this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
-        this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
-        if (!this.validateSelectionHeightAndWidth()) {
-            return;
-        }
-        this.setSelectionCanvasSize(this.selectionWidth, this.selectionHeight);
-        this.selectEllipse(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData, this.selectionWidth, this.selectionHeight);
-        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
-        this.inUse = false;
-        this.isManipulating = true;
+        this.resetProperties();
     }
 
     undoSelection(): void {
         if (!this.isManipulating) return;
-        this.clipEllipse(this.drawingService.baseCtx, this.pathData[0], this.selectionHeight, this.selectionWidth, 1);
+        this.clipEllipse(this.drawingService.baseCtx, this.pathData[0], 1);
         if (!this.isFromClipboard) {
             this.drawingService.baseCtx.drawImage(
                 this.originalImageCanvas,
@@ -235,18 +224,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             );
         }
         this.drawingService.baseCtx.restore();
-        this.resetSelection();
-        this.resizerHandlerService.resetResizers();
-    }
-
-    resetSelection(): void {
-        this.resetSelectedToolSettings();
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetCanvasState(this.drawingService.borderCanvas);
-        this.clearCorners(this.pathData);
-        this.isManipulating = false;
-        this.inUse = false;
+        this.resetProperties();
     }
 
     private validateSelectionHeightAndWidth(): boolean {
@@ -255,12 +233,14 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.inUse = false;
             return false;
         }
+
         this.pathData = this.validateCornerCoords(this.pathData, this.selectionWidth, this.selectionHeight);
         if (this.isCircle) {
             const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
             this.pathData = this.computeSquareCoords(this.pathData, this.selectionWidth, this.selectionHeight, shortestSide);
             this.selectionHeight = this.selectionWidth = shortestSide;
         }
+
         this.selectionWidth = Math.abs(this.selectionWidth);
         this.selectionHeight = Math.abs(this.selectionHeight);
         return true;
@@ -295,54 +275,79 @@ export class EllipseSelectionService extends ToolSelectionService {
         return { x: centerX, y: centerY };
     }
 
-    private selectEllipse(
-        selectionCtx: CanvasRenderingContext2D,
-        baseCtx: CanvasRenderingContext2D,
-        pathData: Vec2[],
-        selectionWidth: number,
-        selectionHeight: number,
-    ): void {
-        this.clipEllipseSelection(selectionCtx, baseCtx, pathData, selectionWidth, selectionHeight);
+    private selectEllipse(selectionCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
+        this.clipEllipseSelection(selectionCtx, baseCtx, pathData);
         this.originalImageCtx.drawImage(
             baseCtx.canvas,
             pathData[SelectionConstants.START_INDEX].x,
             pathData[SelectionConstants.START_INDEX].y,
-            selectionWidth,
-            selectionHeight,
+            this.selectionWidth,
+            this.selectionHeight,
             0,
             0,
-            selectionWidth,
-            selectionHeight,
+            this.selectionWidth,
+            this.selectionHeight,
         );
         this.fillEllipse(baseCtx, pathData, this.isCircle);
     }
 
-    private clipEllipseSelection(
-        selectionCtx: CanvasRenderingContext2D,
-        baseCtx: CanvasRenderingContext2D,
-        pathData: Vec2[],
-        selectionWidth: number,
-        selectionHeight: number,
-    ): void {
+    private clipEllipseSelection(selectionCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
         let startX: number;
         let radiusX: number;
         let startY: number;
         let radiusY: number;
         startX = radiusX = this.selectionWidth / 2;
         startY = radiusY = this.selectionHeight / 2;
-        this.clipEllipse(selectionCtx, { x: 0, y: 0 }, selectionHeight, selectionWidth, 2);
+        this.clipEllipse(selectionCtx, { x: 0, y: 0 }, 2);
         selectionCtx.drawImage(
             baseCtx.canvas,
             pathData[SelectionConstants.START_INDEX].x,
             pathData[SelectionConstants.START_INDEX].y,
-            selectionWidth,
-            selectionHeight,
+            this.selectionWidth,
+            this.selectionHeight,
             0,
             0,
-            selectionWidth,
-            selectionHeight,
+            this.selectionWidth,
+            this.selectionHeight,
         );
         selectionCtx.restore();
         this.drawOutlineEllipse(this.drawingService.borderCtx, startX, startY, radiusX, radiusY, SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET);
+    }
+
+    private lockMouseInsideCanvas(event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+        mousePosition.x = mousePosition.x > this.drawingService.canvas.width ? this.drawingService.canvas.width : mousePosition.x;
+        mousePosition.y = mousePosition.y > this.drawingService.canvas.height ? this.drawingService.canvas.height : mousePosition.y;
+        this.pathData[SelectionConstants.END_INDEX] = mousePosition;
+    }
+
+    private computeSelectionDimensions(): void {
+        this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
+        this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
+    }
+
+    private recalibrateCanvasDimensions(): void {
+        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
+        this.drawingService.borderCanvas.width = this.selectionWidth;
+
+        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
+        this.drawingService.borderCanvas.height = this.selectionHeight;
+    }
+
+    private resetProperties(): void {
+        this.resetAllCanvasState();
+        this.clearCorners(this.pathData);
+        this.resetSelectedToolSettings();
+        this.resizerHandlerService.resetResizers();
+        this.isFromClipboard = false;
+        this.isManipulating = false;
+        this.isCircle = false;
+        this.isShiftDown = false;
+    }
+
+    private resetAllCanvasState(): void {
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
     }
 }

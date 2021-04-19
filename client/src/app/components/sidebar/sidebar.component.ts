@@ -5,8 +5,8 @@ import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
-import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
@@ -19,7 +19,6 @@ export class SidebarComponent {
     @Input() isMagnetismOptionsDisplayed: boolean;
     isGridOptionsDisplayed: boolean;
     shouldRun: boolean;
-    isUndoSelection: boolean;
 
     sidebarToolButtons: SidebarToolButton[];
 
@@ -30,7 +29,6 @@ export class SidebarComponent {
         public popupManager: PopupManagerService,
     ) {
         this.shouldRun = false;
-        this.isUndoSelection = false;
         this.sidebarToolButtons = SIDEBAR_TOOL_BUTTONS;
         this.selectedTool = this.sidebarToolButtons[0];
         this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
@@ -67,16 +65,11 @@ export class SidebarComponent {
     }
 
     undo(): void {
-        if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
-            if (this.toolManager.currentTool.isManipulating) {
-                this.toolManager.currentTool.undoSelection();
-                this.isUndoSelection = true;
-            }
-        }
-        if (!this.isUndoSelection) {
+        if (this.toolManager.currentTool instanceof ToolSelectionService && this.toolManager.currentTool.isManipulating) {
+            this.toolManager.currentTool.undoSelection();
+        } else {
             this.undoRedoService.undo();
         }
-        this.isUndoSelection = false;
     }
 
     redo(): void {
@@ -85,9 +78,7 @@ export class SidebarComponent {
 
     selectAll(): void {
         this.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
-        if (this.toolManager.currentTool instanceof RectangleSelectionService) {
-            this.toolManager.currentTool.selectAll();
-        }
+        (this.toolManager.currentTool as RectangleSelectionService).selectAll();
     }
 
     copySelection(): void {

@@ -29,48 +29,47 @@ export class TitleInputComponent {
 
     validateTitle(title: string): void {
         title = title.trim();
-        let unsatisfiedRequirements = 0;
-        // Change class for min length requirement
-        if (this.tagIsShorterThanMinLength(title)) {
+        let requirementViolated = false;
+
+        if (!this.validateMinLength(title)) requirementViolated = true;
+        if (!this.validateMaxLength(title)) requirementViolated = true;
+        if (!this.validateAsciiOnly(title)) requirementViolated = true;
+
+        this.isTitleValidEvent.emit(!requirementViolated);
+        this.title = title;
+    }
+
+    private validateMinLength(title: string): boolean {
+        if (title.length < DatabaseConstants.MIN_TITLE_LENGTH) {
             this.minLengthDivClass = 'Failed';
-            unsatisfiedRequirements++;
+            return false;
         } else {
             this.minLengthDivClass = 'Satisfied';
         }
+        return true;
+    }
 
-        // Change class for max length requirement
-        if (this.tagIsLongerThanMaxLength(title)) {
+    private validateMaxLength(title: string): boolean {
+        if (title.length > DatabaseConstants.MAX_TITLE_LENGTH) {
             this.maxLengthDivClass = 'Failed';
-            unsatisfiedRequirements++;
+            return false;
         } else {
             this.maxLengthDivClass = 'Satisfied';
         }
+        return true;
+    }
 
-        // Change class for ascii only characters requirement
-        if (this.tagHasSpecialCharacters(title)) {
+    private validateAsciiOnly(title: string): boolean {
+        if (this.titleHasSpecialCharacters(title)) {
             this.noSpecialCharacterDivClass = 'Failed';
-            unsatisfiedRequirements++;
+            return false;
         } else {
             this.noSpecialCharacterDivClass = 'Satisfied';
         }
-
-        if (unsatisfiedRequirements > 0) {
-            this.isTitleValidEvent.emit(false);
-        } else {
-            this.title = title;
-            this.isTitleValidEvent.emit(true);
-        }
+        return true;
     }
 
-    private tagIsShorterThanMinLength(title: string): boolean {
-        return title.length < DatabaseConstants.MIN_TITLE_LENGTH;
-    }
-
-    private tagIsLongerThanMaxLength(title: string): boolean {
-        return title.length > DatabaseConstants.MAX_TITLE_LENGTH;
-    }
-
-    private tagHasSpecialCharacters(title: string): boolean {
+    private titleHasSpecialCharacters(title: string): boolean {
         return !/^[\x00-\xFF]*$/.test(title);
     }
 }

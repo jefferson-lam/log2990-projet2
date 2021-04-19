@@ -264,7 +264,6 @@ describe('SidebarComponent', () => {
         );
         component.undo();
         expect(selectionUndoSelectionSpy).toHaveBeenCalled();
-        expect(component.isUndoSelection).toBeFalsy();
         expect(undoRedoServiceSpy.undo).not.toHaveBeenCalled();
     });
 
