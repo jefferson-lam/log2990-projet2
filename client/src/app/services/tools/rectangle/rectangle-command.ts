@@ -80,7 +80,6 @@ export class RectangleCommand extends Command {
         ctx.stroke();
         if (fillMode !== ToolConstants.FillMode.OUTLINE) {
             ctx.fillStyle = fillColor;
-
             ctx.fillRect(
                 startX + (Math.sign(width) * lineWidth) / 2,
                 startY + (Math.sign(height) * lineWidth) / 2,

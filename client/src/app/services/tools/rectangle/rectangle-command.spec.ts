@@ -135,12 +135,12 @@ describe('RectangleCommand', () => {
         );
     });
 
-    it('drawRectangle should call drawTypeRectangle with changed width & height if bigger than lineWidth', () => {
+    it('drawRectangle should call drawTypeRectangle with changed width & height if bigger than 2*lineWidth', () => {
         const width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
         const height = command.cornerCoords[ShapeConstants.END_INDEX].y - command.cornerCoords[ShapeConstants.START_INDEX].y;
 
         command.isSquare = false;
-        command.lineWidth = Math.min(Math.abs(height), Math.abs(width)) - 1;
+        command.lineWidth = Math.min(Math.abs(height), Math.abs(width)) / 2 - 1;
         command.fillMode = ToolConstants.FillMode.FILL_ONLY;
 
         const expectedWidth = width - Math.sign(width) * command.lineWidth;

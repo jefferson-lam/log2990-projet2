@@ -45,7 +45,11 @@ export class PolygoneCommand extends Command {
         }
         const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
 
-        this.drawTypePolygone(ctx, radiusWithin, startX, startY, sides, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
+        if (radiusWithin > this.lineWidth / 2) {
+            this.drawTypePolygone(ctx, radiusWithin, startX, startY, sides, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
+        } else {
+            this.drawTypePolygone(ctx, radiusWithin, startX, startY, sides, this.fillMode, borderColor, borderColor, this.lineWidth);
+        }
     }
 
     private drawTypePolygone(
@@ -81,8 +85,30 @@ export class PolygoneCommand extends Command {
         ctx.stroke();
         if (fillMethod !== ToolConstants.FillMode.OUTLINE) {
             ctx.fillStyle = primaryColor;
+            this.drawFill(ctx, radiusWithin - lineWidth / 2, startX, startY, sides, lineWidth);
             ctx.fill();
         }
+    }
+
+    private drawFill(ctx: CanvasRenderingContext2D, radiusWithin: number, startX: number, startY: number, sides: number, lineWidth: number): void {
+        // lineWidth *= (1 + sides) / 100;
+        const ANGLE_EVEN = ShapeConstants.END_ANGLE / sides;
+        ctx.beginPath();
+        ctx.lineJoin = 'round';
+        if (sides % 2 !== 0) {
+            for (let i = 0; i < sides; i++) {
+                ctx.lineTo(
+                    startX + radiusWithin * Math.cos(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
+                    startY + radiusWithin * Math.sin(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
+                );
+            }
+        } else {
+            ctx.moveTo(startX + radiusWithin, startY);
+            for (let i = 0; i < sides; i++) {
+                ctx.lineTo(startX + radiusWithin * Math.cos(ANGLE_EVEN * i), startY + radiusWithin * Math.sin(ANGLE_EVEN * i));
+            }
+        }
+        ctx.closePath();
     }
 
     private getPolygoneCenter(start: Vec2, end: Vec2): Vec2 {
