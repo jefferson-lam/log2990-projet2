@@ -16,8 +16,8 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class ClipboardService {
-    outlineClipboard: ImageData = new ImageData(1, 1);
-    clipboard: ImageData = new ImageData(1, 1);
+    outlineClipboard: ImageData;
+    clipboard: ImageData;
     currentTool: RectangleSelectionService | EllipseSelectionService | LassoSelectionService;
     lastSelectionTool: string;
     pathData: Vec2[];
@@ -44,6 +44,8 @@ export class ClipboardService {
         this.lastSelectionTool = '';
         this.pathData = new Array<Vec2>();
         this.isPasted = false;
+        this.outlineClipboard = new ImageData(1, 1);
+        this.clipboard = new ImageData(1, 1);
     }
 
     copySelection(): void {
