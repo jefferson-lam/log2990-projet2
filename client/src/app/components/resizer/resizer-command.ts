@@ -57,7 +57,7 @@ export class ResizerCommand extends Command {
         this.drawingService.canvasSizeSubject.next([this.previewWidth, this.previewHeight]);
     }
 
-    placeResizers(): void {
+    private placeResizers(): void {
         this.sideResizer.style.left = this.baseCtx.canvas.width + 'px';
         this.sideResizer.style.top = this.baseCtx.canvas.height / 2 + 'px';
         this.cornerResizer.style.left = this.baseCtx.canvas.width + 'px';

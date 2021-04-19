@@ -6,6 +6,7 @@ import { ResizerCommand } from './resizer-command';
 import createSpyObj = jasmine.createSpyObj;
 
 // tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('ResizerCommand', () => {
     let service: ResizerCommand;
     const numberValue: number = CanvasConstants.DEFAULT_WIDTH;
@@ -72,7 +73,6 @@ describe('ResizerCommand', () => {
     });
 
     it('execute should call resizeCanvas', () => {
-        // tslint:disable-next-line: no-any
         const resizeCanvasSpy = spyOn<any>(service, 'resizeCanvas');
 
         service.execute();
@@ -111,7 +111,7 @@ describe('ResizerCommand', () => {
     });
 
     it('resizeCanvas should call placeResizers', () => {
-        const placeResizersSpy = spyOn(service, 'placeResizers');
+        const placeResizersSpy = spyOn<any>(service, 'placeResizers');
 
         service['resizeCanvas']();
 
@@ -126,7 +126,7 @@ describe('ResizerCommand', () => {
     });
 
     it('placeResizers should set resizers positions', () => {
-        service.placeResizers();
+        service['placeResizers']();
 
         expect(service['sideResizer'].style.left).toBe(service['baseCtx'].canvas.width + 'px');
         expect(service['sideResizer'].style.top).toBe(service['baseCtx'].canvas.height / 2 + 'px');
