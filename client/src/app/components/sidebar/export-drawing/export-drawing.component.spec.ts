@@ -68,7 +68,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('ngAfterViewInit should call refreshCanvas', () => {
-        const refreshSpy = spyOn(component, 'refreshCanvas');
+        const refreshSpy = spyOn<any>(component, 'refreshCanvas');
         component.ngAfterViewInit();
 
         expect(refreshSpy).toHaveBeenCalled();
@@ -91,7 +91,7 @@ describe('ExportDrawingComponent', () => {
         const baseSpy = spyOn(component['baseCtx'], 'getImageData').and.callThrough();
         const exportSpy = spyOn(component['exportCtx'], 'drawImage');
 
-        component.refreshCanvas();
+        component['refreshCanvas']();
 
         expect(baseSpy).toHaveBeenCalled();
         expect(baseSpy).toHaveBeenCalledWith(0, 0, component.baseCanvas.width, component.baseCanvas.height);
@@ -101,7 +101,7 @@ describe('ExportDrawingComponent', () => {
     it('refreshCanvas should call changeWhiteToAlpha if passed argument true', () => {
         const changeWhiteToAlphaSpy = spyOn<any>(component, 'changeWhiteToAlpha');
 
-        component.refreshCanvas(true);
+        component['refreshCanvas'](true);
 
         expect(changeWhiteToAlphaSpy).toHaveBeenCalled();
     });
@@ -109,7 +109,7 @@ describe('ExportDrawingComponent', () => {
     it('refreshCanvas should call putImageData with exportCtx if no argument passed', () => {
         const exportSpy = spyOn(component['exportCtx'], 'putImageData');
 
-        component.refreshCanvas();
+        component['refreshCanvas']();
 
         expect(exportSpy).toHaveBeenCalled();
     });
@@ -153,7 +153,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('applyFilter should call refreshCanvas with true if not invert filter', () => {
-        const refreshSpy = spyOn(component, 'refreshCanvas');
+        const refreshSpy = spyOn<any>(component, 'refreshCanvas');
 
         component.applyFilter('sepia(100%)');
 
@@ -162,7 +162,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('applyFilter should call refreshCanvas without arguments if invert filter', () => {
-        const refreshSpy = spyOn(component, 'refreshCanvas');
+        const refreshSpy = spyOn<any>(component, 'refreshCanvas');
 
         component.applyFilter('invert(100%)');
 

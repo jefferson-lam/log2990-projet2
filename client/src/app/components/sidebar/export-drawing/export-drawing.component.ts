@@ -71,7 +71,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.exportCtx.putImageData(imgData, 0, 0);
     }
 
-    refreshCanvas(clearBackground: boolean = false): void {
+    private refreshCanvas(clearBackground: boolean = false): void {
         const imgData = this.baseCtx.getImageData(0, 0, this.baseCanvas.width, this.baseCanvas.height);
         if (clearBackground) {
             this.changeWhiteToAlpha(imgData);
