@@ -443,7 +443,6 @@ describe('MainPageCarrouselComponent', () => {
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
-        expect(component.imageNotInServer).toBeFalse();
         flush();
     }));
 
@@ -455,8 +454,6 @@ describe('MainPageCarrouselComponent', () => {
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
-        tick(TICK_TIME);
-        expect(component.imageNotInServer).toBeFalse();
         flush();
     }));
 

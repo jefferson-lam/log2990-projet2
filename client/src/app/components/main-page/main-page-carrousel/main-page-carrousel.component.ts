@@ -28,7 +28,6 @@ export class MainPageCarrouselComponent {
     deleted: boolean;
     selectable: boolean;
     removable: boolean;
-    imageNotInServer: boolean;
 
     separatorKeysCodes: number[];
     allTags: string[];
@@ -145,7 +144,6 @@ export class MainPageCarrouselComponent {
                 };
                 throw errorMessage;
             }
-            this.imageNotInServer = false;
             if (this.showCasedDrawings.length > 1) {
                 this.showCasedDrawings.splice(1, 1);
             } else {
@@ -182,7 +180,6 @@ export class MainPageCarrouselComponent {
     }
 
     private setErrorInServer(errorMessage: string): void {
-        this.imageNotInServer = true;
         this.serverErrorMessage = errorMessage;
     }
 
