@@ -54,14 +54,11 @@ export class LineService extends Tool {
         } else {
             this.lineWidth = width;
         }
-        if (this.lineWidth > this.junctionRadius) {
-            this.setJunctionRadius(this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
-        }
     }
 
     setJunctionRadius(junctionRadius: number): void {
-        if (junctionRadius < this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR || junctionRadius < LineConstants.MIN_JUNCTION_RADIUS) {
-            this.junctionRadius = this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR;
+        if (junctionRadius < LineConstants.MIN_JUNCTION_RADIUS) {
+            this.junctionRadius = LineConstants.MIN_JUNCTION_RADIUS;
         } else if (junctionRadius > LineConstants.MAX_JUNCTION_RADIUS) {
             this.junctionRadius = LineConstants.MAX_JUNCTION_RADIUS;
         } else {
