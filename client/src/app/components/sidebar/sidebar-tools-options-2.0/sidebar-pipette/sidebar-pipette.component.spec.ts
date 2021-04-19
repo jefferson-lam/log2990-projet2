@@ -89,7 +89,7 @@ describe('SidebarPipetteComponent', () => {
             arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
         }
         const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-        component.rawData = pixelData;
+        component['rawData'] = pixelData;
 
         const putImageDataSpy = spyOn(component['ctx'], 'putImageData');
         component.drawPreview();

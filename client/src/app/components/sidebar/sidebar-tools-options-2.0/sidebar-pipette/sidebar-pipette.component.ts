@@ -9,7 +9,7 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 })
 export class SidebarPipetteComponent implements OnInit {
     private ctx: CanvasRenderingContext2D;
-    rawData: ImageData;
+    private rawData: ImageData;
     previewData: ImageData;
     inBound: boolean;
 
