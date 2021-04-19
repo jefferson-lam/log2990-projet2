@@ -183,7 +183,7 @@ describe('ToolSelectionService', () => {
         service.setSelectionSettings();
         expect(selectedToolSpy.setFillMode).toHaveBeenCalledWith(FillMode.OUTLINE);
         expect(selectedToolSpy.setLineWidth).toHaveBeenCalledWith(SelectionConstants.SELECTION_LINE_WIDTH);
-        expect(selectedToolSpy.setPrimaryColor).toHaveBeenCalledWith('white');
+        expect(selectedToolSpy.setPrimaryColor).toHaveBeenCalledWith('black');
         expect(selectedToolSpy.setSecondaryColor).toHaveBeenCalledWith('black');
         expect(setLineDashSpy).toHaveBeenCalledWith([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
     });
@@ -426,6 +426,15 @@ describe('ToolSelectionService', () => {
         const expectedPoint = { x: 0, y: 0 };
         const result = service.clearCorners([startPoint, endPoint]);
         expect(result).toEqual([expectedPoint, expectedPoint]);
+    });
+
+    it('onToolEnter should get et set settings', () => {
+        const getSelectedToolSettingsSpy = spyOn(service, 'getSelectedToolSettings');
+        const setSelectionSettingsSpy = spyOn(service, 'setSelectionSettings');
+
+        service.onToolEnter();
+        expect(getSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(setSelectionSettingsSpy).toHaveBeenCalled();
     });
 
     it('onToolChange should set resizeHandlerService.inUse to false', () => {

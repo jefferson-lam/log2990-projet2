@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { LineService } from '@app/services/tools/line/line-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -40,8 +39,6 @@ export class ToolSelectionService extends Tool {
     undoSelection(): void {}
 
     onMouseDown(event: MouseEvent): void {
-        this.getSelectedToolSettings();
-        this.setSelectionSettings();
         this.selectionTool.onMouseDown(event);
     }
 
@@ -133,11 +130,8 @@ export class ToolSelectionService extends Tool {
         this.drawingService.baseCtx.fillStyle = 'white';
         this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
         this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
-        if (this.selectionTool instanceof LineService) {
-            this.selectionTool.setPrimaryColor('black');
-        } else {
-            this.selectionTool.setPrimaryColor('white');
-        }
+        this.selectionTool.setPrimaryColor('black');
+
         this.selectionTool.setSecondaryColor('black');
         this.drawingService.previewCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
     }
@@ -190,8 +184,14 @@ export class ToolSelectionService extends Tool {
         return cornerCoords.fill({ x: 0, y: 0 });
     }
 
+    onToolEnter(): void {
+        this.getSelectedToolSettings();
+        this.setSelectionSettings();
+    }
+
     onToolChange(): void {
         this.resizerHandlerService.inUse = false;
+        this.resetSelectedToolSettings();
     }
 
     resetAllCanvasState(): void {
