@@ -1,6 +1,6 @@
 <div id="settings-container">
     <h2 id="title">Options sceau de peinture</h2>
-    <div>
+    <div id="settingsWrapper">
         <div id="width-setting">
             <p>Tolérance d'écart : {{ toleranceValue }}</p>
             <mat-slider
@@ -15,8 +15,8 @@
             >
             </mat-slider>
         </div>
-    </div>
-    <div id="colorPicker">
-        <app-color-picker></app-color-picker>
+        <div id="colorPicker">
+            <app-color-picker></app-color-picker>
+        </div>
     </div>
 </div>

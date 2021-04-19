@@ -92,6 +92,8 @@
         </mat-radio-group>
     </div>
     <div id="toggleMagnetism">
-        <mat-slide-toggle #toggleMagnetism color="warn" [(ngModel)]="isMagnetismOn" (change)="emitMagnetismValue()"> Magnétisme </mat-slide-toggle>
+        <mat-slide-toggle id="toggleMagnetism" #toggleMagnetism color="warn" [(ngModel)]="isMagnetismOn" (change)="emitMagnetismValue()">
+            Magnétisme
+        </mat-slide-toggle>
     </div>
 </div>
