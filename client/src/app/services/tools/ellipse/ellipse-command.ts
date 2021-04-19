@@ -75,7 +75,6 @@ export class EllipseCommand extends Command {
 
     private drawTypeEllipse(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
-        ctx.setLineDash([]);
         ctx.lineJoin = 'round';
         ctx.ellipse(
             this.centerPosition.x,
