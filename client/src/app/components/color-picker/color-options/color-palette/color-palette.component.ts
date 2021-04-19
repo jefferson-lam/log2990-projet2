@@ -11,7 +11,7 @@ import { ColorService } from '@app/services/color/color.service';
 })
 export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     // Base code provided by Lukas Marx (https://malcoded.com/posts/angular-color-picker/)
-    ctx: CanvasRenderingContext2D;
+    private ctx: CanvasRenderingContext2D;
     mousedown: boolean;
     selectedPosition: Vec2;
 
