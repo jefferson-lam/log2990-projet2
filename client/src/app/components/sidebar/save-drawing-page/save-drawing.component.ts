@@ -21,7 +21,7 @@ export class SaveDrawingComponent implements AfterViewInit {
     resultMessage: string;
     saveProgressEnum: typeof SaveProgress;
     saveProgress: SaveProgress;
-    request: Message;
+    private request: Message;
     isTitleValid: boolean;
     areTagsValid: boolean;
     isSavePossible: boolean;
