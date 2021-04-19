@@ -8,6 +8,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle-servic
 import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { ToolManagerService } from './tool-manager-service';
 
+// tslint:disable:no-string-literal
 describe('ToolManagerService', () => {
     let service: ToolManagerService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -123,7 +124,7 @@ describe('ToolManagerService', () => {
 
     it('onToolChange should not call clearCanvas and currentTool.onToolChange if same tool as before', () => {
         service.currentTool = pencilServiceSpy;
-        service.onToolChange(pencilServiceSpy);
+        service['onToolChange'](pencilServiceSpy);
 
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(pencilServiceSpy.onToolChange).not.toHaveBeenCalled();
@@ -131,7 +132,7 @@ describe('ToolManagerService', () => {
 
     it('onToolChange should clearCanvas and call currentTool.onToolChange if different tool', () => {
         service.currentTool = pencilServiceSpy;
-        service.onToolChange(eraserServiceSpy);
+        service['onToolChange'](eraserServiceSpy);
 
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(pencilServiceSpy.onToolChange).toHaveBeenCalled();

@@ -18,6 +18,7 @@ export class ToolSelectionService extends Tool {
     selectionToolFillMode: ToolConstants.FillMode;
     selectionToolPrimaryColor: string;
     selectionToolSecondaryColor: string;
+    isManipulating: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -28,6 +29,10 @@ export class ToolSelectionService extends Tool {
         super(drawingService, undoRedoService);
         this.selectionTool = selectionTool;
     }
+
+    // implemented in child classes
+    // tslint:disable-next-line:no-empty
+    undoSelection(): void {}
 
     onMouseDown(event: MouseEvent): void {
         this.getSelectedToolSettings();
