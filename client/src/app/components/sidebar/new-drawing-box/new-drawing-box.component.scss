@@ -2,6 +2,15 @@
     font-family: 'Rubik', serif;
 }
 
+#newTitle {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-self: center;
+  font-size: 22px;
+  font-family: Rubik, serif;
+}
+
 #saveButton,
 #newButton {
     align-content: center;
