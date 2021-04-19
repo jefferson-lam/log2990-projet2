@@ -169,14 +169,15 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.clip();
     }
 
-    drawOutlineEllipse(ctx: CanvasRenderingContext2D, startX: number, startY: number, radiusX: number, radiusY: number, offset: number): void {
+    drawOutlineEllipse(ctx: CanvasRenderingContext2D, start: Vec2, radius: Vec2): void {
+        const offset = SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET;
         ctx.beginPath();
         ctx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
         ctx.ellipse(
-            startX,
-            startY,
-            radiusX + offset,
-            radiusY + offset,
+            start.x,
+            start.y,
+            radius.x + offset,
+            radius.y + offset,
             EllipseConstants.ROTATION,
             ShapeConstants.START_ANGLE,
             ShapeConstants.END_ANGLE,
@@ -241,7 +242,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.pathData = this.validateCornerCoords(this.pathData, this.selectionWidth, this.selectionHeight);
         if (this.isCircle) {
             const shortestSide = Math.min(Math.abs(this.selectionWidth), Math.abs(this.selectionHeight));
-            this.pathData = this.computeSquareCoords(this.pathData, this.selectionWidth, this.selectionHeight, shortestSide);
+            this.pathData = this.computeSquareCoords(this.pathData, this.selectionWidth, this.selectionHeight);
             this.selectionHeight = this.selectionWidth = shortestSide;
         }
 
@@ -280,7 +281,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     }
 
     private selectEllipse(selectionCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
-        this.clipEllipseSelection(selectionCtx, baseCtx, pathData);
+        this.clipEllipseSelection(selectionCtx, baseCtx);
         this.originalImageCtx.drawImage(
             baseCtx.canvas,
             pathData[SelectionConstants.START_INDEX].x,
@@ -295,18 +296,16 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.fillEllipse(baseCtx, pathData, this.isCircle);
     }
 
-    private clipEllipseSelection(selectionCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
-        let startX: number;
-        let radiusX: number;
-        let startY: number;
-        let radiusY: number;
-        startX = radiusX = this.selectionWidth / 2;
-        startY = radiusY = this.selectionHeight / 2;
+    private clipEllipseSelection(selectionCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D): void {
+        const start: Vec2 = {} as Vec2;
+        const radius: Vec2 = {} as Vec2;
+        start.x = radius.x = this.selectionWidth / 2;
+        start.y = radius.y = this.selectionHeight / 2;
         this.clipEllipse(selectionCtx, { x: 0, y: 0 }, 2);
         selectionCtx.drawImage(
             baseCtx.canvas,
-            pathData[SelectionConstants.START_INDEX].x,
-            pathData[SelectionConstants.START_INDEX].y,
+            this.pathData[SelectionConstants.START_INDEX].x,
+            this.pathData[SelectionConstants.START_INDEX].y,
             this.selectionWidth,
             this.selectionHeight,
             0,
@@ -315,7 +314,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.selectionHeight,
         );
         selectionCtx.restore();
-        this.drawOutlineEllipse(this.drawingService.borderCtx, startX, startY, radiusX, radiusY, SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET);
+        this.drawOutlineEllipse(this.drawingService.borderCtx, start, radius);
     }
 
     private lockMouseInsideCanvas(event: MouseEvent): void {
