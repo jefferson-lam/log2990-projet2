@@ -6,6 +6,7 @@ import * as CanvasConstants from '@app/constants/canvas-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
+// tslint:disable: no-string-literal
 describe('ResizerComponent', () => {
     let component: ResizerComponent;
     let fixture: ComponentFixture<ResizerComponent>;
@@ -80,7 +81,7 @@ describe('ResizerComponent', () => {
         component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS - 1;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS - 1;
         component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
         expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
         expect(component.cornerResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
         expect(component.bottomResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
@@ -91,7 +92,7 @@ describe('ResizerComponent', () => {
         component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS - 1;
         component.previewCtx.canvas.height = oldCanvasHeight;
         component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
         expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
         expect(component.bottomResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS / 2 + 'px');
     });
@@ -101,7 +102,7 @@ describe('ResizerComponent', () => {
         component.previewCtx.canvas.width = oldCanvasWidth;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS - 1;
         component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS / 2 + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS / 2 + 'px');
         expect(component.cornerResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
         expect(component.bottomResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
     });
@@ -124,8 +125,8 @@ describe('ResizerComponent', () => {
 
         expect(component.cornerResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
         expect(component.cornerResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.sideResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.sideResizer.nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
         expect(component.bottomResizer.nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
         expect(component.bottomResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
         expect(component.cornerResizer.nativeElement.style.transform).toEqual('');
@@ -142,8 +143,8 @@ describe('ResizerComponent', () => {
 
         expect(component.cornerResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
         expect(component.cornerResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.sideResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.sideResizer.nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
         expect(component.bottomResizer.nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
         expect(component.bottomResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
         expect(component.cornerResizer.nativeElement.style.transform).toEqual('');
@@ -160,8 +161,8 @@ describe('ResizerComponent', () => {
 
         expect(component.cornerResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
         expect(component.cornerResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.sideResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.sideResizer.nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
         expect(component.bottomResizer.nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
         expect(component.bottomResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
         expect(component.cornerResizer.nativeElement.style.transform).toEqual('');
@@ -178,8 +179,8 @@ describe('ResizerComponent', () => {
 
         expect(component.cornerResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
         expect(component.cornerResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.sideResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.sideResizer.nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
         expect(component.bottomResizer.nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
         expect(component.bottomResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
         expect(component.cornerResizer.nativeElement.style.transform).toEqual('');
