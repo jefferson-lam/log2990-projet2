@@ -31,7 +31,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
     filter: string;
 
     url: string;
-    popUpToggle: ExportDrawingConstants.PopUpToggle;
+    private popUpToggle: ExportDrawingConstants.PopUpToggle;
 
     constructor(drawingService: DrawingService, private imgurService: ImgurService, public newDialog: MatDialog) {
         this.baseCanvas = drawingService.canvas;

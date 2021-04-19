@@ -197,7 +197,7 @@ describe('ExportDrawingComponent', () => {
     it('openPopUp should not do anything if popUpToggle and mutex are 0', () => {
         const openErrorPopUpSpy = spyOn(component, 'openErrorPopUp');
         const openCompletePopUpSpy = spyOn(component, 'openCompletePopUp');
-        component.popUpToggle = ExportDrawingConstants.PopUpToggle.NONE;
+        component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.NONE;
         imgurStub.mutex = 0;
 
         component.openPopUp();
@@ -207,7 +207,7 @@ describe('ExportDrawingComponent', () => {
 
     it('openPopUp should call openErrorPopUp if popUpToggle is 2 and mutex is 1', () => {
         const openCompletePopUpSpy = spyOn(component, 'openErrorPopUp');
-        component.popUpToggle = ExportDrawingConstants.PopUpToggle.ERROR;
+        component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.ERROR;
         imgurStub.mutex = 1;
 
         component.openPopUp();
@@ -216,7 +216,7 @@ describe('ExportDrawingComponent', () => {
 
     it('openPopUp should call openCompletePopUp if popUpToggle is 1 and mutex is 1', () => {
         const openCompletePopUpSpy = spyOn(component, 'openCompletePopUp');
-        component.popUpToggle = ExportDrawingConstants.PopUpToggle.COMPLETE;
+        component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.COMPLETE;
         imgurStub.mutex = 1;
 
         component.openPopUp();
@@ -226,7 +226,7 @@ describe('ExportDrawingComponent', () => {
     it('openPopUp should not call openCompletePopUp or openErrorPopUp if popUpToggle is 1 and mutex is 0', () => {
         const openCompletePopUpSpy = spyOn(component, 'openCompletePopUp');
         const openErrorPopUpSpy = spyOn(component, 'openErrorPopUp');
-        component.popUpToggle = ExportDrawingConstants.PopUpToggle.COMPLETE;
+        component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.COMPLETE;
         imgurStub.mutex = 0;
 
         component.openPopUp();
