@@ -61,7 +61,7 @@ describe('ExportDrawingComponent', () => {
         component.newDialog = dialogSpy;
         fixture.detectChanges();
 
-        clickSpy = spyOn(component.link, 'click');
+        clickSpy = spyOn(component['link'], 'click');
     });
 
     it('should create', () => {
@@ -176,10 +176,10 @@ describe('ExportDrawingComponent', () => {
 
         component.saveImage();
 
-        expect(component.link.download).toBe(component.name + '.' + component.type);
+        expect(component['link'].download).toBe(component.name + '.' + component.type);
         expect(imgDataSpy).toHaveBeenCalled();
         expect(imgDataSpy).toHaveBeenCalledWith('image/' + component.type);
-        expect(component.link.href).not.toBeUndefined();
+        expect(component['link'].href).not.toBeUndefined();
         expect(clickSpy).toHaveBeenCalled();
     });
 

@@ -21,7 +21,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
     canvasStyleWidth: string;
     canvasStyleHeight: string;
 
-    link: HTMLAnchorElement;
+    private link: HTMLAnchorElement;
 
     baseCanvas: HTMLCanvasElement;
     baseCtx: CanvasRenderingContext2D;
