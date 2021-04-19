@@ -37,7 +37,7 @@ describe('SidebarGridComponent', () => {
         fixture = TestBed.createComponent(SidebarGridComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        squareWidthSubscribeSpy = spyOn(component.squareWidthChanged, 'subscribe');
+        squareWidthSubscribeSpy = spyOn(component['squareWidthChanged'], 'subscribe');
         opacityValueSubscribeSpy = spyOn(component.opacityValueChanged, 'subscribe');
         visibilityValueSubscribeSpy = spyOn(component.visibilityValueChanged, 'subscribe');
     });
@@ -68,7 +68,7 @@ describe('SidebarGridComponent', () => {
     });
 
     it('emitSquareWidth should emit specified value', () => {
-        const emitSpy = spyOn(component.squareWidthChanged, 'emit');
+        const emitSpy = spyOn(component['squareWidthChanged'], 'emit');
         component.emitSquareWidth();
         expect(emitSpy).toHaveBeenCalledWith(component.squareWidth);
     });
@@ -87,7 +87,7 @@ describe('SidebarGridComponent', () => {
 
     it('emission of squareWidthChanged should call setSquareWidth with specified width', () => {
         const INPUT_WIDTH = 10;
-        component.squareWidthChanged.emit(INPUT_WIDTH);
+        component['squareWidthChanged'].emit(INPUT_WIDTH);
         expect(canvasGridServiceSpy.setSquareWidth).toHaveBeenCalledWith(INPUT_WIDTH);
     });
 
