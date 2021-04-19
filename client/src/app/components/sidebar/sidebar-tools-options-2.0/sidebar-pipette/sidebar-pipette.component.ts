@@ -9,7 +9,7 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
     styleUrls: ['./sidebar-pipette.component.scss'],
 })
 export class SidebarPipetteComponent implements OnInit {
-    ctx: CanvasRenderingContext2D;
+    private ctx: CanvasRenderingContext2D;
     colorService: ColorService;
     rawData: ImageData;
     previewData: ImageData;
