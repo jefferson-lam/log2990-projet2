@@ -33,14 +33,12 @@ export class PopupManagerService {
             width: '1800px',
         });
         dialogRef.afterClosed().subscribe((imageOpen) => {
-            if (imageOpen.autosave) {
-                const discardRef = this.openDiscardChangesPopUp();
-                discardRef?.afterClosed().subscribe((discarded) => {
-                    if (discarded) {
-                        localStorage.setItem('autosave', imageOpen.data);
-                    }
-                });
-            }
+            if (!imageOpen.autosave) return;
+            const discardRef = this.openDiscardChangesPopUp();
+            discardRef?.afterClosed().subscribe((discarded) => {
+                if (!discarded) return;
+                localStorage.setItem('autosave', imageOpen.data);
+            });
         });
     }
 
@@ -48,9 +46,8 @@ export class PopupManagerService {
         if (this.isPopUpOpen) return;
         const dialogRef = this.dialog.open(DiscardChangesPopupComponent);
         dialogRef.afterClosed().subscribe((discarded) => {
-            if (discarded) {
-                this.router.navigate(['/', 'editor']);
-            }
+            if (!discarded) return;
+            this.router.navigate(['/', 'editor']);
         });
         return dialogRef;
     }
@@ -70,11 +67,9 @@ export class PopupManagerService {
     }
 
     openSavePopUp(): void {
-        if (this.isPopUpOpen) return;
-        if (!this.isCanvasEmpty()) {
-            this.toolManager.currentTool.onToolChange();
-            this.dialog.open(SaveDrawingComponent);
-        }
+        if (this.isPopUpOpen || this.isCanvasEmpty()) return;
+        this.toolManager.currentTool.onToolChange();
+        this.dialog.open(SaveDrawingComponent);
     }
 
     isCanvasEmpty(): boolean {
