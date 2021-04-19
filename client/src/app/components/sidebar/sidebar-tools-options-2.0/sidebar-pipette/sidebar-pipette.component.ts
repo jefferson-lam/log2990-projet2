@@ -21,8 +21,7 @@ export class SidebarPipetteComponent implements OnInit {
         this.inBound = false;
     }
 
-    @ViewChild('canvas', { static: true })
-    canvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 
     ngOnInit(): void {
         this.pipetteService.previewDataObservable.subscribe((previewData: ImageData) => {
