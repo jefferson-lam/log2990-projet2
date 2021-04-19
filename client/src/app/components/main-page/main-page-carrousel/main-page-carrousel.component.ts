@@ -33,7 +33,7 @@ export class MainPageCarrouselComponent {
     private tagsInSearch: string[];
 
     private drawingCounter: number;
-    showCasedDrawings: ImageFormat[];
+    private showCasedDrawings: ImageFormat[];
     placeHolderDrawing: ImageFormat;
     previewDrawings: ImageFormat[];
 

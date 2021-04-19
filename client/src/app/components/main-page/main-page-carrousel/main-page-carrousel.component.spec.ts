@@ -115,7 +115,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component.showCasedDrawings = [
+        component['showCasedDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -128,7 +128,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showcasePreviousDrawing();
         expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
-        expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
+        expect(component['showCasedDrawings']).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('showcasePreviewDrawing should set drawing counter to drawingCounter - 1 if drawingCounter not 0', () => {
@@ -140,7 +140,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component.showCasedDrawings = [
+        component['showCasedDrawings'] = [
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
@@ -153,7 +153,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showcasePreviousDrawing();
         expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
-        expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
+        expect(component['showCasedDrawings']).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('showcaseNextDrawing should set drawing counter to 0 if drawingCounter currently at previewDrawings.length - 1', () => {
@@ -164,7 +164,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
         component['drawingCounter'] = component.previewDrawings.length - 1;
-        component.showCasedDrawings = [
+        component['showCasedDrawings'] = [
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
@@ -177,7 +177,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showcaseNextDrawing();
         expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
-        expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
+        expect(component['showCasedDrawings']).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('showcaseNextDrawing should set drawingCounter to drawingCounter+1 if drawingCounter smaller than previewDrawings.length - showcasedDrawings.length', () => {
@@ -187,7 +187,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component.showCasedDrawings = [
+        component['showCasedDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -202,7 +202,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showcaseNextDrawing();
         expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
-        expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
+        expect(component['showCasedDrawings']).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('addTag should add tag if tag exists', () => {
@@ -291,8 +291,8 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('showcasePreviousDrawing should not fire when there are no showcasedDrawings', () => {
-        const popSpy = spyOn(component.showCasedDrawings, 'pop');
-        component.showCasedDrawings = [];
+        const popSpy = spyOn(component['showCasedDrawings'], 'pop');
+        component['showCasedDrawings'] = [];
         component.showcasePreviousDrawing();
         expect(popSpy).not.toHaveBeenCalled();
     });
@@ -335,11 +335,11 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('showCaseNextDrawing should not move to any drawing whatsoever if number of drawings in showcase is 0.', () => {
-        component.showCasedDrawings = [];
+        component['showCasedDrawings'] = [];
 
         component.showcaseNextDrawing();
 
-        expect(component.showCasedDrawings.length).toEqual(0);
+        expect(component['showCasedDrawings'].length).toEqual(0);
     });
 
     it('deleteDrawing should throw error when calling dropDrawing from database', fakeAsync(() => {
@@ -350,7 +350,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
 
-        component.showCasedDrawings = [
+        component['showCasedDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -378,7 +378,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
 
-        component.showCasedDrawings = [
+        component['showCasedDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -406,7 +406,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
 
-        component.showCasedDrawings = [
+        component['showCasedDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -434,7 +434,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
 
-        component.showCasedDrawings = [
+        component['showCasedDrawings'] = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -448,8 +448,8 @@ describe('MainPageCarrouselComponent', () => {
 
     it('deleteDrawing should delete drawing when there is only one', fakeAsync(() => {
         component.previewDrawings = [{ image: '', name: '', id: '1' }];
-        component.showCasedDrawings = [{ image: '', name: '', id: '1' }];
-        const spySplice = spyOn(component.showCasedDrawings, 'splice');
+        component['showCasedDrawings'] = [{ image: '', name: '', id: '1' }];
+        const spySplice = spyOn(component['showCasedDrawings'], 'splice');
 
         component.deleteDrawing();
         tick(TICK_TIME);
@@ -475,7 +475,7 @@ describe('MainPageCarrouselComponent', () => {
 
     it('removeTag should catch error getDrawings in resetShowcasedDrawings', fakeAsync(() => {
         component.previewDrawings = [{ image: '', name: '', id: '1' }];
-        component.showCasedDrawings = [{ image: '', name: '', id: '1' }];
+        component['showCasedDrawings'] = [{ image: '', name: '', id: '1' }];
         databaseServiceSpy.getDrawings.and.returnValue(
             of({
                 title: 'Error',
