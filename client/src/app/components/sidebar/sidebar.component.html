@@ -1,5 +1,5 @@
 <div class="container">
-    <div id="sidebar">
+    <div id="sidebar" class="noselect">
         <div id="left-column">
             <ul class="options-sidebar">
                 <li>
@@ -13,14 +13,19 @@
                 <li id="undoButton" [class.unclickable]="!undoRedoService.isUndoAllowed" (click)="undo()">
                     <mat-icon matTooltip="Annuler (Ctrl-Z)" [matTooltipPosition]="'right'">undo</mat-icon>
                 </li>
-                <li id="selectAllButton">
-                    <mat-icon matTooltip="Tout sélectionner (Ctrl-A)" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
+
+                <li id="copyButton" [class.unclickable]="!clipboardService.isSelected()">
+                    <mat-icon matTooltip="Copier la sélection (Ctrl-C)" [matTooltipPosition]="'right'" (click)="copySelection()"
+                        >content_copy</mat-icon
+                    >
                 </li>
-                <li id="copyButton">
-                    <mat-icon matTooltip="Copier la sélection (Ctrl-C)" [matTooltipPosition]="'right'" (click)="copySelection()">content_copy</mat-icon>
-                </li>
-                <li id="cutButton">
+                <li id="cutButton" [class.unclickable]="!clipboardService.isSelected()">
                     <mat-icon matTooltip="Couper la sélection (Ctrl-X)" [matTooltipPosition]="'right'" (click)="cutSelection()">content_cut</mat-icon>
+                </li>
+                <li id="deleteButton" [class.unclickable]="!clipboardService.isSelected()">
+                    <mat-icon matTooltip="Supprimer la sélection (Touche Del)" [matTooltipPosition]="'right'" (click)="deleteSelection()"
+                        >clear</mat-icon
+                    >
                 </li>
             </ul>
             <ul class="grid-magnet">
@@ -50,19 +55,25 @@
                     >
                 </li>
                 <li id="exportButton">
-                    <mat-icon id="export-drawing-button" matTooltip="Exporter dessin (Ctrl-E)" [matTooltipPosition]="'right'" (click)="exportDrawing()"
+                    <mat-icon
+                        id="export-drawing-button"
+                        matTooltip="Exporter dessin (Ctrl-E)"
+                        [matTooltipPosition]="'right'"
+                        (click)="exportDrawing()"
                         >open_in_new</mat-icon
                     >
                 </li>
                 <li id="redoButton" [class.unclickable]="!undoRedoService.isRedoAllowed" (click)="redo()">
                     <mat-icon matTooltip="Recommencer (Ctrl-Shift-Z)" [matTooltipPosition]="'right'">redo</mat-icon>
                 </li>
-                <li id="deleteButton">
-                    <mat-icon matTooltip="Supprimer la sélection (Touche Del)" [matTooltipPosition]="'right'" (click)="deleteSelection()">clear</mat-icon>
-                </li>
 
-                <li id="pasteButton">
-                    <mat-icon matTooltip="Coller la sélection (Ctrl-V)" [matTooltipPosition]="'right'" (click)="pasteSelection()">content_paste</mat-icon>
+                <li id="selectAllButton">
+                    <mat-icon matTooltip="Tout sélectionner (Ctrl-A)" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
+                </li>
+                <li id="pasteButton" [class.unclickable]="clipboardService.isClipboardEmpty()">
+                    <mat-icon matTooltip="Coller la sélection (Ctrl-V)" [matTooltipPosition]="'right'" (click)="pasteSelection()"
+                        >content_paste</mat-icon
+                    >
                 </li>
                 <li class="blankButton">
                     <mat-icon> select_all </mat-icon>
@@ -93,7 +104,7 @@
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">
         <mat-drawer [mode]="'side'" class="sidenav" [opened]="true" [disableClose]="true">
-            <mat-drawer-content [ngSwitch]="selectedTool.keyShortcut">
+            <mat-drawer-content class="noselect" [ngSwitch]="selectedTool.keyShortcut">
                 <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="'c'"></app-sidebar-pencil>
                 <app-sidebar-eraser class="sidebar-tool-options" *ngSwitchCase="'e'"></app-sidebar-eraser>
                 <app-sidebar-rectangle class="sidebar-tool-options" *ngSwitchCase="'1'"></app-sidebar-rectangle>

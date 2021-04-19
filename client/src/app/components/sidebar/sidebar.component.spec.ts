@@ -59,7 +59,14 @@ describe('SidebarComponent', () => {
             {} as ResizerHandlerService,
             rectangleStub as RectangleService,
         );
-        clipboardServiceStub = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'deleteSelection', 'pasteSelection']);
+        clipboardServiceStub = jasmine.createSpyObj('ClipboardService', [
+            'copySelection',
+            'cutSelection',
+            'deleteSelection',
+            'pasteSelection',
+            'isSelected',
+            'isClipboardEmpty',
+        ]);
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject', 'textService']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<
@@ -97,6 +104,12 @@ describe('SidebarComponent', () => {
         undoButton = fixture.debugElement.nativeElement.querySelector('#undoButton');
         selectionUndoSelectionSpy = spyOn(rectangleSelectionServiceStub, 'undoSelection').and.callFake(() => {
             return;
+        });
+        clipboardServiceStub.isSelected.and.callFake(() => {
+            return true;
+        });
+        clipboardServiceStub.isClipboardEmpty.and.callFake(() => {
+            return false;
         });
     });
 

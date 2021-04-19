@@ -47,7 +47,7 @@ export class ClipboardService {
     }
 
     copySelection(): void {
-        if (this.isSelected(this.drawingService.selectionCanvas)) {
+        if (this.isSelected()) {
             this.clipboard = this.drawingService.selectionCtx.getImageData(
                 0,
                 0,
@@ -72,10 +72,10 @@ export class ClipboardService {
     }
 
     pasteSelection(): void {
-        if (!this.clipboard.data.some((pixel) => pixel !== 0)) {
+        if (this.isClipboardEmpty()) {
             return;
         }
-        if (this.isSelected(this.drawingService.selectionCanvas)) {
+        if (this.isSelected()) {
             this.currentTool.confirmSelection();
         }
         this.changeToSelectionTool(this.lastSelectionTool);
@@ -91,7 +91,7 @@ export class ClipboardService {
     }
 
     deleteSelection(): void {
-        if (!this.isPasted && this.isSelected(this.drawingService.selectionCanvas)) {
+        if (!this.isPasted && this.isSelected()) {
             this.pathData = Object.assign([], this.currentTool.pathData);
             this.deleteEllipse();
             this.deleteRectangle();
@@ -99,6 +99,18 @@ export class ClipboardService {
         }
         this.undoSelection();
         this.isPasted = false;
+    }
+
+    isClipboardEmpty(): boolean {
+        return !this.clipboard.data.some((pixel) => pixel !== 0);
+    }
+
+    isSelected(): boolean {
+        const isSelectionTool =
+            this.currentTool instanceof RectangleSelectionService ||
+            this.currentTool instanceof EllipseSelectionService ||
+            this.currentTool instanceof LassoSelectionService;
+        return isSelectionTool && this.drawingService.selectionCanvas.width !== 0 && this.drawingService.selectionCanvas.height !== 0;
     }
 
     private undoSelection(): void {
@@ -164,13 +176,5 @@ export class ClipboardService {
             default:
                 return ToolManagerConstants.RECTANGLE_SELECTION_KEY;
         }
-    }
-
-    private isSelected(selectionCanvas: HTMLCanvasElement): boolean {
-        const isSelectionTool =
-            this.currentTool instanceof RectangleSelectionService ||
-            this.currentTool instanceof EllipseSelectionService ||
-            this.currentTool instanceof LassoSelectionService;
-        return isSelectionTool && selectionCanvas.width !== 0 && selectionCanvas.height !== 0;
     }
 }
