@@ -22,6 +22,12 @@ describe('Tool', () => {
         expect(toolStub).toBeTruthy();
     });
 
+    it('onScroll should set scroll values', () => {
+        const expectedValues = { x: 30, y: 48 };
+        toolStub.onScroll(expectedValues.x, expectedValues.y);
+        expect(toolStub.scroll).toEqual(expectedValues);
+    });
+
     it('getPositionFromMouse should return correct x and y offset of mouse', () => {
         const EXPECTED_X_OFFSET = 25;
         const EXPECTED_Y_OFFSET = 32;
