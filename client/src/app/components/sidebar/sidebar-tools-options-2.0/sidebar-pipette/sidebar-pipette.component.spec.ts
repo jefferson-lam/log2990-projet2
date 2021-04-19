@@ -5,6 +5,7 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { SidebarPipetteComponent } from './sidebar-pipette.component';
 
 // tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('SidebarPipetteComponent', () => {
     let component: SidebarPipetteComponent;
     let fixture: ComponentFixture<SidebarPipetteComponent>;
@@ -29,20 +30,20 @@ describe('SidebarPipetteComponent', () => {
     });
 
     it('ngOnInit should call drawPreview()', () => {
-        const drawPreviewSpy = spyOn(component, 'drawPreview');
+        const drawPreviewSpy = spyOn<any>(component, 'drawPreview');
         component.ngOnInit();
         expect(drawPreviewSpy).toHaveBeenCalled();
     });
 
     it('drawPreview should call clearRect()', () => {
         const clearRectSpy = spyOn(component['ctx'], 'clearRect');
-        component.drawPreview();
+        component['drawPreview']();
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
     it('drawPreview should call clearRect()', () => {
         const clearRectSpy = spyOn(component['ctx'], 'clearRect');
-        component.drawPreview();
+        component['drawPreview']();
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
@@ -59,7 +60,7 @@ describe('SidebarPipetteComponent', () => {
         const zoomSpy = spyOn(component, 'zoomPreview');
         const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
         const previewStrokeSpy = spyOn(component, 'previewStroke');
-        component.drawPreview();
+        component['drawPreview']();
         expect(clipSpy).toHaveBeenCalled();
         expect(zoomSpy).toHaveBeenCalled();
         expect(centerPixelStrokeSpy).toHaveBeenCalled();
@@ -75,7 +76,7 @@ describe('SidebarPipetteComponent', () => {
         const zoomSpy = spyOn(component, 'zoomPreview');
         const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
         const previewStrokeSpy = spyOn(component, 'previewStroke');
-        component.drawPreview();
+        component['drawPreview']();
         expect(clipSpy).not.toHaveBeenCalled();
         expect(zoomSpy).not.toHaveBeenCalled();
         expect(centerPixelStrokeSpy).not.toHaveBeenCalled();
@@ -92,7 +93,7 @@ describe('SidebarPipetteComponent', () => {
         component['rawData'] = pixelData;
 
         const putImageDataSpy = spyOn(component['ctx'], 'putImageData');
-        component.drawPreview();
+        component['drawPreview']();
         expect(putImageDataSpy).toHaveBeenCalled();
     });
 
@@ -103,7 +104,7 @@ describe('SidebarPipetteComponent', () => {
         pipetteService.previewData = pixelData;
 
         const putImageDataSpy = spyOn(component['ctx'], 'putImageData');
-        component.drawPreview();
+        component['drawPreview']();
         expect(putImageDataSpy).not.toHaveBeenCalled();
     });
 

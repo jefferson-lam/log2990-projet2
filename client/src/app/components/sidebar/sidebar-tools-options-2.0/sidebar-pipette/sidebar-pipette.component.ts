@@ -30,7 +30,7 @@ export class SidebarPipetteComponent implements OnInit {
         });
     }
 
-    drawPreview(): void {
+    private drawPreview(): void {
         if (!this.ctx) {
             this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         }
