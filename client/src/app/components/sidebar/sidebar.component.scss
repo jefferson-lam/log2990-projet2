@@ -127,8 +127,7 @@ mat-drawer {
     width: 240px;
     overflow-y: hidden;
     display: flex;
-    // box-shadow: -1px -10px 10px 1px #1c496e;
-    box-shadow: rgb(25, 62, 95) 2px 2px 4px 0px inset;
+    box-shadow: rgb(25, 62, 95) 2px 2px 4px 0 inset;
 }
 mat-drawer-content {
     margin: 0 !important;
