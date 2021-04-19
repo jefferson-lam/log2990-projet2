@@ -74,20 +74,6 @@ export class TagInputComponent {
         return !requirementViolated;
     }
 
-    resetRequirementsOnFocusOut(tag: string): void {
-        if (this.validateMinLength(tag)) {
-            this.resetRequirements();
-        }
-    }
-
-    resetRequirements(): void {
-        this.distinctTagsDivClass = 'Unrequested';
-        this.minLengthDivClass = 'Unrequested';
-        this.maxLengthDivClass = 'Unrequested';
-        this.noSpecialCharacterDivClass = 'Unrequested';
-        this.maxTagsCountDivClass = 'Unrequested';
-    }
-
     private validateMaxCount(): boolean {
         if (this.tags.length === DatabaseConstants.MAX_TAGS_COUNT) {
             this.maxTagsCountDivClass = 'Failed';

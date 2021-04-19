@@ -1,7 +1,7 @@
 <div id="inputDiv">
     <mat-form-field appearance="fill" id="tagFormField">
         <mat-label>Tags</mat-label>
-        <input #tagInput matInput (focusout)="resetRequirementsOnFocusOut(tagInput.value)" (input)="validateTag(tagInput.value)" />
+        <input #tagInput matInput (input)="validateTag(tagInput.value)" />
     </mat-form-field>
     <button mat-button id="addTagButton" [disabled]="!isSavePossible" (click)="addTag(tagInput.value)">Ajouter un tag</button>
 </div>
