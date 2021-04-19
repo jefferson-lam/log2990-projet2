@@ -15,17 +15,18 @@ export abstract class Tool {
     junctionRadius?: number;
     withJunction?: boolean;
     mouseDownCoord: Vec2;
-    mouseDown: boolean = false;
-    inUse: boolean = false;
+    mouseDown: boolean;
+    inUse: boolean;
     name: string;
 
-    constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {}
+    constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {
+        this.inUse = false;
+        this.mouseDown = false;
+    }
 
     onKeyboardDown(event: KeyboardEvent): void {}
 
     onKeyboardUp(event: KeyboardEvent): void {}
-
-    onKeyboardPress(event: KeyboardEvent): void {}
 
     onEscapeKeyDown(): void {}
 

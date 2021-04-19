@@ -332,17 +332,6 @@ describe('ShortcutManagerService', () => {
         expect(selectAllSpy).toHaveBeenCalled();
     });
 
-    it('ctrl+a should not call selectAll if isShortcutAllowed and not selection tool', () => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, shiftKey: true, code: '', key: 'a' });
-        allowShortcutSpy.and.returnValue(true);
-        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue({} as Tool);
-        const selectAllSpy = spyOn(rectangleSelectionService, 'selectAll').and.callFake(() => {
-            return;
-        });
-        service.onCtrlAKeyDown(eventSpy);
-        expect(selectAllSpy).not.toHaveBeenCalled();
-    });
-
     it('ctrl+a should not call selectAll or selectTool if isShortcutAllowed false', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, shiftKey: true, code: '', key: 'a' });
         allowShortcutSpy.and.returnValue(false);
@@ -419,36 +408,24 @@ describe('ShortcutManagerService', () => {
         expect(popupManagerSpy.openSavePopUp).not.toHaveBeenCalled();
     });
 
-    it('onCtrlShiftZKeyDown should call undoRedoService.redo if isShortcutAllowed true and currentTool not inUse', () => {
+    it('onCtrlShiftZKeyDown should call undoRedoService.redo if isShortcutAllowed true', () => {
         allowShortcutSpy.and.returnValue(true);
-        rectangleSelectionService.inUse = false;
 
         service.onCtrlShiftZKeyDown(mockEvent);
 
         expect(undoRedoServiceSpy.redo).toHaveBeenCalled();
     });
 
-    it('onCtrlShiftZKeyDown should not call undoRedoService.redo if isShortcutAllowed false and currentTool not inUse', () => {
+    it('onCtrlShiftZKeyDown should not call undoRedoService.redo if isShortcutAllowed false', () => {
         allowShortcutSpy.and.returnValue(false);
-        rectangleSelectionService.inUse = false;
 
         service.onCtrlShiftZKeyDown(mockEvent);
 
         expect(undoRedoServiceSpy.redo).not.toHaveBeenCalled();
     });
 
-    it('onCtrlShiftZKeyDown should call undoRedoService.redo if isShortcutAllowed true and currentTool inUse', () => {
+    it('onCtrlZKeyDown should call undoRedoService.undo if isShortcutAllowed true, currentTool not selectionTool and not isManipulating', () => {
         allowShortcutSpy.and.returnValue(true);
-        rectangleSelectionService.inUse = true;
-
-        service.onCtrlShiftZKeyDown(mockEvent);
-
-        expect(undoRedoServiceSpy.redo).not.toHaveBeenCalled();
-    });
-
-    it('onCtrlZKeyDown should call undoRedoService.undo if isShortcutAllowed true, currentTool not inUse and not isManipulating', () => {
-        allowShortcutSpy.and.returnValue(true);
-        rectangleSelectionService.inUse = false;
         rectangleSelectionService.isManipulating = false;
 
         service.onCtrlZKeyDown(mockEvent);
@@ -456,19 +433,8 @@ describe('ShortcutManagerService', () => {
         expect(undoRedoServiceSpy.undo).toHaveBeenCalled();
     });
 
-    it('onCtrlZKeyDown should not call undoRedoService.undo if isShortcutAllowed false, currentTool not inUse and not isManipulating', () => {
+    it('onCtrlZKeyDown should not call undoRedoService.undo if isShortcutAllowed false', () => {
         allowShortcutSpy.and.returnValue(false);
-        rectangleSelectionService.inUse = false;
-        rectangleSelectionService.isManipulating = false;
-
-        service.onCtrlZKeyDown(mockEvent);
-
-        expect(undoRedoServiceSpy.undo).not.toHaveBeenCalled();
-    });
-
-    it('onCtrlZKeyDown should not call undoRedoService.undo if isShortcutAllowed true, currentTool inUse and not isManipulating', () => {
-        allowShortcutSpy.and.returnValue(true);
-        rectangleSelectionService.inUse = true;
         rectangleSelectionService.isManipulating = false;
 
         service.onCtrlZKeyDown(mockEvent);

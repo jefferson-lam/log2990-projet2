@@ -8,9 +8,8 @@ import { MagnetismService } from '@app/services/magnetism/magnetism.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
-import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
-import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -71,9 +70,7 @@ export class ShortcutManagerService {
         event.preventDefault();
         if (!this.isShortcutAllowed()) return;
         this.toolManager.selectTool(RECTANGLE_SELECTION_KEY);
-        if (this.toolManager.currentTool instanceof RectangleSelectionService) {
-            this.toolManager.currentTool.selectAll();
-        }
+        (this.toolManager.currentTool as RectangleSelectionService).selectAll();
     }
 
     onCtrlEKeyDown(event: KeyboardEvent): void {
@@ -103,22 +100,15 @@ export class ShortcutManagerService {
     onCtrlShiftZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (!this.isShortcutAllowed()) return;
-        if (!this.toolManager.currentTool.inUse) {
-            this.undoRedoService.redo();
-        }
+        this.undoRedoService.redo();
     }
 
     onCtrlZKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (!this.isShortcutAllowed()) return;
-        if (
-            (this.toolManager.currentTool instanceof RectangleSelectionService ||
-                this.toolManager.currentTool instanceof EllipseSelectionService ||
-                this.toolManager.currentTool instanceof LassoSelectionService) &&
-            this.toolManager.currentTool.isManipulating
-        ) {
+        if (this.toolManager.currentTool instanceof ToolSelectionService && this.toolManager.currentTool.isManipulating) {
             this.toolManager.currentTool.undoSelection();
-        } else if (!this.toolManager.currentTool.inUse) {
+        } else {
             this.undoRedoService.undo();
         }
     }
@@ -143,10 +133,9 @@ export class ShortcutManagerService {
 
     onDeleteKeyDown(event: KeyboardEvent): void {
         if (!this.isShortcutAllowed()) return;
-        if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
-            event.preventDefault();
-            this.clipboardService.deleteSelection();
-        }
+        if (!(this.toolManager.currentTool instanceof ToolSelectionService)) return;
+        event.preventDefault();
+        this.clipboardService.deleteSelection();
     }
 
     onMinusKeyDown(): void {
@@ -165,9 +154,7 @@ export class ShortcutManagerService {
     }
 
     onMKeyDown(): void {
-        if (!this.isShortcutAllowed()) {
-            return;
-        }
+        if (!this.isShortcutAllowed()) return;
         this.magnetismService.toggleMagnetism();
     }
 
