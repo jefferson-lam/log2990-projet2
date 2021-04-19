@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { SidebarGridComponent } from './sidebar-grid.component';
 
 // tslint:disable: no-any
+// tslint:disable: no-string-literal
 describe('SidebarGridComponent', () => {
     let component: SidebarGridComponent;
     let fixture: ComponentFixture<SidebarGridComponent>;
@@ -56,7 +57,7 @@ describe('SidebarGridComponent', () => {
     it('toggleGrid should set its checked attribute to true if true emitted from CanvasGridService', () => {
         const EXPECTED_VISIBILITY = true;
         component.canvasGridService.gridVisibilitySubject.next(EXPECTED_VISIBILITY);
-        expect(component.toggleGrid.checked).toEqual(EXPECTED_VISIBILITY);
+        expect(component['toggleGrid'].checked).toEqual(EXPECTED_VISIBILITY);
     });
 
     it('widthSlider value and square width should change when canvasGridService emits isGridDisplayed', () => {

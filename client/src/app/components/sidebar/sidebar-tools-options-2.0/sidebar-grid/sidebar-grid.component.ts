@@ -20,7 +20,7 @@ export class SidebarGridComponent implements OnInit {
     opacityValue: number;
     isGridOptionsDisplayed: boolean;
 
-    @ViewChild('toggleGrid') toggleGrid: MatSlideToggle;
+    @ViewChild('toggleGrid') private toggleGrid: MatSlideToggle;
     @ViewChild('widthSlider') widthSlider: MatSlider;
 
     @Output() squareWidthChanged: EventEmitter<number>;
