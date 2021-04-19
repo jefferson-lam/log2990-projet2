@@ -13,7 +13,7 @@ export class SidebarEraserComponent implements OnInit {
     tickInterval: number;
     toolSize: number | undefined;
 
-    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() private toolSizeChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.max = EraserConstants.MAX_ERASER_WIDTH;
