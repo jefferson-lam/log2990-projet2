@@ -124,7 +124,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.imgurService.mutex--;
     }
 
-    openCompletePopUp(): void {
+    private openCompletePopUp(): void {
         this.newDialog.open(ExportCompletePageComponent);
         this.imgurService.mutex--;
     }
