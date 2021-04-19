@@ -30,7 +30,6 @@ export class MainPageCarrouselComponent {
     removable: boolean;
 
     separatorKeysCodes: number[];
-    allTags: string[];
     tagsInSearch: string[];
 
     drawingCounter: number;
@@ -52,7 +51,6 @@ export class MainPageCarrouselComponent {
         this.selectable = true;
         this.removable = true;
         this.separatorKeysCodes = [ENTER, COMMA];
-        this.allTags = [''];
         this.tagsInSearch = [];
         this.drawingCounter = 0;
         this.placeHolderDrawing = new ImageFormat();
