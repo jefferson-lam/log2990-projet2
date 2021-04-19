@@ -71,7 +71,7 @@ div {
 
 #addTagButton {
     font-size: large;
-    background-color: #79bed9;
+    background-color: coral;
     width: 150px;
     align-self: center;
     margin: 10px;
@@ -82,10 +82,10 @@ div {
 }
 
 #addTagButton:active {
-    background-color: #79bed9;
+    background-color: coral;
 }
 
 #addTagButton:disabled {
     cursor: not-allowed;
-    background-color: rgb(123, 156, 162);
+    background-color: rgb(255, 167, 136);
 }
