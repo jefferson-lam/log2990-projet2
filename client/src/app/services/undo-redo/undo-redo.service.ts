@@ -60,7 +60,7 @@ export class UndoRedoService {
         this.refresh();
     }
 
-    refresh(): void {
+    private refresh(): void {
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.resetCanvasSize.execute();
         if (this.initialImage !== undefined) {
@@ -88,8 +88,8 @@ export class UndoRedoService {
             this.actionsAllowedSource.next([this.isUndoAllowed, this.isRedoAllowed]);
             return;
         }
-        if (!this.isUndoPileEmpty()) this.isUndoAllowed = true;
-        if (!this.isRedoPileEmpty()) this.isRedoAllowed = true;
+        this.isUndoAllowed = !this.isUndoPileEmpty();
+        this.isRedoAllowed = !this.isRedoPileEmpty();
 
         this.actionsAllowedSource.next([this.isUndoAllowed, this.isRedoAllowed]);
     }
