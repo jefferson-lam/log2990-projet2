@@ -22,11 +22,11 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     textBold: boolean;
     textItalic: boolean;
 
-    @Output() fontFamilyChanged: EventEmitter<string>;
-    @Output() fontSizeChanged: EventEmitter<number>;
-    @Output() textAlignChanged: EventEmitter<string>;
-    @Output() textBoldChanged: EventEmitter<string>;
-    @Output() textItalicChanged: EventEmitter<string>;
+    @Output() private fontFamilyChanged: EventEmitter<string>;
+    @Output() private fontSizeChanged: EventEmitter<number>;
+    @Output() private textAlignChanged: EventEmitter<string>;
+    @Output() private textBoldChanged: EventEmitter<string>;
+    @Output() private textItalicChanged: EventEmitter<string>;
 
     constructor(public settingsManager: SettingsManagerService, public toolManagerService: ToolManagerService, private textService: TextService) {
         this.max = TextConstants.MAX_FONT_SIZE;

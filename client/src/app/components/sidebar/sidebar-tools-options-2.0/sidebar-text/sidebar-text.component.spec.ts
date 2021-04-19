@@ -13,6 +13,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { TextService } from '@app/services/tools/text/text-service';
 import { SidebarTextComponent } from './sidebar-text.component';
 
+// tslint:disable: no-string-literal
 describe('SidebarTextComponent', () => {
     let service: TextService;
     let textComponent: SidebarTextComponent;
@@ -72,11 +73,11 @@ describe('SidebarTextComponent', () => {
         textComponent = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        fontFamilyChangedSubscribeSpy = spyOn(textComponent.fontFamilyChanged, 'subscribe');
-        fontSizeChangedSubscribeSpy = spyOn(textComponent.fontSizeChanged, 'subscribe');
-        textAlignChangedSubscribeSpy = spyOn(textComponent.textAlignChanged, 'subscribe');
-        textBoldChangedSubscribeSpy = spyOn(textComponent.textBoldChanged, 'subscribe');
-        textItalicChangedSpy = spyOn(textComponent.textItalicChanged, 'subscribe');
+        fontFamilyChangedSubscribeSpy = spyOn(textComponent['fontFamilyChanged'], 'subscribe');
+        fontSizeChangedSubscribeSpy = spyOn(textComponent['fontSizeChanged'], 'subscribe');
+        textAlignChangedSubscribeSpy = spyOn(textComponent['textAlignChanged'], 'subscribe');
+        textBoldChangedSubscribeSpy = spyOn(textComponent['textBoldChanged'], 'subscribe');
+        textItalicChangedSpy = spyOn(textComponent['textItalicChanged'], 'subscribe');
     });
 
     it('should create', () => {
@@ -93,7 +94,7 @@ describe('SidebarTextComponent', () => {
     });
 
     it('emitFontWeight should emit font weight bold', () => {
-        const emitBoldSpy = spyOn(textComponent.textBoldChanged, 'emit');
+        const emitBoldSpy = spyOn(textComponent['textBoldChanged'], 'emit');
         textComponent.textBold = true;
         textComponent.emitFontWeight();
         expect(emitBoldSpy).toHaveBeenCalled();
@@ -101,7 +102,7 @@ describe('SidebarTextComponent', () => {
     });
 
     it('emitFontWeight should emit font weight normal', () => {
-        const emitBoldSpy = spyOn(textComponent.textBoldChanged, 'emit');
+        const emitBoldSpy = spyOn(textComponent['textBoldChanged'], 'emit');
         textComponent.textBold = false;
         textComponent.emitFontWeight();
         expect(emitBoldSpy).toHaveBeenCalled();
@@ -109,7 +110,7 @@ describe('SidebarTextComponent', () => {
     });
 
     it('emitFontStyle should emit font style italic', () => {
-        const emitItalicSpy = spyOn(textComponent.textItalicChanged, 'emit');
+        const emitItalicSpy = spyOn(textComponent['textItalicChanged'], 'emit');
         textComponent.textItalic = true;
         textComponent.emitFontStyle();
         expect(emitItalicSpy).toHaveBeenCalled();
@@ -117,7 +118,7 @@ describe('SidebarTextComponent', () => {
     });
 
     it('emitFontStyle should emit font style italic', () => {
-        const emitItalicSpy = spyOn(textComponent.textItalicChanged, 'emit');
+        const emitItalicSpy = spyOn(textComponent['textItalicChanged'], 'emit');
         textComponent.textItalic = false;
         textComponent.emitFontStyle();
         expect(emitItalicSpy).toHaveBeenCalled();
@@ -125,21 +126,21 @@ describe('SidebarTextComponent', () => {
     });
 
     it('emitFontFamily should emit font family', () => {
-        const emitSpy = spyOn(textComponent.fontFamilyChanged, 'emit');
+        const emitSpy = spyOn(textComponent['fontFamilyChanged'], 'emit');
         textComponent.fontFamily = TEST_FONT_FAMILY;
         textComponent.emitFontFamily();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitFontSize should emit font size', () => {
-        const emitSpy = spyOn(textComponent.fontSizeChanged, 'emit');
+        const emitSpy = spyOn(textComponent['fontSizeChanged'], 'emit');
         textComponent.fontSize = TEST_FONT_SIZE;
         textComponent.emitFontSize();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitTexAlign should emit alignment', () => {
-        const emitSpy = spyOn(textComponent.textAlignChanged, 'emit');
+        const emitSpy = spyOn(textComponent['textAlignChanged'], 'emit');
         textComponent.textAlign = TEST_TEXT_ALIGN;
         textComponent.emitTexAlign();
         expect(emitSpy).toHaveBeenCalled();
