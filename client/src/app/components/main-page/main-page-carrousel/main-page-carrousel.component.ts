@@ -28,7 +28,6 @@ export class MainPageCarrouselComponent {
     deleted: boolean;
     selectable: boolean;
     removable: boolean;
-    deleteClick: boolean;
     drawingLoading: boolean;
     imageNotInServer: boolean;
 
