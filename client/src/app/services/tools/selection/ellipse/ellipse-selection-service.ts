@@ -116,6 +116,7 @@ export class EllipseSelectionService extends ToolSelectionService {
                 this.resetSelectedToolSettings();
                 // Erase the rectangle drawn as a preview of selection
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.inUse = false;
                 this.isEscapeDown = false;
             }
         } else if (this.isManipulating) {
@@ -204,25 +205,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         const command: Command = new EllipseSelectionCommand(this.drawingService.baseCtx, this.drawingService.selectionCanvas, this);
         this.undoRedoService.executeCommand(command);
         this.resetProperties();
-    }
-
-    initializeSelection(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        mousePosition.x = mousePosition.x > this.drawingService.canvas.width ? this.drawingService.canvas.width : mousePosition.x;
-        mousePosition.y = mousePosition.y > this.drawingService.canvas.height ? this.drawingService.canvas.height : mousePosition.y;
-        this.pathData[SelectionConstants.END_INDEX] = mousePosition;
-        this.ellipseService.inUse = false;
-        super.onMouseUp(event);
-        this.selectionWidth = this.pathData[SelectionConstants.END_INDEX].x - this.pathData[SelectionConstants.START_INDEX].x;
-        this.selectionHeight = this.pathData[SelectionConstants.END_INDEX].y - this.pathData[SelectionConstants.START_INDEX].y;
-        if (!this.validateSelectionHeightAndWidth()) {
-            return;
-        }
-        this.setSelectionCanvasSize(this.selectionWidth, this.selectionHeight);
-        this.selectEllipse(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData);
-        this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
-        this.inUse = false;
-        this.isManipulating = true;
     }
 
     undoSelection(): void {
