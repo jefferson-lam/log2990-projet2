@@ -15,7 +15,7 @@ import { ExportErrorPageComponent } from './export-error-page/export-error-page.
 })
 export class ExportDrawingComponent implements AfterViewInit, OnInit {
     @ViewChild('exportImg', { static: false }) private exportImg: ElementRef<HTMLImageElement>;
-    @ViewChild('exportCanvas', { static: true }) exportCanvasRef: ElementRef<HTMLCanvasElement>;
+    @ViewChild('exportCanvas', { static: true }) private exportCanvasRef: ElementRef<HTMLCanvasElement>;
     exportCanvas: HTMLCanvasElement;
     exportCtx: CanvasRenderingContext2D;
     canvasStyleWidth: string;
