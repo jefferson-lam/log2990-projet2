@@ -2,11 +2,13 @@ import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { SelectionComponent } from '@app/components/selection/selection.component';
-import createSpyObj = jasmine.createSpyObj;
 import * as DirectionalMovementConstants from '@app/constants/directional-movement-constants';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { DirectionalMovementDirective } from './directional-movement.directive';
+import createSpyObj = jasmine.createSpyObj;
 
+// tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('DirectionalMovementDirective', () => {
     let fixture: ComponentFixture<SelectionComponent>;
     let directive: DirectionalMovementDirective;
@@ -58,7 +60,7 @@ describe('DirectionalMovementDirective', () => {
         selectionCanvas.nativeElement.style.left = initialPosition.x;
         const expected = parseInt(initialPosition.x, 10) - movement.x + 'px';
 
-        directive.translateLeft(movement.x);
+        directive['translateLeft'](movement.x);
 
         expect(selectionCanvas.nativeElement.style.left).toBe(expected);
     });
@@ -67,7 +69,7 @@ describe('DirectionalMovementDirective', () => {
         selectionCanvas.nativeElement.style.left = initialPosition.x;
         const expected = parseInt(initialPosition.x, 10) + movement.x + 'px';
 
-        directive.translateRight(movement.x);
+        directive['translateRight'](movement.x);
 
         expect(selectionCanvas.nativeElement.style.left).toBe(expected);
     });
@@ -76,7 +78,7 @@ describe('DirectionalMovementDirective', () => {
         selectionCanvas.nativeElement.style.top = initialPosition.y;
         const expected = parseInt(initialPosition.y, 10) - movement.y + 'px';
 
-        directive.translateUp(movement.y);
+        directive['translateUp'](movement.y);
 
         expect(selectionCanvas.nativeElement.style.top).toBe(expected);
     });
@@ -85,7 +87,7 @@ describe('DirectionalMovementDirective', () => {
         selectionCanvas.nativeElement.style.top = initialPosition.y;
         const expected = parseInt(initialPosition.y, 10) + movement.y + 'px';
 
-        directive.translateDown(movement.y);
+        directive['translateDown'](movement.y);
 
         expect(selectionCanvas.nativeElement.style.top).toBe(expected);
     });
@@ -99,7 +101,7 @@ describe('DirectionalMovementDirective', () => {
     }));
 
     it('translateSelection should call translate left if ArrowLeft pressed', () => {
-        const leftSpy = spyOn(directive, 'translateLeft');
+        const leftSpy = spyOn<any>(directive, 'translateLeft');
         directive.keyPressed.set('ArrowLeft', 1);
 
         directive.translateSelection();
@@ -108,7 +110,7 @@ describe('DirectionalMovementDirective', () => {
     });
 
     it('translateSelection should call translate up if ArrowUp pressed', () => {
-        const upSpy = spyOn(directive, 'translateUp');
+        const upSpy = spyOn<any>(directive, 'translateUp');
         directive.keyPressed.set('ArrowUp', 1);
 
         directive.translateSelection();
@@ -117,7 +119,7 @@ describe('DirectionalMovementDirective', () => {
     });
 
     it('translateSelection should call translate right if ArrowRight pressed', () => {
-        const rightSpy = spyOn(directive, 'translateRight');
+        const rightSpy = spyOn<any>(directive, 'translateRight');
         directive.keyPressed.set('ArrowRight', 1);
 
         directive.translateSelection();
@@ -126,7 +128,7 @@ describe('DirectionalMovementDirective', () => {
     });
 
     it('translateSelection should call translate down if ArrowDown pressed', () => {
-        const downSpy = spyOn(directive, 'translateDown');
+        const downSpy = spyOn<any>(directive, 'translateDown');
         directive.keyPressed.set('ArrowDown', 1);
 
         directive.translateSelection();
@@ -135,7 +137,7 @@ describe('DirectionalMovementDirective', () => {
     });
 
     it('translateSelection should emit canvasMovement true', () => {
-        spyOn(directive, 'translateDown');
+        spyOn<any>(directive, 'translateDown');
         directive.keyPressed.set('ArrowDown', 1);
 
         directive.translateSelection();
