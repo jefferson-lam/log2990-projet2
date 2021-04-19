@@ -55,7 +55,7 @@ export class SidebarPipetteComponent implements OnInit {
         this.ctx.closePath();
     }
 
-    zoomPreview(): void {
+    private zoomPreview(): void {
         this.ctx.drawImage(
             this.ctx.canvas,
             PipetteConstants.RAWDATA_POSITION,

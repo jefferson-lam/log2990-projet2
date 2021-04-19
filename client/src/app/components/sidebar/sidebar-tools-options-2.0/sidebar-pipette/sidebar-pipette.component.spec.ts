@@ -57,7 +57,7 @@ describe('SidebarPipetteComponent', () => {
         component['ctx'].putImageData(pixelData, 0, 0);
 
         const clipSpy = spyOn<any>(component, 'clipPreview');
-        const zoomSpy = spyOn(component, 'zoomPreview');
+        const zoomSpy = spyOn<any>(component, 'zoomPreview');
         const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
         const previewStrokeSpy = spyOn(component, 'previewStroke');
         component['drawPreview']();
@@ -73,7 +73,7 @@ describe('SidebarPipetteComponent', () => {
         component['ctx'].putImageData(pixelData, 0, 0);
 
         const clipSpy = spyOn<any>(component, 'clipPreview');
-        const zoomSpy = spyOn(component, 'zoomPreview');
+        const zoomSpy = spyOn<any>(component, 'zoomPreview');
         const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
         const previewStrokeSpy = spyOn(component, 'previewStroke');
         component['drawPreview']();
@@ -113,7 +113,7 @@ describe('SidebarPipetteComponent', () => {
         const arcSpy = spyOn(component['ctx'], 'arc');
         const clipSpy = spyOn(component['ctx'], 'clip');
         const closePathSpy = spyOn(component['ctx'], 'closePath');
-        component.clipPreview();
+        component['clipPreview']();
         expect(beginPathSpy).toHaveBeenCalled();
         expect(arcSpy).toHaveBeenCalled();
         expect(clipSpy).toHaveBeenCalled();
@@ -122,7 +122,7 @@ describe('SidebarPipetteComponent', () => {
 
     it('zoomPreview should call drawImage()', () => {
         const drawImageSpy = spyOn(component['ctx'], 'drawImage');
-        component.zoomPreview();
+        component['zoomPreview']();
         expect(drawImageSpy).toHaveBeenCalled();
     });
 
