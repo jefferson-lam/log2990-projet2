@@ -10,12 +10,10 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 export class SidebarPipetteComponent implements OnInit {
     private ctx: CanvasRenderingContext2D;
     private rawData: ImageData;
-    previewData: ImageData;
     inBound: boolean;
 
     constructor(public pipetteService: PipetteService) {
         this.rawData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-        this.previewData = new ImageData(PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
         this.inBound = false;
     }
 
