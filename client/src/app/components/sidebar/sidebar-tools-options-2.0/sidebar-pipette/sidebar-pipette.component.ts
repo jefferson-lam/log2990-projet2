@@ -69,7 +69,7 @@ export class SidebarPipetteComponent implements OnInit {
         );
     }
 
-    centerPixelStroke(): void {
+    private centerPixelStroke(): void {
         this.ctx.strokeStyle = PipetteConstants.BLACK_STROKE;
         this.ctx.lineWidth = PipetteConstants.CENTER_PIXEL_LINE_WIDTH;
         this.ctx.strokeRect(

@@ -58,7 +58,7 @@ describe('SidebarPipetteComponent', () => {
 
         const clipSpy = spyOn<any>(component, 'clipPreview');
         const zoomSpy = spyOn<any>(component, 'zoomPreview');
-        const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
+        const centerPixelStrokeSpy = spyOn<any>(component, 'centerPixelStroke');
         const previewStrokeSpy = spyOn(component, 'previewStroke');
         component['drawPreview']();
         expect(clipSpy).toHaveBeenCalled();
@@ -74,7 +74,7 @@ describe('SidebarPipetteComponent', () => {
 
         const clipSpy = spyOn<any>(component, 'clipPreview');
         const zoomSpy = spyOn<any>(component, 'zoomPreview');
-        const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
+        const centerPixelStrokeSpy = spyOn<any>(component, 'centerPixelStroke');
         const previewStrokeSpy = spyOn(component, 'previewStroke');
         component['drawPreview']();
         expect(clipSpy).not.toHaveBeenCalled();
@@ -128,7 +128,7 @@ describe('SidebarPipetteComponent', () => {
 
     it('centerPixelStroke should call strokeRect()', () => {
         const strokeRectSpy = spyOn(component['ctx'], 'strokeRect');
-        component.centerPixelStroke();
+        component['centerPixelStroke']();
         expect(strokeRectSpy).toHaveBeenCalled();
     });
 
