@@ -28,7 +28,6 @@ export class MainPageCarrouselComponent {
     serverErrorMessage: string;
     deleted: boolean;
     noValidDrawing: boolean;
-    visible: boolean;
     selectable: boolean;
     removable: boolean;
     deleteClick: boolean;
@@ -56,7 +55,6 @@ export class MainPageCarrouselComponent {
         this.serverErrorMessage = '';
         this.deleted = false;
         this.noValidDrawing = false;
-        this.visible = true;
         this.selectable = true;
         this.removable = true;
         this.separatorKeysCodes = [ENTER, COMMA];
