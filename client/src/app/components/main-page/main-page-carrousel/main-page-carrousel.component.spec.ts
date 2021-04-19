@@ -109,18 +109,18 @@ describe('MainPageCarrouselComponent', () => {
 
     it('showcasePreviewDrawing should set drawing counter to previewDrawings.length -1 if drawingCounter currently at 0', () => {
         component['drawingCounter'] = 0;
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component['showCasedDrawings'] = [
+        component.showCasedDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
         ];
-        const EXPECTED_DRAWING_COUNTER = component['previewDrawings'].length - 1;
+        const EXPECTED_DRAWING_COUNTER = component.previewDrawings.length - 1;
         const EXPECTED_SHOWCASED_DRAWINGS = [
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
@@ -128,19 +128,19 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showcasePreviousDrawing();
         expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
-        expect(component['showCasedDrawings']).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
+        expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('showcasePreviewDrawing should set drawing counter to drawingCounter - 1 if drawingCounter not 0', () => {
         const TEST_START_DRAWING_COUNTER = 2;
         component['drawingCounter'] = TEST_START_DRAWING_COUNTER;
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component['showCasedDrawings'] = [
+        component.showCasedDrawings = [
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
@@ -153,18 +153,18 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showcasePreviousDrawing();
         expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
-        expect(component['showCasedDrawings']).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
+        expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('showcaseNextDrawing should set drawing counter to 0 if drawingCounter currently at previewDrawings.length - 1', () => {
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component['drawingCounter'] = component['previewDrawings'].length - 1;
-        component['showCasedDrawings'] = [
+        component['drawingCounter'] = component.previewDrawings.length - 1;
+        component.showCasedDrawings = [
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
@@ -177,17 +177,17 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showcaseNextDrawing();
         expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
-        expect(component['showCasedDrawings']).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
+        expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('showcaseNextDrawing should set drawingCounter to drawingCounter+1 if drawingCounter smaller than previewDrawings.length - showcasedDrawings.length', () => {
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component['showCasedDrawings'] = [
+        component.showCasedDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -202,11 +202,11 @@ describe('MainPageCarrouselComponent', () => {
         ];
         component.showcaseNextDrawing();
         expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
-        expect(component['showCasedDrawings']).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
+        expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('addTag should add tag if tag exists', () => {
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', tags: ['test', 'test2'], id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', tags: ['test'], id: '3' },
@@ -222,7 +222,7 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('addTag should not add tag if tag does not exist', () => {
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -291,8 +291,8 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('showcasePreviousDrawing should not fire when there are no showcasedDrawings', () => {
-        const popSpy = spyOn(component['showCasedDrawings'], 'pop');
-        component['showCasedDrawings'] = [];
+        const popSpy = spyOn(component.showCasedDrawings, 'pop');
+        component.showCasedDrawings = [];
         component.showcasePreviousDrawing();
         expect(popSpy).not.toHaveBeenCalled();
     });
@@ -335,22 +335,22 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('showCaseNextDrawing should not move to any drawing whatsoever if number of drawings in showcase is 0.', () => {
-        component['showCasedDrawings'] = [];
+        component.showCasedDrawings = [];
 
         component.showcaseNextDrawing();
 
-        expect(component['showCasedDrawings'].length).toEqual(0);
+        expect(component.showCasedDrawings.length).toEqual(0);
     });
 
     it('deleteDrawing should throw error when calling dropDrawing from database', fakeAsync(() => {
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
 
-        component['showCasedDrawings'] = [
+        component.showCasedDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -363,7 +363,7 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
 
-        const spySplice = spyOn(component['previewDrawings'], 'splice');
+        const spySplice = spyOn(component.previewDrawings, 'splice');
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
@@ -371,14 +371,14 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('deleteDrawing should throw error when timeout has occured', fakeAsync(() => {
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
 
-        component['showCasedDrawings'] = [
+        component.showCasedDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -391,7 +391,7 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
 
-        const spySplice = spyOn(component['previewDrawings'], 'splice');
+        const spySplice = spyOn(component.previewDrawings, 'splice');
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
@@ -399,14 +399,14 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('deleteDrawing should throw error when calling deleteDrawing from local-server', fakeAsync(() => {
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
 
-        component['showCasedDrawings'] = [
+        component.showCasedDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
@@ -419,7 +419,7 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
 
-        const spySplice = spyOn(component['previewDrawings'], 'splice');
+        const spySplice = spyOn(component.previewDrawings, 'splice');
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();
@@ -427,19 +427,19 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('deleteDrawing should delete selected drawing', fakeAsync(() => {
-        component['previewDrawings'] = [
+        component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
 
-        component['showCasedDrawings'] = [
+        component.showCasedDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
             { image: '', name: '', id: '3' },
         ];
-        const spySplice = spyOn(component['previewDrawings'], 'splice');
+        const spySplice = spyOn(component.previewDrawings, 'splice');
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
@@ -447,9 +447,9 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('deleteDrawing should delete drawing when there is only one', fakeAsync(() => {
-        component['previewDrawings'] = [{ image: '', name: '', id: '1' }];
-        component['showCasedDrawings'] = [{ image: '', name: '', id: '1' }];
-        const spySplice = spyOn(component['showCasedDrawings'], 'splice');
+        component.previewDrawings = [{ image: '', name: '', id: '1' }];
+        component.showCasedDrawings = [{ image: '', name: '', id: '1' }];
+        const spySplice = spyOn(component.showCasedDrawings, 'splice');
 
         component.deleteDrawing();
         tick(TICK_TIME);
@@ -474,8 +474,8 @@ describe('MainPageCarrouselComponent', () => {
     }));
 
     it('removeTag should catch error getDrawings in resetShowcasedDrawings', fakeAsync(() => {
-        component['previewDrawings'] = [{ image: '', name: '', id: '1' }];
-        component['showCasedDrawings'] = [{ image: '', name: '', id: '1' }];
+        component.previewDrawings = [{ image: '', name: '', id: '1' }];
+        component.showCasedDrawings = [{ image: '', name: '', id: '1' }];
         databaseServiceSpy.getDrawings.and.returnValue(
             of({
                 title: 'Error',
