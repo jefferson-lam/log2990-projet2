@@ -10,9 +10,11 @@ import { catchError, timeout } from 'rxjs/operators';
     providedIn: 'root',
 })
 export class LocalServerService {
-    private readonly DRAWINGS_URL: string = 'http://localhost:3000/api/drawings';
+    private readonly DRAWINGS_URL: string;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) {
+        this.DRAWINGS_URL = 'http://localhost:3000/api/drawings';
+    }
 
     sendDrawing(drawing: ServerDrawing): Observable<Message> {
         return this.http

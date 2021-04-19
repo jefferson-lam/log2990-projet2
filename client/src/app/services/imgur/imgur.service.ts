@@ -6,8 +6,8 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class ImgurService {
-    private readonly IMGUR_URL: string = 'https://api.imgur.com/3/image/';
-    private readonly CLIENT_ID: string = 'Client-ID 7cb69a96d40be21';
+    private readonly IMGUR_URL: string;
+    private readonly CLIENT_ID: string;
 
     responseStatus: number;
     data: string;
@@ -23,6 +23,9 @@ export class ImgurService {
     serviceSettingsObservable: Observable<[number, string]>;
 
     constructor() {
+        this.IMGUR_URL = 'https://api.imgur.com/3/image/';
+        this.CLIENT_ID = 'Client-ID 7cb69a96d40be21';
+
         this.url = 'none';
         this.exportProgress = ExportDrawingConstants.ExportProgress.CHOOSING_SETTING;
 
