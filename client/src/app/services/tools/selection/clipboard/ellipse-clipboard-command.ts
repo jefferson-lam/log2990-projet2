@@ -24,27 +24,27 @@ export class EllipseClipboardCommand extends Command {
         this.fillEllipse(this.ctx, this.pathData, this.isCircle);
     }
 
-    private fillEllipse(ctx: CanvasRenderingContext2D, pathData: Vec2[], isCircle: boolean): void {
-        const ellipseCenter = this.getEllipseCenter(pathData[SelectionConstants.START_INDEX], pathData[SelectionConstants.END_INDEX], isCircle);
-        const startX = ellipseCenter.x;
-        const startY = ellipseCenter.y;
+    private fillEllipse(ctx: CanvasRenderingContext2D, cornerCoords: Vec2[], isCircle: boolean): void {
+        const ellipseCenter = this.getEllipseCenter(
+            cornerCoords[SelectionConstants.START_INDEX],
+            cornerCoords[SelectionConstants.END_INDEX],
+            isCircle,
+        );
         const radiiXAndY = this.getRadiiXAndY(this.pathData);
-        const xRadius = radiiXAndY[0];
-        const yRadius = radiiXAndY[1];
         ctx.beginPath();
-        ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(ellipseCenter.x, ellipseCenter.y, radiiXAndY.x, radiiXAndY.y, ROTATION, START_ANGLE, END_ANGLE);
         ctx.fillStyle = 'white';
         ctx.fill();
     }
 
-    private getRadiiXAndY(path: Vec2[]): number[] {
+    private getRadiiXAndY(path: Vec2[]): Vec2 {
         let xRadius = Math.abs(path[SelectionConstants.END_INDEX].x - path[SelectionConstants.START_INDEX].x) / 2;
         let yRadius = Math.abs(path[SelectionConstants.END_INDEX].y - path[SelectionConstants.START_INDEX].y) / 2;
         if (this.isCircle) {
             const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
             xRadius = yRadius = shortestSide;
         }
-        return [xRadius, yRadius];
+        return { x: xRadius, y: yRadius };
     }
 
     private getEllipseCenter(start: Vec2, end: Vec2, isCircle: boolean): Vec2 {

@@ -10,7 +10,11 @@ export class RectangleCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[];
+    cornerCoords: Vec2[] = [];
+    width: number;
+    height: number;
+    fillColor: string;
+    borderColor: string;
 
     constructor(canvasContext: CanvasRenderingContext2D, rectangleService: RectangleService) {
         super();
@@ -33,53 +37,38 @@ export class RectangleCommand extends Command {
     }
 
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        let width = path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x;
-        let height = path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y;
+        this.width = path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x;
+        this.height = path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y;
         if (this.isSquare) {
-            const shortestSide = Math.min(Math.abs(width), Math.abs(height));
-            width = Math.sign(width) * shortestSide;
-            height = Math.sign(height) * shortestSide;
+            const shortestSide = Math.min(Math.abs(this.width), Math.abs(this.height));
+            this.width = Math.sign(this.width) * shortestSide;
+            this.height = Math.sign(this.height) * shortestSide;
         }
-        const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (Math.abs(width) > this.lineWidth && Math.abs(height) > this.lineWidth) {
-            width -= Math.sign(width) * this.lineWidth;
-            height -= Math.sign(height) * this.lineWidth;
-            this.drawTypeRectangle(ctx, path, width, height, this.fillMode, this.lineWidth, this.primaryColor, borderColor);
+        this.borderColor = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
+        if (Math.abs(this.width) > this.lineWidth && Math.abs(this.height) > this.lineWidth) {
+            this.width -= Math.sign(this.width) * this.lineWidth;
+            this.height -= Math.sign(this.height) * this.lineWidth;
+            this.fillColor = this.primaryColor;
+            this.drawTypeRectangle(ctx, path);
         } else {
-            this.drawTypeRectangle(
-                ctx,
-                path,
-                width,
-                height,
-                ToolConstants.FillMode.OUTLINE_FILL,
-                ShapeConstants.MIN_BORDER_WIDTH,
-                borderColor,
-                borderColor,
-            );
+            this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
+            this.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
+            this.drawTypeRectangle(ctx, path);
         }
     }
 
-    private drawTypeRectangle(
-        ctx: CanvasRenderingContext2D,
-        path: Vec2[],
-        width: number,
-        height: number,
-        fillMode: ToolConstants.FillMode,
-        lineWidth: number,
-        fillColor: string,
-        borderColor: string,
-    ): void {
+    private drawTypeRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.lineJoin = 'miter';
-        const startX = path[ShapeConstants.START_INDEX].x + (Math.sign(width) * lineWidth) / 2;
-        const startY = path[ShapeConstants.START_INDEX].y + (Math.sign(height) * lineWidth) / 2;
-        ctx.rect(startX, startY, width, height);
+        const startX = path[ShapeConstants.START_INDEX].x + (Math.sign(this.width) * this.lineWidth) / 2;
+        const startY = path[ShapeConstants.START_INDEX].y + (Math.sign(this.height) * this.lineWidth) / 2;
+        ctx.rect(startX, startY, this.width, this.height);
 
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = this.borderColor;
+        ctx.lineWidth = this.lineWidth;
         ctx.stroke();
-        if (fillMode !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = fillColor;
+        if (this.fillMode !== ToolConstants.FillMode.OUTLINE) {
+            ctx.fillStyle = this.fillColor;
             ctx.fill();
         }
     }
