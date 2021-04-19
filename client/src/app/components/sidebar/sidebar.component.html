@@ -5,7 +5,7 @@
                 <li id="return-button" routerLink="/home">
                     <mat-icon matTooltip="Retour" [matTooltipPosition]="'right'">backspace</mat-icon>
                 </li>
-                <li  id="save-drawing-button" (click)="saveDrawing()">
+                <li  id="save-drawing-button" [class.unclickable]="popupManager.isPopUpOpen" (click)="saveDrawing()">
                     <mat-icon matTooltip="Sauvegarder (Ctrl-S)" [matTooltipPosition]="'right'"
                         >save_alt</mat-icon
                     >
@@ -52,12 +52,12 @@
         </div>
         <div id="right-column">
             <ul class="options-sidebar">
-                <li id="new-drawing-button" (click)="openNewDrawing()">
+                <li id="new-drawing-button" [class.unclickable]="popupManager.isPopUpOpen || !popupManager.newDrawingPossible" (click)="openNewDrawing()">
                     <mat-icon matTooltip="Nouveau dessin (Ctrl-O)" [matTooltipPosition]="'right'"
                         >add_box</mat-icon
                     >
                 </li>
-                <li id="exportButton" (click)="exportDrawing()">
+                <li id="exportButton" [class.unclickable]="popupManager.isPopUpOpen" (click)="exportDrawing()">
                     <mat-icon
                         id="export-drawing-button"
                         matTooltip="Exporter dessin (Ctrl-E)"
