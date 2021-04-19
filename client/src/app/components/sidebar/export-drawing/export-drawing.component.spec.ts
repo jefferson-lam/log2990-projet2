@@ -117,7 +117,7 @@ describe('ExportDrawingComponent', () => {
     it("setPopupSizes should set canvasStyleHeight to MAX_EXPORT_CANVAS_HEIGHT+'px' if height bigger than width", () => {
         component.baseCanvas.height = MIN_HEIGHT_CANVAS + 1;
         component.baseCanvas.width = MIN_HEIGHT_CANVAS;
-        component.setPopupSizes();
+        component['setPopupSizes']();
 
         expect(component.canvasStyleHeight).toBe(MAX_EXPORT_CANVAS_HEIGHT + 'px');
     });
@@ -125,7 +125,7 @@ describe('ExportDrawingComponent', () => {
     it("setPopupSizes should set canvasStyleWidth to (canvas.width/canvas.height)*MAX_EXPORT_CANVAS_HEIGHT+'px' if height bigger than width", () => {
         component.baseCanvas.height = MIN_HEIGHT_CANVAS + 1;
         component.baseCanvas.width = MIN_HEIGHT_CANVAS;
-        component.setPopupSizes();
+        component['setPopupSizes']();
 
         expect(component.canvasStyleWidth).toBe((component.baseCanvas.width / component.baseCanvas.height) * MAX_EXPORT_CANVAS_HEIGHT + 'px');
     });
@@ -133,7 +133,7 @@ describe('ExportDrawingComponent', () => {
     it("setPopupSizes should set canvasStyleWidth to MAX_EXPORT_CANVAS_WIDTH+'px' if width bigger than height", () => {
         component.baseCanvas.height = MIN_HEIGHT_CANVAS;
         component.baseCanvas.width = MIN_HEIGHT_CANVAS + 1;
-        component.setPopupSizes();
+        component['setPopupSizes']();
 
         expect(component.canvasStyleWidth).toBe(MAX_EXPORT_CANVAS_WIDTH + 'px');
     });
@@ -141,7 +141,7 @@ describe('ExportDrawingComponent', () => {
     it("setPopupSizes should set canvasStyleWidth to (canvas.height/canvas.width)*MAX_EXPORT_CANVAS_WIDTH+'px' if width bigger than height", () => {
         component.baseCanvas.height = MIN_HEIGHT_CANVAS;
         component.baseCanvas.width = MIN_HEIGHT_CANVAS + 1;
-        component.setPopupSizes();
+        component['setPopupSizes']();
 
         expect(component.canvasStyleHeight).toBe((component.baseCanvas.height / component.baseCanvas.width) * MAX_EXPORT_CANVAS_WIDTH + 'px');
     });

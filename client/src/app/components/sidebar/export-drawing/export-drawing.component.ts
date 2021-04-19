@@ -82,7 +82,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.exportImg.nativeElement.src = this.exportCanvas.toDataURL();
     }
 
-    setPopupSizes(): void {
+    private setPopupSizes(): void {
         if (this.baseCanvas.height > this.baseCanvas.width) {
             this.canvasStyleWidth = (this.baseCanvas.width / this.baseCanvas.height) * MAX_EXPORT_CANVAS_HEIGHT + 'px';
             this.canvasStyleHeight = MAX_EXPORT_CANVAS_HEIGHT + 'px';
