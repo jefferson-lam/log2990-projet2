@@ -18,7 +18,7 @@ export class SidebarPolygoneComponent implements OnInit {
     polygoneSidesCount: number;
     fillMode: number | undefined;
 
-    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() private toolSizeChanged: EventEmitter<number>;
     @Output() fillModeChanged: EventEmitter<number>;
     @Output() numberOfPolySides: EventEmitter<number>;
 
