@@ -119,7 +119,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         }
     }
 
-    openErrorPopUp(): void {
+    private openErrorPopUp(): void {
         this.newDialog.open(ExportErrorPageComponent);
         this.imgurService.mutex--;
     }
