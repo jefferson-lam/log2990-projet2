@@ -30,9 +30,9 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
     @ViewChild('corgiPortrait', { static: false }) private corgiPortrait: ElementRef<HTMLElement>;
     @ViewChild('angleSlider') angleSlider: MatSlider;
 
-    @Output() stampSourceChanged: EventEmitter<string>;
-    @Output() zoomFactorChanged: EventEmitter<number>;
-    @Output() rotationAngleChanged: EventEmitter<number>;
+    @Output() private stampSourceChanged: EventEmitter<string>;
+    @Output() private zoomFactorChanged: EventEmitter<number>;
+    @Output() private rotationAngleChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService, public stampService: StampService) {
         this.rotationAngle = this.stampService.realRotationValues;

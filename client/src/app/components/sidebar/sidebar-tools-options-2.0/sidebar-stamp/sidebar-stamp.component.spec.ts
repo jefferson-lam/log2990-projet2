@@ -33,9 +33,9 @@ describe('SidebarStampComponent', () => {
         fixture = TestBed.createComponent(SidebarStampComponent);
         stampComponent = fixture.componentInstance;
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        stampSourceSpy = spyOn(stampComponent.stampSourceChanged, 'subscribe').and.callThrough();
-        zoomFactorSpy = spyOn(stampComponent.zoomFactorChanged, 'subscribe').and.callThrough();
-        rotationAngleSpy = spyOn(stampComponent.rotationAngleChanged, 'subscribe').and.callThrough();
+        stampSourceSpy = spyOn(stampComponent['stampSourceChanged'], 'subscribe').and.callThrough();
+        zoomFactorSpy = spyOn(stampComponent['zoomFactorChanged'], 'subscribe').and.callThrough();
+        rotationAngleSpy = spyOn(stampComponent['rotationAngleChanged'], 'subscribe').and.callThrough();
 
         fixture.detectChanges();
     });
@@ -198,7 +198,7 @@ describe('SidebarStampComponent', () => {
     });
 
     it('emitImageSrc should emit image source', () => {
-        const emitSpy = spyOn(stampComponent.stampSourceChanged, 'emit');
+        const emitSpy = spyOn(stampComponent['stampSourceChanged'], 'emit');
         stampComponent.imageSource = 'hello.svg';
         stampComponent.emitImageSrc();
 
@@ -206,7 +206,7 @@ describe('SidebarStampComponent', () => {
     });
 
     it('emitImageSrc should change image source', () => {
-        const emitSpy = spyOn(stampComponent.stampSourceChanged, 'emit');
+        const emitSpy = spyOn(stampComponent['stampSourceChanged'], 'emit');
         stampComponent.imageSource = 'hello.svg';
         stampComponent.emitImageSrc();
 
@@ -215,14 +215,14 @@ describe('SidebarStampComponent', () => {
     });
 
     it('emitZoomFactor should emit zoom factor', () => {
-        const emitSpy = spyOn(stampComponent.zoomFactorChanged, 'emit');
+        const emitSpy = spyOn(stampComponent['zoomFactorChanged'], 'emit');
         stampComponent.zoomFactor = StampConstants.INIT_ZOOM_FACTOR;
         stampComponent.emitZoomFactor();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitRotateAngle should emit rotating angle', () => {
-        const emitSpy = spyOn(stampComponent.rotationAngleChanged, 'emit');
+        const emitSpy = spyOn(stampComponent['rotationAngleChanged'], 'emit');
         stampComponent.rotationAngle = StampConstants.INIT_ROTATION_ANGLE;
         stampComponent.emitRotateAngle();
         expect(emitSpy).toHaveBeenCalled();
