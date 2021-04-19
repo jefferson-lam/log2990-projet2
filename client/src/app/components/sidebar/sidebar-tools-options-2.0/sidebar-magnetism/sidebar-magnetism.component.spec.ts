@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { SidebarMagnetismComponent } from './sidebar-magnetism.component';
 
 // tslint:disable: no-any
+// tslint:disable: no-string-literal
 describe('SidebarMagnetismComponent', () => {
     let component: SidebarMagnetismComponent;
     let fixture: ComponentFixture<SidebarMagnetismComponent>;
@@ -37,21 +38,18 @@ describe('SidebarMagnetismComponent', () => {
 
     it('emission of magnetismValueChanged should change magnetismService.isMagnetismOn', () => {
         component.magnetismValueChanged.emit(false);
-        // tslint:disable-next-line: no-string-literal
         expect(component['magnetismService'].isMagnetismOn).toBeFalse();
     });
 
     it('emission of referenceCornerChanged should change magnetismService.referenceResizerMode', () => {
         component.magnetizedPointChanged.emit(MagnestismConstants.MagnetizedPoint.TOP_LEFT);
-        // tslint:disable-next-line: no-string-literal
         expect(component['magnetismService'].magnetizedPoint).toEqual(MagnestismConstants.MagnetizedPoint.TOP_LEFT);
     });
 
     it('canvasGridService.gridVisibility should change toggle state of toggle magnetism of magnetismToggle slider.', () => {
         const EXPECTED_STATE = true;
-        // tslint:disable-next-line: no-string-literal
         component['magnetismService'].magnetismStateSubject.next(EXPECTED_STATE);
-        expect(component.magnetismToggle.checked).toEqual(EXPECTED_STATE);
+        expect(component['magnetismToggle'].checked).toEqual(EXPECTED_STATE);
     });
 
     it('emitMagnetismValue should emit component.isMagnetismOn', () => {

@@ -9,7 +9,7 @@ import { MagnetismService } from '@app/services/magnetism/magnetism.service';
     styleUrls: ['./sidebar-magnetism.component.scss'],
 })
 export class SidebarMagnetismComponent implements OnInit {
-    @ViewChild('toggleMagnetism') magnetismToggle: MatSlideToggle;
+    @ViewChild('toggleMagnetism') private magnetismToggle: MatSlideToggle;
 
     isMagnetismOn: boolean;
     MAGNETISM_CORNERS: typeof MagnestismConstants.MagnetizedPoint;
