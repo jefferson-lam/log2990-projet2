@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ import * as ServerConstants from '@common/validation/server-constants';
     styleUrls: ['./main-page-carrousel.component.scss'],
 })
 export class MainPageCarrouselComponent {
+    @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
     @Input() newTagAdded: boolean;
     @Input() deleteDrawingTrue: boolean;
 
@@ -26,15 +27,23 @@ export class MainPageCarrouselComponent {
     tagErrorMessage: string;
     serverErrorMessage: string;
     deleted: boolean;
+    noValidDrawing: boolean;
+    visible: boolean;
     selectable: boolean;
     removable: boolean;
+    deleteClick: boolean;
+    drawingLoading: boolean;
+    imageNotInServer: boolean;
 
     separatorKeysCodes: number[];
-    private tagsInSearch: string[];
+    allTags: string[];
+    tagsInSearch: string[];
 
-    private drawingCounter: number;
-    private showCasedDrawings: ImageFormat[];
-    private previewDrawings: ImageFormat[];
+    drawingCounter: number;
+    fetchedDrawingByTag: string[];
+    showCasedDrawings: ImageFormat[];
+    placeHolderDrawing: ImageFormat;
+    previewDrawings: ImageFormat[];
 
     constructor(
         private database: DatabaseService,
@@ -46,11 +55,15 @@ export class MainPageCarrouselComponent {
         this.tagErrorMessage = '';
         this.serverErrorMessage = '';
         this.deleted = false;
+        this.noValidDrawing = false;
+        this.visible = true;
         this.selectable = true;
         this.removable = true;
         this.separatorKeysCodes = [ENTER, COMMA];
+        this.allTags = [''];
         this.tagsInSearch = [];
         this.drawingCounter = 0;
+        this.placeHolderDrawing = new ImageFormat();
         this.previewDrawings = [];
         this.resetShowcasedDrawings();
         this.matDialogRef.disableClose = true;
@@ -88,7 +101,9 @@ export class MainPageCarrouselComponent {
     }
 
     showcasePreviousDrawing(): void {
+        this.noValidDrawing = false;
         if (this.showCasedDrawings.length === 0) {
+            this.noValidDrawing = true;
             return;
         }
         // Determine new drawingCounter value
@@ -103,7 +118,9 @@ export class MainPageCarrouselComponent {
 
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;
+        this.noValidDrawing = false;
         if (this.showCasedDrawings.length === 0) {
+            this.noValidDrawing = true;
             return;
         }
         if (this.drawingCounter + this.showCasedDrawings.length >= this.previewDrawings.length) {
@@ -139,6 +156,7 @@ export class MainPageCarrouselComponent {
                 };
                 throw errorMessage;
             }
+            this.imageNotInServer = false;
             if (this.showCasedDrawings.length > 1) {
                 this.showCasedDrawings.splice(1, 1);
             } else {
@@ -175,6 +193,7 @@ export class MainPageCarrouselComponent {
     }
 
     private setErrorInServer(errorMessage: string): void {
+        this.imageNotInServer = true;
         this.serverErrorMessage = errorMessage;
     }
 
@@ -183,6 +202,7 @@ export class MainPageCarrouselComponent {
         this.previewDrawings = [];
         this.showCasedDrawings = [];
         this.drawingCounter = 0;
+        this.drawingLoading = true;
         let drawingsWithMatchingTags: Drawing[];
 
         if (this.tagsInSearch.length > 0) {
@@ -193,8 +213,11 @@ export class MainPageCarrouselComponent {
                 for (const drawing of drawingsWithMatchingTags) {
                     await this.addDrawingToDisplay(drawing._id, drawing);
                 }
+                this.noValidDrawing = this.showCasedDrawings.length === 0;
             } catch (error) {
                 this.setErrorInServer("Le serveur n'est pas disponible.");
+            } finally {
+                this.drawingLoading = false;
             }
             return;
         }
@@ -206,8 +229,11 @@ export class MainPageCarrouselComponent {
             for (const drawing of drawingsWithMatchingTags) {
                 await this.addDrawingToDisplay(drawing._id, drawing);
             }
+            this.noValidDrawing = this.showCasedDrawings.length === 0;
         } catch (error) {
             this.setErrorInServer("Le serveur n'est pas disponible.");
+        } finally {
+            this.drawingLoading = false;
         }
     }
 
