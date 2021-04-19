@@ -38,7 +38,6 @@ export class MainPageCarrouselComponent {
 
     private drawingCounter: number;
     showCasedDrawings: ImageFormat[];
-    placeHolderDrawing: ImageFormat;
     previewDrawings: ImageFormat[];
 
     constructor(
@@ -57,7 +56,6 @@ export class MainPageCarrouselComponent {
         this.separatorKeysCodes = [ENTER, COMMA];
         this.tagsInSearch = [];
         this.drawingCounter = 0;
-        this.placeHolderDrawing = new ImageFormat();
         this.previewDrawings = [];
         this.resetShowcasedDrawings();
         this.matDialogRef.disableClose = true;
