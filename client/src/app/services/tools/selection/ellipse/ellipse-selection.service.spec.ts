@@ -420,7 +420,7 @@ describe('EllipseToolSelectionService', () => {
         ];
         service.selectionWidth = sw;
         service.selectionHeight = sh;
-        service.clipEllipse(baseCtxStub, service.pathData[0], sh, sw, 0);
+        service.clipEllipse(baseCtxStub, service.pathData[0], 0);
         expect(baseCtxEllipseSpy).toHaveBeenCalled();
         expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
@@ -465,23 +465,21 @@ describe('EllipseToolSelectionService', () => {
     it('undoSelection should call appropriate functions to restore state', () => {
         const sw = 75;
         const sh = 210;
+        const firstPoint = { x: 25, y: 40 };
         service.isManipulating = true;
-        service.pathData = [
-            { x: 25, y: 40 },
-            { x: 100, y: 250 },
-        ];
+        service.pathData = Object.assign([], [firstPoint, { x: 100, y: 250 }]);
         service.selectionWidth = sw;
         service.selectionHeight = sh;
         service.undoSelection();
         expect(clipEllipseSpy).toHaveBeenCalled();
         expect(baseCtxDrawImage).toHaveBeenCalledWith(
-            selectionCtxStub.canvas,
+            service.originalImageCanvas,
             0,
             0,
             service.selectionWidth,
             service.selectionHeight,
-            service.pathData[0].x,
-            service.pathData[0].y,
+            firstPoint.x,
+            firstPoint.y,
             service.selectionWidth,
             service.selectionHeight,
         );

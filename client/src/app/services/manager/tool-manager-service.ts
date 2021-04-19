@@ -22,7 +22,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class ToolManagerService {
-    keyBindings: Map<string, Tool>;
+    private keyBindings: Map<string, Tool>;
     currentTool: Tool;
     currentToolSubject: Subject<Tool>;
 
@@ -48,41 +48,12 @@ export class ToolManagerService {
         this.currentToolSubject = new BehaviorSubject<Tool>(this.currentTool);
     }
 
-    private bindKeys(): void {
-        this.keyBindings = new Map<string, Tool>();
-        this.keyBindings
-            .set(ToolManagerConstants.PENCIL_KEY, this.pencilService)
-            .set(ToolManagerConstants.ERASER_KEY, this.eraserService)
-            .set(ToolManagerConstants.LINE_KEY, this.lineService)
-            .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
-            .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
-            .set(ToolManagerConstants.RECTANGLE_SELECTION_KEY, this.rectangleSelectionService)
-            .set(ToolManagerConstants.ELLIPSE_SELECTION_KEY, this.ellipseSelectionService)
-            .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
-            .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
-            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
-            .set(ToolManagerConstants.LASSO_SELECTION_KEY, this.lassoSelectionService)
-            .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService)
-            .set(ToolManagerConstants.STAMP_KEY, this.stampService)
-            .set(ToolManagerConstants.TEXT_KEY, this.textService);
-    }
-
     selectTool(keyShortcut: string): Tool {
         if (this.keyBindings.has(keyShortcut)) {
             this.currentTool = this.onToolChange(this.keyBindings.get(keyShortcut) as Tool);
             this.currentToolSubject.next(this.currentTool);
-            return this.currentTool;
-        } else {
-            return this.currentTool;
         }
-    }
-
-    onToolChange(newTool: Tool): Tool {
-        if (this.currentTool !== newTool) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.currentTool.onToolChange();
-        }
-        return newTool;
+        return this.currentTool;
     }
 
     setPrimaryColorTools(color: string): void {
@@ -100,5 +71,32 @@ export class ToolManagerService {
         this.rectangleService.setSecondaryColor(color);
         this.ellipseService.setSecondaryColor(color);
         this.polygoneService.setSecondaryColor(color);
+    }
+
+    private onToolChange(newTool: Tool): Tool {
+        if (this.currentTool !== newTool) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.currentTool.onToolChange();
+        }
+        return newTool;
+    }
+
+    private bindKeys(): void {
+        this.keyBindings = new Map<string, Tool>();
+        this.keyBindings
+            .set(ToolManagerConstants.PENCIL_KEY, this.pencilService)
+            .set(ToolManagerConstants.ERASER_KEY, this.eraserService)
+            .set(ToolManagerConstants.LINE_KEY, this.lineService)
+            .set(ToolManagerConstants.RECTANGLE_KEY, this.rectangleService)
+            .set(ToolManagerConstants.ELLIPSE_KEY, this.ellipseService)
+            .set(ToolManagerConstants.RECTANGLE_SELECTION_KEY, this.rectangleSelectionService)
+            .set(ToolManagerConstants.ELLIPSE_SELECTION_KEY, this.ellipseSelectionService)
+            .set(ToolManagerConstants.POLYGONE_KEY, this.polygoneService)
+            .set(ToolManagerConstants.AEROSOL_KEY, this.aerosolService)
+            .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
+            .set(ToolManagerConstants.LASSO_SELECTION_KEY, this.lassoSelectionService)
+            .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService)
+            .set(ToolManagerConstants.STAMP_KEY, this.stampService)
+            .set(ToolManagerConstants.TEXT_KEY, this.textService);
     }
 }

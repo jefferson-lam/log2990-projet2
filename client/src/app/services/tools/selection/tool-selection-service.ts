@@ -12,12 +12,16 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class ToolSelectionService extends Tool {
+    originalImageCanvas: HTMLCanvasElement;
+    originalImageCtx: CanvasRenderingContext2D;
+
     selectionTool: Tool;
     // Save selectionTool's lineWidth here and fillMode.
     selectionToolLineWidth: number;
     selectionToolFillMode: ToolConstants.FillMode;
     selectionToolPrimaryColor: string;
     selectionToolSecondaryColor: string;
+    isManipulating: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -27,7 +31,13 @@ export class ToolSelectionService extends Tool {
     ) {
         super(drawingService, undoRedoService);
         this.selectionTool = selectionTool;
+        this.originalImageCanvas = document.createElement('canvas');
+        this.originalImageCtx = this.originalImageCanvas.getContext('2d') as CanvasRenderingContext2D;
     }
+
+    // implemented in child classes
+    // tslint:disable-next-line:no-empty
+    undoSelection(): void {}
 
     onMouseDown(event: MouseEvent): void {
         this.getSelectedToolSettings();
@@ -57,13 +67,6 @@ export class ToolSelectionService extends Tool {
 
     onKeyboardUp(event: KeyboardEvent): void {
         this.selectionTool.onKeyboardUp(event);
-    }
-
-    resetCanvasState(canvas: HTMLCanvasElement): void {
-        canvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
-        canvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
-        canvas.width = SelectionConstants.DEFAULT_WIDTH;
-        canvas.height = SelectionConstants.DEFAULT_HEIGHT;
     }
 
     /**
@@ -145,6 +148,34 @@ export class ToolSelectionService extends Tool {
         this.selectionTool.setPrimaryColor(this.selectionToolPrimaryColor);
         this.selectionTool.setSecondaryColor(this.selectionToolSecondaryColor);
         this.drawingService.previewCtx.setLineDash([]);
+    }
+
+    setSelectionCanvasSize(width: number, height: number): void {
+        this.drawingService.selectionCanvas.width = width;
+        this.drawingService.selectionCanvas.height = height;
+        this.drawingService.previewSelectionCanvas.width = width;
+        this.drawingService.previewSelectionCanvas.height = height;
+        this.drawingService.borderCanvas.width = width;
+        this.drawingService.borderCanvas.height = height;
+        this.originalImageCanvas.width = width;
+        this.originalImageCanvas.height = height;
+    }
+
+    setSelectionCanvasPosition(topLeft: Vec2): void {
+        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+    }
+
+    resetCanvasState(canvas: HTMLCanvasElement): void {
+        canvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
+        canvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
+        canvas.width = SelectionConstants.DEFAULT_WIDTH;
+        canvas.height = SelectionConstants.DEFAULT_HEIGHT;
     }
 
     addScalarToVec2(point: Vec2, scalar: number): Vec2 {

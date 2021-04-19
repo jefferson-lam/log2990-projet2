@@ -264,7 +264,6 @@ describe('SidebarComponent', () => {
         );
         component.undo();
         expect(selectionUndoSelectionSpy).toHaveBeenCalled();
-        expect(component.isUndoSelection).toBeFalsy();
         expect(undoRedoServiceSpy.undo).not.toHaveBeenCalled();
     });
 
@@ -295,17 +294,6 @@ describe('SidebarComponent', () => {
         });
         component.selectAll();
         expect(selectAllSpy).toHaveBeenCalled();
-    });
-
-    it('clicking on selectAll should not call selectAll if the tool is not rectangleSelectionService', () => {
-        toolManagerServiceSpy.selectTool.and.callFake(() => {
-            return ellipseStub;
-        });
-        const selectAllSpy = spyOn(rectangleSelectionServiceStub, 'selectAll').and.callFake(() => {
-            return;
-        });
-        component.selectAll();
-        expect(selectAllSpy).not.toHaveBeenCalled();
     });
 
     it('openGridOptions should set isGridOptionsDisplayed to false if initially true', () => {

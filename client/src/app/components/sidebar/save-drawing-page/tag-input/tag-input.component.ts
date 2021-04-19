@@ -49,7 +49,7 @@ export class TagInputComponent {
         }
         this.isSavePossible = false;
         this.tagInput.nativeElement.value = '';
-        this.resetRequirements();
+        this.isSavePossible = false;
     }
 
     deleteTag(tag: string): void {
@@ -61,86 +61,71 @@ export class TagInputComponent {
 
     validateTag(tag: string): boolean {
         tag = tag.trim();
-        this.unsatisfiedRequirements = 0;
+        let requirementViolated = false;
 
-        this.distinctTagsValidator(tag);
-        this.minLengthTagsValidator(tag);
-        this.maxLengthTagsValidator(tag);
-        this.characterTagsValidator(tag);
-        this.maxTagsValidator();
+        if (!this.validateDistinctTag(tag)) requirementViolated = true;
+        if (!this.validateMinLength(tag)) requirementViolated = true;
+        if (!this.validateMaxLength(tag)) requirementViolated = true;
+        if (!this.validateAsciiOnly(tag)) requirementViolated = true;
+        if (!this.validateMaxCount()) requirementViolated = true;
 
-        const requirementViolated = this.unsatisfiedRequirements > 0;
+        // emit to save-drawing-page that tags aren't valid
         this.areTagsValidEvent.emit(!requirementViolated);
         this.isSavePossible = !requirementViolated;
         return !requirementViolated;
     }
 
-    distinctTagsValidator(tag: string): void {
-        this.distinctTagsDivClass = 'Satisfied';
+    private validateMaxCount(): boolean {
+        if (this.tags.length === DatabaseConstants.MAX_TAGS_COUNT) {
+            this.maxTagsCountDivClass = 'Failed';
+            return false;
+        } else {
+            this.maxTagsCountDivClass = 'Satisfied';
+        }
+        return true;
+    }
+
+    private validateDistinctTag(tag: string): boolean {
         if (this.tags.includes(tag)) {
             this.distinctTagsDivClass = 'Failed';
-            this.unsatisfiedRequirements++;
+            return false;
+        } else {
+            this.distinctTagsDivClass = 'Satisfied';
         }
+        return true;
     }
 
-    minLengthTagsValidator(tag: string): void {
-        this.minLengthDivClass = 'Satisfied';
-        if (this.tagIsShorterThanMinLength(tag)) {
+    private validateMinLength(tag: string): boolean {
+        if (tag.length < DatabaseConstants.MIN_TAG_LENGTH) {
             this.minLengthDivClass = 'Failed';
-            this.unsatisfiedRequirements++;
+            return false;
+        } else {
+            this.minLengthDivClass = 'Satisfied';
         }
+        return true;
     }
 
-    maxLengthTagsValidator(tag: string): void {
-        this.maxLengthDivClass = 'Satisfied';
-        if (this.tagIsLongerThanMaxLength(tag)) {
+    private validateMaxLength(tag: string): boolean {
+        if (tag.length > DatabaseConstants.MAX_TAG_LENGTH) {
             this.maxLengthDivClass = 'Failed';
-            this.unsatisfiedRequirements++;
+            return false;
+        } else {
+            this.maxLengthDivClass = 'Satisfied';
         }
+        return true;
     }
 
-    characterTagsValidator(tag: string): void {
-        this.noSpecialCharacterDivClass = 'Satisfied';
+    private validateAsciiOnly(tag: string): boolean {
         if (this.tagHasSpecialCharacters(tag)) {
             this.noSpecialCharacterDivClass = 'Failed';
-            this.unsatisfiedRequirements++;
+            return false;
+        } else {
+            this.noSpecialCharacterDivClass = 'Satisfied';
         }
-    }
-
-    maxTagsValidator(): void {
-        this.maxTagsCountDivClass = 'Satisfied';
-        if (this.tagsHasReachedMaxCount()) {
-            this.maxTagsCountDivClass = 'Failed';
-            this.unsatisfiedRequirements++;
-        }
-    }
-
-    resetRequirementsOnFocusOut(tag: string): void {
-        if (this.tagIsShorterThanMinLength(tag)) {
-            this.resetRequirements();
-        }
-    }
-
-    resetRequirements(): void {
-        this.distinctTagsDivClass = 'Unrequested';
-        this.minLengthDivClass = 'Unrequested';
-        this.maxLengthDivClass = 'Unrequested';
-        this.noSpecialCharacterDivClass = 'Unrequested';
-        this.maxTagsCountDivClass = 'Unrequested';
-    }
-
-    private tagIsShorterThanMinLength(tag: string): boolean {
-        return tag.length < DatabaseConstants.MIN_TAG_LENGTH;
-    }
-
-    private tagIsLongerThanMaxLength(tag: string): boolean {
-        return tag.length > DatabaseConstants.MAX_TAG_LENGTH;
+        return true;
     }
 
     private tagHasSpecialCharacters(tag: string): boolean {
         return !/^[\x00-\xFF]*$/.test(tag);
-    }
-    private tagsHasReachedMaxCount(): boolean {
-        return this.tags.length === DatabaseConstants.MAX_TAGS_COUNT;
     }
 }

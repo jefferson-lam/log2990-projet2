@@ -2,7 +2,6 @@
     <mat-form-field appearance="fill" id="tagFormField">
         <mat-label>Tags</mat-label>
         <input #tagInput matInput
-               (focusout)="resetRequirementsOnFocusOut(tagInput.value)"
                (input)="validateTag(tagInput.value)"
                (keyup.enter)='addTag(tagInput.value)'
                autocomplete="off"/>
