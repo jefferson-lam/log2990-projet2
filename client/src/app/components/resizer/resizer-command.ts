@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class ResizerCommand extends Command {
-    baseCtx: CanvasRenderingContext2D;
+    private baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
 
     sideResizer: HTMLElement;

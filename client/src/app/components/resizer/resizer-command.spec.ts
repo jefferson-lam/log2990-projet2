@@ -51,7 +51,7 @@ describe('ResizerCommand', () => {
 
         canvasSizeSubject = spyOn(drawingServiceSpy.canvasSizeSubject, 'next');
         previewCtxDrawImageSpy = spyOn(service.previewCtx, 'drawImage').and.callThrough();
-        baseCtxDrawImageSpy = spyOn(service.baseCtx, 'drawImage').and.callThrough();
+        baseCtxDrawImageSpy = spyOn(service['baseCtx'], 'drawImage').and.callThrough();
 
         service.previewWidth = CanvasConstants.MIN_WIDTH_CANVAS;
         service.previewHeight = CanvasConstants.MIN_HEIGHT_CANVAS;
@@ -106,7 +106,7 @@ describe('ResizerCommand', () => {
         service.resizeCanvas();
 
         expect(drawingServiceSpy.whiteOut).toHaveBeenCalled();
-        expect(drawingServiceSpy.whiteOut).toHaveBeenCalledWith(service.baseCtx);
+        expect(drawingServiceSpy.whiteOut).toHaveBeenCalledWith(service['baseCtx']);
     });
 
     it('resizeCanvas should call placeResizers', () => {
@@ -127,19 +127,19 @@ describe('ResizerCommand', () => {
     it('placeResizers should set resizers positions', () => {
         service.placeResizers();
 
-        expect(service.sideResizer.style.left).toBe(service.baseCtx.canvas.width + 'px');
-        expect(service.sideResizer.style.top).toBe(service.baseCtx.canvas.height / 2 + 'px');
-        expect(service.cornerResizer.style.left).toBe(service.baseCtx.canvas.width + 'px');
-        expect(service.cornerResizer.style.top).toBe(service.baseCtx.canvas.height + 'px');
-        expect(service.bottomResizer.style.left).toBe(service.baseCtx.canvas.width / 2 + 'px');
-        expect(service.bottomResizer.style.top).toBe(service.baseCtx.canvas.height + 'px');
+        expect(service.sideResizer.style.left).toBe(service['baseCtx'].canvas.width + 'px');
+        expect(service.sideResizer.style.top).toBe(service['baseCtx'].canvas.height / 2 + 'px');
+        expect(service.cornerResizer.style.left).toBe(service['baseCtx'].canvas.width + 'px');
+        expect(service.cornerResizer.style.top).toBe(service['baseCtx'].canvas.height + 'px');
+        expect(service.bottomResizer.style.left).toBe(service['baseCtx'].canvas.width / 2 + 'px');
+        expect(service.bottomResizer.style.top).toBe(service['baseCtx'].canvas.height + 'px');
     });
 
     it('resizeBaseCanvas should set new canvas size', () => {
         service.resizeBaseCanvas();
 
-        expect(service.baseCtx.canvas.width).toBe(service.previewWidth);
-        expect(service.baseCtx.canvas.height).toBe(service.previewHeight);
+        expect(service['baseCtx'].canvas.width).toBe(service.previewWidth);
+        expect(service['baseCtx'].canvas.height).toBe(service.previewHeight);
     });
 
     it('resizePreviewCanvas should set new canvas size', () => {
