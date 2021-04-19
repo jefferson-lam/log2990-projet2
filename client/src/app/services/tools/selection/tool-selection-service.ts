@@ -163,6 +163,7 @@ export class ToolSelectionService extends Tool {
         this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
         this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+        this.drawingService.previewSelectionCanvas.focus();
     }
 
     resetCanvasState(canvas: HTMLCanvasElement): void {
