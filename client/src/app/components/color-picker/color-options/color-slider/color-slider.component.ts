@@ -12,8 +12,7 @@ export class ColorSliderComponent implements AfterViewInit {
     mousedown: boolean;
     selectedHeight: number;
 
-    @ViewChild('canvas', { static: true })
-    canvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 
     @Input() rgbSelectorColor: Rgba;
 
