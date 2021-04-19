@@ -28,7 +28,6 @@ export class MainPageCarrouselComponent {
     deleted: boolean;
     selectable: boolean;
     removable: boolean;
-    drawingLoading: boolean;
     imageNotInServer: boolean;
 
     separatorKeysCodes: number[];
@@ -192,7 +191,6 @@ export class MainPageCarrouselComponent {
         this.previewDrawings = [];
         this.showCasedDrawings = [];
         this.drawingCounter = 0;
-        this.drawingLoading = true;
         let drawingsWithMatchingTags: Drawing[];
 
         if (this.tagsInSearch.length > 0) {
@@ -205,8 +203,6 @@ export class MainPageCarrouselComponent {
                 }
             } catch (error) {
                 this.setErrorInServer("Le serveur n'est pas disponible.");
-            } finally {
-                this.drawingLoading = false;
             }
             return;
         }
@@ -220,8 +216,6 @@ export class MainPageCarrouselComponent {
             }
         } catch (error) {
             this.setErrorInServer("Le serveur n'est pas disponible.");
-        } finally {
-            this.drawingLoading = false;
         }
     }
 
