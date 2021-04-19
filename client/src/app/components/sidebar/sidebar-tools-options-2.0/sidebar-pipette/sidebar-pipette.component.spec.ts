@@ -56,7 +56,7 @@ describe('SidebarPipetteComponent', () => {
         const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
         component['ctx'].putImageData(pixelData, 0, 0);
 
-        const clipSpy = spyOn(component, 'clipPreview');
+        const clipSpy = spyOn<any>(component, 'clipPreview');
         const zoomSpy = spyOn(component, 'zoomPreview');
         const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
         const previewStrokeSpy = spyOn(component, 'previewStroke');
@@ -72,7 +72,7 @@ describe('SidebarPipetteComponent', () => {
         const pixelData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
         component['ctx'].putImageData(pixelData, 0, 0);
 
-        const clipSpy = spyOn(component, 'clipPreview');
+        const clipSpy = spyOn<any>(component, 'clipPreview');
         const zoomSpy = spyOn(component, 'zoomPreview');
         const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
         const previewStrokeSpy = spyOn(component, 'previewStroke');

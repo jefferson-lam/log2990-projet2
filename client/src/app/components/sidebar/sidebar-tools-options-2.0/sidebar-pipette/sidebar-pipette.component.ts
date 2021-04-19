@@ -48,7 +48,7 @@ export class SidebarPipetteComponent implements OnInit {
         }
     }
 
-    clipPreview(): void {
+    private clipPreview(): void {
         this.ctx.beginPath();
         this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.clip();
