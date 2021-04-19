@@ -10,7 +10,6 @@ import * as DatabaseConstants from '@common/validation/database-constants';
 export class TitleInputComponent {
     @Output() isTitleValidEvent: EventEmitter<boolean>;
     title: string;
-    unsatisfiedRequirements: number;
 
     minLengthRequirement: string;
     minLengthDivClass: string;
