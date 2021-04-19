@@ -115,6 +115,13 @@ describe('EllipseService', () => {
         expect(predictionRectangleSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseMove should not call drawPredictionRectangle if drawnFromSelection', () => {
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onMouseMove(mouseEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it('onMouseLeave should call setValues and execute of previewCommand if mouse was pressed', () => {
         service.inUse = true;
 
@@ -129,6 +136,13 @@ describe('EllipseService', () => {
         service.onMouseLeave(mouseEvent);
         expect(setPreviewValuesSpy).not.toHaveBeenCalled();
         expect(previewExecuteSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseLeave should not call drawpredictionrectangle if from selection', () => {
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onMouseLeave(mouseEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseEnter should make service.inUse true if left mouse was pressed and mouse was pressed before leaving', () => {
@@ -209,6 +223,16 @@ describe('EllipseService', () => {
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
+    it('onKeyboardDown should not call drawPredictionRectangle if from selection', () => {
+        const keyEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onKeyboardDown(keyEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it(' onKeyboardUp should call setValues and execute of previewCommand if mouse was down and then shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.inUse = true;
@@ -247,6 +271,16 @@ describe('EllipseService', () => {
         service.onKeyboardUp(keyEvent);
         expect(setPreviewValuesSpy).not.toHaveBeenCalled();
         expect(previewExecuteSpy).not.toHaveBeenCalled();
+    });
+
+    it('onKeyboardUp should not drawPredictionRectangle if from selection', () => {
+        const keyEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onKeyboardUp(keyEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
     });
 
     it('setLineWidth should change size of lineWidth if within min and max width allowed', () => {

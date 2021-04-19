@@ -117,6 +117,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onToolEnter(): void {
         super.onToolEnter();
+        this.ellipseService.drawnFromSelection = true;
     }
 
     onToolChange(): void {
@@ -131,6 +132,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.onKeyboardUp(resetKeyboardEvent);
             this.ellipseService.inUse = false;
         }
+        this.ellipseService.drawnFromSelection = false;
     }
 
     fillEllipse(ctx: CanvasRenderingContext2D, pathData: Vec2[], isCircle: boolean): void {
