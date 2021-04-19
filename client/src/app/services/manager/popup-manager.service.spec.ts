@@ -4,10 +4,8 @@ import { Router } from '@angular/router';
 import { Tool } from '@app/classes/tool';
 import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-carrousel/main-page-carrousel.component';
-import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
-import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EMPTY, Observable, Subject } from 'rxjs';
@@ -208,11 +206,9 @@ describe('PopupManagerService', () => {
     });
 
     it("openExportPopUp should open export pop up if pop up isn't open", () => {
-        const mockConfig = { maxWidth: MAX_WIDTH_FORM + 'px', maxHeight: MAX_HEIGHT_FORM + 'px' };
         service.openExportPopUp();
 
         expect(dialogSpy.open).toHaveBeenCalled();
-        expect(dialogSpy.open).toHaveBeenCalledWith(ExportDrawingComponent, mockConfig);
     });
 
     it("openExportPopUp should call onToolChange if pop up isn't open", () => {

@@ -4,11 +4,11 @@
     background-color: #607d8b;
 }
 
-.drawing-container {
+#drawing-container {
     overflow: auto;
     flex: 1 1 auto;
     position: relative;
-    margin-left: 305px;
+    margin-left: 345px;
 }
 
 .drawing {
@@ -22,4 +22,9 @@
     width: 100%;
     margin-left: 60px;
     position: absolute;
+}
+
+#canvasTextBox{
+  z-index: 1;
+  position: absolute;
 }

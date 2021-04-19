@@ -13,6 +13,7 @@ import { ClipboardService } from '@app/services/tools/selection/clipboard/clipbo
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ShortcutManagerService } from './shortcut-manager.service';
 
@@ -21,6 +22,7 @@ describe('ShortcutManagerService', () => {
     let service: ShortcutManagerService;
     let rectangleSelectionService: RectangleSelectionService;
     let stampService: StampService;
+    let textService: TextService;
     let popupManagerSpy: jasmine.SpyObj<PopupManagerService>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
@@ -41,8 +43,10 @@ describe('ShortcutManagerService', () => {
         toolManagerSpy = jasmine.createSpyObj(
             'ToolManagerService',
             ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools'],
-            ['currentTool'],
+            ['currentTool', 'textService'],
         );
+        textService = new TextService({} as DrawingService, {} as UndoRedoService);
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'textService')?.get as jasmine.Spy<() => TextService>).and.returnValue(textService);
         popupManagerSpy = jasmine.createSpyObj(
             'PopupManagerService',
             ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp', 'openCarrouselPopUp'],
@@ -105,8 +109,9 @@ describe('ShortcutManagerService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('isShortcutAllowed should return true if isTextInput false and popupManager.isPopOpen false', () => {
+    it('isShortcutAllowed should return true if isTextInput false,popupManager.isPopOpen false and lockKeyboard false', () => {
         service.isTextInput = false;
+        toolManagerSpy.textService.lockKeyboard = false;
         (Object.getOwnPropertyDescriptor(popupManagerSpy, 'isPopUpOpen')?.get as jasmine.Spy<() => boolean>).and.returnValue(false);
 
         // tslint:disable-next-line:no-string-literal
@@ -135,7 +140,7 @@ describe('ShortcutManagerService', () => {
         expect(result).toBeFalse();
     });
 
-    it('onKeyboardDown should call toolManager.selectTool if isShortcutAllowed and key is associated to tool', () => {
+    it('onKeyboardDown should call toolManager.selectTool if isShortcutAllowed, lockKeyboard and key is associated to tool', () => {
         allowShortcutSpy.and.returnValue(true);
         const event = {
             key: 'e',
@@ -170,15 +175,14 @@ describe('ShortcutManagerService', () => {
 
     it('onGKeyDown should call canvasGridService.toggleGrid if isShortcutAllowed true', () => {
         allowShortcutSpy.and.returnValue(true);
-
         service.onGKeyDown();
 
         expect(canvasGridServiceSpy.toggleGrid).toHaveBeenCalled();
     });
 
     it('onGKeyDown should not call canvasGridService.toggleGrid if isShortcutAllowed false', () => {
+        toolManagerSpy.textService.lockKeyboard = false;
         allowShortcutSpy.and.returnValue(false);
-
         service.onGKeyDown();
 
         expect(canvasGridServiceSpy.toggleGrid).not.toHaveBeenCalled();
@@ -531,14 +535,35 @@ describe('ShortcutManagerService', () => {
     });
 
     it('onDeleteKeyDown should call deleteSelection from ClipboardService', () => {
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(rectangleSelectionService);
+        allowShortcutSpy.and.returnValue(true);
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
         service.onDeleteKeyDown(eventSpy);
         expect(clipboardServiceSpy.deleteSelection).toHaveBeenCalled();
     });
 
-    it('onDeleteKeyDown should not call cutSelection from ClipboardService if isShortcutAlled is false', () => {
+    it('onDeleteKeyDown should not call cutSelection from ClipboardService if isShortcutAllowed is false', () => {
         allowShortcutSpy.and.returnValue(false);
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue({} as Tool);
+        service.onDeleteKeyDown(eventSpy);
+        expect(clipboardServiceSpy.deleteSelection).not.toHaveBeenCalled();
+    });
+
+    it('onDeleteKeyDown should call deleteSelection from ClipboardService if current tool is rectangle service', () => {
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(rectangleSelectionService);
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        allowShortcutSpy.and.returnValue(true);
+
+        service.onDeleteKeyDown(eventSpy);
+        expect(clipboardServiceSpy.deleteSelection).toHaveBeenCalled();
+    });
+
+    it('onDeleteKeyDown should not call deleteSelection from ClipboardService if current tool not rectangle service', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
+        allowShortcutSpy.and.returnValue(true);
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue({} as Tool);
+
         service.onDeleteKeyDown(eventSpy);
         expect(clipboardServiceSpy.deleteSelection).not.toHaveBeenCalled();
     });
@@ -589,6 +614,19 @@ describe('ShortcutManagerService', () => {
         service.onPlusKeyDown();
 
         expect(canvasGridServiceSpy.increaseGridSize).not.toHaveBeenCalled();
+    });
+
+    it('onEscapeKeyDown should call currentTool.onEscapeKeyDown if not isPopUpOpen', () => {
+        const escapeKeySpy = spyOn(service.toolManager.currentTool, 'onEscapeKeyDown');
+        service.onEscapeKeyDown();
+        expect(escapeKeySpy).toHaveBeenCalled();
+    });
+
+    it('onEscapeKeyDown should not call currentTool.onEscapeKeyDown if isPopUpOpen', () => {
+        const escapeKeySpy = spyOn(service.toolManager.currentTool, 'onEscapeKeyDown');
+        (Object.getOwnPropertyDescriptor(popupManagerSpy, 'isPopUpOpen')?.get as jasmine.Spy<() => boolean>).and.returnValue(true);
+        service.onEscapeKeyDown();
+        expect(escapeKeySpy).not.toHaveBeenCalled();
     });
 
     it('selectionMovementOnArrowDown should not call delay and translate selection if key already pressed, directive.hasMovedOnce and isShortcutAllowed true', fakeAsync((): void => {

@@ -427,6 +427,8 @@ describe('RectangleSelectionService', () => {
     it('undoSelection should call appropriate functions to restore state', () => {
         const sw = 75;
         const sh = 210;
+        const top = 40;
+        const left = 25;
         service.isManipulating = true;
         service.pathData = [
             { x: 25, y: 40 },
@@ -436,7 +438,7 @@ describe('RectangleSelectionService', () => {
         service.selectionHeight = sh;
         service.undoSelection();
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
-        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(selectionCtxStub.canvas, 0, 0, sw, sh, service.pathData[0].x, service.pathData[0].y, sw, sh);
+        expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(service.originalImageCanvas, 0, 0, sw, sh, left, top, sw, sh);
         expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
         expect(service.isManipulating).toBeFalsy();

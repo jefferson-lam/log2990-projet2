@@ -1,22 +1,22 @@
-*{
-  font-family: 'Rubik', serif;
-
+* {
+    font-family: 'Rubik', serif;
 }
 
-#settingsContainer{
-  color: #EEE;
-  margin-left: 10px;
+#settingsContainer {
+    color: #eee;
+    margin-left: 20px;
+    overflow-x: hidden;
 }
 
-#title{
-  font-weight: bolder;
-  font-size: x-large;
+#title {
+    font-weight: bolder;
+    font-size: x-large;
 }
 
-.mat-radio-button{
-  margin:5px;
+.mat-radio-button {
+    margin: 5px;
 }
 
-#colorPicker{
-  margin-left: -20px;
+#colorPicker {
+    margin-left: -20px;
 }

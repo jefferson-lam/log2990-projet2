@@ -90,20 +90,13 @@ export class LassoSelectionService extends ToolSelectionService {
             this.lineService.linePathData[this.lineService.linePathData.length - 1] = mousePosition;
             this.isValidSegment = true;
         } else {
-            this.isValidSegment = this.validateSegment(this.pathData[this.pathData.length - 1], this.pathData);
+            this.isValidSegment = !this.isIntersect(this.pathData[this.pathData.length - 1], this.pathData);
         }
 
         this.drawingService.previewCtx.canvas.style.cursor = 'no-drop';
         if (this.isValidSegment) {
             this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
         }
-    }
-
-    validateSegment(point: Vec2, pathData: Vec2[]): boolean {
-        return !(
-            this.isIntersect(point, pathData) ||
-            (this.arePointsEqual(point, this.initialPoint) && this.numSides < SelectionConstants.MINIMUM_LINE_LASSO)
-        );
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
@@ -127,61 +120,16 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
-    undoSelection(): void {
-        if (!this.isManipulating) return;
-        this.drawingService.baseCtx.drawImage(
-            this.drawingService.selectionCanvas,
-            0,
-            0,
-            this.selectionWidth,
-            this.selectionHeight,
-            this.topLeft.x,
-            this.topLeft.y,
-            this.selectionWidth,
-            this.selectionHeight,
-        );
-        this.resetSelectedToolSettings();
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetCanvasState(this.drawingService.borderCanvas);
-        this.resizerHandlerService.resetResizers();
-        this.isManipulating = false;
-        this.isEscapeDown = false;
-        this.isConnected = false;
-    }
-
-    resetSelection(): void {
-        this.resetCanvasState(this.drawingService.selectionCanvas);
-        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
-        this.resetCanvasState(this.drawingService.borderCanvas);
-        this.resetSelectedToolSettings();
-        // Erase the rectangle drawn as a preview of selection
-        this.clearPath();
-        this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
-        this.numSides = 0;
-        this.isValidSegment = true;
-        this.inUse = false;
-    }
-
     isIntersect(point: Vec2, pathData: Vec2[]): boolean {
         const newLine = { start: pathData[pathData.length - 2], end: point };
         let pathLine;
-        let numIntersections = 0;
         for (let i = 0; i < pathData.length - 2; i++) {
             pathLine = { start: pathData[i], end: pathData[i + 1] };
-            const isIntersect = this.segmentIntersectionService.intersects(newLine, pathLine);
-            if (isIntersect) {
-                ++numIntersections;
+            if (this.segmentIntersectionService.intersects(newLine, pathLine)) {
+                return true;
             }
         }
-        if (numIntersections === 0) {
-            return false;
-        }
-        if (numIntersections === 1 && this.arePointsEqual(point, this.initialPoint)) {
-            return false;
-        } else {
-            return true;
-        }
+        return false;
     }
 
     computeSelectionSize(pathData: Vec2[]): number[] {
@@ -232,10 +180,7 @@ export class LassoSelectionService extends ToolSelectionService {
         const selectionSize = this.computeSelectionSize(this.pathData);
         this.selectionWidth = selectionSize[0];
         this.selectionHeight = selectionSize[1];
-        this.drawingService.selectionCanvas.width = this.drawingService.previewSelectionCanvas.width = this.selectionWidth;
-        this.drawingService.selectionCanvas.height = this.drawingService.previewSelectionCanvas.height = this.selectionHeight;
-        this.drawingService.borderCanvas.width = this.selectionWidth;
-        this.drawingService.borderCanvas.height = this.selectionHeight;
+        this.setSelectionCanvasSize(this.selectionWidth, this.selectionHeight);
         this.selectLasso(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData);
         this.setSelectionCanvasPosition(this.topLeft);
         this.isConnected = false;
@@ -244,8 +189,57 @@ export class LassoSelectionService extends ToolSelectionService {
         this.isManipulating = true;
     }
 
+    undoSelection(): void {
+        if (!this.isManipulating) return;
+        if (!this.isFromClipboard) {
+            this.drawingService.baseCtx.drawImage(
+                this.originalImageCanvas,
+                0,
+                0,
+                this.selectionWidth,
+                this.selectionHeight,
+                this.topLeft.x,
+                this.topLeft.y,
+                this.selectionWidth,
+                this.selectionHeight,
+            );
+        }
+        this.resetSelectedToolSettings();
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
+        this.resizerHandlerService.resetResizers();
+        this.isManipulating = false;
+        this.isEscapeDown = false;
+        this.isConnected = false;
+    }
+
+    resetSelection(): void {
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
+        this.resetSelectedToolSettings();
+        // Erase the rectangle drawn as a preview of selection
+        this.clearPath();
+        this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
+        this.numSides = 0;
+        this.isValidSegment = true;
+        this.inUse = false;
+    }
+
     private selectLasso(targetCtx: CanvasRenderingContext2D, baseCtx: CanvasRenderingContext2D, pathData: Vec2[]): void {
         this.clipLassoSelection(targetCtx, baseCtx, pathData);
+        this.originalImageCtx.drawImage(
+            baseCtx.canvas,
+            this.topLeft.x,
+            this.topLeft.y,
+            this.selectionWidth,
+            this.selectionHeight,
+            0,
+            0,
+            this.selectionWidth,
+            this.selectionHeight,
+        );
         this.fillLasso(baseCtx, pathData, 'white');
     }
 
@@ -293,16 +287,6 @@ export class LassoSelectionService extends ToolSelectionService {
             ctx.lineTo(point.x - this.topLeft.x, point.y - this.topLeft.y);
         }
         ctx.stroke();
-    }
-
-    private setSelectionCanvasPosition(topLeft: Vec2): void {
-        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
-        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
-        this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
-        this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
-        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
     }
 
     private clearPath(): void {

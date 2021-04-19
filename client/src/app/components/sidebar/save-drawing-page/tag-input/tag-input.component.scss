@@ -1,5 +1,5 @@
 div {
-    font-size: 12px;
+    font-size: 14px;
 }
 .Satisfied {
     color: green;
@@ -10,16 +10,33 @@ div {
     color: red;
 }
 
+.Unrequested {
+    color: black;
+}
+
+#inputDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+#tagFormField {
+    padding-top: 15px;
+}
+
 .tagDiv {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    justify-content: flex-start;
     align-content: space-between;
+    flex-wrap: wrap;
 }
 
 .tag {
     background: rgb(224, 224, 224);
     padding: 5px;
-    margin-bottom: 5px;
+    margin: 5px;
 }
 
 .tagLabel {
@@ -52,16 +69,22 @@ div {
 }
 
 #addTagButton {
-    cursor: pointer;
-    background-color: inherit;
-    border-radius: 3px;
-    margin-left: 5px;
+    font-size: large;
+    background-color: coral;
+    width: 150px;
+    align-self: center;
+    margin: 10px;
 }
 
-#addTagButton:hover:enabled {
-    background: rgb(182, 178, 178);
+#addTagButton:hover {
+    background-color: slategrey;
+}
+
+#addTagButton:active {
+    background-color: rgb(255, 96, 38);
 }
 
 #addTagButton:disabled {
     cursor: not-allowed;
+    background-color: rgb(255, 167, 136);
 }
