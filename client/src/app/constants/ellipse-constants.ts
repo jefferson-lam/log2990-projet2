@@ -1,4 +1,4 @@
-export const HIDDEN_BORDER_WIDTH = 1;
+export const HIDDEN_BORDER_WIDTH = 0;
 
 export const NEGATIVE_FACTOR = -1;
 

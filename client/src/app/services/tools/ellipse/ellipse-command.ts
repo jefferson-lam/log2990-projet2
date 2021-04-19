@@ -42,9 +42,9 @@ export class EllipseCommand extends Command {
         let xRadius = radiiXAndY[ShapeConstants.X_INDEX];
         let yRadius = radiiXAndY[ShapeConstants.Y_INDEX];
         const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (xRadius > this.lineWidth / 2 && yRadius > this.lineWidth / 2) {
-            xRadius -= this.lineWidth / 2;
-            yRadius -= this.lineWidth / 2;
+        if (xRadius > this.lineWidth && yRadius > this.lineWidth) {
+            xRadius = xRadius - this.lineWidth / 2;
+            yRadius = yRadius - this.lineWidth / 2;
             this.drawTypeEllipse(ctx, startX, startY, xRadius, yRadius, this.fillMode, this.primaryColor, borderColor, this.lineWidth);
         } else {
             this.drawTypeEllipse(
@@ -95,18 +95,18 @@ export class EllipseCommand extends Command {
         ctx.setLineDash([]);
         ctx.lineJoin = 'round';
         ctx.ellipse(startX, startY, xRadius, yRadius, EllipseConstants.ROTATION, ShapeConstants.START_ANGLE, ShapeConstants.END_ANGLE);
-
         ctx.strokeStyle = secondaryColor;
         ctx.lineWidth = lineWidth;
         ctx.stroke();
+        if (xRadius - lineWidth / 2 <= 0 || yRadius - lineWidth / 2 <= 0) return;
         if (fillMethod !== ToolConstants.FillMode.OUTLINE) {
             ctx.fillStyle = primaryColor;
             ctx.beginPath();
             ctx.ellipse(
                 startX,
                 startY,
-                xRadius - this.lineWidth / 2,
-                yRadius - this.lineWidth / 2,
+                xRadius - lineWidth / 2,
+                yRadius - lineWidth / 2,
                 EllipseConstants.ROTATION,
                 ShapeConstants.START_ANGLE,
                 ShapeConstants.END_ANGLE,
