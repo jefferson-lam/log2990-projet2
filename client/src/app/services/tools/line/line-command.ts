@@ -15,7 +15,6 @@ export class LineCommand extends Command {
         super();
         this.isPreview = false;
         this.ctx = canvasContext;
-        this.path = [];
         this.path = Object.assign([], lineService.linePathData);
 
         this.withJunction = lineService.withJunction;

@@ -30,7 +30,7 @@ export class EllipseCommand extends Command {
         this.primaryColor = ellipseService.primaryColor;
         this.secondaryColor = ellipseService.secondaryColor;
         this.lineWidth = ellipseService.lineWidth;
-        Object.assign(this.cornerCoords, ellipseService.cornerCoords);
+        this.cornerCoords = Object.assign([], ellipseService.cornerCoords);
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
