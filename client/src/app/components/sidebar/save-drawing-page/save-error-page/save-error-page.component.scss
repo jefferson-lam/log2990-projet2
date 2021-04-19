@@ -6,8 +6,12 @@
 
 #errorDivHeader {
     display: flex;
+    text-align: center;
     justify-content: center;
-    margin: auto;
+    align-self: center;
+    font-size: x-large;
+    padding-bottom: 25px;
+    font-family: Rubik, serif;
 }
 
 #saveErrorDiv {
@@ -34,12 +38,14 @@
     font-size: 15px;
     display: flex;
     justify-content: center;
+    font-family: Rubik, serif;
 }
 
 #buttonDiv {
     display: flex;
     justify-content: center;
     margin-top: 50px;
+    font-family: Rubik, serif;
 }
 
 #closebutton {
@@ -47,9 +53,11 @@
     font-size: large;
     background-color: coral;
     width: 125px;
+    font-family: Rubik, serif;
 }
 
 #closebutton:hover {
     color: black;
     background-color: slategrey;
+    font-family: Rubik, serif;
 }
