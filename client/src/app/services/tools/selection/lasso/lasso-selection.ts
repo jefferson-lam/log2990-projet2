@@ -159,18 +159,13 @@ export class LassoSelectionService extends ToolSelectionService {
     isIntersect(point: Vec2, pathData: Vec2[]): boolean {
         const newLine = { start: pathData[pathData.length - 2], end: point };
         let pathLine;
-        let numIntersections = 0;
         for (let i = 0; i < pathData.length - 2; i++) {
             pathLine = { start: pathData[i], end: pathData[i + 1] };
-            const isIntersect = this.segmentIntersectionService.intersects(newLine, pathLine);
-            if (isIntersect) {
-                ++numIntersections;
+            if (this.segmentIntersectionService.intersects(newLine, pathLine)) {
+                return true;
             }
         }
-        if (numIntersections === 0) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     computeSelectionSize(pathData: Vec2[]): number[] {
