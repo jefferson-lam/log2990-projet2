@@ -4,6 +4,7 @@ import * as ExportDrawingConstants from '@app/constants/export-drawing-constants
 import { ImgurService } from './imgur.service';
 
 // tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('ImgurService', () => {
     let service: ImgurService;
     let httpMock: HttpTestingController;
@@ -38,10 +39,10 @@ describe('ImgurService', () => {
     });
 
     it('exportDrawing should call imageStringSplit, createHeaders, createBody and createRequestOptions', () => {
-        const stringSplitSpy = spyOn(service, 'imageStringSplit');
-        const headerSpy = spyOn(service, 'createHeaders');
-        const formDataSpy = spyOn(service, 'createBody');
-        const optionSpy = spyOn(service, 'createRequestOptions');
+        const stringSplitSpy = spyOn<any>(service, 'imageStringSplit');
+        const headerSpy = spyOn<any>(service, 'createHeaders');
+        const formDataSpy = spyOn<any>(service, 'createBody');
+        const optionSpy = spyOn<any>(service, 'createRequestOptions');
         const imageURL = 'empty image url';
         const imageName = 'name';
 
@@ -69,7 +70,7 @@ describe('ImgurService', () => {
         const headers = new Headers();
         headers.append('Authorization', 'Client-ID 7cb69a96d40be21');
 
-        const returnValue = service.createHeaders();
+        const returnValue = service['createHeaders']();
         expect(returnValue).toEqual(headers);
     });
 
@@ -78,7 +79,7 @@ describe('ImgurService', () => {
         formData.append('image', IMG);
         formData.append('name', 'name');
 
-        const returnValue = service.createBody(IMG, 'name');
+        const returnValue = service['createBody'](IMG, 'name');
         expect(returnValue).toEqual(formData);
     });
 
@@ -94,40 +95,40 @@ describe('ImgurService', () => {
             body: formData,
         };
 
-        const returnValue = service.createRequestOptions(headers, formData);
+        const returnValue = service['createRequestOptions'](headers, formData);
         expect(returnValue).toEqual(requestOptions);
     });
 
     it('setDataFromResponse should set exportProgress and url correctly if status = 200', () => {
-        const setUrlFromResponseSpy = spyOn(service, 'setUrlFromResponse');
-        const setExportProgressSpy = spyOn(service, 'setExportProgress');
+        const setUrlFromResponseSpy = spyOn<any>(service, 'setUrlFromResponse');
+        const setExportProgressSpy = spyOn<any>(service, 'setExportProgress');
 
-        service.setDataFromResponse(ExportDrawingConstants.OK_STATUS, URL);
+        service['setDataFromResponse'](ExportDrawingConstants.OK_STATUS, URL);
         expect(setUrlFromResponseSpy).toHaveBeenCalledWith(URL);
         expect(setExportProgressSpy).toHaveBeenCalledWith(ExportDrawingConstants.ExportProgress.COMPLETE);
     });
 
     it('setDataFromResponse should set exportProgress and url correctly if status != 200', () => {
-        const setUrlFromResponseSpy = spyOn(service, 'setUrlFromResponse');
-        const setExportProgressSpy = spyOn(service, 'setExportProgress');
+        const setUrlFromResponseSpy = spyOn<any>(service, 'setUrlFromResponse');
+        const setExportProgressSpy = spyOn<any>(service, 'setExportProgress');
 
-        service.setDataFromResponse(ExportDrawingConstants.BAD_REQUEST, URL);
+        service['setDataFromResponse'](ExportDrawingConstants.BAD_REQUEST, URL);
         expect(setUrlFromResponseSpy).toHaveBeenCalledWith('none');
         expect(setExportProgressSpy).toHaveBeenCalledWith(ExportDrawingConstants.ExportProgress.ERROR);
     });
 
     it('setUrlFromResponse should set url correctly', () => {
-        service.setUrlFromResponse(URL);
+        service['setUrlFromResponse'](URL);
         expect(service.serviceSettings[ExportDrawingConstants.URL]).toEqual(URL);
     });
 
     it('setExportProgress should set exportProgress correctly', () => {
-        service.setExportProgress(ExportDrawingConstants.ExportProgress.COMPLETE);
+        service['setExportProgress'](ExportDrawingConstants.ExportProgress.COMPLETE);
         expect(service.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS]).toEqual(ExportDrawingConstants.ExportProgress.COMPLETE);
     });
 
     it('imageStringSplit should split string correctly', () => {
-        const result = service.imageStringSplit(STRING_IMG);
+        const result = service['imageStringSplit'](STRING_IMG);
         expect(result).toEqual('thisistheimage');
     });
 

@@ -54,20 +54,20 @@ export class ImgurService {
         this.isSendingRequest = false;
     }
 
-    createHeaders(): Headers {
+    private createHeaders(): Headers {
         const headers = new Headers();
         headers.append('Authorization', this.CLIENT_ID);
         return headers;
     }
 
-    createBody(img: string, name: string): FormData {
+    private createBody(img: string, name: string): FormData {
         const formData = new FormData();
         formData.append('image', img);
         formData.append('name', name);
         return formData;
     }
 
-    createRequestOptions(headers: Headers, formData: FormData): ExportDrawingConstants.PostRequest {
+    private createRequestOptions(headers: Headers, formData: FormData): ExportDrawingConstants.PostRequest {
         const requestOptions = {
             method: 'POST',
             headers,
@@ -76,7 +76,7 @@ export class ImgurService {
         return requestOptions;
     }
 
-    setDataFromResponse(status: number, url: string): void {
+    private setDataFromResponse(status: number, url: string): void {
         this.mutex++;
         if (status === ExportDrawingConstants.OK_STATUS) {
             this.setUrlFromResponse(url);
@@ -88,15 +88,15 @@ export class ImgurService {
         this.serviceSettingsSource.next(this.serviceSettings);
     }
 
-    setUrlFromResponse(url: string): void {
+    private setUrlFromResponse(url: string): void {
         this.serviceSettings[ExportDrawingConstants.URL] = url;
     }
 
-    setExportProgress(progress: number): void {
+    private setExportProgress(progress: number): void {
         this.serviceSettings[ExportDrawingConstants.EXPORT_PROGRESS] = progress;
     }
 
-    imageStringSplit(img: string): string {
+    private imageStringSplit(img: string): string {
         const stringArray = img.split(',');
         return stringArray[1];
     }
