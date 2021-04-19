@@ -5,6 +5,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarAerosolComponent } from './sidebar-aerosol.component';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('SidebarAerosolComponent', () => {
     let component: SidebarAerosolComponent;
     let fixture: ComponentFixture<SidebarAerosolComponent>;
@@ -27,7 +28,7 @@ describe('SidebarAerosolComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        toolSizeChangedSubscribeSpy = spyOn(component.toolSizeChanged, 'subscribe');
+        toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
         waterDropSizeChangedSubcribeSpy = spyOn(component.waterDropSizeChanged, 'subscribe');
         emitEmissionNumberSubscribeSpy = spyOn(component.numberOfEmissions, 'subscribe');
     });
@@ -37,7 +38,7 @@ describe('SidebarAerosolComponent', () => {
     });
 
     it('emitToolSize should emit tool size', () => {
-        const emitSpy = spyOn(component.toolSizeChanged, 'emit');
+        const emitSpy = spyOn(component['toolSizeChanged'], 'emit');
         component.toolSize = NO_JUNCTION_RADIUS;
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
