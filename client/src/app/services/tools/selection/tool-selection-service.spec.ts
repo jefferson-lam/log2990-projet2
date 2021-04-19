@@ -79,6 +79,11 @@ describe('ToolSelectionService', () => {
         expect(service.inUse).toBeFalsy();
     });
 
+    it('should call undoSelection ', () => {
+        service.undoSelection();
+        expect(service).toBeTruthy();
+    });
+
     it('onMouseDown should pass if selectionTool is not inUse', () => {
         expect((): void => {
             service.onMouseDown(mouseEvent);
