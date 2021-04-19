@@ -79,6 +79,11 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
+    onMouseUp(): void {
+        if (!this.isManipulating) return;
+        this.drawingService.previewSelectionCanvas.focus();
+    }
+
     onMouseMove(event: MouseEvent): void {
         if (!this.inUse) return;
         const mousePosition = this.getPositionFromMouse(event);
