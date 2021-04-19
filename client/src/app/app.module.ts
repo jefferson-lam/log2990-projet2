@@ -60,6 +60,7 @@ import { SidebarPolygoneComponent } from './components/sidebar/sidebar-tools-opt
 import { SidebarRectangleSelectionComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle-selection/sidebar-rectangle-selection/sidebar-rectangle-selection.component';
 import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-rectangle/sidebar-rectangle.component';
 import { SidebarStampComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-stamp/sidebar-stamp.component';
+import { SidebarTextComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-text/sidebar-text.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
@@ -100,6 +101,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarGridComponent,
         SidebarMagnetismComponent,
         SidebarStampComponent,
+        SidebarTextComponent,
     ],
     entryComponents: [MainPageCarrouselComponent, ExportCompletePageComponent],
     imports: [

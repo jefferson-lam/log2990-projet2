@@ -1,0 +1,77 @@
+* {
+  font-family: 'Rubik', serif;
+}
+
+#settingsContainer {
+  color: #eee;
+  margin-left: 10px;
+}
+
+#title {
+  font-weight: bolder;
+  font-size: x-large;
+}
+
+#widthSetting, #widthSetting {
+  display: block;
+  margin-top: 7px;
+}
+
+#widthText, #alignmentText, #formatText {
+  margin-top: -5px;
+}
+
+#textFormatSettings {
+  flex-direction: row-reverse;
+  margin-top: 7px;
+}
+
+#alignmentSettings{
+  flex-direction: row-reverse;
+  margin-top: -3px;
+}
+
+#colorPicker {
+  margin-left: -20px;
+}
+
+.mat-radio-button {
+  margin: 9px;
+}
+
+#leftValue,#center,#right,#normal,#italic,#bold{
+  color: #ff7f50;
+}
+
+:host::ng-deep.mat-radio-label {
+  flex-direction:column;
+  .mat-radio-label-content {
+    padding: 0;
+  }
+}
+
+#styleText{
+  color: coral;
+  margin-left: 8px;
+}
+
+#style0 {
+  font-family: Arial, serif ;
+}
+
+#style1 {
+  font-family: Comic Sans MS, serif ;
+}
+
+#style2 {
+  font-family: Roboto, serif ;
+}
+
+#style3 {
+  font-family: Rubik, serif ;
+}
+
+#style4{
+  font-family: Century Gothic, serif ;
+}
+

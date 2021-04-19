@@ -69,6 +69,11 @@ export class EditorComponent {
         this.shortcutManager.onCtrlVKeyDown(event);
     }
 
+    @HostListener('window:keydown.escape', ['$event'])
+    onEscapeKeyDown(): void {
+        this.shortcutManager.onEscapeKeyDown();
+    }
+
     @HostListener('window:keydown.control.x', ['$event'])
     onCtrlXKeyDown(event: KeyboardEvent): void {
         this.shortcutManager.onCtrlXKeyDown(event);

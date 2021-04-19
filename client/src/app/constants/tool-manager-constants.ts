@@ -23,3 +23,5 @@ export const LASSO_SELECTION_KEY = 'v';
 export const PAINT_BUCKET_KEY = 'b';
 
 export const STAMP_KEY = 'd';
+
+export const TEXT_KEY = 't';
