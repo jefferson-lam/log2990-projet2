@@ -36,7 +36,7 @@ export class MainPageCarrouselComponent {
     separatorKeysCodes: number[];
     tagsInSearch: string[];
 
-    drawingCounter: number;
+    private drawingCounter: number;
     fetchedDrawingByTag: string[];
     showCasedDrawings: ImageFormat[];
     placeHolderDrawing: ImageFormat;
