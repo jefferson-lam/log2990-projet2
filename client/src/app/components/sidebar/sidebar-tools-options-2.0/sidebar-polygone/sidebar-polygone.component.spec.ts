@@ -29,7 +29,7 @@ describe('SidebarPolygoneComponent', () => {
         settingsManagerService = TestBed.inject(SettingsManagerService);
         toolSizeChangedSubscribeSpy = spyOn(polygoneComponent['toolSizeChanged'], 'subscribe');
         fillModeChangedSubscribeSpy = spyOn(polygoneComponent['fillModeChanged'], 'subscribe');
-        numberOfSidesSpy = spyOn(polygoneComponent.numberOfPolySides, 'subscribe');
+        numberOfSidesSpy = spyOn(polygoneComponent['numberOfPolySides'], 'subscribe');
     });
 
     it('should create', () => {
@@ -51,7 +51,7 @@ describe('SidebarPolygoneComponent', () => {
     });
 
     it('emitPolygoneSideNumber should emit sides number', () => {
-        const emitSpy = spyOn(polygoneComponent.numberOfPolySides, 'emit');
+        const emitSpy = spyOn(polygoneComponent['numberOfPolySides'], 'emit');
         polygoneComponent.polygoneSidesCount = PolygoneConstants.INIT_SIDES_COUNT;
         polygoneComponent.emitPolygoneSideNumber();
         expect(emitSpy).toHaveBeenCalled();
