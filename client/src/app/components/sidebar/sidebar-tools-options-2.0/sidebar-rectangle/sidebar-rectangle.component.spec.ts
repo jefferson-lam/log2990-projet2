@@ -25,7 +25,7 @@ describe('SidebarRectangleComponent', () => {
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
         toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
-        fillModeChangedSubscribeSpy = spyOn(component.fillModeChanged, 'subscribe');
+        fillModeChangedSubscribeSpy = spyOn(component['fillModeChanged'], 'subscribe');
     });
 
     it('should create', () => {
@@ -41,7 +41,7 @@ describe('SidebarRectangleComponent', () => {
 
     it('emitFillMode should emit fill mode', () => {
         const newFillMode = 1;
-        const emitSpy = spyOn(component.fillModeChanged, 'emit');
+        const emitSpy = spyOn(component['fillModeChanged'], 'emit');
         component.emitFillMode(newFillMode);
         expect(emitSpy).toHaveBeenCalled();
     });
