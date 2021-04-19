@@ -12,7 +12,7 @@ import { ColorService } from '@app/services/color/color.service';
 export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     // Base code provided by Lukas Marx (https://malcoded.com/posts/angular-color-picker/)
     private ctx: CanvasRenderingContext2D;
-    mousedown: boolean;
+    private mousedown: boolean;
     selectedPosition: Vec2;
 
     @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;

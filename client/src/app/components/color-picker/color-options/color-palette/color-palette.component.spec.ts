@@ -147,12 +147,12 @@ describe('ColorPaletteComponent', () => {
         component.onMouseUp(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
-        expect(component.mousedown).toEqual(false);
+        expect(component['mousedown']).toEqual(false);
     });
 
     it('onMouseDown should set mouseDown to true', () => {
         component.onMouseDown(mouseEventDown);
-        expect(component.mousedown).toEqual(true);
+        expect(component['mousedown']).toEqual(true);
     });
 
     it('onMouseDown should set selectedPosition to {offset.X, offSet.Y}', () => {
@@ -176,42 +176,42 @@ describe('ColorPaletteComponent', () => {
     });
 
     it('onMouseMove should set selectedPosition to (offSet.X, offSet.Y) if mouseDown is true', () => {
-        component.mousedown = true;
+        component['mousedown'] = true;
         const currentPosition = { x: mouseEventMove.offsetX, y: mouseEventMove.offsetY };
         component.onMouseMove(mouseEventMove);
         expect(component.selectedPosition).toEqual(currentPosition);
     });
 
     it('onMouseMove should call draw() mouseDown is true', () => {
-        component.mousedown = true;
+        component['mousedown'] = true;
         const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.onMouseMove(mouseEventMove);
         expect(fillRectSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should call setColorAtPosition with current position if mouseDown is true', () => {
-        component.mousedown = true;
+        component['mousedown'] = true;
         const getColorAtPositionSpy = spyOn(colorService, 'getColorAtPosition');
         component.onMouseMove(mouseEventMove);
         expect(getColorAtPositionSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should not set selectedPosition to (offSet.X, offSet.Y) if mouseDown is false', () => {
-        component.mousedown = false;
+        component['mousedown'] = false;
         const currentPosition = { x: mouseEventMove.offsetX, y: mouseEventMove.offsetY };
         component.onMouseMove(mouseEventMove);
         expect(component.selectedPosition).not.toEqual(currentPosition);
     });
 
     it('onMouseMove should not call draw() if mouseDown is false', () => {
-        component.mousedown = false;
+        component['mousedown'] = false;
         const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.onMouseMove(mouseEventMove);
         expect(fillRectSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseMove should not call setColorAtPosition if mouseDown is false', () => {
-        component.mousedown = false;
+        component['mousedown'] = false;
         const getColorAtPositionSpy = spyOn(colorService, 'getColorAtPosition');
         component.onMouseMove(mouseEventMove);
         expect(getColorAtPositionSpy).not.toHaveBeenCalled();
