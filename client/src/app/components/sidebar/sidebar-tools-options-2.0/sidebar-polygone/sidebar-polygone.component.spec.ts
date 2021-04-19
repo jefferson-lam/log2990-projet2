@@ -28,7 +28,7 @@ describe('SidebarPolygoneComponent', () => {
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
         toolSizeChangedSubscribeSpy = spyOn(polygoneComponent['toolSizeChanged'], 'subscribe');
-        fillModeChangedSubscribeSpy = spyOn(polygoneComponent.fillModeChanged, 'subscribe');
+        fillModeChangedSubscribeSpy = spyOn(polygoneComponent['fillModeChanged'], 'subscribe');
         numberOfSidesSpy = spyOn(polygoneComponent.numberOfPolySides, 'subscribe');
     });
 
@@ -45,7 +45,7 @@ describe('SidebarPolygoneComponent', () => {
 
     it('emitFillMode should emit fill mode', () => {
         const newFillMode = ToolsConstants.FillMode.FILL_ONLY;
-        const emitSpy = spyOn(polygoneComponent.fillModeChanged, 'emit');
+        const emitSpy = spyOn(polygoneComponent['fillModeChanged'], 'emit');
         polygoneComponent.emitFillMode(newFillMode);
         expect(emitSpy).toHaveBeenCalled();
     });
