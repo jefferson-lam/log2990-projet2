@@ -12,8 +12,7 @@ export class ColorHistoryComponent implements AfterViewInit, OnInit {
     ctx: CanvasRenderingContext2D;
     primary: Rgba;
     secondary: Rgba;
-    @ViewChild('canvas', { static: true })
-    canvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 
     savedColors: Rgba[];
 
