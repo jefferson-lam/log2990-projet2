@@ -89,7 +89,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('refreshCanvas should get baseCtx imageData and draw on exportCtx', () => {
-        const baseSpy = spyOn(component.baseCtx, 'getImageData').and.callThrough();
+        const baseSpy = spyOn(component['baseCtx'], 'getImageData').and.callThrough();
         const exportSpy = spyOn(component['exportCtx'], 'drawImage');
 
         component.refreshCanvas();
