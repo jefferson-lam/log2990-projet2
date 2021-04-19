@@ -88,7 +88,7 @@ describe('ResizerCommand', () => {
     });
 
     it('resizeCanvas should call resizeBaseCanvas', () => {
-        const resizeBaseSpy = spyOn(service, 'resizeBaseCanvas');
+        const resizeBaseSpy = spyOn<any>(service, 'resizeBaseCanvas');
 
         service['resizeCanvas']();
 
@@ -96,7 +96,7 @@ describe('ResizerCommand', () => {
     });
 
     it('resizeCanvas should call resizePreviewCanvas', () => {
-        const resizePreviewSpy = spyOn(service, 'resizePreviewCanvas');
+        const resizePreviewSpy = spyOn<any>(service, 'resizePreviewCanvas');
 
         service['resizeCanvas']();
 
@@ -137,14 +137,14 @@ describe('ResizerCommand', () => {
     });
 
     it('resizeBaseCanvas should set new canvas size', () => {
-        service.resizeBaseCanvas();
+        service['resizeBaseCanvas']();
 
         expect(service['baseCtx'].canvas.width).toBe(service['previewWidth']);
         expect(service['baseCtx'].canvas.height).toBe(service['previewHeight']);
     });
 
     it('resizePreviewCanvas should set new canvas size', () => {
-        service.resizePreviewCanvas();
+        service['resizePreviewCanvas']();
 
         expect(service['previewCtx'].canvas.width).toBe(service['previewWidth']);
         expect(service['previewCtx'].canvas.height).toBe(service['previewHeight']);

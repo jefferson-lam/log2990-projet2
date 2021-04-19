@@ -66,12 +66,12 @@ export class ResizerCommand extends Command {
         this.bottomResizer.style.left = this.baseCtx.canvas.width / 2 + 'px';
     }
 
-    resizeBaseCanvas(): void {
+    private resizeBaseCanvas(): void {
         this.baseCtx.canvas.width = this.previewWidth;
         this.baseCtx.canvas.height = this.previewHeight;
     }
 
-    resizePreviewCanvas(): void {
+    private resizePreviewCanvas(): void {
         this.previewCtx.canvas.width = this.previewWidth;
         this.previewCtx.canvas.height = this.previewHeight;
     }
