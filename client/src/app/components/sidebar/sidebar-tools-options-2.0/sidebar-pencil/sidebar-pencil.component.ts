@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import * as PencilConstants from '@app/constants/pencil-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
@@ -14,7 +13,6 @@ export class SidebarPencilComponent implements OnInit {
     tickInterval: number;
     toolSize: number | undefined;
 
-    @Input() newTool: Tool;
     @Input() selected: number;
 
     @Output() toolSizeChanged: EventEmitter<number>;
