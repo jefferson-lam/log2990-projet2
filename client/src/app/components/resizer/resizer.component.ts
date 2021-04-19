@@ -15,9 +15,9 @@ export class ResizerComponent implements AfterViewInit {
     @Input() baseCtx: CanvasRenderingContext2D;
     @Input() previewCtx: CanvasRenderingContext2D;
 
-    isSideResizerDown: boolean;
-    isCornerResizerDown: boolean;
-    isBottomResizerDown: boolean;
+    private isSideResizerDown: boolean;
+    private isCornerResizerDown: boolean;
+    private isBottomResizerDown: boolean;
 
     @ViewChild('sideResizer', { static: false }) private sideResizer: ElementRef<HTMLElement>;
     @ViewChild('cornerResizer', { static: false }) private cornerResizer: ElementRef<HTMLElement>;

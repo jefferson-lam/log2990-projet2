@@ -115,7 +115,7 @@ describe('ResizerComponent', () => {
     // 4. CornerResizer: -dx, -dy
 
     it('drawPreviewOfNewSize of +dx, +dy canvas on cornerResizer sets buttons and previewCanvas to correct size', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const newCanvasWidth = 1500;
         const newCanvasHeight = 1050;
         component.previewCtx.canvas.width = newCanvasWidth;
@@ -133,7 +133,7 @@ describe('ResizerComponent', () => {
     });
 
     it('drawPreviewOfNewSize of +dx, -dy canvas on cornerResizer sets buttons and previewCanvas to correct size', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const newCanvasWidth = 1500;
         const newCanvasHeight = 400;
         component.previewCtx.canvas.width = newCanvasWidth;
@@ -151,7 +151,7 @@ describe('ResizerComponent', () => {
     });
 
     it('drawPreviewOfNewSize of -dx, +dy canvas on cornerResizer sets buttons and previewCanvas to correct size', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const newCanvasWidth = 500;
         const newCanvasHeight = 1200;
         component.previewCtx.canvas.width = newCanvasWidth;
@@ -169,7 +169,7 @@ describe('ResizerComponent', () => {
     });
 
     it('drawPreviewOfNewSize of -dx, -dy canvas on cornerResizer sets buttons and previewCanvas to correct size', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const newCanvasWidth = 500;
         const newCanvasHeight = 400;
         component.previewCtx.canvas.width = newCanvasWidth;
@@ -200,21 +200,21 @@ describe('ResizerComponent', () => {
 
     it('should return true if bottomResizer clicked', () => {
         component.onBottomResizerDown();
-        expect(component.isBottomResizerDown).toEqual(true);
+        expect(component['isBottomResizerDown']).toEqual(true);
     });
 
     it('should return true if sideResizer clicked', () => {
         component.onSideResizerDown();
-        expect(component.isSideResizerDown).toEqual(true);
+        expect(component['isSideResizerDown']).toEqual(true);
     });
 
     it('should return true if cornerResizer clicked', () => {
         component.onCornerResizerDown();
-        expect(component.isCornerResizerDown).toEqual(true);
+        expect(component['isCornerResizerDown']).toEqual(true);
     });
 
     it('setPreviewSize should set width if isSideResizerDown and over min value', () => {
-        component.isSideResizerDown = true;
+        component['isSideResizerDown'] = true;
         const cdkDragMove = {
             pointerPosition: {
                 x: 600,
@@ -227,7 +227,7 @@ describe('ResizerComponent', () => {
     });
 
     it('setPreviewSize should set width and height if isCornerResizerDown and over min value', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const cdkDragMove = {
             pointerPosition: {
                 x: 600,
@@ -240,7 +240,7 @@ describe('ResizerComponent', () => {
     });
 
     it('setPreviewSize should set height if isBottomResizerDown and over min value', () => {
-        component.isBottomResizerDown = true;
+        component['isBottomResizerDown'] = true;
         const cdkDragMove = {
             pointerPosition: {
                 x: 600,
