@@ -20,7 +20,7 @@ export class SidebarAerosolComponent implements OnInit {
     emissionCount: number;
 
     @Output() private toolSizeChanged: EventEmitter<number>;
-    @Output() waterDropSizeChanged: EventEmitter<number>;
+    @Output() private waterDropSizeChanged: EventEmitter<number>;
     @Output() numberOfEmissions: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
