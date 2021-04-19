@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as PipetteConstants from '@app/constants/pipette-constants';
-import { ColorService } from '@app/services/color/color.service';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 
 @Component({
@@ -10,7 +9,6 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 })
 export class SidebarPipetteComponent implements OnInit {
     private ctx: CanvasRenderingContext2D;
-    colorService: ColorService;
     rawData: ImageData;
     previewData: ImageData;
     inBound: boolean;
