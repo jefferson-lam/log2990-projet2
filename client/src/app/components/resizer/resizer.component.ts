@@ -54,7 +54,7 @@ export class ResizerComponent implements AfterViewInit {
         this.drawPreviewOfNewSize();
     }
 
-    drawPreviewOfNewSize(): void {
+    private drawPreviewOfNewSize(): void {
         this.sideResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
         this.sideResizer.nativeElement.style.top = this.previewCtx.canvas.height / 2 + 'px';
         this.cornerResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
@@ -76,7 +76,7 @@ export class ResizerComponent implements AfterViewInit {
         this.isBottomResizerDown = false;
     }
 
-    lockMinCanvasValue(): void {
+    private lockMinCanvasValue(): void {
         if (this.previewCtx.canvas.width < CanvasConstants.MIN_WIDTH_CANVAS) {
             this.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
 
