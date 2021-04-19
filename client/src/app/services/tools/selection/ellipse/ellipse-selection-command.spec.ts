@@ -128,8 +128,8 @@ describe('EllipseSelectionCommandService', () => {
         // tslint:disable:no-string-literal
         const radii = command['getRadiiXAndY'](command.cornerCoords);
 
-        expect(radii[0]).toEqual(shortestSide);
-        expect(radii[1]).toEqual(shortestSide);
+        expect(radii.x).toEqual(shortestSide);
+        expect(radii.y).toEqual(shortestSide);
     });
 
     it('execute should not fill shape if isFromClipboard is set to true', () => {

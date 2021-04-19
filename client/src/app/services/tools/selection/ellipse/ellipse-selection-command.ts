@@ -30,15 +30,11 @@ export class EllipseSelectionCommand extends Command {
 
     execute(): void {
         const ellipseCenter = this.getEllipseCenter(this.cornerCoords[START_INDEX], this.cornerCoords[END_INDEX], this.isCircle);
-        const startX = ellipseCenter.x;
-        const startY = ellipseCenter.y;
         const radiiXAndY = this.getRadiiXAndY(this.cornerCoords);
-        const xRadius = radiiXAndY[0];
-        const yRadius = radiiXAndY[1];
 
         if (!this.isFromClipboard) {
             this.ctx.beginPath();
-            this.ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
+            this.ctx.ellipse(ellipseCenter.x, ellipseCenter.y, radiiXAndY.x, radiiXAndY.y, ROTATION, START_ANGLE, END_ANGLE);
             this.ctx.fillStyle = 'white';
             this.ctx.fill();
         }
@@ -76,27 +72,23 @@ export class EllipseSelectionCommand extends Command {
             y: this.transformValues.y + this.selectionHeight,
         };
         const ellipseCenter = this.getEllipseCenter(this.transformValues, end, this.isCircle);
-        const startX = ellipseCenter.x;
-        const startY = ellipseCenter.y;
         const radiiXAndY = this.getRadiiXAndY([this.transformValues, end]);
-        const xRadius = radiiXAndY[0];
-        const yRadius = radiiXAndY[1];
         const offset = 1;
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(this.transformValues.x, this.transformValues.y);
-        ctx.ellipse(startX, startY, xRadius + offset, yRadius + offset, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(ellipseCenter.x, ellipseCenter.y, radiiXAndY.x + offset, radiiXAndY.y + offset, ROTATION, START_ANGLE, END_ANGLE);
         ctx.clip();
     }
 
-    private getRadiiXAndY(path: Vec2[]): number[] {
+    private getRadiiXAndY(path: Vec2[]): Vec2 {
         let xRadius = Math.abs(path[END_INDEX].x - path[START_INDEX].x) / 2;
         let yRadius = Math.abs(path[END_INDEX].y - path[START_INDEX].y) / 2;
         if (this.isCircle) {
             const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
             xRadius = yRadius = shortestSide;
         }
-        return [xRadius, yRadius];
+        return { x: xRadius, y: yRadius };
     }
 
     private getEllipseCenter(start: Vec2, end: Vec2, isCircle: boolean): Vec2 {
