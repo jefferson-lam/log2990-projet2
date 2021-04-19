@@ -17,7 +17,6 @@ export class TagInputComponent {
         this.maxLengthRequirement = TagInputConstants.MAX_LENGTH_REQUIREMENT;
         this.noSpecialCharacterRequirement = TagInputConstants.NO_SPECIAL_CARACTER_REQUIREMENT;
         this.maxTagsCountRequirement = TagInputConstants.MAX_TAGS_COUNT_REQUIREMENT;
-        this.minLengthDivClass = 'Failed';
         this.isSavePossible = false;
     }
     @ViewChild('tagInput') tagInput: ElementRef;

@@ -58,4 +58,43 @@ describe('TitleValidatorComponent', () => {
         component.validateTitle(testTitle);
         expect(component.noSpecialCharacterDivClass).toEqual('Satisfied');
     });
+
+    it('minLengthTitleValidator should set minLengthDivClass to "Failed" if tag is shorter than minimum allowed and change counter', () => {
+        const testTitle = '';
+        component.minLengthTitleValidator(testTitle);
+        expect(component.minLengthDivClass).toEqual('Failed');
+        expect(component.unsatisfiedRequirements).not.toEqual(0);
+    });
+
+    it('minLengthTitleValidator should set minLengthDivClass to "Satisfied" if tag length is equal or longer than minimum allowed', () => {
+        const testTitle = 't';
+        component.minLengthTitleValidator(testTitle);
+        expect(component.minLengthDivClass).toEqual('Satisfied');
+    });
+
+    it('maxLengthTitleValidator should set maxLengthDivClass to "Failed" if tag is longer than maximum allowed and change counter', () => {
+        const testTitle = '012345678901234567891';
+        component.maxLengthTitleValidator(testTitle);
+        expect(component.maxLengthDivClass).toEqual('Failed');
+        expect(component.unsatisfiedRequirements).not.toEqual(0);
+    });
+
+    it('maxLengthTitleValidator should set maxLengthDivClass to "Satisfied" if tag is shorter than maximum allowed', () => {
+        const testTitle = '012345678901';
+        component.maxLengthTitleValidator(testTitle);
+        expect(component.maxLengthDivClass).toEqual('Satisfied');
+    });
+
+    it('characterTitleValidator should set noSpecialCharactersDivClass to "Failed" if tag has special characters and change counter', () => {
+        const testTitle = '😂';
+        component.characterTitleValidator(testTitle);
+        expect(component.noSpecialCharacterDivClass).toEqual('Failed');
+        expect(component.unsatisfiedRequirements).not.toEqual(0);
+    });
+
+    it("characterTitleValidator should set noSpecialCharactersDivClass to 'Satisfied' if tag doesn't have special characters", () => {
+        const testTitle = 'NoLaughingAllowed';
+        component.characterTitleValidator(testTitle);
+        expect(component.noSpecialCharacterDivClass).toEqual('Satisfied');
+    });
 });
