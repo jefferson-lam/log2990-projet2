@@ -15,7 +15,7 @@ export class SidebarEllipseComponent implements OnInit {
     fillMode: number | undefined;
 
     @Output() private toolSizeChanged: EventEmitter<number>;
-    @Output() fillModeChanged: EventEmitter<number>;
+    @Output() private fillModeChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.max = ShapeConstants.MAX_BORDER_WIDTH;
