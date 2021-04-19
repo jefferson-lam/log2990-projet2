@@ -101,6 +101,16 @@ export class EllipseCommand extends Command {
         ctx.stroke();
         if (fillMethod !== ToolConstants.FillMode.OUTLINE) {
             ctx.fillStyle = primaryColor;
+            ctx.beginPath();
+            ctx.ellipse(
+                startX,
+                startY,
+                xRadius - this.lineWidth / 2,
+                yRadius - this.lineWidth / 2,
+                EllipseConstants.ROTATION,
+                ShapeConstants.START_ANGLE,
+                ShapeConstants.END_ANGLE,
+            );
             ctx.fill();
         }
     }
