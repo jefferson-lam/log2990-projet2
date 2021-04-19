@@ -24,7 +24,7 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
     currentTool: Tool;
     stamps: Map<number, Stamp>;
 
-    @ViewChild('relaxedEgg', { static: false }) relaxedEgg: ElementRef<HTMLElement>;
+    @ViewChild('relaxedEgg', { static: false }) private relaxedEgg: ElementRef<HTMLElement>;
     @ViewChild('sleepyEgg', { static: false }) sleepyEgg: ElementRef<HTMLElement>;
     @ViewChild('hungryEgg', { static: false }) hungryEgg: ElementRef<HTMLElement>;
     @ViewChild('toastEgg', { static: false }) toastEgg: ElementRef<HTMLElement>;

@@ -6,6 +6,7 @@ import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { Subject } from 'rxjs';
 import { SidebarStampComponent } from './sidebar-stamp.component';
 
+// tslint:disable: no-string-literal
 describe('SidebarStampComponent', () => {
     let stampServiceSpy: jasmine.SpyObj<StampService>;
     let stampComponent: SidebarStampComponent;
@@ -109,7 +110,8 @@ describe('SidebarStampComponent', () => {
 
     it("resetBorders should set all border styles to ''", () => {
         stampComponent.resetBorders();
-        expect(stampComponent.relaxedEgg.nativeElement.style.border).toBe('');
+        // tslint:disable-next-line: no-string-literal
+        expect(stampComponent['relaxedEgg'].nativeElement.style.border).toBe('');
         expect(stampComponent.sleepyEgg.nativeElement.style.border).toBe('');
         expect(stampComponent.hungryEgg.nativeElement.style.border).toBe('');
         expect(stampComponent.toastEgg.nativeElement.style.border).toBe('');
@@ -150,7 +152,7 @@ describe('SidebarStampComponent', () => {
 
     it('changeBorderIndicator should change border style', () => {
         stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_1);
-        expect(stampComponent.relaxedEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        expect(stampComponent['relaxedEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeStampSource should change imageSource value of index 1', () => {
