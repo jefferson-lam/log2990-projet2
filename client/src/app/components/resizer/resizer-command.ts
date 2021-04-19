@@ -42,7 +42,7 @@ export class ResizerCommand extends Command {
      * It also saves the drawing that was on the canvas by doing a swap with the
      * preview canvas.
      */
-    resizeCanvas(): void {
+    private resizeCanvas(): void {
         // Save drawing to preview canvas before drawing is wiped due to resizing
         this.previewCtx.drawImage(this.baseCtx.canvas, 0, 0);
         this.resizeBaseCanvas();

@@ -44,8 +44,8 @@ describe('AutoSaveService', () => {
         document.body.append(bottomResizer);
         document.body.append(cornerResizer);
 
-        resizerCommandSpy = jasmine.createSpyObj('ResizerCommand', ['execute', 'resizeCanvas']);
-        resizerCommandSpy.resizeCanvas.and.stub();
+        resizerCommandSpy = jasmine.createSpyObj('ResizerCommand', ['execute']);
+
         resizerCommandSpy.execute.and.stub();
 
         mockSubject = new Subject<number[]>();

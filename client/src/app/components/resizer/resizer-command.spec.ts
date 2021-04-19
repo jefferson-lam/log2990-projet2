@@ -72,7 +72,8 @@ describe('ResizerCommand', () => {
     });
 
     it('execute should call resizeCanvas', () => {
-        const resizeCanvasSpy = spyOn(service, 'resizeCanvas');
+        // tslint:disable-next-line: no-any
+        const resizeCanvasSpy = spyOn<any>(service, 'resizeCanvas');
 
         service.execute();
 
@@ -80,7 +81,7 @@ describe('ResizerCommand', () => {
     });
 
     it('resizeCanvas should call drawImage 2 times (once for preview, once for base)', () => {
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(previewCtxDrawImageSpy).toHaveBeenCalled();
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
@@ -89,7 +90,7 @@ describe('ResizerCommand', () => {
     it('resizeCanvas should call resizeBaseCanvas', () => {
         const resizeBaseSpy = spyOn(service, 'resizeBaseCanvas');
 
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(resizeBaseSpy).toHaveBeenCalled();
     });
@@ -97,13 +98,13 @@ describe('ResizerCommand', () => {
     it('resizeCanvas should call resizePreviewCanvas', () => {
         const resizePreviewSpy = spyOn(service, 'resizePreviewCanvas');
 
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(resizePreviewSpy).toHaveBeenCalled();
     });
 
     it('resizeCanvas should call whiteOut with baseCtx', () => {
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(drawingServiceSpy.whiteOut).toHaveBeenCalled();
         expect(drawingServiceSpy.whiteOut).toHaveBeenCalledWith(service['baseCtx']);
@@ -112,13 +113,13 @@ describe('ResizerCommand', () => {
     it('resizeCanvas should call placeResizers', () => {
         const placeResizersSpy = spyOn(service, 'placeResizers');
 
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(placeResizersSpy).toHaveBeenCalled();
     });
 
     it('resizeCanvas should emit new size', () => {
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(canvasSizeSubject).toHaveBeenCalled();
         expect(canvasSizeSubject).toHaveBeenCalledWith([service['previewWidth'], service['previewHeight']]);
