@@ -13,6 +13,7 @@ import { ExportCompletePageComponent } from './export-complete-page/export-compl
 import { ExportDrawingComponent } from './export-drawing.component';
 import { ExportErrorPageComponent } from './export-error-page/export-error-page.component';
 
+// tslint:disable: no-string-literal
 describe('ExportDrawingComponent', () => {
     let component: ExportDrawingComponent;
     let fixture: ComponentFixture<ExportDrawingComponent>;
@@ -33,11 +34,9 @@ describe('ExportDrawingComponent', () => {
         (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
             new Subject<any>(),
         );
-        // tslint:disable:no-string-literal
         (Object.getOwnPropertyDescriptor(dialogSpy, 'afterAllClosed')?.get as jasmine.Spy<() => Observable<void>>).and.returnValue(
             dialogSpy['_afterAllClosedAtThisLevel'].asObservable(),
         );
-        // tslint:enable:no-string-literal
         // tslint:enable:no-any
         TestBed.configureTestingModule({
             imports: [FormsModule],
@@ -173,7 +172,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('saveImage should set link href with image data and click it', () => {
-        const imgDataSpy = spyOn(component.exportCanvas, 'toDataURL').and.callThrough();
+        const imgDataSpy = spyOn(component['exportCanvas'], 'toDataURL').and.callThrough();
 
         component.saveImage();
 
@@ -185,14 +184,14 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('exportToImgur should set link href with image data and call imgurService.exportDrawing', () => {
-        const imgDataSpy = spyOn(component.exportCanvas, 'toDataURL').and.callThrough();
+        const imgDataSpy = spyOn(component['exportCanvas'], 'toDataURL').and.callThrough();
         const exportDrawingSpy = spyOn(imgurStub, 'exportDrawing');
 
         component.exportToImgur();
 
         expect(imgDataSpy).toHaveBeenCalled();
         expect(imgDataSpy).toHaveBeenCalledWith('image/' + component.type);
-        expect(exportDrawingSpy).toHaveBeenCalledWith(component.exportCanvas.toDataURL('image/' + component.type), component.name);
+        expect(exportDrawingSpy).toHaveBeenCalledWith(component['exportCanvas'].toDataURL('image/' + component.type), component.name);
     });
 
     it('openPopUp should not do anything if popUpToggle and mutex are 0', () => {
