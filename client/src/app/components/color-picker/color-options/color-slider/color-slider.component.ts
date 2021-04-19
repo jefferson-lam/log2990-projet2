@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
 import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from '@app/services/color/color.service';
@@ -13,8 +13,6 @@ export class ColorSliderComponent implements AfterViewInit {
     private selectedHeight: number;
 
     @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
-
-    @Input() rgbSelectorColor: Rgba;
 
     @Output() hue: EventEmitter<Rgba>;
 
