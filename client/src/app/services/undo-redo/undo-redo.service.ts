@@ -60,8 +60,8 @@ export class UndoRedoService {
         this.refresh();
     }
 
-    private refresh(): void {
-        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+    refresh(): void {
+        this.drawingService.whiteOut(this.drawingService.baseCtx);
         this.resetCanvasSize.execute();
         if (this.initialImage !== undefined) {
             this.drawingService.baseCtx.drawImage(this.initialImage, 0, 0, this.initialImage.width, this.initialImage.height);

@@ -144,14 +144,14 @@ describe('UndoRedoService', () => {
         expect(updateSpy).toHaveBeenCalledWith(true);
     });
 
-    it('refresh should clear base canvas', () => {
+    it('refresh should white out base canvas', () => {
         // tslint:disable:no-string-literal
-        const clearCanvasSpy = spyOn(service['drawingService'], 'clearCanvas');
+        const whiteOutSpy = spyOn(service['drawingService'], 'whiteOut');
 
         service.refresh();
 
-        expect(clearCanvasSpy).toHaveBeenCalled();
-        expect(clearCanvasSpy).toHaveBeenCalledWith(baseCtxStub);
+        expect(whiteOutSpy).toHaveBeenCalled();
+        expect(whiteOutSpy).toHaveBeenCalledWith(baseCtxStub);
     });
 
     it('refresh should execute commands', () => {
