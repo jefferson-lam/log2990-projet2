@@ -13,8 +13,8 @@ export class ResizerCommand extends Command {
     private cornerResizer: HTMLElement;
     private bottomResizer: HTMLElement;
 
-    previewWidth: number;
-    previewHeight: number;
+    private previewWidth: number;
+    private previewHeight: number;
 
     constructor(private drawingService: DrawingService, @Inject(Number) width?: number, @Inject(Number) height?: number) {
         super();
