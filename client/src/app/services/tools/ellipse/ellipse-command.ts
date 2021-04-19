@@ -34,6 +34,7 @@ export class EllipseCommand extends Command {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.lineWidth = 1;
         const ellipseCenter = this.getEllipseCenter(path[ShapeConstants.START_INDEX], path[ShapeConstants.END_INDEX], this.isCircle);
         const startX = ellipseCenter.x;
         const startY = ellipseCenter.y;
