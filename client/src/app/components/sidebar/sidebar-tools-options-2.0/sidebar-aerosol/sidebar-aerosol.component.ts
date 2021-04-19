@@ -21,7 +21,7 @@ export class SidebarAerosolComponent implements OnInit {
 
     @Output() private toolSizeChanged: EventEmitter<number>;
     @Output() private waterDropSizeChanged: EventEmitter<number>;
-    @Output() numberOfEmissions: EventEmitter<number>;
+    @Output() private numberOfEmissions: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.maxWidth = AerosolConstants.MAX_LINE_WIDTH;

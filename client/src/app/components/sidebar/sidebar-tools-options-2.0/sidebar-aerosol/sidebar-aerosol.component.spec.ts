@@ -30,7 +30,7 @@ describe('SidebarAerosolComponent', () => {
         settingsManagerService = TestBed.inject(SettingsManagerService);
         toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
         waterDropSizeChangedSubcribeSpy = spyOn(component['waterDropSizeChanged'], 'subscribe');
-        emitEmissionNumberSubscribeSpy = spyOn(component.numberOfEmissions, 'subscribe');
+        emitEmissionNumberSubscribeSpy = spyOn(component['numberOfEmissions'], 'subscribe');
     });
 
     it('should create', () => {
@@ -52,7 +52,7 @@ describe('SidebarAerosolComponent', () => {
     });
 
     it('emitEmissionNumber should emit number of emissions', () => {
-        const emitSpy = spyOn(component.numberOfEmissions, 'emit');
+        const emitSpy = spyOn(component['numberOfEmissions'], 'emit');
         component.emissionCount = AerosolConstants.INIT_LINE_WIDTH;
         component.emitEmissionNumber();
         expect(emitSpy).toHaveBeenCalled();
