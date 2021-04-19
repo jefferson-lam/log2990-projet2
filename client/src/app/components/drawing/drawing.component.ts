@@ -25,7 +25,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private gridCtx: CanvasRenderingContext2D;
     private defaultSize: Vec2;
 
-    @Input() currentTool: Tool;
+    @Input() private currentTool: Tool;
 
     constructor(
         private drawingService: DrawingService,

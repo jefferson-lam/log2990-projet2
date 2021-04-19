@@ -106,7 +106,7 @@ describe('DrawingComponent', () => {
     });
 
     it('should get pencilStub', () => {
-        expect(component.currentTool).toEqual(pencilStub);
+        expect(component['currentTool']).toEqual(pencilStub);
     });
 
     it("should call the tool's keyboard down when receiving a keyboard down event", () => {
@@ -211,7 +211,7 @@ describe('DrawingComponent', () => {
     it(" should call the tool's mouse wheel when receiving a mouse wheel event", () => {
         const wheelEvent = {} as WheelEvent;
         const wheelEventSpy = spyOn(stampStub, 'onMouseWheel').and.callThrough();
-        component.currentTool = stampStub;
+        component['currentTool'] = stampStub;
         component.onMouseWheel(wheelEvent);
 
         expect(wheelEventSpy).toHaveBeenCalled();
