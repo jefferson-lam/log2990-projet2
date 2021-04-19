@@ -13,7 +13,7 @@ export class SettingsManagerService {
             toolManager.setPrimaryColorTools(colorService.convertRgbaToString(color));
         });
         colorService.secondaryObservable.subscribe((color: Rgba) => {
-            this.toolManager.setSecondaryColorTools(colorService.convertRgbaToString(color));
+            toolManager.setSecondaryColorTools(colorService.convertRgbaToString(color));
         });
     }
 

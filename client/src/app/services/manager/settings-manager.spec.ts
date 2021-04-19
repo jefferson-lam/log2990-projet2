@@ -55,16 +55,6 @@ describe('SettingsManagerService', () => {
         expect(toolSpy.initNumberSides).toEqual(EXPECTED_SIDES_COUNT);
     });
 
-    // it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {
-    //     service.setPrimaryColorTools('blue');
-    //     expect(toolManagerSpy.setPrimaryColorTools).toHaveBeenCalled();
-    // });
-
-    // it('setSecondaryColorTools should call setPrimaryToolsColor of toolManager', () => {
-    //     service.setSecondaryColorTools('blue');
-    //     expect(toolManagerSpy.setSecondaryColorTools).toHaveBeenCalled();
-    // });
-
     it('setWaterDropWidth should call setWaterDropWidth of toolManager', () => {
         const EXPECTED_WATER_DROP_WIDTH = 50;
         service.setWaterDropWidth(EXPECTED_WATER_DROP_WIDTH);
@@ -82,34 +72,4 @@ describe('SettingsManagerService', () => {
         service.setToleranceValue(EXPECTED_TOLERANCE_VALUE);
         expect(toolSpy.setToleranceValue).toHaveBeenCalled();
     });
-
-    // it('calls setPrimaryColorsTools when size changed', async(() => {
-    //     const mockColor = {
-    //         red: 255,
-    //         green: 10,
-    //         blue: 2,
-    //         alpha: 1,
-    //     } as Rgba;
-    //     const serviceSetter = spyOn(service, 'setPrimaryColorTools').and.callThrough();
-    //     const colorService = TestBed.inject(ColorService);
-    //     colorService.setPrimaryColor(mockColor);
-
-    //     expect(serviceSetter).toHaveBeenCalled();
-    //     expect(serviceSetter).toHaveBeenCalledWith(colorService.convertRgbaToString(mockColor));
-    // }));
-
-    // it('calls setSecondaryColorsTools when size changed', async(() => {
-    //     const mockColor = {
-    //         red: 255,
-    //         green: 10,
-    //         blue: 2,
-    //         alpha: 1,
-    //     } as Rgba;
-    //     const serviceSetter = spyOn(service, 'setSecondaryColorTools').and.callThrough();
-    //     const colorService = TestBed.inject(ColorService);
-    //     colorService.setSecondaryColor(mockColor);
-
-    //     expect(serviceSetter).toHaveBeenCalled();
-    //     expect(serviceSetter).toHaveBeenCalledWith(colorService.convertRgbaToString(mockColor));
-    // }));
 });
