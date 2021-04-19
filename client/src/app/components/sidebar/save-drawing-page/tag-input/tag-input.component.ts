@@ -12,8 +12,8 @@ export class TagInputComponent {
     @ViewChild('tagInput') tagInput: ElementRef;
     currentTag: string;
     tags: string[];
-
     isSavePossible: boolean;
+
     @Output() areTagsValidEvent: EventEmitter<boolean>;
 
     distinctTagsRequirement: string;
@@ -33,13 +33,14 @@ export class TagInputComponent {
 
     constructor() {
         this.tags = new Array();
-        this.isSavePossible = false;
         this.areTagsValidEvent = new EventEmitter<boolean>();
         this.distinctTagsRequirement = TagInputConstants.DISTINCT_TAGS_REQUIREMENT;
         this.minLengthRequirement = TagInputConstants.MIN_LENGTH_REQUIREMENT;
         this.maxLengthRequirement = TagInputConstants.MAX_LENGTH_REQUIREMENT;
         this.noSpecialCharacterRequirement = TagInputConstants.NO_SPECIAL_CARACTER_REQUIREMENT;
         this.maxTagsCountRequirement = TagInputConstants.MAX_TAGS_COUNT_REQUIREMENT;
+        this.minLengthDivClass = 'Failed';
+        this.isSavePossible = false;
     }
 
     addTag(tag: string): void {
@@ -47,8 +48,8 @@ export class TagInputComponent {
         if (this.validateTag(tag)) {
             this.tags.push(tag);
         }
-        this.tagInput.nativeElement.value = '';
         this.isSavePossible = false;
+        this.tagInput.nativeElement.value = '';
         this.resetRequirements();
     }
 

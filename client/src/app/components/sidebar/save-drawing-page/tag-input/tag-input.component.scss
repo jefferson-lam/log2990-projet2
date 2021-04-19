@@ -23,6 +23,7 @@ div {
 
 #tagFormField {
     padding-top: 15px;
+    width: 190px;
 }
 
 .tagDiv {
@@ -42,8 +43,8 @@ div {
 .tagLabel {
     float: left;
     padding-right: 15px;
-    padding-bottom: 0px;
-    margin: 0px 0px 0px 0px;
+    padding-bottom: 0;
+    margin: 0 0 0 0;
 }
 
 .tagDeleteButton {
@@ -51,7 +52,7 @@ div {
     float: right;
     width: 13.34px;
     height: 13.14px;
-    padding: 0px 0px 0px 0px;
+    padding: 0 0 0 0;
 }
 
 .icon {
@@ -70,7 +71,7 @@ div {
 
 #addTagButton {
     font-size: large;
-    background-color: coral;
+    background-color: #79bed9;
     width: 150px;
     align-self: center;
     margin: 10px;
@@ -81,10 +82,10 @@ div {
 }
 
 #addTagButton:active {
-    background-color: rgb(255, 96, 38);
+    background-color: #79bed9;
 }
 
 #addTagButton:disabled {
     cursor: not-allowed;
-    background-color: rgb(255, 167, 136);
+    background-color: rgb(123, 156, 162);
 }

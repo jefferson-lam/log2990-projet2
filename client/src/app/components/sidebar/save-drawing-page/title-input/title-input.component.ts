@@ -25,6 +25,7 @@ export class TitleInputComponent {
         this.minLengthRequirement = TitleInputConstants.MIN_LENGTH_REQUIREMENT;
         this.maxLengthRequirement = TitleInputConstants.MAX_LENGTH_REQUIREMENT;
         this.noSpecialCharacterRequirement = TitleInputConstants.NO_SPECIAL_CARACTER_REQUIREMENT;
+        this.minLengthDivClass = 'Failed';
     }
 
     validateTitle(title: string): void {
