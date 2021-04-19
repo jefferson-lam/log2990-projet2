@@ -23,11 +23,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private gridCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2;
-    private previewCanvasSize: Vec2;
-    private gridCanvasSize: Vec2;
+    private defaultSize: Vec2;
 
     @Input() currentTool: Tool;
+
     constructor(
         private drawingService: DrawingService,
         private autoSaveService: AutoSaveService,
@@ -37,40 +36,18 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         public cursorManager: CursorManagerService,
     ) {
         this.currentTool = toolManager.pencilService; // default value
-        this.canvasSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
-        this.previewCanvasSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
-        this.gridCanvasSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
+        this.defaultSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
     }
 
     ngAfterViewInit(): void {
-        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.baseCtx = this.baseCtx;
-        this.drawingService.previewCtx = this.previewCtx;
-        this.drawingService.gridCtx = this.gridCtx;
-        this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.drawingService.canvas.width = CanvasConstants.DEFAULT_WIDTH;
-        this.drawingService.canvas.height = CanvasConstants.DEFAULT_HEIGHT;
-        this.drawingService.previewCtx.canvas.width = CanvasConstants.DEFAULT_WIDTH;
-        this.drawingService.previewCtx.canvas.height = CanvasConstants.DEFAULT_HEIGHT;
-        this.drawingService.gridCtx.canvas.width = CanvasConstants.DEFAULT_WIDTH;
-        this.drawingService.gridCtx.canvas.height = CanvasConstants.DEFAULT_HEIGHT;
-        this.baseCtx.fillStyle = 'white';
-        this.baseCtx.fillRect(0, 0, this.baseCtx.canvas.width, this.baseCtx.canvas.height);
+        this.assignContextValues();
+        this.propagateValuesToDrawingService();
         this.canvasGridService.gridCtx = this.gridCtx;
 
-        this.drawingService.canvasSizeSubject = new BehaviorSubject<number[]>([this.drawingService.canvas.width, this.drawingService.canvas.height]);
-        this.drawingService.canvasSizeSubject.asObservable().subscribe((size) => {
-            this.canvasGridService.resize(size[0], size[1]);
-        });
-
-        this.cursorManager.previewCanvas = this.previewCanvas.nativeElement;
-        this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
-            this.currentTool = tool;
-            this.cursorManager.changeCursor(tool);
-        });
         this.autoSaveService.loadDrawing();
+
+        this.resizeGridCanvasOnSizeChange();
+        this.changeCursorOnToolChange();
     }
 
     ngOnDestroy(): void {
@@ -132,27 +109,39 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         event.preventDefault();
     }
 
-    get baseWidth(): number {
-        return this.canvasSize.x;
+    get defaultWidth(): number {
+        return this.defaultSize.x;
     }
 
-    get baseHeight(): number {
-        return this.canvasSize.y;
+    get defaultHeight(): number {
+        return this.defaultSize.y;
     }
 
-    get previewWidth(): number {
-        return this.previewCanvasSize.x;
+    private assignContextValues(): void {
+        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
     }
 
-    get previewHeight(): number {
-        return this.previewCanvasSize.y;
+    private propagateValuesToDrawingService(): void {
+        this.drawingService.baseCtx = this.baseCtx;
+        this.drawingService.previewCtx = this.previewCtx;
+        this.drawingService.gridCtx = this.gridCtx;
+        this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
-    get gridWidth(): number {
-        return this.gridCanvasSize.y;
+    private resizeGridCanvasOnSizeChange(): void {
+        this.drawingService.canvasSizeSubject = new BehaviorSubject<number[]>([this.drawingService.canvas.width, this.drawingService.canvas.height]);
+        this.drawingService.canvasSizeSubject.asObservable().subscribe((dimensions) => {
+            this.canvasGridService.resize(dimensions[0], dimensions[1]);
+        });
     }
 
-    get gridHeight(): number {
-        return this.gridCanvasSize.x;
+    private changeCursorOnToolChange(): void {
+        this.cursorManager.previewCanvas = this.previewCanvas.nativeElement;
+        this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
+            this.currentTool = tool;
+            this.cursorManager.changeCursor(tool);
+        });
     }
 }

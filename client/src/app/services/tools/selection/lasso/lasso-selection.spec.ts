@@ -299,6 +299,28 @@ describe('LassoSelectionService', () => {
         }).not.toThrow();
     });
 
+    it('undoSelection should call drawImage if is not from clipboard', () => {
+        const resetCanvasStateSpy = spyOn(service, 'resetCanvasState');
+        const drawImageSpy = spyOn(baseCtxStub, 'drawImage');
+        service.isManipulating = true;
+        service.isFromClipboard = false;
+        service.undoSelection();
+        expect(drawImageSpy).toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalled();
+        expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
+    });
+
+    it('undoSelection should call drawImage if from clipboard', () => {
+        const resetCanvasStateSpy = spyOn(service, 'resetCanvasState');
+        const drawImageSpy = spyOn(baseCtxStub, 'drawImage');
+        service.isManipulating = true;
+        service.isFromClipboard = true;
+        service.undoSelection();
+        expect(drawImageSpy).not.toHaveBeenCalled();
+        expect(resetCanvasStateSpy).toHaveBeenCalled();
+        expect(resizerHandlerServiceSpy.resetResizers).toHaveBeenCalled();
+    });
+
     it('undoSelection should call procedure if manipulating', () => {
         const resetCanvasStateSpy = spyOn(service, 'resetCanvasState');
         const drawImageSpy = spyOn(baseCtxStub, 'drawImage');

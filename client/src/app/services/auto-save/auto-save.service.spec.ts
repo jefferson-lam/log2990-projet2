@@ -176,4 +176,20 @@ describe('AutoSaveService', () => {
         expect(autoSaveSpy).toHaveBeenCalled();
         expect(undoRedoServiceSpy.reset).toHaveBeenCalled();
     }));
+
+    it('loadLocalStorage should', async (done) => {
+        loadLocalStorageSpy.and.callThrough();
+        spyOn(localStorage, 'getItem').and.callFake((key) => {
+            return mockImageURL;
+        });
+
+        service['loadLocalStorage']()
+            .then(() => {
+                expect((service.undoRedoService.initialImage as HTMLImageElement).src).toBe(mockImageURL);
+                done();
+            })
+            .catch((error) => {
+                done.fail(error);
+            });
+    });
 });

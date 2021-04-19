@@ -16,6 +16,7 @@ import { ResizeTopLeft } from '@app/services/tools/selection/resizer/resize-stra
 import { ResizeTopRight } from '@app/services/tools/selection/resizer/resize-strategy/resize-top-right';
 import { ResizerHandlerService } from './resizer-handler.service';
 
+// tslint:disable:no-string-literal
 describe('ResizerHandlerService', () => {
     let service: ResizerHandlerService;
     let canvasTestHelper: CanvasTestHelper;
@@ -39,7 +40,7 @@ describe('ResizerHandlerService', () => {
             .set(ResizerDown.TopRight, document.createElement('div'))
             .set(ResizerDown.Top, document.createElement('div'));
 
-        service.resizerStrategies
+        service['resizerStrategies']
             .set(ResizerDown.TopLeft, new ResizeTopLeft())
             .set(ResizerDown.Left, new ResizeLeft())
             .set(ResizerDown.BottomLeft, new ResizeBottomLeft())
@@ -49,7 +50,7 @@ describe('ResizerHandlerService', () => {
             .set(ResizerDown.TopRight, new ResizeTopRight())
             .set(ResizerDown.Top, new ResizeTop());
 
-        service.resizeStrategy = service.resizerStrategies.get(ResizerDown.TopLeft) as ResizeStrategy;
+        service['resizeStrategy'] = service['resizerStrategies'].get(ResizerDown.TopLeft) as ResizeStrategy;
     });
 
     it('should be created', () => {
@@ -57,14 +58,14 @@ describe('ResizerHandlerService', () => {
     });
 
     it('assignComponent should call assignComponent for all strategies', () => {
-        const topLeftStrategyAssignSpy = spyOn(service.resizerStrategies.get(ResizerDown.TopLeft) as ResizeStrategy, 'assignComponent');
-        const leftStrategyAssignSpy = spyOn(service.resizerStrategies.get(ResizerDown.Left) as ResizeStrategy, 'assignComponent');
-        const bottomLeftStrategyAssignSpy = spyOn(service.resizerStrategies.get(ResizerDown.BottomLeft) as ResizeStrategy, 'assignComponent');
-        const bottomStrategyAssignSpy = spyOn(service.resizerStrategies.get(ResizerDown.Bottom) as ResizeStrategy, 'assignComponent');
-        const bottomRightStrategyAssignSpy = spyOn(service.resizerStrategies.get(ResizerDown.BottomRight) as ResizeStrategy, 'assignComponent');
-        const rightStrategyAssignSpy = spyOn(service.resizerStrategies.get(ResizerDown.Right) as ResizeStrategy, 'assignComponent');
-        const topRightStrategyAssignSpy = spyOn(service.resizerStrategies.get(ResizerDown.TopRight) as ResizeStrategy, 'assignComponent');
-        const topStrategyAssignSpy = spyOn(service.resizerStrategies.get(ResizerDown.Top) as ResizeStrategy, 'assignComponent');
+        const topLeftStrategyAssignSpy = spyOn(service['resizerStrategies'].get(ResizerDown.TopLeft) as ResizeStrategy, 'assignComponent');
+        const leftStrategyAssignSpy = spyOn(service['resizerStrategies'].get(ResizerDown.Left) as ResizeStrategy, 'assignComponent');
+        const bottomLeftStrategyAssignSpy = spyOn(service['resizerStrategies'].get(ResizerDown.BottomLeft) as ResizeStrategy, 'assignComponent');
+        const bottomStrategyAssignSpy = spyOn(service['resizerStrategies'].get(ResizerDown.Bottom) as ResizeStrategy, 'assignComponent');
+        const bottomRightStrategyAssignSpy = spyOn(service['resizerStrategies'].get(ResizerDown.BottomRight) as ResizeStrategy, 'assignComponent');
+        const rightStrategyAssignSpy = spyOn(service['resizerStrategies'].get(ResizerDown.Right) as ResizeStrategy, 'assignComponent');
+        const topRightStrategyAssignSpy = spyOn(service['resizerStrategies'].get(ResizerDown.TopRight) as ResizeStrategy, 'assignComponent');
+        const topStrategyAssignSpy = spyOn(service['resizerStrategies'].get(ResizerDown.Top) as ResizeStrategy, 'assignComponent');
 
         service.assignComponent({} as SelectionComponent);
 
@@ -79,20 +80,20 @@ describe('ResizerHandlerService', () => {
     });
 
     it('resize should call resize method of resizeStrategy', () => {
-        const resizeSpy = spyOn(service.resizeStrategy, 'resize');
+        const resizeSpy = spyOn(service['resizeStrategy'], 'resize');
         service.resize({} as CdkDragMove);
         expect(resizeSpy).toHaveBeenCalled();
         expect(resizeSpy).toHaveBeenCalledWith({} as CdkDragMove, service.isShiftDown);
     });
 
     it('resizeSquare should call resizeSquare method of resizeStrategy', () => {
-        const resizeSquareSpy = spyOn(service.resizeStrategy, 'resizeSquare');
+        const resizeSquareSpy = spyOn(service['resizeStrategy'], 'resizeSquare');
         service.resizeSquare();
         expect(resizeSquareSpy).toHaveBeenCalled();
     });
 
     it('restoreLastDimensions should call restoreLastDimensions method of resizeStrategy', () => {
-        const restoreDimensionsSpy = spyOn(service.resizeStrategy, 'restoreLastDimensions');
+        const restoreDimensionsSpy = spyOn(service['resizeStrategy'], 'restoreLastDimensions');
         service.restoreLastDimensions();
         expect(restoreDimensionsSpy).toHaveBeenCalled();
     });
@@ -182,6 +183,6 @@ describe('ResizerHandlerService', () => {
     it('setResizeStrategy should set resizeStrategy to number passed', () => {
         service.setResizeStrategy(ResizerDown.BottomLeft);
 
-        expect(service.resizeStrategy).toBe(service.resizerStrategies.get(ResizerDown.BottomLeft) as ResizeStrategy);
+        expect(service['resizeStrategy']).toBe(service['resizerStrategies'].get(ResizerDown.BottomLeft) as ResizeStrategy);
     });
 });
