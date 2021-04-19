@@ -1,14 +1,14 @@
 <div class="modal-dialog">
     <div *ngIf="saveProgress === saveProgressEnum.CHOOSING_SETTING">
         <div id="saveWindow">
-          <div  id="headerDiv">Sauvegarder une image</div>
+            <div id="headerDiv">Sauvegarder une image</div>
             <div id="formDiv">
                 <form>
                     <app-title-input #titleInput (isTitleValidEvent)="verifyTitleValid($event)"></app-title-input>
                     <app-tag-input #tagInput (areTagsValidEvent)="verifyTagsValid($event)"></app-tag-input>
                 </form>
             </div>
-          <br>
+            <br />
             <div id="buttonDiv">
                 <button mat-button mat-dialog-close id="closebutton">Annuler</button>
                 <button mat-button #savebutton id="saveButton" [disabled]="!isSavePossible" (click)="saveDrawing()">Confirmer</button>
@@ -16,6 +16,6 @@
         </div>
     </div>
     <app-save-saving-page *ngIf="saveProgress === saveProgressEnum.SAVING"></app-save-saving-page>
-    <app-save-complete-page [reason]="resultMessage" *ngIf="saveProgress === saveProgressEnum.COMPLETE"></app-save-complete-page>
+    <app-save-complete-page *ngIf="saveProgress === saveProgressEnum.COMPLETE"></app-save-complete-page>
     <app-save-error-page [reason]="resultMessage" *ngIf="saveProgress === saveProgressEnum.ERROR"></app-save-error-page>
 </div>
