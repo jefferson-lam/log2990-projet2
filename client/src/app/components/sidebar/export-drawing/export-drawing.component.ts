@@ -14,7 +14,7 @@ import { ExportErrorPageComponent } from './export-error-page/export-error-page.
     styleUrls: ['./export-drawing.component.scss'],
 })
 export class ExportDrawingComponent implements AfterViewInit, OnInit {
-    @ViewChild('exportImg', { static: false }) exportImg: ElementRef<HTMLImageElement>;
+    @ViewChild('exportImg', { static: false }) private exportImg: ElementRef<HTMLImageElement>;
     @ViewChild('exportCanvas', { static: true }) exportCanvasRef: ElementRef<HTMLCanvasElement>;
     exportCanvas: HTMLCanvasElement;
     exportCtx: CanvasRenderingContext2D;
