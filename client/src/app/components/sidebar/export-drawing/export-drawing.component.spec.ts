@@ -82,7 +82,7 @@ describe('ExportDrawingComponent', () => {
 
         component.changeWhiteToAlpha(imgData);
 
-        imgData = component.exportCtx.getImageData(0, 0, 1, 1);
+        imgData = component['exportCtx'].getImageData(0, 0, 1, 1);
         for (const rgbValue of imgData.data) {
             expect(rgbValue).toBe(0);
         }
@@ -90,7 +90,7 @@ describe('ExportDrawingComponent', () => {
 
     it('refreshCanvas should get baseCtx imageData and draw on exportCtx', () => {
         const baseSpy = spyOn(component.baseCtx, 'getImageData').and.callThrough();
-        const exportSpy = spyOn(component.exportCtx, 'drawImage');
+        const exportSpy = spyOn(component['exportCtx'], 'drawImage');
 
         component.refreshCanvas();
 
@@ -108,7 +108,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('refreshCanvas should call putImageData with exportCtx if no argument passed', () => {
-        const exportSpy = spyOn(component.exportCtx, 'putImageData');
+        const exportSpy = spyOn(component['exportCtx'], 'putImageData');
 
         component.refreshCanvas();
 
@@ -150,7 +150,7 @@ describe('ExportDrawingComponent', () => {
     it('applyFilter should set filter of exportCtx', () => {
         component.applyFilter('invert(100%)');
 
-        expect(component.exportCtx.filter).toBe('invert(100%)');
+        expect(component['exportCtx'].filter).toBe('invert(100%)');
     });
 
     it('applyFilter should call refreshCanvas with true if not invert filter', () => {

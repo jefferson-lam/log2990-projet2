@@ -17,7 +17,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
     @ViewChild('exportImg', { static: false }) private exportImg: ElementRef<HTMLImageElement>;
     @ViewChild('exportCanvas', { static: true }) private exportCanvasRef: ElementRef<HTMLCanvasElement>;
     private exportCanvas: HTMLCanvasElement;
-    exportCtx: CanvasRenderingContext2D;
+    private exportCtx: CanvasRenderingContext2D;
     canvasStyleWidth: string;
     canvasStyleHeight: string;
 
