@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSlider } from '@angular/material/slider';
 import { Stamp } from '@app/classes/stamp';
-import { Tool } from '@app/classes/tool';
 import * as StampConstants from '@app/constants/stamp-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
@@ -21,7 +20,6 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
     maxAngle: number;
     zoomFactor: number;
     tickInterval: number;
-    currentTool: Tool;
     stamps: Map<number, Stamp>;
 
     @ViewChild('relaxedEgg', { static: false }) private relaxedEgg: ElementRef<HTMLElement>;
