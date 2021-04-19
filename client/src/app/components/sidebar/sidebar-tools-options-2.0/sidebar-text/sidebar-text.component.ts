@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import * as TextConstants from '@app/constants/text-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
@@ -22,8 +21,6 @@ export class SidebarTextComponent implements OnInit, AfterViewInit {
     fontFamily: string;
     textBold: boolean;
     textItalic: boolean;
-
-    currentTool: Tool;
 
     @Output() fontFamilyChanged: EventEmitter<string>;
     @Output() fontSizeChanged: EventEmitter<number>;
