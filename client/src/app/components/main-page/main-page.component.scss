@@ -32,6 +32,7 @@
 .header-item {
     justify-content: center;
     text-align: center;
+    align-self: flex-start;
 }
 
 .footer-item {
@@ -44,12 +45,13 @@
     width: 20%;
     min-width: min-content;
 }
+
 #main-buttons {
     align-items: center;
     display: flex;
     flex-direction: column;
     width: 200px;
-    margin-bottom: 150px;
+    margin-bottom: 250px;
 }
 
 #main-buttons > button {
@@ -60,14 +62,12 @@
 }
 
 #main-title {
-    margin-top: 180px;
+    margin-top: 250px;
     font-family: 'Rubik', serif;
     font-size: calc(0.5em + 6vw);
     font-weight: 900;
     letter-spacing: 0.1em;
     -webkit-text-fill-color: transparent;
-    //-webkit-text-stroke-width: 1px;
-    //-webkit-text-stroke-color: #4682b4;
     text-shadow: 0 0 #f0f3bd, 8px 8px #0c1d34;
 }
 
@@ -95,4 +95,5 @@
 
 a {
     text-decoration: none;
+    color: black;
 }
