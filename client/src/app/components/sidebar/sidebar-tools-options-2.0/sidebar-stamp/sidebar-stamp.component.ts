@@ -37,12 +37,12 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
     @Output() rotationAngleChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService, public stampService: StampService) {
-        this.rotationAngle = StampConstants.INIT_ROTATION_ANGLE;
+        this.rotationAngle = this.stampService.realRotationValues;
         this.minFactor = StampConstants.MIN_ZOOM_FACTOR;
         this.maxFactor = StampConstants.MAX_ZOOM_FACTOR;
         this.minAngle = StampConstants.MIN_ANGLE;
         this.maxAngle = StampConstants.MAX_ANGLE;
-        this.zoomFactor = StampConstants.INIT_ZOOM_FACTOR;
+        this.zoomFactor = this.stampService.imageZoomFactor;
         this.tickInterval = StampConstants.TICK_INTERVAL;
 
         this.stampSourceChanged = new EventEmitter();
