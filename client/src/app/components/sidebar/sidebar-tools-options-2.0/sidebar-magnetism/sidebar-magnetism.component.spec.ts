@@ -42,7 +42,7 @@ describe('SidebarMagnetismComponent', () => {
     });
 
     it('emission of referenceCornerChanged should change magnetismService.referenceResizerMode', () => {
-        component.magnetizedPointChanged.emit(MagnestismConstants.MagnetizedPoint.TOP_LEFT);
+        component['magnetizedPointChanged'].emit(MagnestismConstants.MagnetizedPoint.TOP_LEFT);
         expect(component['magnetismService'].magnetizedPoint).toEqual(MagnestismConstants.MagnetizedPoint.TOP_LEFT);
     });
 
@@ -60,7 +60,7 @@ describe('SidebarMagnetismComponent', () => {
 
     it('emitReferencePoint should emit component.referenceCornerChanged', () => {
         const EXPECTED_MODE = MagnestismConstants.MagnetizedPoint.BOTTOM_MIDDLE;
-        const referenceCornerChangedSpy = spyOn(component.magnetizedPointChanged, 'emit');
+        const referenceCornerChangedSpy = spyOn(component['magnetizedPointChanged'], 'emit');
         component.emitReferencePoint(EXPECTED_MODE);
         expect(referenceCornerChangedSpy).toHaveBeenCalledWith(EXPECTED_MODE);
     });
