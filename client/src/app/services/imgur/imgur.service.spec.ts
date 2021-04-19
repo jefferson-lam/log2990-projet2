@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { ImgurService } from './imgur.service';
 
+// tslint:disable: no-string-literal
 describe('ImgurService', () => {
     let service: ImgurService;
     let httpMock: HttpTestingController;
@@ -131,7 +132,7 @@ describe('ImgurService', () => {
     });
 
     it('resetServiceSettings should split string correctly', () => {
-        const nextSpy = spyOn(service.serviceSettingsSource, 'next');
+        const nextSpy = spyOn(service['serviceSettingsSource'], 'next');
 
         service.resetServiceSettings();
 

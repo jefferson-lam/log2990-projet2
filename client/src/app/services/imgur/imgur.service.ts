@@ -19,7 +19,7 @@ export class ImgurService {
     exportProgress: ExportDrawingConstants.ExportProgress;
     serviceSettings: [number, string];
 
-    serviceSettingsSource: Subject<[number, string]>;
+    private serviceSettingsSource: Subject<[number, string]>;
     serviceSettingsObservable: Observable<[number, string]>;
 
     constructor() {
