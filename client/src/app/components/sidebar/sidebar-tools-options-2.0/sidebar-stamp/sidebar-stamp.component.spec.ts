@@ -88,8 +88,8 @@ describe('SidebarStampComponent', () => {
     });
 
     it('setStamp should call changeStampSource, changeBorderIndicator, emitImageSrc and emitRotateAngle', () => {
-        const changeStampSourceSpy = spyOn(stampComponent, 'changeStampSource');
-        const changeBorderIndicatorSpy = spyOn(stampComponent, 'changeBorderIndicator');
+        const changeStampSourceSpy = spyOn<any>(stampComponent, 'changeStampSource');
+        const changeBorderIndicatorSpy = spyOn<any>(stampComponent, 'changeBorderIndicator');
         const emitImageSrcSpy = spyOn(stampComponent, 'emitImageSrc');
         const emitRotateAngleSpy = spyOn(stampComponent, 'emitRotateAngle');
 
@@ -105,7 +105,7 @@ describe('SidebarStampComponent', () => {
 
     it('changeBorderIndicator should call resetBorders', () => {
         const resetBorderSpy = spyOn<any>(stampComponent, 'resetBorders');
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_6);
         expect(resetBorderSpy).toHaveBeenCalled();
     });
 
@@ -122,78 +122,78 @@ describe('SidebarStampComponent', () => {
 
     it('changeBorderIndicator should call resetBorders', () => {
         const resetBorderSpy = spyOn<any>(stampComponent, 'resetBorders');
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_6);
         expect(resetBorderSpy).toHaveBeenCalled();
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_6);
         expect(stampComponent['corgiPortrait'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_5);
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_5);
         expect(stampComponent['huskyPortrait'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_4);
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_4);
         expect(stampComponent['toastEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_3);
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_3);
         expect(stampComponent['hungryEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_2);
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_2);
         expect(stampComponent['sleepyEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_1);
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_1);
         expect(stampComponent['relaxedEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeStampSource should change imageSource value of index 1', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_1);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_1);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_1.svg');
     });
 
     it('changeStampSource should change imageSource value of index 2', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_2);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_2);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_2.svg');
     });
 
     it('changeStampSource should change imageSource value of index 3', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_3);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_3);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_3.svg');
     });
 
     it('changeStampSource should change imageSource value of index 4', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_4);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_4);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_4.svg');
     });
 
     it('changeStampSource should change imageSource value of index 5', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_5);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_5);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_5.svg');
     });
 
     it('changeStampSource should change imageSource value of index 6', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_6);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_6);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_6.svg');
     });

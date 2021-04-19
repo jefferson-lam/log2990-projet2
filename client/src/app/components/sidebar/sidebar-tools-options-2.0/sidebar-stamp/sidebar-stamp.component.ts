@@ -90,12 +90,12 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
         this.corgiPortrait.nativeElement.style.border = '';
     }
 
-    changeBorderIndicator(imageIndex: number): void {
+    private changeBorderIndicator(imageIndex: number): void {
         this.resetBorders();
         (this.stamps.get(imageIndex) as Stamp).element.style.border = '2px dashed floralwhite';
     }
 
-    changeStampSource(stampIndex: number): void {
+    private changeStampSource(stampIndex: number): void {
         this.stampClickState = true;
         this.imageSource = (this.stamps.get(stampIndex) as Stamp).imageSource;
     }
