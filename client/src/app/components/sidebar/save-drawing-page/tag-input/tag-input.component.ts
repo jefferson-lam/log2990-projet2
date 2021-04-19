@@ -9,11 +9,22 @@ import * as DatabaseConstants from '@common/validation/database-constants';
     styleUrls: ['./tag-input.component.scss'],
 })
 export class TagInputComponent {
+    constructor() {
+        this.tags = [];
+        this.areTagsValidEvent = new EventEmitter<boolean>();
+        this.distinctTagsRequirement = TagInputConstants.DISTINCT_TAGS_REQUIREMENT;
+        this.minLengthRequirement = TagInputConstants.MIN_LENGTH_REQUIREMENT;
+        this.maxLengthRequirement = TagInputConstants.MAX_LENGTH_REQUIREMENT;
+        this.noSpecialCharacterRequirement = TagInputConstants.NO_SPECIAL_CARACTER_REQUIREMENT;
+        this.maxTagsCountRequirement = TagInputConstants.MAX_TAGS_COUNT_REQUIREMENT;
+        this.isSavePossible = false;
+    }
     @ViewChild('tagInput') tagInput: ElementRef;
     currentTag: string;
     tags: string[];
-
     isSavePossible: boolean;
+    unsatisfiedRequirements: number;
+
     @Output() areTagsValidEvent: EventEmitter<boolean>;
 
     distinctTagsRequirement: string;
@@ -31,22 +42,12 @@ export class TagInputComponent {
     maxTagsCountRequirement: string;
     maxTagsCountDivClass: string;
 
-    constructor() {
-        this.tags = new Array();
-        this.isSavePossible = false;
-        this.areTagsValidEvent = new EventEmitter<boolean>();
-        this.distinctTagsRequirement = TagInputConstants.DISTINCT_TAGS_REQUIREMENT;
-        this.minLengthRequirement = TagInputConstants.MIN_LENGTH_REQUIREMENT;
-        this.maxLengthRequirement = TagInputConstants.MAX_LENGTH_REQUIREMENT;
-        this.noSpecialCharacterRequirement = TagInputConstants.NO_SPECIAL_CARACTER_REQUIREMENT;
-        this.maxTagsCountRequirement = TagInputConstants.MAX_TAGS_COUNT_REQUIREMENT;
-    }
-
     addTag(tag: string): void {
         tag = tag.trim();
         if (this.validateTag(tag)) {
             this.tags.push(tag);
         }
+        this.isSavePossible = false;
         this.tagInput.nativeElement.value = '';
         this.isSavePossible = false;
     }
