@@ -41,7 +41,7 @@ export class RectangleCommand extends Command {
             height = Math.sign(height) * shortestSide;
         }
         const borderColor: string = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (Math.abs(width) > this.lineWidth && Math.abs(height) > this.lineWidth) {
+        if (Math.abs(width) > this.lineWidth * 2 && Math.abs(height) > this.lineWidth * 2) {
             width -= Math.sign(width) * this.lineWidth;
             height -= Math.sign(height) * this.lineWidth;
             this.drawTypeRectangle(ctx, path, width, height, this.fillMode, this.lineWidth, this.primaryColor, borderColor);
@@ -80,7 +80,13 @@ export class RectangleCommand extends Command {
         ctx.stroke();
         if (fillMode !== ToolConstants.FillMode.OUTLINE) {
             ctx.fillStyle = fillColor;
-            ctx.fill();
+
+            ctx.fillRect(
+                startX + (Math.sign(width) * lineWidth) / 2,
+                startY + (Math.sign(height) * lineWidth) / 2,
+                width - Math.sign(width) * lineWidth,
+                height - Math.sign(height) * lineWidth,
+            );
         }
     }
 }
