@@ -1,7 +1,7 @@
 <div class="modal-dialog">
     <div *ngIf="saveProgress === saveProgressEnum.CHOOSING_SETTING">
         <div id="saveWindow">
-          <h1 id="headerDiv">Sauvegarder une image</h1>
+          <div  id="headerDiv">Sauvegarder une image</div>
             <div id="formDiv">
                 <form>
                     <app-title-input #titleInput (isTitleValidEvent)="verifyTitleValid($event)"></app-title-input>
