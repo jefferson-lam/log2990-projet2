@@ -63,44 +63,25 @@ export class PolygoneCommand extends Command {
         secondaryColor: string,
         lineWidth: number,
     ): void {
-        const ANGLE_EVEN = ShapeConstants.END_ANGLE / sides;
-        ctx.beginPath();
-        ctx.lineJoin = 'round';
-        if (sides % 2 !== 0) {
-            for (let i = 0; i < sides; i++) {
-                ctx.lineTo(
-                    startX + radiusWithin * Math.cos(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
-                    startY + radiusWithin * Math.sin(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
-                );
-            }
-        } else {
-            ctx.moveTo(startX + radiusWithin, startY);
-            for (let i = 0; i < sides; i++) {
-                ctx.lineTo(startX + radiusWithin * Math.cos(ANGLE_EVEN * i), startY + radiusWithin * Math.sin(ANGLE_EVEN * i));
-            }
-        }
-        ctx.closePath();
+        this.drawShape(ctx, radiusWithin, startX, startY, sides);
         ctx.strokeStyle = secondaryColor;
         ctx.lineWidth = lineWidth;
         ctx.stroke();
         if (fillMethod !== ToolConstants.FillMode.OUTLINE) {
             ctx.fillStyle = primaryColor;
-            this.drawFill(ctx, radiusWithin - lineWidth / 2, startX, startY, sides, lineWidth);
+            this.drawShape(ctx, radiusWithin - lineWidth / 2, startX, startY, sides);
             ctx.fill();
         }
     }
 
-    private drawFill(ctx: CanvasRenderingContext2D, radiusWithin: number, startX: number, startY: number, sides: number, lineWidth: number): void {
-        // lineWidth *= (1 + sides) / 100;
+    private drawShape(ctx: CanvasRenderingContext2D, radiusWithin: number, startX: number, startY: number, sides: number): void {
         const ANGLE_EVEN = ShapeConstants.END_ANGLE / sides;
         ctx.beginPath();
         ctx.lineJoin = 'round';
         if (sides % 2 !== 0) {
             for (let i = 0; i < sides; i++) {
-                ctx.lineTo(
-                    startX + radiusWithin * Math.cos(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
-                    startY + radiusWithin * Math.sin(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
-                );
+                const angle = ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI;
+                ctx.lineTo(startX + radiusWithin * Math.cos(angle), startY + radiusWithin * Math.sin(angle));
             }
         } else {
             ctx.moveTo(startX + radiusWithin, startY);
