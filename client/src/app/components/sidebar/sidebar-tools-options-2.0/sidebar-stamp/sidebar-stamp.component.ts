@@ -25,11 +25,11 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
     stamps: Map<number, Stamp>;
 
     @ViewChild('relaxedEgg', { static: false }) private relaxedEgg: ElementRef<HTMLElement>;
-    @ViewChild('sleepyEgg', { static: false }) sleepyEgg: ElementRef<HTMLElement>;
-    @ViewChild('hungryEgg', { static: false }) hungryEgg: ElementRef<HTMLElement>;
-    @ViewChild('toastEgg', { static: false }) toastEgg: ElementRef<HTMLElement>;
-    @ViewChild('huskyPortrait', { static: false }) huskyPortrait: ElementRef<HTMLElement>;
-    @ViewChild('corgiPortrait', { static: false }) corgiPortrait: ElementRef<HTMLElement>;
+    @ViewChild('sleepyEgg', { static: false }) private sleepyEgg: ElementRef<HTMLElement>;
+    @ViewChild('hungryEgg', { static: false }) private hungryEgg: ElementRef<HTMLElement>;
+    @ViewChild('toastEgg', { static: false }) private toastEgg: ElementRef<HTMLElement>;
+    @ViewChild('huskyPortrait', { static: false }) private huskyPortrait: ElementRef<HTMLElement>;
+    @ViewChild('corgiPortrait', { static: false }) private corgiPortrait: ElementRef<HTMLElement>;
     @ViewChild('angleSlider') angleSlider: MatSlider;
 
     @Output() stampSourceChanged: EventEmitter<string>;
