@@ -15,7 +15,6 @@ export class PolygoneCommand extends Command {
 
     constructor(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService) {
         super();
-        this.cornerCoords = [];
         this.setValues(canvasContext, polygoneService);
     }
 
@@ -30,7 +29,7 @@ export class PolygoneCommand extends Command {
         this.secondaryColor = polygoneService.secondaryColor;
         this.lineWidth = polygoneService.lineWidth;
         this.numberSides = polygoneService.numberSides;
-        Object.assign(this.cornerCoords, polygoneService.cornerCoords);
+        this.cornerCoords = Object.assign([], polygoneService.cornerCoords);
     }
 
     private drawPolygone(ctx: CanvasRenderingContext2D, path: Vec2[], sides: number): void {
