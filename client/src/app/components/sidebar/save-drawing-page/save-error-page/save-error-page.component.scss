@@ -6,8 +6,12 @@
 
 #errorDivHeader {
     display: flex;
+    text-align: center;
     justify-content: center;
-    margin: auto;
+    align-self: center;
+    font-size: x-large;
+    padding-bottom: 25px;
+    font-family: Rubik, serif;
 }
 
 #saveErrorDiv {
@@ -34,6 +38,7 @@
     font-size: 15px;
     display: flex;
     justify-content: center;
+    font-family: Rubik, serif;
 }
 
 #buttonDiv {
@@ -53,3 +58,8 @@
     color: black;
     background-color: slategrey;
 }
+
+.mat-button{
+  font-family: Rubik, serif;
+}
+
