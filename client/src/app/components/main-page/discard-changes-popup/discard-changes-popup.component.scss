@@ -10,13 +10,21 @@
     display: flex;
 }
 
-#discardHeader,
 #buttonDiv {
     text-align: center;
     justify-content: center;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+}
+
+#discardHeader{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-self: center;
+  font-size: 22px;
+  font-family: Rubik, serif;
 }
 
 #discardButton,
