@@ -95,13 +95,13 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('resetShowcasedDrawings should call getDrawingsByTag if tagsValue has more than one tag', () => {
-        component.tagsInSearch = ['test1', 'test2'];
+        component['tagsInSearch'] = ['test1', 'test2'];
         component['resetShowcasedDrawings']();
-        expect(databaseServiceSpy.getDrawingsByTags).toHaveBeenCalledWith(component.tagsInSearch);
+        expect(databaseServiceSpy.getDrawingsByTags).toHaveBeenCalledWith(component['tagsInSearch']);
     });
 
     it('resetShowcasedDrawings should call getDrawings if tagsValue has no tags', () => {
-        component.tagsInSearch = [];
+        component['tagsInSearch'] = [];
         component['resetShowcasedDrawings']();
         expect(databaseServiceSpy.getDrawings).toHaveBeenCalled();
         expect(databaseServiceSpy.getDrawingsByTags).not.toHaveBeenCalled();
@@ -214,7 +214,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         const input = document.createElement('input');
         const event = { value: 'test', input } as MatChipInputEvent;
-        const spyTagPushed = spyOn(component.tagsInSearch, 'push');
+        const spyTagPushed = spyOn(component['tagsInSearch'], 'push');
         component['checkIfTagExists']('test');
         component.addTag(event);
         expect(spyTagPushed).toHaveBeenCalled();
@@ -230,7 +230,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         const input = document.createElement('input');
         const event = { value: 'test', input } as MatChipInputEvent;
-        const spyTagPushed = spyOn(component.tagsInSearch, 'push');
+        const spyTagPushed = spyOn(component['tagsInSearch'], 'push');
         component['checkIfTagExists']('test');
         component.addTag(event);
         expect(spyTagPushed).not.toHaveBeenCalled();
@@ -240,14 +240,14 @@ describe('MainPageCarrouselComponent', () => {
     it('addTag should send error message', () => {
         const input = document.createElement('input');
         const event = { value: 'test', input } as MatChipInputEvent;
-        const spyTagPushed = spyOn(component.tagsInSearch, 'push');
+        const spyTagPushed = spyOn(component['tagsInSearch'], 'push');
         component.addTag(event);
         expect(spyTagPushed).not.toHaveBeenCalled();
         expect(component.tagErrorPresent).toEqual(true);
     });
 
     it('addTag should send error message if tag is already in search bar', () => {
-        component.tagsInSearch = ['test', 'test2'];
+        component['tagsInSearch'] = ['test', 'test2'];
         const input = document.createElement('input');
         const event = { value: 'test', input } as MatChipInputEvent;
         component['setErrorInTag']('Étiquette déjà incluse. Veuillez mettre une étiquette différente.');
@@ -259,7 +259,7 @@ describe('MainPageCarrouselComponent', () => {
     it('addTag should not add tag if tag is already in input', () => {
         const input = document.createElement('input');
         const event = { value: '', input } as MatChipInputEvent;
-        const spyTagPushed = spyOn(component.tagsInSearch, 'push');
+        const spyTagPushed = spyOn(component['tagsInSearch'], 'push');
         component.addTag(event);
         expect(spyTagPushed).not.toHaveBeenCalled();
         expect(component.tagErrorPresent).toEqual(false);
@@ -271,8 +271,8 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('removeTag should not remove tag in index', () => {
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
-        component.tagsInSearch = ['test', 'test2', 'test3', 'test4'];
+        const spySplice = spyOn(component['tagsInSearch'], 'splice');
+        component['tagsInSearch'] = ['test', 'test2', 'test3', 'test4'];
         component.removeTag('test3');
         expect(spySplice).not.toHaveBeenCalled();
     });
@@ -284,8 +284,8 @@ describe('MainPageCarrouselComponent', () => {
                 body: '{"_id":"000000000000000000000000","title":"TEST","tags":["test1", "test2"]}',
             }),
         );
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
-        component.tagsInSearch = [];
+        const spySplice = spyOn(component['tagsInSearch'], 'splice');
+        component['tagsInSearch'] = [];
         component.removeTag('test3');
         expect(spySplice).not.toHaveBeenCalled();
     });
@@ -465,8 +465,8 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
         tick(TICK_TIME);
-        component.tagsInSearch = ['test1', 'test2', 'test3', 'test4'];
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
+        component['tagsInSearch'] = ['test1', 'test2', 'test3', 'test4'];
+        const spySplice = spyOn(component['tagsInSearch'], 'splice');
         component.removeTag('test3');
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
@@ -482,8 +482,8 @@ describe('MainPageCarrouselComponent', () => {
                 body: '',
             }),
         );
-        component.tagsInSearch = [];
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
+        component['tagsInSearch'] = [];
+        const spySplice = spyOn(component['tagsInSearch'], 'splice');
         component.removeTag('test');
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();

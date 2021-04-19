@@ -30,7 +30,7 @@ export class MainPageCarrouselComponent {
     removable: boolean;
 
     separatorKeysCodes: number[];
-    tagsInSearch: string[];
+    private tagsInSearch: string[];
 
     drawingCounter: number;
     fetchedDrawingByTag: string[];
