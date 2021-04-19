@@ -14,7 +14,7 @@ export class SidebarMagnetismComponent implements OnInit {
     isMagnetismOn: boolean;
     MAGNETISM_CORNERS: typeof MagnestismConstants.MagnetizedPoint;
 
-    @Output() magnetismValueChanged: EventEmitter<boolean>;
+    @Output() private magnetismValueChanged: EventEmitter<boolean>;
     @Output() magnetizedPointChanged: EventEmitter<MagnestismConstants.MagnetizedPoint>;
 
     constructor(public magnetismService: MagnetismService) {

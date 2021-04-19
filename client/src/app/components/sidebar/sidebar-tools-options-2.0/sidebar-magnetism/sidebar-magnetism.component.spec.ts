@@ -37,7 +37,7 @@ describe('SidebarMagnetismComponent', () => {
     });
 
     it('emission of magnetismValueChanged should change magnetismService.isMagnetismOn', () => {
-        component.magnetismValueChanged.emit(false);
+        component['magnetismValueChanged'].emit(false);
         expect(component['magnetismService'].isMagnetismOn).toBeFalse();
     });
 
@@ -53,7 +53,7 @@ describe('SidebarMagnetismComponent', () => {
     });
 
     it('emitMagnetismValue should emit component.isMagnetismOn', () => {
-        const magnetismValueSpy = spyOn(component.magnetismValueChanged, 'emit');
+        const magnetismValueSpy = spyOn(component['magnetismValueChanged'], 'emit');
         component.emitMagnetismValue();
         expect(magnetismValueSpy).toHaveBeenCalledWith(component.isMagnetismOn);
     });
