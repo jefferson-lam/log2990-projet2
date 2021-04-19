@@ -12,6 +12,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle-servic
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject } from 'rxjs';
 import { SidebarComponent } from './sidebar.component';
@@ -25,6 +26,7 @@ describe('SidebarComponent', () => {
     let lineStub: ToolStub;
     let rectangleStub: ToolStub;
     let ellipseStub: ToolStub;
+    let textStub: ToolStub;
     let rectangleSelectionServiceStub: RectangleSelectionService;
     let clipboardServiceStub: jasmine.SpyObj<ClipboardService>;
     let fixture: ComponentFixture<SidebarComponent>;
@@ -50,19 +52,23 @@ describe('SidebarComponent', () => {
         lineStub = new LineService({} as DrawingService, undoRedoServiceSpy);
         rectangleStub = new RectangleService({} as DrawingService, undoRedoServiceSpy);
         ellipseStub = new EllipseService({} as DrawingService, undoRedoServiceSpy);
+        textStub = new TextService({} as DrawingService, {} as UndoRedoService);
         rectangleSelectionServiceStub = new RectangleSelectionService(
             {} as DrawingService,
             undoRedoServiceSpy,
             {} as ResizerHandlerService,
             rectangleStub as RectangleService,
         );
-
         clipboardServiceStub = jasmine.createSpyObj('ClipboardService', ['copySelection', 'cutSelection', 'deleteSelection', 'pasteSelection']);
-        toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject']);
+        toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['selectTool'], ['currentTool', 'currentToolSubject', 'textService']);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(pencilStub);
         (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'currentToolSubject')?.get as jasmine.Spy<
             () => BehaviorSubject<Tool>
         >).and.returnValue(new BehaviorSubject<Tool>(toolManagerServiceSpy.currentTool));
+        (Object.getOwnPropertyDescriptor(toolManagerServiceSpy, 'textService')?.get as jasmine.Spy<() => TextService>).and.returnValue(
+            textStub as TextService,
+        );
+
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [
@@ -75,6 +81,7 @@ describe('SidebarComponent', () => {
                 { provide: PopupManagerService, useValue: popupManagerSpy },
                 { provide: ClipboardService, useValue: clipboardServiceStub },
                 { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: TextService, useValue: textStub },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();

@@ -32,12 +32,12 @@ export class ShortcutManagerService {
     }
 
     private isShortcutAllowed(): boolean {
-        return !this.isTextInput && !this.popupManager.isPopUpOpen;
+        return !this.isTextInput && !this.popupManager.isPopUpOpen && !this.toolManager.textService.lockKeyboard;
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
         if (!this.isShortcutAllowed()) return;
-        if (event.key.match(/^(1|2|3|a|b|c|d|e|i|l|r|s|v)$/)) {
+        if (event.key.match(/^(1|2|3|a|b|c|d|e|i|l|r|s|t|v)$/)) {
             this.toolManager.selectTool(event.key);
         }
     }
@@ -142,9 +142,11 @@ export class ShortcutManagerService {
     }
 
     onDeleteKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
         if (!this.isShortcutAllowed()) return;
-        this.clipboardService.deleteSelection();
+        if (this.toolManager.currentTool instanceof RectangleSelectionService || this.toolManager.currentTool instanceof EllipseSelectionService) {
+            event.preventDefault();
+            this.clipboardService.deleteSelection();
+        }
     }
 
     onMinusKeyDown(): void {
@@ -180,6 +182,11 @@ export class ShortcutManagerService {
         if (this.toolManager.currentTool instanceof StampService) {
             this.toolManager.currentTool.changeRotationAngleNormal();
         }
+    }
+
+    onEscapeKeyDown(): void {
+        if (this.popupManager.isPopUpOpen) return;
+        this.toolManager.currentTool.onEscapeKeyDown();
     }
 
     async selectionMovementOnArrowDown(event: KeyboardEvent, directive: DirectionalMovementDirective): Promise<void> {

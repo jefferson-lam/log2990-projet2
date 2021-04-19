@@ -15,6 +15,7 @@ import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/e
 import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
+import { TextService } from '@app/services/tools/text/text-service';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
@@ -40,6 +41,7 @@ export class ToolManagerService {
         public lassoSelectionService: LassoSelectionService,
         public paintBucketService: PaintBucketService,
         public stampService: StampService,
+        public textService: TextService,
     ) {
         this.bindKeys();
         this.currentTool = this.pencilService;
@@ -61,7 +63,8 @@ export class ToolManagerService {
             .set(ToolManagerConstants.PIPETTE_KEY, this.pipetteService)
             .set(ToolManagerConstants.LASSO_SELECTION_KEY, this.lassoSelectionService)
             .set(ToolManagerConstants.PAINT_BUCKET_KEY, this.paintBucketService)
-            .set(ToolManagerConstants.STAMP_KEY, this.stampService);
+            .set(ToolManagerConstants.STAMP_KEY, this.stampService)
+            .set(ToolManagerConstants.TEXT_KEY, this.textService);
     }
 
     selectTool(keyShortcut: string): Tool {
@@ -90,6 +93,7 @@ export class ToolManagerService {
         this.lineService.setPrimaryColor(color);
         this.aerosolService.setPrimaryColor(color);
         this.paintBucketService.setPrimaryColor(color);
+        this.textService.setPrimaryColor(color);
     }
 
     setSecondaryColorTools(color: string): void {

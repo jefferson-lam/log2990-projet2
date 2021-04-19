@@ -90,20 +90,13 @@ export class LassoSelectionService extends ToolSelectionService {
             this.lineService.linePathData[this.lineService.linePathData.length - 1] = mousePosition;
             this.isValidSegment = true;
         } else {
-            this.isValidSegment = this.validateSegment(this.pathData[this.pathData.length - 1], this.pathData);
+            this.isValidSegment = !this.isIntersect(this.pathData[this.pathData.length - 1], this.pathData);
         }
 
         this.drawingService.previewCtx.canvas.style.cursor = 'no-drop';
         if (this.isValidSegment) {
             this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
         }
-    }
-
-    validateSegment(point: Vec2, pathData: Vec2[]): boolean {
-        return !(
-            this.isIntersect(point, pathData) ||
-            (this.arePointsEqual(point, this.initialPoint) && this.numSides < SelectionConstants.MINIMUM_LINE_LASSO)
-        );
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
@@ -166,22 +159,13 @@ export class LassoSelectionService extends ToolSelectionService {
     isIntersect(point: Vec2, pathData: Vec2[]): boolean {
         const newLine = { start: pathData[pathData.length - 2], end: point };
         let pathLine;
-        let numIntersections = 0;
         for (let i = 0; i < pathData.length - 2; i++) {
             pathLine = { start: pathData[i], end: pathData[i + 1] };
-            const isIntersect = this.segmentIntersectionService.intersects(newLine, pathLine);
-            if (isIntersect) {
-                ++numIntersections;
+            if (this.segmentIntersectionService.intersects(newLine, pathLine)) {
+                return true;
             }
         }
-        if (numIntersections === 0) {
-            return false;
-        }
-        if (numIntersections === 1 && this.arePointsEqual(point, this.initialPoint)) {
-            return false;
-        } else {
-            return true;
-        }
+        return false;
     }
 
     computeSelectionSize(pathData: Vec2[]): number[] {
