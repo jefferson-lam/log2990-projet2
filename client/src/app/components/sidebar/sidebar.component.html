@@ -29,10 +29,10 @@
                 </li>
             </ul>
             <ul class="tools-sidebar">
-                <li id="toolIdLeft" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons | slice: 0:7" class="listToolsClass">
+                <li id="toolId" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons | slice: 0:7" class="listToolsClass">
                     <mat-icon
                         class="toolClass"
-                        id="icon-button-left-{{ tool.name }}"
+                        id="icon-button-{{ tool.name }}"
                         matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
                         [matTooltipPosition]="'right'"
                         (click)="onSelectTool(tool)"
@@ -76,10 +76,10 @@
                 </li>
             </ul>
             <ul class="tools-sidebar">
-                <li id="toolIdRight" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons | slice: 7:14" class="listToolsClass">
+                <li id="toolId" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons | slice: 7:14" class="listToolsClass">
                     <mat-icon
                         class="toolClass"
-                        id="icon-button-right-{{ tool.name }}"
+                        id="icon-button-{{ tool.name }}"
                         matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
                         [matTooltipPosition]="'right'"
                         (click)="onSelectTool(tool)"
