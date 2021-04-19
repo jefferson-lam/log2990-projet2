@@ -23,7 +23,6 @@ export class SaveDrawingComponent implements AfterViewInit {
     saveProgress: SaveProgress;
     private request: Message;
     private isTitleValid: boolean;
-    areTagsValid: boolean;
     isSavePossible: boolean;
 
     private imageURL: string;
@@ -39,7 +38,6 @@ export class SaveDrawingComponent implements AfterViewInit {
         this.saveProgress = SaveProgress.CHOOSING_SETTING;
         this.request = { title: 'Error', body: '' };
         this.isTitleValid = false;
-        this.areTagsValid = true;
         this.isSavePossible = false;
     }
 
@@ -53,7 +51,6 @@ export class SaveDrawingComponent implements AfterViewInit {
     }
 
     verifyTagsValid(areTagsValid: boolean): void {
-        this.areTagsValid = areTagsValid;
         this.verifySavePossible();
     }
 
