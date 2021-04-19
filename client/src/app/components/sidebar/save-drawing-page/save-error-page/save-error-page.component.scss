@@ -45,7 +45,6 @@
     display: flex;
     justify-content: center;
     margin-top: 50px;
-    font-family: Rubik, serif;
 }
 
 #closebutton {
@@ -53,11 +52,14 @@
     font-size: large;
     background-color: coral;
     width: 125px;
-    font-family: Rubik, serif;
 }
 
 #closebutton:hover {
     color: black;
     background-color: slategrey;
-    font-family: Rubik, serif;
 }
+
+.mat-button{
+  font-family: Rubik, serif;
+}
+
