@@ -19,7 +19,7 @@ export class SidebarPolygoneComponent implements OnInit {
     fillMode: number | undefined;
 
     @Output() private toolSizeChanged: EventEmitter<number>;
-    @Output() fillModeChanged: EventEmitter<number>;
+    @Output() private fillModeChanged: EventEmitter<number>;
     @Output() numberOfPolySides: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
