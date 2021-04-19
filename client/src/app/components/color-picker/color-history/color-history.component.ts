@@ -14,7 +14,7 @@ export class ColorHistoryComponent implements AfterViewInit, OnInit {
     private secondary: Rgba;
     @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 
-    savedColors: Rgba[];
+    private savedColors: Rgba[];
 
     constructor(public colorService: ColorService) {
         this.savedColors = new Array();

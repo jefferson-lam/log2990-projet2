@@ -23,7 +23,7 @@ describe('ColorHistoryComponent', () => {
         fixture.detectChanges();
         const placeholder = { red: 255, green: 255, blue: 255, alpha: 1 };
         for (let i = 0; i < ColorConstants.MAX_SAVED_COLORS; i++) {
-            component.savedColors.push(placeholder);
+            component['savedColors'].push(placeholder);
         }
 
         colorService = TestBed.inject(ColorService);
@@ -82,7 +82,7 @@ describe('ColorHistoryComponent', () => {
     });
 
     it('should fill history with default colors if savedColors is empty', () => {
-        component.savedColors = new Array();
+        component['savedColors'] = new Array();
         const ctxFillRectSpy = spyOn(component['ctx'], 'fillRect');
         const convertRgbaStringSpy = spyOn(colorService, 'convertRgbaToString');
         component.ngAfterViewInit();
