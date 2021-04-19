@@ -2,19 +2,19 @@
     font-family: 'Rubik', serif;
 }
 
-#colorPicker {
-    margin-left: -20px;
-}
-
 #settingsContainer {
     color: #eee;
-    margin-left: 20px;
+    margin-left: 10px;
     overflow-x: hidden;
 }
 
 #title {
     font-weight: bolder;
     font-size: x-large;
+}
+
+#settingsWrapper {
+    margin-left: 10px;
 }
 
 #imagesContainer {
@@ -35,4 +35,8 @@
 .image:active {
     background-color: #4682b4;
     border: 2px dashed floralwhite;
+}
+
+#colorPicker {
+    margin-left: -20px;
 }

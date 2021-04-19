@@ -9,6 +9,8 @@ import { ResizerHandlerService } from '@app/services/tools/selection/resizer/res
 import { SelectionComponent } from './selection.component';
 
 // tslint:disable:max-file-line-count
+// tslint:disable:no-string-literal
+// tslint:disable:no-any
 describe('SelectionComponent', () => {
     let component: SelectionComponent;
     let fixture: ComponentFixture<SelectionComponent>;
@@ -55,10 +57,10 @@ describe('SelectionComponent', () => {
             return;
         });
         resizeSpy = spyOn(resizerHandlerService, 'resize');
-        getTransformValuesSpy = spyOn(component, 'getTransformValues').and.callThrough();
+        getTransformValuesSpy = spyOn<any>(component, 'getTransformValues').and.callThrough();
         setCanvasPositionSpy = spyOn(component, 'setCanvasPosition').and.callThrough();
         drawScaledSpy = spyOn(component, 'drawWithScalingFactors');
-        drawSelectionSpy = spyOn(component.selectionCtx, 'drawImage');
+        drawSelectionSpy = spyOn(component['selectionCtx'], 'drawImage');
         drawImagePreviewSpy = spyOn(component.previewSelectionCtx, 'drawImage');
         moveEvent = {
             distance: {
@@ -87,8 +89,8 @@ describe('SelectionComponent', () => {
         const expectedHeight = 100;
         const expectedWidth = 500;
         drawingService.canvasSizeSubject.next([expectedWidth, expectedHeight]);
-        expect(component.selectionContainer.nativeElement.style.height).toEqual('100px');
-        expect(component.selectionContainer.nativeElement.style.width).toEqual('500px');
+        expect(component['selectionContainer'].nativeElement.style.height).toEqual('100px');
+        expect(component['selectionContainer'].nativeElement.style.width).toEqual('500px');
     });
 
     it('onCanvasMove should call setCanvasPosition if emittedValue is true', () => {
@@ -153,7 +155,7 @@ describe('SelectionComponent', () => {
             x: 0,
             y: 0,
         };
-        const result = component.getTransformValues(component.selectionCanvas);
+        const result = component['getTransformValues'](component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -163,7 +165,7 @@ describe('SelectionComponent', () => {
             y: 50,
         };
         component.selectionCanvas.style.transform = 'translate3d(100px, 50px, 0px)';
-        const result = component.getTransformValues(component.selectionCanvas);
+        const result = component['getTransformValues'](component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -173,7 +175,7 @@ describe('SelectionComponent', () => {
             y: 50,
         };
         component.selectionCanvas.style.transform = 'translate3d(-250px, 50px, 0px)';
-        const result = component.getTransformValues(component.selectionCanvas);
+        const result = component['getTransformValues'](component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -183,7 +185,7 @@ describe('SelectionComponent', () => {
             y: -50,
         };
         component.selectionCanvas.style.transform = 'translate3d(-250px, -50px, 0px)';
-        const result = component.getTransformValues(component.selectionCanvas);
+        const result = component['getTransformValues'](component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -193,7 +195,7 @@ describe('SelectionComponent', () => {
             y: -50,
         };
         component.selectionCanvas.style.transform = 'translate3d(250px, -50px, 0px)';
-        const result = component.getTransformValues(component.selectionCanvas);
+        const result = component['getTransformValues'](component.selectionCanvas);
         expect(result).toEqual(expectedResult);
     });
 
@@ -216,7 +218,7 @@ describe('SelectionComponent', () => {
     it('drawPreview should call drawWithScalingFactors and hide selectionCanvas if resizerHandlerService.inUse', () => {
         component.drawPreview(moveEvent);
         expect(drawScaledSpy).toHaveBeenCalled();
-        expect(drawScaledSpy).toHaveBeenCalledWith(component.borderCtx, component.outlineSelectionCanvas);
+        expect(drawScaledSpy).toHaveBeenCalledWith(component['borderCtx'], component['outlineSelectionCanvas']);
         expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
         expect(component.selectionCanvas.style.visibility).toBe('hidden');
     });
@@ -246,7 +248,7 @@ describe('SelectionComponent', () => {
     it('resizeSelectionCanvas should call drawWithScalingFactors and drawImage if resizerHandlerService.inUse', () => {
         component.resizeSelectionCanvas(endEvent);
         expect(drawScaledSpy).toHaveBeenCalled();
-        expect(drawScaledSpy).toHaveBeenCalledWith(component.borderCtx, component.outlineSelectionCanvas);
+        expect(drawScaledSpy).toHaveBeenCalledWith(component['borderCtx'], component['outlineSelectionCanvas']);
         expect(drawScaledSpy).toHaveBeenCalledWith(component.previewSelectionCtx, component.selectionCanvas);
         expect(drawSelectionSpy).toHaveBeenCalled();
         expect(drawSelectionSpy).toHaveBeenCalledWith(component.previewSelectionCanvas, 0, 0);
@@ -267,17 +269,17 @@ describe('SelectionComponent', () => {
     });
 
     it('resizeSelectionCanvas should fill selectionCtx with white if resizerHandlerService.inUse', () => {
-        const clearSelectionSpy = spyOn(component.selectionCtx, 'clearRect');
+        const clearSelectionSpy = spyOn(component['selectionCtx'], 'clearRect');
         const clearPreviewSpy = spyOn(component.previewSelectionCtx, 'clearRect');
         component.resizeSelectionCanvas(endEvent);
-        expect(component.selectionCtx.fillStyle).toBe('#000000');
+        expect(component['selectionCtx'].fillStyle).toBe('#000000');
         expect(clearSelectionSpy).toHaveBeenCalled();
         expect(clearPreviewSpy).toHaveBeenCalled();
     });
 
     it('drawWithScalingFactors should call getScalingFactors', () => {
         drawScaledSpy.and.callThrough();
-        const getScalingSpy = spyOn(component, 'getScalingFactors').and.callThrough();
+        const getScalingSpy = spyOn<any>(component, 'getScalingFactors').and.callThrough();
         component.drawWithScalingFactors(component.previewSelectionCtx, component.selectionCanvas);
         expect(getScalingSpy).toHaveBeenCalled();
     });
@@ -291,78 +293,78 @@ describe('SelectionComponent', () => {
     });
 
     it('getScalingFactors should call getWidthScalingFactor and getHeightScalingFactor', () => {
-        const widthScalingFactorSpy = spyOn(component, 'getWidthScalingFactor');
-        const heightScalingFactorSpy = spyOn(component, 'getHeightScalingFactor');
-        component.getScalingFactors();
+        const widthScalingFactorSpy = spyOn<any>(component, 'getWidthScalingFactor');
+        const heightScalingFactorSpy = spyOn<any>(component, 'getHeightScalingFactor');
+        component['getScalingFactors']();
         expect(widthScalingFactorSpy).toHaveBeenCalled();
         expect(heightScalingFactorSpy).toHaveBeenCalled();
     });
 
     it('getWidthScalingFactor should return -1 if resizerDown is on right side and left border has changed', () => {
-        component.resizerDown = ResizerDown.TopRight;
+        component['resizerDown'] = ResizerDown.TopRight;
         component.previewSelectionCanvas.style.left = MOCK_POSITION.x + 'px';
         component.initialPosition.x = MOCK_POSITION.x + 1;
-        const result = component.getWidthScalingFactor();
+        const result = component['getWidthScalingFactor']();
         // tslint:disable-next-line:no-magic-numbers
         expect(result).toBe(-1);
     });
 
     it('getWidthScalingFactor should return 1 if resizerDown is on right side and left border has not changed', () => {
-        component.resizerDown = ResizerDown.TopRight;
+        component['resizerDown'] = ResizerDown.TopRight;
         component.previewSelectionCanvas.style.left = MOCK_POSITION.x + 'px';
         component.initialPosition.x = MOCK_POSITION.x;
-        const result = component.getWidthScalingFactor();
+        const result = component['getWidthScalingFactor']();
         expect(result).toBe(1);
     });
 
     it('getWidthScalingFactor should return -1 if resizerDown is on left side and left border is equal to initial right side', () => {
-        component.resizerDown = ResizerDown.TopLeft;
+        component['resizerDown'] = ResizerDown.TopLeft;
         component.previewSelectionCanvas.style.left = MOCK_POSITION.x + 'px';
         component.bottomRight.x = MOCK_POSITION.x;
-        const result = component.getWidthScalingFactor();
+        const result = component['getWidthScalingFactor']();
         // tslint:disable-next-line:no-magic-numbers
         expect(result).toBe(-1);
     });
 
     it('getWidthScalingFactor should return 1 if resizerDown is on left side and left border is not equal to initial right side', () => {
-        component.resizerDown = ResizerDown.TopLeft;
+        component['resizerDown'] = ResizerDown.TopLeft;
         component.previewSelectionCanvas.style.left = MOCK_POSITION.x + 'px';
         component.bottomRight.x = MOCK_POSITION.x + 1;
-        const result = component.getWidthScalingFactor();
+        const result = component['getWidthScalingFactor']();
         expect(result).toBe(1);
     });
 
     it('getHeightScalingFactor should return -1 if resizerDown is on bottom side and top border is not equal to initial top', () => {
-        component.resizerDown = ResizerDown.Bottom;
+        component['resizerDown'] = ResizerDown.Bottom;
         component.previewSelectionCanvas.style.top = MOCK_POSITION.y + 'px';
         component.initialPosition.y = MOCK_POSITION.y + 1;
-        const result = component.getHeightScalingFactor();
+        const result = component['getHeightScalingFactor']();
         // tslint:disable-next-line:no-magic-numbers
         expect(result).toBe(-1);
     });
 
     it('getHeightScalingFactor should return 1 if resizerDown is on bottom side and top border is equal to initial top', () => {
-        component.resizerDown = ResizerDown.Bottom;
+        component['resizerDown'] = ResizerDown.Bottom;
         component.previewSelectionCanvas.style.top = MOCK_POSITION.y + 'px';
         component.initialPosition.y = MOCK_POSITION.y;
-        const result = component.getHeightScalingFactor();
+        const result = component['getHeightScalingFactor']();
         expect(result).toBe(1);
     });
 
     it('getHeightScalingFactor should return -1 if resizerDown is on top side and top border is equal to initial bottom', () => {
-        component.resizerDown = ResizerDown.TopLeft;
+        component['resizerDown'] = ResizerDown.TopLeft;
         component.previewSelectionCanvas.style.top = MOCK_POSITION.y + 'px';
         component.bottomRight.y = MOCK_POSITION.y;
-        const result = component.getHeightScalingFactor();
+        const result = component['getHeightScalingFactor']();
         // tslint:disable-next-line:no-magic-numbers
         expect(result).toBe(-1);
     });
 
     it('getHeightScalingFactor should return 1 if resizerDown is on top side and top border is not equal to initial bottom', () => {
-        component.resizerDown = ResizerDown.TopLeft;
+        component['resizerDown'] = ResizerDown.TopLeft;
         component.previewSelectionCanvas.style.top = MOCK_POSITION.y + 'px';
         component.bottomRight.y = MOCK_POSITION.y + 1;
-        const result = component.getHeightScalingFactor();
+        const result = component['getHeightScalingFactor']();
         expect(result).toBe(1);
     });
 
@@ -370,7 +372,7 @@ describe('SelectionComponent', () => {
         const canvasWidth = 50;
         const canvasHeight = 50;
         component.resizerHandlerService.inUse = false;
-        component.resizerDown = ResizerDown.Bottom;
+        component['resizerDown'] = ResizerDown.Bottom;
         component.previewSelectionCanvas.style.left = MOCK_POSITION.x + 'px';
         component.previewSelectionCanvas.style.top = MOCK_POSITION.y + 'px';
         component.borderCanvas.width = canvasWidth;
@@ -384,10 +386,10 @@ describe('SelectionComponent', () => {
             y: expectedInitial.y + component.previewSelectionCanvas.height,
         };
         component.setInitialValues(ResizerDown.TopLeft);
-        expect(component.outlineSelectionCanvas.width).toEqual(component.borderCanvas.width);
-        expect(component.outlineSelectionCanvas.height).toEqual(component.borderCanvas.height);
+        expect(component['outlineSelectionCanvas'].width).toEqual(component.borderCanvas.width);
+        expect(component['outlineSelectionCanvas'].height).toEqual(component.borderCanvas.height);
         expect(component.resizerHandlerService.inUse).toBeTrue();
-        expect(component.resizerDown).toBe(0);
+        expect(component['resizerDown']).toBe(0);
         expect(component.initialPosition).toEqual(expectedInitial);
         expect(component.bottomRight).toEqual(expectBottomRight);
     });
@@ -399,8 +401,8 @@ describe('SelectionComponent', () => {
         component.borderCanvas.width = canvasWidth;
         component.borderCanvas.height = canvasHeight;
         component.setInitialValues(ResizerDown.TopLeft);
-        expect(component.outlineSelectionCanvas.width).toEqual(component.borderCanvas.width);
-        expect(component.outlineSelectionCanvas.height).toEqual(component.borderCanvas.height);
+        expect(component['outlineSelectionCanvas'].width).toEqual(component.borderCanvas.width);
+        expect(component['outlineSelectionCanvas'].height).toEqual(component.borderCanvas.height);
         expect(setResizeStrategySpy).toHaveBeenCalled();
         expect(setResizeStrategySpy).toHaveBeenCalledWith(ResizerDown.TopLeft);
     });
