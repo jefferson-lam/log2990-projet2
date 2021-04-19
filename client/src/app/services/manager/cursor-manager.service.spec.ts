@@ -50,7 +50,7 @@ describe('CursorManagerService', () => {
     });
 
     it('should call toolManager.currentTool.drawCursor on undo/redo pile size change if onCanvas', () => {
-        service.onCanvas = true;
+        service['onCanvas'] = true;
         const drawCursorSpy = spyOn(eraserStub, 'drawCursor');
 
         (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(eraserStub);
@@ -81,7 +81,7 @@ describe('CursorManagerService', () => {
     });
 
     it('changeCursor should call tool.drawCursor if onCanvas', () => {
-        service.onCanvas = true;
+        service['onCanvas'] = true;
         const drawCursorSpy = spyOn(eraserStub, 'drawCursor');
 
         service.changeCursor(eraserStub);
@@ -91,7 +91,7 @@ describe('CursorManagerService', () => {
     });
 
     it('changeCursor should not call tool.drawCursor if not onCanvas', () => {
-        service.onCanvas = false;
+        service['onCanvas'] = false;
         const drawCursorSpy = spyOn(eraserStub, 'drawCursor');
 
         service.changeCursor(eraserStub);
@@ -106,14 +106,14 @@ describe('CursorManagerService', () => {
     });
 
     it('onMouseLeave should set onCanvas to false', () => {
-        service.onCanvas = true;
+        service['onCanvas'] = true;
         service.onMouseLeave();
-        expect(service.onCanvas).toBeFalse();
+        expect(service['onCanvas']).toBeFalse();
     });
 
     it('onMouseEnter should set onCanvas to true', () => {
-        service.onCanvas = false;
+        service['onCanvas'] = false;
         service.onMouseEnter();
-        expect(service.onCanvas).toBeTrue();
+        expect(service['onCanvas']).toBeTrue();
     });
 });
