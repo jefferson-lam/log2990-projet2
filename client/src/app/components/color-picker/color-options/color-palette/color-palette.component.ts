@@ -13,7 +13,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     // Base code provided by Lukas Marx (https://malcoded.com/posts/angular-color-picker/)
     private ctx: CanvasRenderingContext2D;
     private mousedown: boolean;
-    selectedPosition: Vec2;
+    private selectedPosition: Vec2;
 
     @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 

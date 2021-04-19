@@ -83,21 +83,21 @@ describe('ColorPaletteComponent', () => {
 
     it('draw should call beginPath() if (this.selectedPosition) is true', () => {
         const beginPathSpy = spyOn(component['ctx'], 'beginPath');
-        component.selectedPosition = { x: placeholderX, y: placeholderY };
+        component['selectedPosition'] = { x: placeholderX, y: placeholderY };
         component.ngAfterViewInit();
         expect(beginPathSpy).toHaveBeenCalled();
     });
 
     it('draw should call arc() if (this.selectedPosition) is true', () => {
         const arcSpy = spyOn(component['ctx'], 'arc');
-        component.selectedPosition = { x: placeholderX, y: placeholderY };
+        component['selectedPosition'] = { x: placeholderX, y: placeholderY };
         component.ngAfterViewInit();
         expect(arcSpy).toHaveBeenCalled();
     });
 
     it('draw should call stroke() if (this.selectedPosition) is true', () => {
         const strokeSpy = spyOn(component['ctx'], 'stroke');
-        component.selectedPosition = { x: placeholderX, y: placeholderY };
+        component['selectedPosition'] = { x: placeholderX, y: placeholderY };
         component.ngAfterViewInit();
         expect(strokeSpy).toHaveBeenCalled();
     });
@@ -126,19 +126,19 @@ describe('ColorPaletteComponent', () => {
 
     it('should call setColorAtPosition() if hue changes', () => {
         const getColorAtPositionSpy = spyOn(colorService, 'getColorAtPosition');
-        component.selectedPosition = { x: 1, y: 1 };
+        component['selectedPosition'] = { x: 1, y: 1 };
         component.ngOnChanges({
             hue: new SimpleChange(null, colorPlaceholderBlack, false),
         });
         fixture.detectChanges();
         expect(getColorAtPositionSpy).toHaveBeenCalledWith(
             component['ctx'],
-            component.selectedPosition.x,
-            component.selectedPosition.y,
+            component['selectedPosition'].x,
+            component['selectedPosition'].y,
             component.currentOpacity,
         );
-        expect(component.selectedPosition.x).toEqual(1);
-        expect(component.selectedPosition.y).toEqual(1);
+        expect(component['selectedPosition'].x).toEqual(1);
+        expect(component['selectedPosition'].y).toEqual(1);
     });
 
     it('onMouseUp should set mousedown to false', () => {
@@ -158,7 +158,7 @@ describe('ColorPaletteComponent', () => {
     it('onMouseDown should set selectedPosition to {offset.X, offSet.Y}', () => {
         component.onMouseDown(mouseEventDown);
         const currentPosition = { x: mouseEventDown.offsetX, y: mouseEventDown.offsetY };
-        expect(component.selectedPosition).toEqual(currentPosition);
+        expect(component['selectedPosition']).toEqual(currentPosition);
     });
 
     it('onMouseDown should call draw()', () => {
@@ -179,7 +179,7 @@ describe('ColorPaletteComponent', () => {
         component['mousedown'] = true;
         const currentPosition = { x: mouseEventMove.offsetX, y: mouseEventMove.offsetY };
         component.onMouseMove(mouseEventMove);
-        expect(component.selectedPosition).toEqual(currentPosition);
+        expect(component['selectedPosition']).toEqual(currentPosition);
     });
 
     it('onMouseMove should call draw() mouseDown is true', () => {
@@ -200,7 +200,7 @@ describe('ColorPaletteComponent', () => {
         component['mousedown'] = false;
         const currentPosition = { x: mouseEventMove.offsetX, y: mouseEventMove.offsetY };
         component.onMouseMove(mouseEventMove);
-        expect(component.selectedPosition).not.toEqual(currentPosition);
+        expect(component['selectedPosition']).not.toEqual(currentPosition);
     });
 
     it('onMouseMove should not call draw() if mouseDown is false', () => {
