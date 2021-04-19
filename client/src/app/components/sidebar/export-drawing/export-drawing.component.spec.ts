@@ -199,7 +199,7 @@ describe('ExportDrawingComponent', () => {
         component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.NONE;
         imgurStub.mutex = 0;
 
-        component.openPopUp();
+        component['openPopUp']();
         expect(openErrorPopUpSpy).not.toHaveBeenCalled();
         expect(openCompletePopUpSpy).not.toHaveBeenCalled();
     });
@@ -209,7 +209,7 @@ describe('ExportDrawingComponent', () => {
         component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.ERROR;
         imgurStub.mutex = 1;
 
-        component.openPopUp();
+        component['openPopUp']();
         expect(openCompletePopUpSpy).toHaveBeenCalled();
     });
 
@@ -218,7 +218,7 @@ describe('ExportDrawingComponent', () => {
         component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.COMPLETE;
         imgurStub.mutex = 1;
 
-        component.openPopUp();
+        component['openPopUp']();
         expect(openCompletePopUpSpy).toHaveBeenCalled();
     });
 
@@ -228,7 +228,7 @@ describe('ExportDrawingComponent', () => {
         component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.COMPLETE;
         imgurStub.mutex = 0;
 
-        component.openPopUp();
+        component['openPopUp']();
         expect(openCompletePopUpSpy).not.toHaveBeenCalled();
         expect(openErrorPopUpSpy).not.toHaveBeenCalled();
     });

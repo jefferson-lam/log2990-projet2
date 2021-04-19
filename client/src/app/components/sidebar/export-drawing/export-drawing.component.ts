@@ -111,7 +111,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.imgurService.exportDrawing(this.exportCanvas.toDataURL('image/' + this.type), this.name);
     }
 
-    openPopUp(): void {
+    private openPopUp(): void {
         if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.ERROR && this.imgurService.mutex === 1) {
             this.openErrorPopUp();
         } else if (this.imgurService.mutex) {
