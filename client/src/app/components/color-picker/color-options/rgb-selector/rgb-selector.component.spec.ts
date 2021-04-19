@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { RgbSelectorComponent } from './rgb-selector.component';
 
+// tslint:disable: no-string-literal
 describe('RgbSelectorComponent', () => {
     let component: RgbSelectorComponent;
     let fixture: ComponentFixture<RgbSelectorComponent>;
@@ -29,12 +30,12 @@ describe('RgbSelectorComponent', () => {
 
     it('should update red, green, blue values if color from palette changes', () => {
         component.ngOnChanges({
-            initialColor: new SimpleChange(null, component.initialColor, false),
+            initialColor: new SimpleChange(null, component['initialColor'], false),
         });
         fixture.detectChanges();
-        expect(component.red).toEqual(component.initialColor.red);
-        expect(component.green).toEqual(component.initialColor.green);
-        expect(component.blue).toEqual(component.initialColor.blue);
+        expect(component.red).toEqual(component['initialColor'].red);
+        expect(component.green).toEqual(component['initialColor'].green);
+        expect(component.blue).toEqual(component['initialColor'].blue);
     });
 
     it('should not update red, green or blue values if color from palette does not change', () => {

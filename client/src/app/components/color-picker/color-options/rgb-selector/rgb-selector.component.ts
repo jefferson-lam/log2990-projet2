@@ -17,7 +17,7 @@ export class RgbSelectorComponent implements OnChanges {
     @ViewChild('greenInput', { static: false }) private greenInput: ElementRef<HTMLInputElement>;
     @ViewChild('blueInput', { static: false }) private blueInput: ElementRef<HTMLInputElement>;
 
-    @Input() initialColor: Rgba;
+    @Input() private initialColor: Rgba;
 
     @Output() newColor: EventEmitter<Rgba>;
 
