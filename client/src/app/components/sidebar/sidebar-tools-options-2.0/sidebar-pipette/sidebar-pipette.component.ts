@@ -80,7 +80,7 @@ export class SidebarPipetteComponent implements OnInit {
         );
     }
 
-    previewStroke(): void {
+    private previewStroke(): void {
         this.ctx.beginPath();
         this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.lineWidth = PipetteConstants.OUTER_BORDER_LINE_WIDTH;
