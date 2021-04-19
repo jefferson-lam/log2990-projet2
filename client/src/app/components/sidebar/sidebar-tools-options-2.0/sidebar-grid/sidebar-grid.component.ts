@@ -25,7 +25,7 @@ export class SidebarGridComponent implements OnInit {
 
     @Output() private squareWidthChanged: EventEmitter<number>;
     @Output() private opacityValueChanged: EventEmitter<number>;
-    @Output() visibilityValueChanged: EventEmitter<boolean>;
+    @Output() private visibilityValueChanged: EventEmitter<boolean>;
 
     constructor(public canvasGridService: CanvasGridService) {
         this.maxSquareWidth = GridConstants.MAX_SQUARE_WIDTH;
