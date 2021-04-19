@@ -22,7 +22,6 @@ export class TagInputComponent {
     @ViewChild('tagInput') private tagInput: ElementRef;
     tags: string[];
     isSavePossible: boolean;
-    unsatisfiedRequirements: number;
 
     @Output() areTagsValidEvent: EventEmitter<boolean>;
 
