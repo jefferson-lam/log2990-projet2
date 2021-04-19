@@ -26,7 +26,7 @@ export class SaveDrawingComponent implements AfterViewInit {
     areTagsValid: boolean;
     isSavePossible: boolean;
 
-    imageURL: string;
+    private imageURL: string;
 
     constructor(
         private database: DatabaseService,
