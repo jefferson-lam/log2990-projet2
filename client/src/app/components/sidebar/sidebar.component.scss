@@ -167,3 +167,7 @@ mat-drawer-content {
 .blankButton {
     visibility: hidden;
 }
+
+.noselect {
+    user-select: none;
+}
