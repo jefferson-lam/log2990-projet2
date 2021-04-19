@@ -30,7 +30,6 @@ export class MainPageCarrouselComponent {
     noValidDrawing: boolean;
     selectable: boolean;
     removable: boolean;
-    deleteClick: boolean;
     drawingLoading: boolean;
     imageNotInServer: boolean;
 
