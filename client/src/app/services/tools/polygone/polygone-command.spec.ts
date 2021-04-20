@@ -138,21 +138,23 @@ describe('PolygoneCommand', () => {
         expect(getRadiiSpy).toHaveBeenCalled();
     });
 
-    it('drawPolygone should call drawTypePolygone and change primary color', () => {
+    it('drawPolygone should call drawShape if radiusWithin < lineWidth', () => {
         spyOn<any>(command, 'getRadiiX').and.callFake(() => {
             return mockRadii;
         });
-        const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
-        command.fillMode = ToolConstants.FillMode.FILL_ONLY;
+        command.lineWidth = mockRadii[0] + 1;
+        const drawTypeSpy = spyOn<any>(command, 'drawShape');
+        command.fillMode = ToolConstants.FillMode.OUTLINE;
         // tslint:disable:no-string-literal
         command['drawPolygone'](command['ctx']);
         expect(drawTypeSpy).toHaveBeenCalled();
     });
 
-    it('drawPolygone should call drawTypePolygone and not change primary color', () => {
+    it('drawPolygone should call drawTypePolygone and not change primary color if radiusWithin > lineWidth', () => {
         spyOn<any>(command, 'getRadiiX').and.callFake(() => {
-            return mockRadii;
+            return mockRadii[0];
         });
+        command.lineWidth = mockRadii[0] - 1;
         const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
         command.fillMode = ToolConstants.FillMode.OUTLINE;
         // tslint:disable:no-string-literal
@@ -160,13 +162,25 @@ describe('PolygoneCommand', () => {
         expect(drawTypeSpy).toHaveBeenCalled();
     });
 
+    it('drawPolygone should call drawTypePolygone and change primary color', () => {
+        spyOn<any>(command, 'getRadiiX').and.callFake(() => {
+            return mockRadii[0];
+        });
+        const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
+        command.fillMode = ToolConstants.FillMode.FILL_ONLY;
+        command.lineWidth = mockRadii[0] - 1;
+        // tslint:disable:no-string-literal
+        command['drawPolygone'](command['ctx']);
+        expect(drawTypeSpy).toHaveBeenCalled();
+    });
+
     it('drawPolygone should call drawTypePolygone with fill mode change', () => {
         spyOn<any>(command, 'getRadiiX').and.callFake(() => {
-            return mockRadii;
+            return mockRadii[0];
         });
         const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
         command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
-        command.lineWidth = mockRadii[0];
+        command.lineWidth = mockRadii[0] - 1;
         // tslint:disable:no-string-literal
         command['drawPolygone'](command['ctx']);
         expect(drawTypeSpy).toHaveBeenCalled();

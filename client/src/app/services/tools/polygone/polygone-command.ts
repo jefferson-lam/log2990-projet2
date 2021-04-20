@@ -45,11 +45,11 @@ export class PolygoneCommand extends Command {
             return;
         }
         this.borderColor = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (this.radiusWithin > this.lineWidth / 2) {
+        if (this.radiusWithin > this.lineWidth) {
             this.drawTypePolygone(ctx);
         } else {
             this.primaryColor = this.borderColor;
-            this.drawTypePolygone(ctx);
+            this.drawShape(ctx);
         }
     }
 
