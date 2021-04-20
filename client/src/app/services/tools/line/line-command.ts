@@ -8,14 +8,13 @@ export class LineCommand extends Command {
     junctionRadius: number;
     lineWidth: number;
     primaryColor: string;
-    path: Vec2[] = [];
+    path: Vec2[];
     isPreview: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, lineService: LineService) {
         super();
         this.isPreview = false;
         this.ctx = canvasContext;
-
         this.path = Object.assign([], lineService.linePathData);
 
         this.withJunction = lineService.withJunction;

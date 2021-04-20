@@ -1,66 +1,116 @@
 <div class="container">
-    <div id="sidebar">
-        <ul class="options-sidebar">
-            <li>
-                <mat-icon id="return-button" matTooltip="Retour" [matTooltipPosition]="'right'" routerLink="/home">backspace</mat-icon>
-            </li>
-            <li>
-                <mat-icon id="new-drawing-button" matTooltip="Nouveau dessin" [matTooltipPosition]="'right'" (click)="openNewDrawing()"
-                    >add_box</mat-icon
-                >
-            </li>
-            <li>
-                <mat-icon id="save-drawing-button" matTooltip="Sauvegarder" [matTooltipPosition]="'right'" (click)="saveDrawing()">save_alt</mat-icon>
-            </li>
-            <li id="undoButton" [class.unclickable]="!isUndoPossible" (click)="undo()">
-                <mat-icon matTooltip="Annuler" [matTooltipPosition]="'right'">undo</mat-icon>
-            </li>
-            <li id="redoButton" [class.unclickable]="!isRedoPossible" (click)="redo()">
-                <mat-icon matTooltip="Recommencer" [matTooltipPosition]="'right'">redo</mat-icon>
-            </li>
-            <li id="exportButton">
-                <mat-icon id="export-drawing-button" matTooltip="Exporter dessin" [matTooltipPosition]="'right'" (click)="exportDrawing()"
-                    >open_in_new</mat-icon
-                >
-            </li>
-            <li id="selectAllButton">
-                <mat-icon matTooltip="Tout selectionner" [matTooltipPosition]="'right'" (click)="selectAll()"> aspect_ratio </mat-icon>
-            </li>
-            <li id="copyButton">
-                <mat-icon matTooltip="Copier la sélection" [matTooltipPosition]="'right'" (click)="copySelection()">content_copy</mat-icon>
-            </li>
-            <li id="cutButton">
-                <mat-icon matTooltip="Couper la sélection" [matTooltipPosition]="'right'" (click)="cutSelection()">content_cut</mat-icon>
-            </li>
-            <li id="pasteButton">
-                <mat-icon matTooltip="Coller la sélection" [matTooltipPosition]="'right'" (click)="pasteSelection()">content_paste</mat-icon>
-            </li>
-            <li id="deleteButton">
-                <mat-icon matTooltip="Supprimer la sélection" [matTooltipPosition]="'right'" (click)="deleteSelection()">clear</mat-icon>
-            </li>
-            <li id="gridButton">
-                <mat-icon matTooltip="Options grille" [matTooltipPosition]="'right'" (click)="openGridOptions()"> grid_on </mat-icon>
-            </li>
-        </ul>
-        <ul class="tools-sidebar">
-            <li id="toolId" [class.selected]="tool === selectedTool" *ngFor="let tool of sidebarToolButtons" class="listToolsClass">
-                <mat-icon
-                    class="toolClass"
-                    id="icon-button-{{ tool.name }}"
-                    matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
-                    [matTooltipPosition]="'right'"
-                    (click)="onSelectTool(tool)"
-                >
-                    {{ tool.icon }}
-                </mat-icon>
-            </li>
-        </ul>
+    <div id="sidebar" class="noselect">
+        <div id="left-column">
+            <ul class="options-sidebar">
+                <li id="return-button" routerLink="/home">
+                    <mat-icon matTooltip="Retour" [matTooltipPosition]="'right'">backspace</mat-icon>
+                </li>
+                <li  id="save-drawing-button" [class.unclickable]="popupManager.isPopUpOpen" (click)="saveDrawing()">
+                    <mat-icon matTooltip="Sauvegarder (Ctrl-S)" [matTooltipPosition]="'right'"
+                        >save_alt</mat-icon
+                    >
+                </li>
+                <li id="undoButton" [class.unclickable]="!undoRedoService.isUndoAllowed" (click)="undo()">
+                    <mat-icon matTooltip="Annuler (Ctrl-Z)" [matTooltipPosition]="'right'">undo</mat-icon>
+                </li>
+
+                <li id="copyButton" [class.unclickable]="!clipboardService.isSelected()" (click)="copySelection()">
+                    <mat-icon matTooltip="Copier la sélection (Ctrl-C)" [matTooltipPosition]="'right'"
+                        >content_copy</mat-icon
+                    >
+                </li>
+                <li id="cutButton" [class.unclickable]="!clipboardService.isSelected()" (click)="cutSelection()">
+                    <mat-icon matTooltip="Couper la sélection (Ctrl-X)" [matTooltipPosition]="'right'">content_cut</mat-icon>
+                </li>
+                <li id="deleteButton" [class.unclickable]="!clipboardService.isSelected()" (click)="deleteSelection()">
+                    <mat-icon matTooltip="Supprimer la sélection (Touche Del)" [matTooltipPosition]="'right'"
+                        >clear</mat-icon
+                    >
+                </li>
+            </ul>
+            <ul class="grid-magnet">
+                <li id="gridButton" (click)="openGridOptions()">
+                    <mat-icon matTooltip="Options grille (Touche G)" [matTooltipPosition]="'right'"> grid_on </mat-icon>
+                </li>
+            </ul>
+            <ul class="tools-sidebar">
+                <li id="toolId"
+                    [class.selected]="tool === selectedTool"
+                    *ngFor="let tool of sidebarToolButtons | slice: 0:7"
+                    class="listToolsClass"
+                    (click)="onSelectTool(tool)">
+                    <mat-icon
+                        class="toolClass"
+                        id="icon-button-{{ tool.name }}"
+                        matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
+                        [matTooltipPosition]="'right'"
+                    >
+                        {{ tool.icon }}
+                    </mat-icon>
+                </li>
+            </ul>
+        </div>
+        <div id="right-column">
+            <ul class="options-sidebar">
+                <li id="new-drawing-button" [class.unclickable]="popupManager.isPopUpOpen || !popupManager.newDrawingPossible" (click)="openNewDrawing()">
+                    <mat-icon matTooltip="Nouveau dessin (Ctrl-O)" [matTooltipPosition]="'right'"
+                        >add_box</mat-icon
+                    >
+                </li>
+                <li id="exportButton" [class.unclickable]="popupManager.isPopUpOpen" (click)="exportDrawing()">
+                    <mat-icon
+                        id="export-drawing-button"
+                        matTooltip="Exporter dessin (Ctrl-E)"
+                        [matTooltipPosition]="'right'"
+                        >open_in_new</mat-icon
+                    >
+                </li>
+                <li id="redoButton" [class.unclickable]="!undoRedoService.isRedoAllowed" (click)="redo()">
+                    <mat-icon matTooltip="Recommencer (Ctrl-Shift-Z)" [matTooltipPosition]="'right'">redo</mat-icon>
+                </li>
+
+                <li id="selectAllButton" (click)="selectAll()">
+                    <mat-icon matTooltip="Tout sélectionner (Ctrl-A)" [matTooltipPosition]="'right'"> aspect_ratio </mat-icon>
+                </li>
+                <li id="pasteButton" [class.unclickable]="clipboardService.isClipboardEmpty()" (click)="pasteSelection()">
+                    <mat-icon matTooltip="Coller la sélection (Ctrl-V)" [matTooltipPosition]="'right'"
+                        >content_paste</mat-icon
+                    >
+                </li>
+                <li class="blankButton">
+                    <mat-icon> select_all </mat-icon>
+                </li>
+            </ul>
+            <ul class="grid-magnet">
+                <li id="magnetismButton" (click)="toggleMagnetismOptions()">
+                    <mat-icon matTooltip="Options magnétisme (Touche M)" [matTooltipPosition]="'right'">
+                        select_all
+                    </mat-icon>
+                </li>
+            </ul>
+            <ul class="tools-sidebar">
+                <li id="toolId"
+                    [class.selected]="tool === selectedTool"
+                    *ngFor="let tool of sidebarToolButtons | slice: 7:14"
+                    class="listToolsClass"
+                    (click)="onSelectTool(tool)">
+                    <mat-icon
+                        class="toolClass"
+                        id="icon-button-{{ tool.name }}"
+                        matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
+                        [matTooltipPosition]="'right'"
+                    >
+                        {{ tool.icon }}
+                    </mat-icon>
+                </li>
+            </ul>
+        </div>
     </div>
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">
         <mat-drawer [mode]="'side'" class="sidenav" [opened]="true" [disableClose]="true">
-            <mat-drawer-content [ngSwitch]="selectedTool.keyShortcut">
-                <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="'c'"> </app-sidebar-pencil>
+            <mat-drawer-content class="noselect" [ngSwitch]="selectedTool.keyShortcut">
+                <app-sidebar-pencil class="sidebar-tool-options" *ngSwitchCase="'c'"></app-sidebar-pencil>
                 <app-sidebar-eraser class="sidebar-tool-options" *ngSwitchCase="'e'"></app-sidebar-eraser>
                 <app-sidebar-rectangle class="sidebar-tool-options" *ngSwitchCase="'1'"></app-sidebar-rectangle>
                 <app-sidebar-ellipse class="sidebar-tool-options" *ngSwitchCase="'2'"></app-sidebar-ellipse>
@@ -70,8 +120,12 @@
                 <app-sidebar-pipette class="sidebar-tool-options" *ngSwitchCase="'i'"></app-sidebar-pipette>
                 <app-sidebar-rectangle-selection class="sidebar-tool-options" *ngSwitchCase="'r'"></app-sidebar-rectangle-selection>
                 <app-sidebar-ellipse-selection class="sidebar-tool-options" *ngSwitchCase="'s'"></app-sidebar-ellipse-selection>
+                <app-sidebar-lasso-selection class="sidebar-tool-options" *ngSwitchCase="'v'"></app-sidebar-lasso-selection>
                 <app-sidebar-paint-bucket class="sidebar-tool-options" *ngSwitchCase="'b'"></app-sidebar-paint-bucket>
+                <app-sidebar-stamp class="sidebar-tool-options" *ngSwitchCase="'d'"> </app-sidebar-stamp>
+                <app-sidebar-text class="sidebar-tool-options" *ngSwitchCase="'t'"> </app-sidebar-text>
                 <app-sidebar-grid class="sidebar-tool-options" *ngIf="isGridOptionsDisplayed"></app-sidebar-grid>
+                <app-sidebar-magnetism class="sidebar-tool-options" *ngIf="isMagnetismOptionsDisplayed"></app-sidebar-magnetism>
             </mat-drawer-content>
         </mat-drawer>
     </mat-drawer-container>

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -49,9 +50,10 @@ describe('LineService', () => {
         service.linePathData = [service.initialPoint, { x: 133, y: 256 }, { x: 257, y: 399 }];
         service.mousePosition = { x: 289, y: 400 };
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 25,
             button: 0,
         } as MouseEvent;
     });
@@ -84,35 +86,16 @@ describe('LineService', () => {
         expect(service.lineWidth).toEqual(LineConstants.MIN_LINE_WIDTH);
     });
 
-    it('setLineWidth should dynamically modify the junctionRadius size if lineWidth > junctionRadius', () => {
-        const newLineWidth = 160;
-        const TEST_JUNCTION_RADIUS = 90;
-        service.junctionRadius = TEST_JUNCTION_RADIUS;
-        service.setLineWidth(newLineWidth);
-        expect(service.junctionRadius).toEqual(newLineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
+    it('setJunctionRadius should set to mind if lower than mind', () => {
+        const newJunctionRadius = -10;
+        service.setJunctionRadius(newJunctionRadius);
+        expect(service.junctionRadius).toEqual(LineConstants.MIN_JUNCTION_RADIUS);
     });
 
     it('setJunctionRadius should set to MAX_JUNCTION if entered setting is bigger than max', () => {
         const newJunctionRadius = 250;
         service.setJunctionRadius(newJunctionRadius);
         expect(service.junctionRadius).toEqual(LineConstants.MAX_JUNCTION_RADIUS);
-    });
-
-    it('setJunctionRadius should set to lineWidth * minjunction factor if smaller than lineWidth * min_factor', () => {
-        const TEST_JUNCTION_RADIUS = 40;
-        service.lineWidth = TEST_JUNCTION_RADIUS;
-        const newJunctionRadius = 5;
-        service.setJunctionRadius(newJunctionRadius);
-        expect(service.junctionRadius).toEqual(service.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
-    });
-
-    it('setJunctionRadius should set to lineWidth * minjunction factor if negative value', () => {
-        const TEST_JUNCTION_RADIUS = -10;
-        const newJunctionRadius = TEST_JUNCTION_RADIUS;
-        const TEST_LINE_WIDTH = 40;
-        service.lineWidth = TEST_LINE_WIDTH;
-        service.setJunctionRadius(newJunctionRadius);
-        expect(service.junctionRadius).toEqual(service.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
     });
 
     it('setJunctionRadius will set junctionRadius to max if max value exceeded', () => {

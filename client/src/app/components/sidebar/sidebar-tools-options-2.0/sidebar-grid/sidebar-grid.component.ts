@@ -10,24 +10,36 @@ import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service
     styleUrls: ['./sidebar-grid.component.scss'],
 })
 export class SidebarGridComponent implements OnInit {
-    maxSquareWidth: number = GridConstants.MAX_SQUARE_WIDTH;
-    minSquareWidth: number = GridConstants.MIN_SQUARE_WIDTH;
-    minOpacityValue: number = GridConstants.MIN_OPACITY_VALUE;
-    maxOpacityValue: number = GridConstants.MAX_OPACITY_VALUE;
-    opacityTickInterval: number = GridConstants.OPACITY_TICK_INTERVAL;
-    widthTickInterval: number = GridConstants.SQUARE_WIDTH_INTERVAL;
-    squareWidth: number = GridConstants.DEFAULT_SQUARE_WIDTH;
-    opacityValue: number = GridConstants.DEFAULT_OPACITY;
+    maxSquareWidth: number;
+    minSquareWidth: number;
+    minOpacityValue: number;
+    maxOpacityValue: number;
+    opacityTickInterval: number;
+    widthTickInterval: number;
+    squareWidth: number;
+    opacityValue: number;
     isGridOptionsDisplayed: boolean;
 
     @ViewChild('toggleGrid') toggleGrid: MatSlideToggle;
     @ViewChild('widthSlider') widthSlider: MatSlider;
 
-    @Output() squareWidthChanged: EventEmitter<number> = new EventEmitter();
-    @Output() opacityValueChanged: EventEmitter<number> = new EventEmitter();
-    @Output() visibilityValueChanged: EventEmitter<boolean> = new EventEmitter();
+    @Output() squareWidthChanged: EventEmitter<number>;
+    @Output() opacityValueChanged: EventEmitter<number>;
+    @Output() visibilityValueChanged: EventEmitter<boolean>;
 
-    constructor(public canvasGridService: CanvasGridService) {}
+    constructor(public canvasGridService: CanvasGridService) {
+        this.maxSquareWidth = GridConstants.MAX_SQUARE_WIDTH;
+        this.minSquareWidth = GridConstants.MIN_SQUARE_WIDTH;
+        this.minOpacityValue = GridConstants.MIN_OPACITY_VALUE;
+        this.maxOpacityValue = GridConstants.MAX_OPACITY_VALUE;
+        this.opacityTickInterval = GridConstants.OPACITY_TICK_INTERVAL;
+        this.widthTickInterval = GridConstants.SQUARE_WIDTH_INTERVAL;
+        this.squareWidth = GridConstants.DEFAULT_SQUARE_WIDTH;
+        this.opacityValue = GridConstants.DEFAULT_OPACITY;
+        this.squareWidthChanged = new EventEmitter();
+        this.opacityValueChanged = new EventEmitter();
+        this.visibilityValueChanged = new EventEmitter();
+    }
 
     ngOnInit(): void {
         this.squareWidthChanged.subscribe((newWidth: number) => this.canvasGridService.setSquareWidth(newWidth));
@@ -42,6 +54,8 @@ export class SidebarGridComponent implements OnInit {
             this.squareWidth = width;
         });
         this.isGridOptionsDisplayed = this.canvasGridService.isGridDisplayed;
+        this.squareWidth = this.canvasGridService.squareWidth;
+        this.opacityValue = this.canvasGridService.opacityValue;
     }
 
     emitSquareWidth(): void {

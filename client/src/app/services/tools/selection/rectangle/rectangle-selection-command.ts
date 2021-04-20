@@ -9,7 +9,7 @@ export class RectangleSelectionCommand extends Command {
     selectionHeight: number;
     transformValues: Vec2;
     isSquare: boolean;
-    cornerCoords: Vec2[] = [];
+    pathData: Vec2[];
     selectionCanvas: HTMLCanvasElement;
     isFromClipboard: boolean;
 
@@ -24,7 +24,7 @@ export class RectangleSelectionCommand extends Command {
         rectangleSelectionService: RectangleSelectionService,
     ): void {
         this.ctx = canvasContext;
-        this.cornerCoords = Object.assign([], rectangleSelectionService.cornerCoords);
+        this.pathData = Object.assign([], rectangleSelectionService.pathData);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
         this.initialSelectionHeight = rectangleSelectionService.selectionHeight;
         this.initialSelectionWidth = rectangleSelectionService.selectionWidth;
@@ -38,7 +38,7 @@ export class RectangleSelectionCommand extends Command {
     execute(): void {
         if (!this.isFromClipboard) {
             this.ctx.fillStyle = 'white';
-            this.ctx.fillRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.initialSelectionWidth, this.initialSelectionHeight);
+            this.ctx.fillRect(this.pathData[0].x, this.pathData[0].y, this.initialSelectionWidth, this.initialSelectionHeight);
         }
         // When implementing scaling, we will have to sum selectionWidth and selectionHeight to a
         // the distance scaled by the mouse
@@ -53,15 +53,5 @@ export class RectangleSelectionCommand extends Command {
             this.selectionWidth,
             this.selectionHeight,
         );
-    }
-
-    cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {
-        const newCanvas = document.createElement('canvas');
-        const context = newCanvas.getContext('2d') as CanvasRenderingContext2D;
-        newCanvas.width = selectionCanvas.width;
-        newCanvas.height = selectionCanvas.height;
-        // apply the old canvas to the new one
-        context.drawImage(selectionCanvas, 0, 0);
-        return newCanvas;
     }
 }

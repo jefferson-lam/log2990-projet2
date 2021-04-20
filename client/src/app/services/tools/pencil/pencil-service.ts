@@ -14,11 +14,12 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class PencilService extends Tool {
     pathData: Vec2[];
     lineWidth: number;
-    primaryColor: string = 'black';
+    primaryColor: string;
     previewCommand: PencilCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
+        this.primaryColor = 'black';
         this.clearPath();
         this.lineWidth = PencilConstants.MIN_SIZE_PENCIL;
         this.previewCommand = new PencilCommand(drawingService.previewCtx, this);

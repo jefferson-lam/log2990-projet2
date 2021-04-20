@@ -1,5 +1,7 @@
+import { CdkScrollable, ScrollDispatcher } from '@angular/cdk/scrolling';
 import { Component, HostListener } from '@angular/core';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
+import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 
 @Component({
     selector: 'app-editor',
@@ -7,7 +9,13 @@ import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.s
     styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent {
-    constructor(public shortcutManager: ShortcutManagerService) {}
+    constructor(public shortcutManager: ShortcutManagerService, private toolManager: ToolManagerService, private scroller: ScrollDispatcher) {
+        this.scroller.scrolled().subscribe((element) => {
+            if (!(element instanceof CdkScrollable)) return;
+            if (element.getElementRef().nativeElement.id !== 'drawing-container') return;
+            this.toolManager.scrolled(element.measureScrollOffset('left'), element.measureScrollOffset('top'));
+        });
+    }
 
     @HostListener('window:keydown.g', ['$event'])
     onGKeyDown(): void {
@@ -49,6 +57,16 @@ export class EditorComponent {
         this.shortcutManager.onCtrlZKeyDown(event);
     }
 
+    @HostListener('window:keydown.alt', ['$event'])
+    onAltDown(event: KeyboardEvent): void {
+        this.shortcutManager.onAltDown(event);
+    }
+
+    @HostListener('window:keyup.alt', ['$event'])
+    onAltUp(): void {
+        this.shortcutManager.onAltUp();
+    }
+
     @HostListener('window:keydown.control.c', ['$event'])
     onCtrlCKeyDown(event: KeyboardEvent): void {
         this.shortcutManager.onCtrlCKeyDown(event);
@@ -57,6 +75,11 @@ export class EditorComponent {
     @HostListener('window:keydown.control.v', ['$event'])
     onCtrlVKeyDown(event: KeyboardEvent): void {
         this.shortcutManager.onCtrlVKeyDown(event);
+    }
+
+    @HostListener('window:keydown.escape', ['$event'])
+    onEscapeKeyDown(): void {
+        this.shortcutManager.onEscapeKeyDown();
     }
 
     @HostListener('window:keydown.control.x', ['$event'])
@@ -77,6 +100,11 @@ export class EditorComponent {
     @HostListener('window:keydown.+', ['$event'])
     onPlusKeyDown(): void {
         this.shortcutManager.onPlusKeyDown();
+    }
+
+    @HostListener('window:keydown.m', ['$event'])
+    onMKeyDown(): void {
+        this.shortcutManager.onMKeyDown();
     }
 
     @HostListener('window:keydown.=', ['$event'])

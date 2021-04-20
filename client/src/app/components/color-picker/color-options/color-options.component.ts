@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
+import * as ColorConstants from '@app/constants/color-constants';
 import { ColorService } from '@app/services/color/color.service';
 
 @Component({
@@ -8,17 +9,24 @@ import { ColorService } from '@app/services/color/color.service';
     styleUrls: ['./color-options.component.scss'],
 })
 export class ColorOptionsComponent {
-    max: number = 1;
-    min: number = 0;
-    step: number = 0.1;
+    max: number;
+    min: number;
+    step: number;
     hue: Rgba;
 
-    @Input() color: Rgba = { red: 255, green: 255, blue: 255, alpha: 1 };
+    @Input() color: Rgba;
 
-    @Output() newColor: EventEmitter<Rgba> = new EventEmitter();
-    @Output() showOptions: EventEmitter<boolean> = new EventEmitter();
+    @Output() newColor: EventEmitter<Rgba>;
+    @Output() showOptions: EventEmitter<boolean>;
 
-    constructor(public colorService: ColorService) {}
+    constructor(public colorService: ColorService) {
+        this.max = 1;
+        this.min = 0;
+        this.step = ColorConstants.STEP;
+        this.color = ColorConstants.INITIAL_COLOR;
+        this.newColor = new EventEmitter();
+        this.showOptions = new EventEmitter();
+    }
 
     confirmColorPick(): void {
         this.newColor.emit(this.color);

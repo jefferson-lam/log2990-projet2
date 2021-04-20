@@ -1,4 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CdkScrollable, ScrollDispatcher } from '@angular/cdk/scrolling';
+import { CUSTOM_ELEMENTS_SCHEMA, ElementRef, NgZone } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
@@ -9,6 +10,7 @@ import { PopupManagerService } from '@app/services/manager/popup-manager.service
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Subject } from 'rxjs';
 import { EditorComponent } from './editor.component';
 
 class ToolStub extends Tool {}
@@ -23,6 +25,8 @@ describe('EditorComponent', () => {
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
     let canvasGridServiceSpy: jasmine.SpyObj<CanvasGridService>;
     let shortcutManagerSpy: jasmine.SpyObj<ShortcutManagerService>;
+    let scrollDispatcherSpy: jasmine.SpyObj<ScrollDispatcher>;
+    let scrollSubject: Subject<CdkScrollable>;
 
     beforeEach(async(() => {
         shortcutManagerSpy = jasmine.createSpyObj('ShortcutManagerService', [
@@ -42,12 +46,27 @@ describe('EditorComponent', () => {
             'onPlusKeyDown',
             'onEqualKeyDown',
             'onKeyboardDown',
+            'onEscapeKeyDown',
+            'onMKeyDown',
+            'onAltUp',
+            'onAltDown',
         ]);
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         toolStub = new ToolStub(drawServiceSpy as DrawingService, {} as UndoRedoService);
-        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['getTool', 'selectTool', 'setPrimaryColorTools', 'setSecondaryColorTools']);
+        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', [
+            'getTool',
+            'selectTool',
+            'setPrimaryColorTools',
+            'setSecondaryColorTools',
+            'scrolled',
+        ]);
         popupManagerSpy = jasmine.createSpyObj('PopupManagerService', ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp'], ['isPopupOpen']);
         canvasGridServiceSpy = jasmine.createSpyObj('CanvasGridService', ['resize', 'toggleGrid', 'reduceGridSize', 'increaseGridSize']);
+        scrollSubject = new Subject<CdkScrollable>();
+        scrollDispatcherSpy = jasmine.createSpyObj('ScrollDispatcher', ['scrolled']);
+        scrollDispatcherSpy.scrolled.and.callFake(() => {
+            return scrollSubject.asObservable();
+        });
 
         TestBed.configureTestingModule({
             declarations: [EditorComponent],
@@ -60,6 +79,7 @@ describe('EditorComponent', () => {
                 { provide: ShortcutManagerService, useValue: shortcutManagerSpy },
                 { provide: SidebarComponent, useValue: {} },
                 { provide: DrawingComponent, useValue: {} },
+                { provide: ScrollDispatcher, useValue: scrollDispatcherSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -74,6 +94,37 @@ describe('EditorComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it("should call toolManager.scrolled when scroll event emitted and a CdkScrollable with element.id === 'drawing-container'", () => {
+        const mockRef = { nativeElement: { id: 'drawing-container' } } as ElementRef;
+        const mockScrollable = new CdkScrollable(mockRef, scrollDispatcherSpy, {} as NgZone);
+        const scrollOffsetSpy = spyOn(mockScrollable, 'measureScrollOffset');
+        scrollOffsetSpy.and.callFake(() => {
+            return 1;
+        });
+        scrollSubject.next(mockScrollable);
+        expect(toolManagerSpy.scrolled).toHaveBeenCalled();
+    });
+
+    it("should not call toolManager.scrolled when scroll event emitted and a CdkScrollable with element.id !== 'drawing-container'", () => {
+        const mockRef = { nativeElement: { id: 'not-drawing-container' } } as ElementRef;
+        const mockScrollable = new CdkScrollable(mockRef, scrollDispatcherSpy, {} as NgZone);
+        const scrollOffsetSpy = spyOn(mockScrollable, 'measureScrollOffset');
+        scrollOffsetSpy.and.callFake(() => {
+            return 1;
+        });
+        scrollSubject.next(mockScrollable);
+        expect(toolManagerSpy.scrolled).not.toHaveBeenCalled();
+    });
+
+    it('should not call toolManager.scrolled when scroll event emitted but not a CdkScrollable', () => {
+        const mockScrollable = jasmine.createSpyObj('CdkScrollable', ['measureScrollOffset']);
+        mockScrollable.measureScrollOffset.and.callFake(() => {
+            return 1;
+        });
+        scrollSubject.next(mockScrollable);
+        expect(toolManagerSpy.scrolled).not.toHaveBeenCalled();
     });
 
     it("should call shortcutManger.onKeyboardDown when '1' key is down", () => {
@@ -127,6 +178,11 @@ describe('EditorComponent', () => {
     it('onGKeyDown should call shortcutManager.onGKeyDown', () => {
         component.onGKeyDown();
         expect(shortcutManagerSpy.onGKeyDown).toHaveBeenCalled();
+    });
+
+    it('onMKeyDown should call shortcutManager.onMKeyDown', () => {
+        component.onMKeyDown();
+        expect(shortcutManagerSpy.onMKeyDown).toHaveBeenCalled();
     });
 
     it('onMinusKeyDown should call shortcutManager.onMinusKeyDown', () => {
@@ -201,25 +257,41 @@ describe('EditorComponent', () => {
         expect(shortcutManagerSpy.onKeyboardDown).not.toHaveBeenCalled();
     });
 
-    it('ctrl+c should call copySelection from ClipboardService', () => {
+    it('alt key down should call shortcutManager.onAltDown', () => {
+        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'alt' });
+        component.onAltDown(eventSpy);
+        expect(shortcutManagerSpy.onAltDown).toHaveBeenCalledWith(eventSpy);
+    });
+
+    it('alt key up should call shortcutManager.onAltUp', () => {
+        component.onAltUp();
+        expect(shortcutManagerSpy.onAltUp).toHaveBeenCalled();
+    });
+
+    it('onEscapeKeyDown should call shortcutManager.onEscapeKeyDown', () => {
+        component.onEscapeKeyDown();
+        expect(shortcutManagerSpy.onEscapeKeyDown).toHaveBeenCalled();
+    });
+
+    it('ctrl+c should call shortcutManager.onCtrlCKeyDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyC', key: 'c' });
         component.onCtrlCKeyDown(eventSpy);
         expect(shortcutManagerSpy.onCtrlCKeyDown).toHaveBeenCalled();
     });
 
-    it('ctrl+x should call cutSelection from ClipboardService', () => {
+    it('ctrl+x should call shortcutManager.onCtrlXKeyDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyX', key: 'x' });
         component.onCtrlXKeyDown(eventSpy);
         expect(shortcutManagerSpy.onCtrlXKeyDown).toHaveBeenCalled();
     });
 
-    it('ctrl+v should call pasteSelection from ClipboardService', () => {
+    it('ctrl+v should call shortcutManager.onCtrlVKeyDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: true, code: 'KeyV', key: 'v' });
         component.onCtrlVKeyDown(eventSpy);
         expect(shortcutManagerSpy.onCtrlVKeyDown).toHaveBeenCalled();
     });
 
-    it('delete should call deleteSelection from ClipboardService', () => {
+    it('delete should call shortcutManager.onDeleteKeyDown', () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { ctrlKey: false, code: 'Delete', key: 'delete' });
         component.onDeleteKeyDown(eventSpy);
         expect(shortcutManagerSpy.onDeleteKeyDown).toHaveBeenCalled();

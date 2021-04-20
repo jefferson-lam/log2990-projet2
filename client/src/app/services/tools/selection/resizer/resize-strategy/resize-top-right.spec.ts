@@ -1,5 +1,6 @@
 import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { TestBed } from '@angular/core/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ResizeStrategy } from '@app/classes/resize-strategy';
 import { SelectionComponent } from '@app/components/selection/selection.component';
 import { ResizeTopRight } from './resize-top-right';
@@ -7,11 +8,18 @@ import { ResizeTopRight } from './resize-top-right';
 describe('ResizeTopRightService', () => {
     let service: ResizeTopRight;
     let mockComponent: SelectionComponent;
+    let canvasTestHelper: CanvasTestHelper;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ResizeTopRight);
-        mockComponent = { bottomRight: { x: 20, y: 20 }, initialPosition: { x: 10, y: 10 } } as SelectionComponent;
+        canvasTestHelper = TestBed.inject(CanvasTestHelper);
+        mockComponent = {
+            bottomRight: { x: 20, y: 20 },
+            initialPosition: { x: 10, y: 10 },
+            previewSelectionCanvas: canvasTestHelper.previewSelectionCanvas,
+            borderCanvas: canvasTestHelper.borderCanvas,
+        } as SelectionComponent;
         service.selectionComponent = mockComponent;
     });
 
@@ -41,8 +49,8 @@ describe('ResizeTopRightService', () => {
     });
 
     it('resize should call resize methods of resizeWidth and resizeHeight if isShiftDown false', () => {
-        const resizeWidthSpy = spyOn(service.resizeWidth, 'resize');
-        const resizeHeightSpy = spyOn(service.resizeHeight, 'resize');
+        const resizeWidthSpy = spyOn(service.resizeWidth, 'resizePreview');
+        const resizeHeightSpy = spyOn(service.resizeHeight, 'resizePreview');
 
         service.resize({} as CdkDragMove, false);
 

@@ -11,12 +11,16 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class ToolSelectionService extends Tool {
+    originalImageCanvas: HTMLCanvasElement;
+    originalImageCtx: CanvasRenderingContext2D;
+
     selectionTool: Tool;
     // Save selectionTool's lineWidth here and fillMode.
     selectionToolLineWidth: number;
     selectionToolFillMode: ToolConstants.FillMode;
     selectionToolPrimaryColor: string;
     selectionToolSecondaryColor: string;
+    isManipulating: boolean;
 
     constructor(
         drawingService: DrawingService,
@@ -26,10 +30,15 @@ export class ToolSelectionService extends Tool {
     ) {
         super(drawingService, undoRedoService);
         this.selectionTool = selectionTool;
+        this.originalImageCanvas = document.createElement('canvas');
+        this.originalImageCtx = this.originalImageCanvas.getContext('2d') as CanvasRenderingContext2D;
     }
 
+    // implemented in child classes
+    // tslint:disable-next-line:no-empty
+    undoSelection(): void {}
+
     onMouseDown(event: MouseEvent): void {
-        this.getSelectedToolSettings();
         this.setSelectionSettings();
         this.selectionTool.onMouseDown(event);
     }
@@ -58,13 +67,6 @@ export class ToolSelectionService extends Tool {
         this.selectionTool.onKeyboardUp(event);
     }
 
-    resetCanvasState(canvas: HTMLCanvasElement): void {
-        canvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
-        canvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
-        canvas.width = SelectionConstants.DEFAULT_WIDTH;
-        canvas.height = SelectionConstants.DEFAULT_HEIGHT;
-    }
-
     /**
      * Simple swap functions that will always place the top-left corner as the START_INDEX
      * and the bottom-right corner as the END_INDEX, no matter the orientation of the selection
@@ -89,7 +91,8 @@ export class ToolSelectionService extends Tool {
      * Ensures that no matter how the user starts his selection, that the
      * cornerCoords will match the ones displayed on screen.
      */
-    computeSquareCoords(cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number, shortestSide: number): Vec2[] {
+    computeSquareCoords(cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): Vec2[] {
+        const shortestSide = Math.min(Math.abs(selectionWidth), Math.abs(selectionHeight));
         if (selectionWidth < 0 && selectionHeight < 0) {
             cornerCoords[0] = this.addScalarToVec2(cornerCoords[1], -shortestSide);
         } else if (selectionWidth < 0) {
@@ -97,10 +100,10 @@ export class ToolSelectionService extends Tool {
                 cornerCoords[0] = this.addScalarToVec2(cornerCoords[1], -shortestSide);
             }
         } else if (selectionHeight < 0) {
-            if (shortestSide === selectionHeight) {
-                cornerCoords[1] = this.addScalarToVec2(cornerCoords[0], shortestSide);
-            } else if (shortestSide === selectionWidth) {
+            if (shortestSide === selectionWidth) {
                 cornerCoords[0] = this.addScalarToVec2(cornerCoords[1], -shortestSide);
+            } else {
+                cornerCoords[1] = this.addScalarToVec2(cornerCoords[0], shortestSide);
             }
         }
         return cornerCoords;
@@ -142,6 +145,35 @@ export class ToolSelectionService extends Tool {
         this.drawingService.previewCtx.setLineDash([]);
     }
 
+    setSelectionCanvasSize(width: number, height: number): void {
+        this.drawingService.selectionCanvas.width = width;
+        this.drawingService.selectionCanvas.height = height;
+        this.drawingService.previewSelectionCanvas.width = width;
+        this.drawingService.previewSelectionCanvas.height = height;
+        this.drawingService.borderCanvas.width = width;
+        this.drawingService.borderCanvas.height = height;
+        this.originalImageCanvas.width = width;
+        this.originalImageCanvas.height = height;
+    }
+
+    setSelectionCanvasPosition(topLeft: Vec2): void {
+        this.drawingService.selectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.selectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.previewSelectionCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.previewSelectionCanvas.style.top = topLeft.y + 'px';
+        this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
+        this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
+        this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+        this.drawingService.previewSelectionCanvas.focus();
+    }
+
+    resetCanvasState(canvas: HTMLCanvasElement): void {
+        canvas.style.left = SelectionConstants.DEFAULT_LEFT_POSITION + 'px';
+        canvas.style.top = SelectionConstants.DEFAULT_TOP_POSITION + 'px';
+        canvas.width = SelectionConstants.DEFAULT_WIDTH;
+        canvas.height = SelectionConstants.DEFAULT_HEIGHT;
+    }
+
     addScalarToVec2(point: Vec2, scalar: number): Vec2 {
         return {
             x: point.x + scalar,
@@ -153,7 +185,19 @@ export class ToolSelectionService extends Tool {
         return cornerCoords.fill({ x: 0, y: 0 });
     }
 
+    onToolEnter(): void {
+        this.getSelectedToolSettings();
+        this.setSelectionSettings();
+    }
+
     onToolChange(): void {
         this.resizerHandlerService.inUse = false;
+        this.resetSelectedToolSettings();
+    }
+
+    resetAllCanvasState(): void {
+        this.resetCanvasState(this.drawingService.selectionCanvas);
+        this.resetCanvasState(this.drawingService.previewSelectionCanvas);
+        this.resetCanvasState(this.drawingService.borderCanvas);
     }
 }

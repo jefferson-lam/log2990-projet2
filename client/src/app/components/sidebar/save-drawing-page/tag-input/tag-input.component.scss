@@ -1,5 +1,5 @@
 div {
-    font-size: 12px;
+    font-size: 14px;
 }
 .Satisfied {
     color: green;
@@ -10,23 +10,41 @@ div {
     color: red;
 }
 
+.Unrequested {
+    color: black;
+}
+
+#inputDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+#tagFormField {
+    padding-top: 15px;
+    width: 190px;
+}
+
 .tagDiv {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    justify-content: flex-start;
     align-content: space-between;
+    flex-wrap: wrap;
 }
 
 .tag {
-    background: rgb(224, 224, 224);
     padding: 5px;
-    margin-bottom: 5px;
+    margin: 5px;
+    background-color: #79bed9;
 }
 
 .tagLabel {
     float: left;
     padding-right: 15px;
-    padding-bottom: 0px;
-    margin: 0px 0px 0px 0px;
+    padding-bottom: 0;
+    margin: 0 0 0 0;
 }
 
 .tagDeleteButton {
@@ -34,7 +52,7 @@ div {
     float: right;
     width: 13.34px;
     height: 13.14px;
-    padding: 0px 0px 0px 0px;
+    padding: 0 0 0 0;
 }
 
 .icon {
@@ -52,16 +70,23 @@ div {
 }
 
 #addTagButton {
-    cursor: pointer;
-    background-color: inherit;
-    border-radius: 3px;
-    margin-left: 5px;
+    font-size: large;
+    background-color: coral;
+    width: 150px;
+    align-self: center;
+    margin: 10px;
 }
 
-#addTagButton:hover:enabled {
-    background: rgb(182, 178, 178);
+#addTagButton:hover {
+    color: beige;
+    background-color: #0c3164;
+}
+
+#addTagButton:active {
+    background-color: coral;
 }
 
 #addTagButton:disabled {
     cursor: not-allowed;
+    background-color: rgb(255, 167, 136);
 }

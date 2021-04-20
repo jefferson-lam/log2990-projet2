@@ -1,7 +1,7 @@
-<mat-form-field appearance="fill">
+<mat-form-field id ="title-field" appearance="fill">
     <mat-label>Titre</mat-label>
-    <input #titleInput matInput (input)="validateTitle(titleInput.value)" />
+    <input #titleInput matInput (input)="validateTitle(titleInput.value)" autocomplete="off" />
 </mat-form-field>
-<div [className]="minLengthDivClass">{{ minLengthRequirement }}</div>
-<div [className]="maxLengthDivClass">{{ maxLengthRequirement }}</div>
-<div [className]="noSpecialCharacterDivClass">{{ noSpecialCharacterRequirement }}</div>
+<div *ngIf='minLengthDivClass === "Failed"' [className]="minLengthDivClass">{{ minLengthRequirement }}</div>
+<div *ngIf='maxLengthDivClass === "Failed"' [className]="maxLengthDivClass">{{ maxLengthRequirement }}</div>
+<div *ngIf='noSpecialCharacterDivClass === "Failed"' [className]="noSpecialCharacterDivClass">{{ noSpecialCharacterRequirement }}</div>

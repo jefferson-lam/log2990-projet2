@@ -48,4 +48,36 @@ export class SettingsManagerService {
     setToleranceValue(newToleranceValue: number): void {
         this.toolManager.currentTool.setToleranceValue(newToleranceValue);
     }
+
+    setImageSource(newSource: string): void {
+        this.toolManager.currentTool.imageSource = newSource;
+    }
+
+    setImageZoomFactor(newFactor: number): void {
+        this.toolManager.currentTool.imageZoomFactor = newFactor;
+    }
+
+    setAngleRotation(newAngle: number): void {
+        this.toolManager.currentTool.setAngleRotation(newAngle);
+    }
+
+    setFontFamily(fontFamily: string): void {
+        this.toolManager.currentTool.setFontFamily(fontFamily);
+    }
+
+    setFontSize(fontSize: number): void {
+        this.toolManager.currentTool.setFontSize(fontSize);
+    }
+
+    setTextAlign(textAlign: string): void {
+        this.toolManager.currentTool.setTextAlign(textAlign);
+    }
+
+    setTextBold(fontWeight: string): void {
+        this.toolManager.currentTool.setTextBold(fontWeight);
+    }
+
+    setTextItalic(fontStyle: string): void {
+        this.toolManager.currentTool.setTextItalic(fontStyle);
+    }
 }

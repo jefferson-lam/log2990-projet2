@@ -1,14 +1,23 @@
 * {
     font-family: 'Rubik', serif;
 }
+
 #settings-container {
     color: #eee;
     margin-left: 10px;
+    overflow-x: hidden;
 }
+
 #title {
     font-weight: bolder;
     font-size: x-large;
+    margin-left: 10px;
 }
+
+#settingsWrapper {
+    margin-left: 10px;
+}
+
 #width-setting {
     display: block;
     margin-top: 10px;

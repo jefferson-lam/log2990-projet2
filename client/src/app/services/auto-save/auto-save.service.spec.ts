@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -7,6 +7,8 @@ import { Subject } from 'rxjs';
 import { AutoSaveService } from './auto-save.service';
 import SpyObj = jasmine.SpyObj;
 
+// tslint:disable: no-any
+// tslint:disable:no-string-literal
 describe('AutoSaveService', () => {
     let service: AutoSaveService;
     let drawServiceSpy: SpyObj<DrawingService>;
@@ -17,8 +19,9 @@ describe('AutoSaveService', () => {
     let bottomResizer: HTMLElement;
     let canvasTestHelper: CanvasTestHelper;
     let undoRedoServiceSpy: SpyObj<UndoRedoService>;
-    let executeSpy: jasmine.Spy;
+    let resizerCommandSpy: jasmine.SpyObj<ResizerCommand>;
     let autoSaveSpy: jasmine.Spy;
+    let loadLocalStorageSpy: jasmine.Spy<any>;
     let mockSubject: Subject<number[]>;
 
     const mockImageURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
@@ -41,19 +44,24 @@ describe('AutoSaveService', () => {
         document.body.append(bottomResizer);
         document.body.append(cornerResizer);
 
+        resizerCommandSpy = jasmine.createSpyObj('ResizerCommand', ['execute', 'resizeCanvas']);
+        resizerCommandSpy.resizeCanvas.and.stub();
+        resizerCommandSpy.execute.and.stub();
+
         mockSubject = new Subject<number[]>();
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['reset'], {
-            pileSizeSource: mockSubject,
-            pileSizeObservable: mockSubject.asObservable(),
-            resetCanvasSize: new ResizerCommand(drawServiceSpy),
+            actionsAllowedSource: mockSubject,
+            actionsAllowedObservable: mockSubject.asObservable(),
+            resetCanvasSize: resizerCommandSpy,
             initialImage: new Image(),
         });
 
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['newDrawing'], ['canvas', 'baseCtx']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['newDrawing', 'whiteOut'], ['canvas', 'baseCtx']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
                 { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: ResizerCommand, useValue: resizerCommandSpy },
             ],
         });
         service = TestBed.inject(AutoSaveService);
@@ -63,21 +71,23 @@ describe('AutoSaveService', () => {
         );
 
         autoSaveSpy = spyOn(service, 'autoSaveDrawing');
-        executeSpy = spyOn(undoRedoServiceSpy.resetCanvasSize, 'execute');
+        loadLocalStorageSpy = spyOn<any>(service, 'loadLocalStorage').and.callFake(() => {
+            (service.undoRedoService.initialImage as HTMLImageElement).src = mockImageURL;
+        });
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should call autoSaveDrawing if pile size changes and both are not empty', () => {
-        service.undoRedoService.pileSizeSource.next([1, 1]);
+    it('should call autoSaveDrawing if undo and redo are allowed', () => {
+        service.undoRedoService['actionsAllowedSource'].next([true, true]);
 
         expect(autoSaveSpy).toHaveBeenCalled();
     });
 
-    it('should not call autoSaveDrawing if pile size changes and both are empty', () => {
-        service.undoRedoService.pileSizeSource.next([0, 0]);
+    it('should not call autoSaveDrawing if undo and redo not allowed', () => {
+        service.undoRedoService['actionsAllowedSource'].next([false, false]);
 
         expect(autoSaveSpy).not.toHaveBeenCalled();
     });
@@ -104,49 +114,82 @@ describe('AutoSaveService', () => {
         expect(setSpy).toHaveBeenCalledWith('autosave', mockImageURL);
     });
 
-    it('loadDrawing should execute resetCanvasSize if autosaved drawing', async () => {
-        localStorage.setItem('autosave', mockImageURL);
-        await service.loadDrawing();
+    it('loadDrawing should execute resetCanvasSize if autosaved drawing', fakeAsync(() => {
+        spyOn(localStorage, 'getItem').and.callFake((key) => {
+            return mockImageURL;
+        });
+        service.loadDrawing();
+        flush();
+        expect(loadLocalStorageSpy).toHaveBeenCalled();
+        expect(resizerCommandSpy.execute).toHaveBeenCalled();
         localStorage.clear();
+    }));
 
-        expect(executeSpy).toHaveBeenCalled();
-    });
-
-    it('loadDrawing should drawImage after initialImage.onload event if autosaved drawing', async () => {
-        localStorage.setItem('autosave', mockImageURL);
-        const drawSpy = spyOn(canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D, 'drawImage');
-        await service.loadDrawing();
-        localStorage.clear();
-
+    it('loadDrawing should drawImage after initialImage.onload event if autosaved drawing', fakeAsync(() => {
+        spyOn(localStorage, 'getItem').and.callFake((key) => {
+            return mockImageURL;
+        });
+        const drawSpy = spyOn(service.drawingService.baseCtx, 'drawImage');
+        service.loadDrawing();
+        flush();
+        expect(loadLocalStorageSpy).toHaveBeenCalled();
         expect(service.undoRedoService.initialImage).not.toBeNull();
         expect(drawSpy).toHaveBeenCalled();
-    });
+    }));
 
-    it('loadDrawing should autoSaveDrawing after initialImage.onload event if autosaved drawing', async () => {
-        localStorage.setItem('autosave', mockImageURL);
-        await service.loadDrawing();
-        localStorage.clear();
+    it('loadDrawing should autoSaveDrawing after initialImage.onload event if autosaved drawing', fakeAsync(() => {
+        spyOn(localStorage, 'getItem').and.callFake((key) => {
+            return mockImageURL;
+        });
 
+        resizerCommandSpy.execute.and.stub();
+        service.loadDrawing();
+        flush();
+        expect(loadLocalStorageSpy).toHaveBeenCalled();
         expect(autoSaveSpy).toHaveBeenCalled();
-    });
+    }));
 
-    it('loadDrawing should execute resetCanvasSize if not autosaved drawing', () => {
-        localStorage.clear();
+    it('loadDrawing should execute resetCanvasSize if not autosaved drawing', fakeAsync(() => {
+        spyOn(localStorage, 'getItem').and.callFake((key) => {
+            return null;
+        });
         service.loadDrawing();
+        flush();
+        expect(resizerCommandSpy.execute).toHaveBeenCalled();
+    }));
 
-        expect(executeSpy).toHaveBeenCalled();
-    });
-
-    it('loadDrawing should call drawingService.newDrawing if not autosave', () => {
+    it('loadDrawing should call drawingService.newDrawing if not autosave', fakeAsync(() => {
+        spyOn(localStorage, 'getItem').and.callFake((key) => {
+            return null;
+        });
         service.loadDrawing();
-
+        flush();
         expect(drawServiceSpy.newDrawing).toHaveBeenCalled();
-    });
+    }));
 
-    it('loadDrawing should call autoSaveDrawing and reset undoRedoService', () => {
+    it('loadDrawing should call autoSaveDrawing and reset undoRedoService', fakeAsync(() => {
+        spyOn(localStorage, 'getItem').and.callFake((key) => {
+            return null;
+        });
         service.loadDrawing();
-
+        flush();
         expect(autoSaveSpy).toHaveBeenCalled();
         expect(undoRedoServiceSpy.reset).toHaveBeenCalled();
+    }));
+
+    it('loadLocalStorage should', async (done) => {
+        loadLocalStorageSpy.and.callThrough();
+        spyOn(localStorage, 'getItem').and.callFake((key) => {
+            return mockImageURL;
+        });
+
+        service['loadLocalStorage']()
+            .then(() => {
+                expect((service.undoRedoService.initialImage as HTMLImageElement).src).toBe(mockImageURL);
+                done();
+            })
+            .catch((error) => {
+                done.fail(error);
+            });
     });
 });

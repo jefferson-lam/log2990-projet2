@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
-import * as EllipseConstants from '@app/constants/ellipse-constants';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseService } from './ellipse-service';
@@ -23,10 +24,6 @@ describe('EllipseService', () => {
     let previewExecuteSpy: jasmine.Spy;
     let setPreviewValuesSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
-
-    // let drawEllipseSpy: jasmine.Spy<any>;
-    // let testCanvas: HTMLCanvasElement;
-    // let testCtx: CanvasRenderingContext2D;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -50,9 +47,10 @@ describe('EllipseService', () => {
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 40,
             button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
     });
@@ -112,6 +110,13 @@ describe('EllipseService', () => {
         expect(predictionRectangleSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseMove should not call drawPredictionRectangle if drawnFromSelection', () => {
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onMouseMove(mouseEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it('onMouseLeave should call setValues and execute of previewCommand if mouse was pressed', () => {
         service.inUse = true;
 
@@ -128,11 +133,18 @@ describe('EllipseService', () => {
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseLeave should not call drawpredictionrectangle if from selection', () => {
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onMouseLeave(mouseEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it('onMouseEnter should make service.inUse true if left mouse was pressed and mouse was pressed before leaving', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: MouseConstants.PRIMARY_BUTTON,
+            buttons: MouseConstants.MouseButton.Middle,
         } as MouseEvent;
         service.inUse = true;
 
@@ -206,6 +218,16 @@ describe('EllipseService', () => {
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
+    it('onKeyboardDown should not call drawPredictionRectangle if from selection', () => {
+        const keyEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onKeyboardDown(keyEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it(' onKeyboardUp should call setValues and execute of previewCommand if mouse was down and then shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.inUse = true;
@@ -246,6 +268,16 @@ describe('EllipseService', () => {
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
+    it('onKeyboardUp should not drawPredictionRectangle if from selection', () => {
+        const keyEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onKeyboardUp(keyEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it('setLineWidth should change size of lineWidth if within min and max width allowed', () => {
         const RANDOM_TEST_WIDTH = 10;
         service.setLineWidth(RANDOM_TEST_WIDTH);
@@ -255,13 +287,13 @@ describe('EllipseService', () => {
     it('setLineWidth should change size of lineWidth to min width if width is lower than min', () => {
         const LOWER_TEST_WIDTH = -1;
         service.setLineWidth(LOWER_TEST_WIDTH);
-        expect(service.lineWidth).toEqual(EllipseConstants.MIN_BORDER_WIDTH);
+        expect(service.lineWidth).toEqual(ShapeConstants.MIN_BORDER_WIDTH);
     });
 
     it('setLineWidth should change size of lineWidth to max width if width is bigger than max', () => {
         const RANDOM_TEST_WIDTH = 70;
         service.setLineWidth(RANDOM_TEST_WIDTH);
-        expect(service.lineWidth).toEqual(EllipseConstants.MAX_BORDER_WIDTH);
+        expect(service.lineWidth).toEqual(ShapeConstants.MAX_BORDER_WIDTH);
     });
 
     it('onToolChange should call onMouseUp', () => {

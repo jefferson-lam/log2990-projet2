@@ -1,6 +1,6 @@
 <div id="settings-container">
     <h2 id="title">Options de l'ellipse</h2>
-    <div>
+    <div id="settingsWrapper">
         <div id="width-setting">
             <p>Épaisseur : {{ toolSize }}</p>
             <mat-slider
@@ -17,9 +17,15 @@
         </div>
         <div id="trace-type">
             <mat-radio-group>
-                <mat-radio-button id="border" value="border" color="warn" (change)="emitFillMode(0)"> Contour </mat-radio-button> <br />
-                <mat-radio-button id="filled" value="filled" color="warn" (change)="emitFillMode(1)"> Plein </mat-radio-button> <br />
-                <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="emitFillMode(2)" checked>
+                <mat-radio-button id="border" value="border" color="warn" (change)="emitFillMode(0)" [checked]="fillMode === 0">
+                    Contour
+                </mat-radio-button>
+                <br />
+                <mat-radio-button id="filled" value="filled" color="warn" (change)="emitFillMode(1)" [checked]="fillMode === 1">
+                    Plein
+                </mat-radio-button>
+                <br />
+                <mat-radio-button id="filledContour" value="filledContour" color="warn" (change)="emitFillMode(2)" [checked]="fillMode === 2">
                     Plein avec contour
                 </mat-radio-button>
             </mat-radio-group>

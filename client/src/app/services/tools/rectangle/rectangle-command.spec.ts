@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { RectangleCommand } from '@app/services/tools/rectangle/rectangle-command';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
@@ -84,8 +84,7 @@ describe('RectangleCommand', () => {
     });
 
     it('drawRectangle should call drawTypeRectangle with unchanged width & height if smaller or equal to lineWidth', () => {
-        const width = command.cornerCoords[RectangleConstants.END_INDEX].x - command.cornerCoords[RectangleConstants.START_INDEX].x;
-        const height = command.cornerCoords[RectangleConstants.END_INDEX].y - command.cornerCoords[RectangleConstants.START_INDEX].y;
+        const width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
 
         command.isSquare = false;
         command.lineWidth = width;
@@ -95,21 +94,12 @@ describe('RectangleCommand', () => {
         command['drawRectangle'](command['ctx'], command.cornerCoords);
 
         expect(drawRectangleTypeSpy).toHaveBeenCalled();
-        expect(drawRectangleTypeSpy).toHaveBeenCalledWith(
-            baseCtxStub,
-            pathStub,
-            width,
-            height,
-            ToolConstants.FillMode.OUTLINE_FILL,
-            RectangleConstants.MIN_BORDER_WIDTH,
-            command.primaryColor,
-            command.primaryColor,
-        );
+        expect(drawRectangleTypeSpy).toHaveBeenCalledWith(baseCtxStub, pathStub);
     });
 
     it('drawRectangle should call drawTypeRectangle with shortestSide of width & height if smaller or equal to lineWidth and isSquare', () => {
-        let width = command.cornerCoords[RectangleConstants.END_INDEX].x - command.cornerCoords[RectangleConstants.START_INDEX].x;
-        let height = command.cornerCoords[RectangleConstants.END_INDEX].y - command.cornerCoords[RectangleConstants.START_INDEX].y;
+        let width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
+        let height = command.cornerCoords[ShapeConstants.END_INDEX].y - command.cornerCoords[ShapeConstants.START_INDEX].y;
 
         const shortestSide = Math.min(Math.abs(width), Math.abs(height));
         width = Math.sign(width) * shortestSide;
@@ -123,43 +113,22 @@ describe('RectangleCommand', () => {
         command['drawRectangle'](command['ctx'], command.cornerCoords);
 
         expect(drawRectangleTypeSpy).toHaveBeenCalled();
-        expect(drawRectangleTypeSpy).toHaveBeenCalledWith(
-            baseCtxStub,
-            pathStub,
-            width,
-            height,
-            ToolConstants.FillMode.OUTLINE_FILL,
-            RectangleConstants.MIN_BORDER_WIDTH,
-            command.primaryColor,
-            command.primaryColor,
-        );
+        expect(drawRectangleTypeSpy).toHaveBeenCalledWith(baseCtxStub, pathStub);
     });
 
     it('drawRectangle should call drawTypeRectangle with changed width & height if bigger than lineWidth', () => {
-        const width = command.cornerCoords[RectangleConstants.END_INDEX].x - command.cornerCoords[RectangleConstants.START_INDEX].x;
-        const height = command.cornerCoords[RectangleConstants.END_INDEX].y - command.cornerCoords[RectangleConstants.START_INDEX].y;
+        const width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
+        const height = command.cornerCoords[ShapeConstants.END_INDEX].y - command.cornerCoords[ShapeConstants.START_INDEX].y;
 
         command.isSquare = false;
         command.lineWidth = Math.min(Math.abs(height), Math.abs(width)) - 1;
         command.fillMode = ToolConstants.FillMode.FILL_ONLY;
 
-        const expectedWidth = width - Math.sign(width) * command.lineWidth;
-        const expectedHeight = height - Math.sign(height) * command.lineWidth;
-
         // tslint:disable:no-string-literal
         command['drawRectangle'](command['ctx'], command.cornerCoords);
 
         expect(drawRectangleTypeSpy).toHaveBeenCalled();
-        expect(drawRectangleTypeSpy).toHaveBeenCalledWith(
-            baseCtxStub,
-            pathStub,
-            expectedWidth,
-            expectedHeight,
-            command.fillMode,
-            command.lineWidth,
-            command.primaryColor,
-            command.primaryColor,
-        );
+        expect(drawRectangleTypeSpy).toHaveBeenCalledWith(baseCtxStub, pathStub);
     });
 
     it('FillMode.FILL_ONLY should fill all pixels between start and end point with the same color.', () => {
@@ -195,7 +164,7 @@ describe('RectangleCommand', () => {
         testCtx.lineJoin = 'miter';
         testCtx.rect(START_X, START_Y, TEST_X_OFFSET, TEST_Y_OFFSET);
         testCtx.strokeStyle = TEST_SECONDARY_COLOR;
-        testCtx.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
+        testCtx.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
         testCtx.stroke();
         testCtx.fillStyle = TEST_SECONDARY_COLOR;
         testCtx.fill();
@@ -216,7 +185,7 @@ describe('RectangleCommand', () => {
         testCtx.beginPath();
         testCtx.lineJoin = 'miter';
         testCtx.strokeStyle = TEST_SECONDARY_COLOR;
-        testCtx.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
+        testCtx.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
         testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
         testCtx.stroke();
 

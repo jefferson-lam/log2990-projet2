@@ -2,6 +2,16 @@
     font-family: 'Rubik', serif;
 }
 
+#newTitle {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-self: center;
+  font-size: 22px;
+  font-family: Rubik, serif;
+  padding-top: 10px;
+}
+
 #saveButton,
 #newButton {
     align-content: center;
@@ -10,6 +20,11 @@
     margin-left: 76px;
     margin-bottom: 30px;
     width: 125px;
+}
+
+#saveButton:hover, #newButton:hover{
+    color: beige;
+    background-color: #0c3164;
 }
 
 .modal-dialog {

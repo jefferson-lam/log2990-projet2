@@ -6,8 +6,6 @@ import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
-import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
-import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -16,8 +14,17 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class PopupManagerService {
     isPopUpOpen: boolean;
+    newDrawingPossible: boolean;
 
     constructor(public dialog: MatDialog, public undoRedoService: UndoRedoService, public toolManager: ToolManagerService, public router: Router) {
+        this.newDrawingPossible = this.undoRedoService.initialImage !== undefined;
+        this.undoRedoService.pileSizeObservable.subscribe(() => {
+            if (this.undoRedoService.isUndoPileEmpty() && this.undoRedoService.initialImage === undefined) {
+                this.newDrawingPossible = false;
+                return;
+            }
+            this.newDrawingPossible = true;
+        });
         this.isPopUpOpen = false;
         this.dialog.afterAllClosed.subscribe(() => {
             this.isPopUpOpen = false;
@@ -34,14 +41,12 @@ export class PopupManagerService {
             width: '1800px',
         });
         dialogRef.afterClosed().subscribe((imageOpen) => {
-            if (imageOpen.autosave) {
-                const discardRef = this.openDiscardChangesPopUp();
-                discardRef?.afterClosed().subscribe((discarded) => {
-                    if (discarded) {
-                        localStorage.setItem('autosave', imageOpen.data);
-                    }
-                });
-            }
+            if (!imageOpen.autosave) return;
+            const discardRef = this.openDiscardChangesPopUp();
+            discardRef?.afterClosed().subscribe((discarded) => {
+                if (!discarded) return;
+                localStorage.setItem('autosave', imageOpen.data);
+            });
         });
     }
 
@@ -49,9 +54,8 @@ export class PopupManagerService {
         if (this.isPopUpOpen) return;
         const dialogRef = this.dialog.open(DiscardChangesPopupComponent);
         dialogRef.afterClosed().subscribe((discarded) => {
-            if (discarded) {
-                this.router.navigate(['/', 'editor']);
-            }
+            if (!discarded) return;
+            this.router.navigate(['/', 'editor']);
         });
         return dialogRef;
     }
@@ -59,34 +63,19 @@ export class PopupManagerService {
     openExportPopUp(): void {
         if (this.isPopUpOpen) return;
         this.toolManager.currentTool.onToolChange();
-        this.dialog.open(ExportDrawingComponent, {
-            maxWidth: MAX_WIDTH_FORM + 'px',
-            maxHeight: MAX_HEIGHT_FORM + 'px',
-        });
+        this.dialog.open(ExportDrawingComponent);
     }
 
     openNewDrawingPopUp(): void {
         if (this.isPopUpOpen) return;
-        if (!this.undoRedoService.isUndoPileEmpty() || this.undoRedoService.initialImage !== undefined) {
-            this.toolManager.currentTool.onToolChange();
-            this.dialog.open(NewDrawingBoxComponent);
-        }
+        if (!this.newDrawingPossible) return;
+        this.toolManager.currentTool.onToolChange();
+        this.dialog.open(NewDrawingBoxComponent);
     }
 
     openSavePopUp(): void {
         if (this.isPopUpOpen) return;
-        if (!this.isCanvasEmpty()) {
-            this.toolManager.currentTool.onToolChange();
-            this.dialog.open(SaveDrawingComponent);
-        }
-    }
-
-    isCanvasEmpty(): boolean {
-        // Thanks to user Kaiido on stackoverflow.com
-        // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank/17386803#comment96825186_17386803
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        const baseCtx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
-        const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
-        return !pixelBuffer.some((color) => color !== WHITE_RGBA_DECIMAL);
+        this.toolManager.currentTool.onToolChange();
+        this.dialog.open(SaveDrawingComponent);
     }
 }

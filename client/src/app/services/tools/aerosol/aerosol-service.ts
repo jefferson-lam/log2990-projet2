@@ -17,12 +17,11 @@ export class AerosolService extends Tool {
     lineWidth: number;
     waterDropWidth: number;
     emissionCount: number;
-    randomAngle: number;
-    randomRadius: number;
-    emissionRate: number;
-    primaryColor: string = '#2F2A36';
-
-    previewCommand: AerosolCommand;
+    primaryColor: string;
+    private randomAngle: number;
+    private randomRadius: number;
+    private mousePosition: Vec2;
+    private previewCommand: AerosolCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
@@ -30,28 +29,25 @@ export class AerosolService extends Tool {
         this.lineWidth = AerosolConstants.INIT_LINE_WIDTH;
         this.emissionCount = AerosolConstants.INIT_EMISSION_COUNT;
         this.waterDropWidth = AerosolConstants.INIT_WATERDROP_WIDTH;
+        this.primaryColor = '#2F2A36';
         this.previewCommand = new AerosolCommand(drawingService.previewCtx, this);
     }
 
     onMouseDown(event: MouseEvent): void {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
-        if (this.inUse) {
-            this.clearPath();
-            this.pathData.push(this.getRandomEmission(event, this.lineWidth / 2));
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
+        if (!this.inUse) return;
 
-            this.aerosolRefresh = window.setInterval(() => {
-                this.pathData.push(this.getRandomEmission(event, this.lineWidth / 2));
-                this.previewCommand.setValues(this.drawingService.previewCtx, this);
-                this.previewCommand.execute();
-            }, this.getEmissionRate());
-        }
+        this.mousePosition = this.getPositionFromMouse(event);
+        this.clearPath();
+        this.addPointToPreview();
+
+        this.aerosolRefresh = window.setInterval(() => {
+            this.addPointToPreview();
+        }, this.getEmissionRate());
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.pathData.push(this.getRandomEmission(event, this.lineWidth / 2));
             const command: Command = new AerosolCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -62,37 +58,33 @@ export class AerosolService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        window.clearInterval(this.aerosolRefresh);
-        if (this.inUse) {
-            this.pathData.push(this.getRandomEmission(event, this.lineWidth / 2));
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
-            this.aerosolRefresh = window.setInterval(() => {
-                this.pathData.push(this.getRandomEmission(event, this.lineWidth / 2));
-                this.previewCommand.setValues(this.drawingService.previewCtx, this);
-                this.previewCommand.execute();
-            }, this.getEmissionRate());
-        }
+        if (!this.inUse) return;
+        this.mousePosition = this.getPositionFromMouse(event);
     }
 
     onMouseLeave(event: MouseEvent): void {
         this.onMouseUp(event);
     }
 
-    private getRandomEmission(event: MouseEvent, radius: number): Vec2 {
-        this.mouseDownCoord = this.getPositionFromMouse(event);
+    private addPointToPreview(): void {
+        this.pathData.push(this.getRandomEmission());
+        this.previewCommand.setValues(this.drawingService.previewCtx, this);
+        this.previewCommand.execute();
+    }
+
+    private getRandomEmission(): Vec2 {
+        const radius = this.lineWidth / 2;
         this.randomAngle = Math.random() * (2 * Math.PI);
         this.randomRadius = Math.random() * radius;
 
         return {
-            x: this.mouseDownCoord.x + Math.cos(this.randomAngle) * this.randomRadius,
-            y: this.mouseDownCoord.y + Math.sin(this.randomAngle) * this.randomRadius,
+            x: this.mousePosition.x + Math.cos(this.randomAngle) * this.randomRadius,
+            y: this.mousePosition.y + Math.sin(this.randomAngle) * this.randomRadius,
         };
     }
 
     private getEmissionRate(): number {
-        this.emissionRate = AerosolConstants.EMISSION_RATE / this.emissionCount;
-        return this.emissionRate;
+        return AerosolConstants.EMISSION_RATE / this.emissionCount;
     }
 
     clearPath(): void {

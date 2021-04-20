@@ -1,0 +1,65 @@
+<div id="settingsContainer">
+    <h2 id="title">Options du texte</h2>
+    <div id="settingsWrapper">
+        <div id="widthSetting">
+            <p>Taille du texte : {{ fontSize }}</p>
+            <mat-slider
+                id="widthText"
+                color="warn"
+                thumbLabel
+                [tickInterval]="tickInterval"
+                [min]="min"
+                [max]="max"
+                [(value)]="fontSize"
+                (change)="emitFontSize()"
+            >
+            </mat-slider>
+        </div>
+
+        <div id="styleSettings">
+            <p>Style du texte</p>
+            <mat-form-field appearance="legacy" id="styleText">
+                <label>
+                    <select
+                        matNativeControl
+                        required
+                        [(ngModel)]="fontFamily"
+                        (change)="emitFontFamily()"
+                        (mouseup)="$event.stopPropagation()"
+                        ngDefaultControl
+                    >
+                        <option value="Arial" id="style0">Arial</option>
+                        <option value="Comic Sans MS" id="style1">Comic Sans MS</option>
+                        <option value="Roboto" id="style2">Roboto</option>
+                        <option value="Rubik" id="style3">Rubik</option>
+                        <option value="Century Gothic" id="style4">Century Gothic</option>
+                    </select>
+                </label>
+            </mat-form-field>
+        </div>
+
+        <div id="alignmentSettings">
+            <p>Alignement du texte</p>
+            <mat-radio-group id="alignmentText" [(ngModel)]="textAlign" (change)="emitTexAlign()" ngDefaultControl>
+                <mat-radio-button id="leftValue" value="left" color="warn" checked> Gauche </mat-radio-button>
+                <mat-radio-button id="center" value="center" color="warn"> Centre </mat-radio-button>
+                <mat-radio-button id="right" value="right" color="warn"> Droite </mat-radio-button>
+            </mat-radio-group>
+        </div>
+
+        <div id="textFormatSettings">
+            <p>Format du texte</p>
+            <mat-checkbox id="italic" value="italic" color="warn" [(ngModel)]="textItalic" (change)="emitFontStyle()" ngDefaultControl>
+                Italic
+            </mat-checkbox>
+            <br />
+            <mat-checkbox id="bold" value="bold" color="warn" [(ngModel)]="textBold" (change)="emitFontWeight()" ngDefaultControl>
+                Gras
+            </mat-checkbox>
+        </div>
+
+        <div id="colorPicker">
+            <app-color-picker></app-color-picker>
+        </div>
+    </div>
+</div>

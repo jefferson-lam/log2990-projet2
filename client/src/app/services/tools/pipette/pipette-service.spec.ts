@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Rgba } from '@app/classes/rgba';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PipetteConstants from '@app/constants/pipette-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PipetteService } from './pipette-service';
 
-describe('PipetteServiceService', () => {
+describe('PipetteService', () => {
     let service: PipetteService;
     let colorService: ColorService;
     let leftMouseButton: MouseEvent;
@@ -38,20 +39,20 @@ describe('PipetteServiceService', () => {
         service['drawingService'].canvas = baseCtxStub.canvas;
 
         leftMouseButton = {
-            offsetX: PipetteConstants.OFFSET_TESTS_X,
-            offsetY: PipetteConstants.OFFSET_TESTS_Y,
+            x: PipetteConstants.OFFSET_TESTS_X + CanvasConstants.LEFT_MARGIN,
+            y: PipetteConstants.OFFSET_TESTS_Y,
             button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
 
         rightMouseButton = {
-            offsetX: PipetteConstants.OFFSET_TESTS_X,
-            offsetY: PipetteConstants.OFFSET_TESTS_Y,
+            x: PipetteConstants.OFFSET_TESTS_X + CanvasConstants.LEFT_MARGIN,
+            y: PipetteConstants.OFFSET_TESTS_Y,
             button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
 
         mouseMove = {
-            offsetX: 1,
-            offsetY: 1,
+            x: 1 + CanvasConstants.LEFT_MARGIN,
+            y: 1,
             button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
     });
@@ -176,7 +177,7 @@ describe('PipetteServiceService', () => {
             PipetteConstants.NON_TRANSPARENT_FF,
             PipetteConstants.NON_TRANSPARENT_FF,
             PipetteConstants.NON_TRANSPARENT_FF,
-            1,
+            PipetteConstants.NON_TRANSPARENT_FF,
         ]);
         const pixelData = new ImageData(arrayData, 1, 1);
         const expectedColor = { red: 255, green: 255, blue: 255, alpha: 1 };

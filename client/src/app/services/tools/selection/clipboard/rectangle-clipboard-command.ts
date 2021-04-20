@@ -4,7 +4,7 @@ import * as SelectionConstants from '@app/constants/selection-constants';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 
 export class RectangleClipboardCommand extends Command {
-    cornerCoords: Vec2[];
+    pathData: Vec2[];
     selectionWidth: number;
     selectionHeight: number;
 
@@ -15,22 +15,22 @@ export class RectangleClipboardCommand extends Command {
 
     setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
         this.ctx = canvasContext;
-        this.cornerCoords = Object.assign([], clipboardService.cornerCoords);
+        this.pathData = Object.assign([], clipboardService.pathData);
         this.selectionHeight = clipboardService.selectionHeight;
         this.selectionWidth = clipboardService.selectionWidth;
     }
 
     execute(): void {
-        this.fillRectangle(this.ctx, this.cornerCoords, this.selectionWidth, this.selectionHeight);
+        this.fillRectangle(this.ctx);
     }
 
-    private fillRectangle(baseCtx: CanvasRenderingContext2D, cornerCoords: Vec2[], selectionWidth: number, selectionHeight: number): void {
+    private fillRectangle(baseCtx: CanvasRenderingContext2D): void {
         baseCtx.fillStyle = 'white';
         baseCtx.fillRect(
-            cornerCoords[SelectionConstants.START_INDEX].x,
-            cornerCoords[SelectionConstants.START_INDEX].y,
-            selectionWidth,
-            selectionHeight,
+            this.pathData[SelectionConstants.START_INDEX].x,
+            this.pathData[SelectionConstants.START_INDEX].y,
+            this.selectionWidth,
+            this.selectionHeight,
         );
     }
 }
