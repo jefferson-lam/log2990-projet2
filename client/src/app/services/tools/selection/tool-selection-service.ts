@@ -17,10 +17,10 @@ export class ToolSelectionService extends Tool {
 
     selectionTool: Tool;
     // Save selectionTool's lineWidth here and fillMode.
-    selectionToolLineWidth: number;
-    selectionToolFillMode: ToolConstants.FillMode;
-    selectionToolPrimaryColor: string;
-    selectionToolSecondaryColor: string;
+    protected selectionToolLineWidth: number;
+    protected selectionToolFillMode: ToolConstants.FillMode;
+    protected selectionToolPrimaryColor: string;
+    protected selectionToolSecondaryColor: string;
     isManipulating: boolean;
 
     constructor(
@@ -114,7 +114,7 @@ export class ToolSelectionService extends Tool {
     /**
      * Saves the selectionTool's past settings so we can reset to them later.
      */
-    getSelectedToolSettings(): void {
+    protected getSelectedToolSettings(): void {
         if (this.selectionTool.lineWidth != undefined) {
             this.selectionToolLineWidth = this.selectionTool.lineWidth;
         }
@@ -129,7 +129,7 @@ export class ToolSelectionService extends Tool {
         }
     }
 
-    setSelectionSettings(): void {
+    protected setSelectionSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'white';
         this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
         this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
@@ -179,7 +179,7 @@ export class ToolSelectionService extends Tool {
         canvas.height = SelectionConstants.DEFAULT_HEIGHT;
     }
 
-    addScalarToVec2(point: Vec2, scalar: number): Vec2 {
+    protected addScalarToVec2(point: Vec2, scalar: number): Vec2 {
         return {
             x: point.x + scalar,
             y: point.y + scalar,
