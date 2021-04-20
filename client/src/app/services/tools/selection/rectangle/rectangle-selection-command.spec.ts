@@ -64,7 +64,7 @@ describe('RectangleSelectionCommandService', () => {
     });
 
     it('setValues should bind correct values to Command', () => {
-        command.setValues(baseCtxStub, selectionCtxStub.canvas, rectangleSelectionService);
+        command['setValues'](baseCtxStub, selectionCtxStub.canvas, rectangleSelectionService);
         expect(command['selectionCanvas']).toEqual(selectionCtxStub.canvas);
         expect(command['selectionHeight']).toEqual(TEST_SELECTION_HEIGHT);
         expect(command['selectionWidth']).toEqual(TEST_SELECTION_WIDTH);
