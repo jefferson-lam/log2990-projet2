@@ -15,14 +15,14 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class LassoSelectionService extends ToolSelectionService {
     isManipulating: boolean;
-    isConnected: boolean;
-    isValidSegment: boolean;
+    private isConnected: boolean;
+    private isValidSegment: boolean;
     pathData: Vec2[];
-    initialPoint: Vec2;
+    private initialPoint: Vec2;
     transformValues: Vec2;
     selectionWidth: number;
     selectionHeight: number;
-    numSides: number;
+    private numSides: number;
     topLeft: Vec2;
     isEscapeDown: boolean;
     isFromClipboard: boolean;
@@ -119,7 +119,7 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
-    isIntersect(point: Vec2, pathData: Vec2[]): boolean {
+    private isIntersect(point: Vec2, pathData: Vec2[]): boolean {
         const newLine = { start: pathData[pathData.length - 2], end: point };
         let pathLine;
         for (let i = 0; i < pathData.length - 2; i++) {
@@ -131,7 +131,7 @@ export class LassoSelectionService extends ToolSelectionService {
         return false;
     }
 
-    computeSelectionSize(pathData: Vec2[]): number[] {
+    private computeSelectionSize(pathData: Vec2[]): number[] {
         let minHeight = Number.MAX_VALUE;
         let maxHeight = Number.MIN_VALUE;
         let minWidth = Number.MAX_VALUE;
@@ -172,7 +172,7 @@ export class LassoSelectionService extends ToolSelectionService {
         this.resetProperties();
     }
 
-    initializeSelection(): void {
+    private initializeSelection(): void {
         this.lineService.onToolChange();
         const selectionSize = this.computeSelectionSize(this.pathData);
         this.selectionWidth = selectionSize[0];
