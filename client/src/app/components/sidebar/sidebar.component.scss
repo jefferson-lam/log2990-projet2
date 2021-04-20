@@ -106,8 +106,7 @@ mat-icon {
 }
 
 .selected {
-    background-color: #4682b4;
-    color: red;
+    background-color: #4682b4 !important;
 }
 
 .tools-option-container {
@@ -169,4 +168,10 @@ mat-drawer-content {
 
 .noselect {
     user-select: none;
+}
+
+img {
+    position: center;
+    margin-left: 7px;
+    margin-top: 4px;
 }
