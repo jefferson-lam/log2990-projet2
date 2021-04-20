@@ -10,9 +10,9 @@ import { ResizeTop } from '@app/services/tools/selection/resizer/resize-strategy
     providedIn: 'root',
 })
 export class ResizeTopLeft extends ResizeStrategy {
-    resizeWidth: ResizeLeft;
-    resizeHeight: ResizeTop;
-    oppositePoint: Vec2;
+    private resizeWidth: ResizeLeft;
+    private resizeHeight: ResizeTop;
+    private oppositePoint: Vec2;
 
     constructor() {
         super();
