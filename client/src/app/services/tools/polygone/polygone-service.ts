@@ -91,24 +91,9 @@ export class PolygoneService extends Tool {
         }
     }
 
+    // This setter is here to conform to the implementation in settings manager
     setLineWidth(width: number): void {
         this.lineWidth = width;
-    }
-
-    setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.fillMode = newFillMode;
-    }
-
-    setSidesCount(newSidesCount: number): void {
-        this.numberSides = newSidesCount;
-    }
-
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
-    }
-
-    setSecondaryColor(newColor: string): void {
-        this.secondaryColor = newColor;
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {

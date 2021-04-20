@@ -147,18 +147,18 @@ describe('ToolManagerService', () => {
     it('should call all needed setPrimaryColor methods when setPrimaryColor is called', () => {
         const RANDOM_COLOR = 'blue';
         service.setPrimaryColorTools(RANDOM_COLOR);
-        expect(rectangleServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(ellipseServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(pencilServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(lineServiceSpy.setPrimaryColor).toHaveBeenCalled();
+        expect(rectangleServiceSpy.primaryColor).toEqual(RANDOM_COLOR);
+        expect(ellipseServiceSpy.primaryColor).toEqual(RANDOM_COLOR);
+        expect(pencilServiceSpy.primaryColor).toEqual(RANDOM_COLOR);
+        expect(lineServiceSpy.primaryColor).toEqual(RANDOM_COLOR);
     });
 
     it('should call all needed setSecondaryColor methods when setSecondaryColor is called', () => {
         const RANDOM_COLOR = 'blue';
         service.setSecondaryColorTools(RANDOM_COLOR);
-        expect(rectangleServiceSpy.setSecondaryColor).toHaveBeenCalled();
-        expect(ellipseServiceSpy.setSecondaryColor).toHaveBeenCalled();
-        expect(polygoneSpy.setSecondaryColor).toHaveBeenCalled();
+        expect(rectangleServiceSpy.secondaryColor).toEqual(RANDOM_COLOR);
+        expect(ellipseServiceSpy.secondaryColor).toEqual(RANDOM_COLOR);
+        expect(polygoneSpy.secondaryColor).toEqual(RANDOM_COLOR);
     });
 
     it('onToolChange should not call clearCanvas and currentTool.onToolChange if same tool as before', () => {

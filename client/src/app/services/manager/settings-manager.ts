@@ -10,10 +10,10 @@ import { ToolManagerService } from './tool-manager-service';
 export class SettingsManagerService {
     constructor(public toolManager: ToolManagerService, colorService: ColorService) {
         colorService.primaryObservable.subscribe((color: Rgba) => {
-            this.setPrimaryColorTools(colorService.convertRgbaToString(color));
+            toolManager.setPrimaryColorTools(colorService.convertRgbaToString(color));
         });
         colorService.secondaryObservable.subscribe((color: Rgba) => {
-            this.setSecondaryColorTools(colorService.convertRgbaToString(color));
+            toolManager.setSecondaryColorTools(colorService.convertRgbaToString(color));
         });
     }
 
@@ -22,7 +22,7 @@ export class SettingsManagerService {
     }
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.toolManager.currentTool.setFillMode(newFillMode);
+        this.toolManager.currentTool.fillMode = newFillMode;
     }
 
     setJunctionRadius(newJunctionRadius: number): void {
@@ -30,19 +30,19 @@ export class SettingsManagerService {
     }
 
     setWithJunction(withJunction: boolean): void {
-        this.toolManager.currentTool.setWithJunction(withJunction);
+        this.toolManager.currentTool.withJunction = withJunction;
     }
 
     setSidesCount(newSidesCount: number): void {
-        this.toolManager.currentTool.setSidesCount(newSidesCount);
+        this.toolManager.currentTool.initNumberSides = newSidesCount;
     }
 
     setWaterDropWidth(newSize: number): void {
-        this.toolManager.currentTool.setWaterDropWidth(newSize);
+        this.toolManager.currentTool.waterDropWidth = newSize;
     }
 
     setEmissionCount(newEmissionCount: number): void {
-        this.toolManager.currentTool.setEmissionCount(newEmissionCount);
+        this.toolManager.currentTool.emissionCount = newEmissionCount;
     }
 
     setToleranceValue(newToleranceValue: number): void {
@@ -50,11 +50,11 @@ export class SettingsManagerService {
     }
 
     setImageSource(newSource: string): void {
-        this.toolManager.currentTool.setImageSource(newSource);
+        this.toolManager.currentTool.imageSource = newSource;
     }
 
     setImageZoomFactor(newFactor: number): void {
-        this.toolManager.currentTool.setImageZoomFactor(newFactor);
+        this.toolManager.currentTool.imageZoomFactor = newFactor;
     }
 
     setAngleRotation(newAngle: number): void {
@@ -79,13 +79,5 @@ export class SettingsManagerService {
 
     setTextItalic(fontStyle: string): void {
         this.toolManager.currentTool.setTextItalic(fontStyle);
-    }
-
-    setPrimaryColorTools(color: string): void {
-        this.toolManager.setPrimaryColorTools(color);
-    }
-
-    setSecondaryColorTools(color: string): void {
-        this.toolManager.setSecondaryColorTools(color);
     }
 }

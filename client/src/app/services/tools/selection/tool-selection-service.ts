@@ -133,21 +133,21 @@ export class ToolSelectionService extends Tool {
 
     setSelectionSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'white';
-        this.selectionTool.setWithJunction(false);
-        this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
-        this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
-        this.selectionTool.setPrimaryColor('black');
-        this.selectionTool.setSecondaryColor('black');
+        this.selectionTool.withJunction = false;
+        this.selectionTool.fillMode = ToolConstants.FillMode.OUTLINE;
+        this.selectionTool.lineWidth = SelectionConstants.SELECTION_LINE_WIDTH;
+        this.selectionTool.primaryColor = 'black';
+        this.selectionTool.secondaryColor = 'black';
         this.drawingService.previewCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
     }
 
     resetSelectedToolSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'black';
-        this.selectionTool.setFillMode(this.selectionToolFillMode);
-        this.selectionTool.setWithJunction(this.selectionToolWithJunction);
-        this.selectionTool.setLineWidth(this.selectionToolLineWidth);
-        this.selectionTool.setPrimaryColor(this.selectionToolPrimaryColor);
-        this.selectionTool.setSecondaryColor(this.selectionToolSecondaryColor);
+        this.selectionTool.fillMode = this.selectionToolFillMode;
+        this.selectionTool.withJunction = this.selectionToolWithJunction;
+        this.selectionTool.lineWidth = this.selectionToolLineWidth;
+        this.selectionTool.primaryColor = this.selectionToolPrimaryColor;
+        this.selectionTool.secondaryColor = this.selectionToolSecondaryColor;
         this.drawingService.previewCtx.setLineDash([]);
     }
 

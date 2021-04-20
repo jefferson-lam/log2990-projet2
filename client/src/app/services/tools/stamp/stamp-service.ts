@@ -112,14 +112,6 @@ export class StampService extends Tool {
         this.angleSubject.next(this.realRotationValues);
     }
 
-    setImageSource(newImageSource: string): void {
-        this.imageSource = newImageSource;
-    }
-
-    setImageZoomFactor(newZoomFactor: number): void {
-        this.imageZoomFactor = newZoomFactor;
-    }
-
     setAngleRotation(newAngle: number): void {
         this.rotationAngle = newAngle * StampConstants.CONVERT_RAD;
     }

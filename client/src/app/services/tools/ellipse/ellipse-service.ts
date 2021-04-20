@@ -138,18 +138,6 @@ export class EllipseService extends Tool {
         }
     }
 
-    setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.fillMode = newFillMode;
-    }
-
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
-    }
-
-    setSecondaryColor(newColor: string): void {
-        this.secondaryColor = newColor;
-    }
-
     private getRadiiXAndY(path: Vec2[]): number[] {
         let xRadius = Math.abs(path[ShapeConstants.END_INDEX].x - path[ShapeConstants.START_INDEX].x) / 2;
         let yRadius = Math.abs(path[ShapeConstants.END_INDEX].y - path[ShapeConstants.START_INDEX].y) / 2;
