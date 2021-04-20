@@ -219,7 +219,7 @@ describe('RectangleSelectionService', () => {
         service.inUse = true;
         service.onKeyboardDown(shiftKeyboardEvent);
         expect(service.isSquare).toBeTruthy();
-        expect(service.isShiftDown).toBeTruthy();
+        expect(service['isShiftDown']).toBeTruthy();
     });
 
     it('onKeyboardDown while inUse with esc key should set values to true', () => {
@@ -273,11 +273,11 @@ describe('RectangleSelectionService', () => {
         const shiftKeyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
-        service.isShiftDown = true;
+        service['isShiftDown'] = true;
         service.inUse = true;
         service.onKeyboardUp(shiftKeyboardEvent);
         expect(service.isSquare).toBeFalsy();
-        expect(service.isShiftDown).toBeFalsy();
+        expect(service['isShiftDown']).toBeFalsy();
     });
 
     it('onKeyboardUp inUse should reset canvas state if esc is called', () => {
