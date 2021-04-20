@@ -3,22 +3,22 @@ import { Vec2 } from '@app/classes/vec2';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
 export class RectangleSelectionCommand extends Command {
-    initialSelectionWidth: number;
-    initialSelectionHeight: number;
-    selectionWidth: number;
-    selectionHeight: number;
-    transformValues: Vec2;
+    private initialSelectionWidth: number;
+    private initialSelectionHeight: number;
+    private selectionWidth: number;
+    private selectionHeight: number;
+    private transformValues: Vec2;
     isSquare: boolean;
-    pathData: Vec2[];
-    selectionCanvas: HTMLCanvasElement;
-    isFromClipboard: boolean;
+    private pathData: Vec2[];
+    private selectionCanvas: HTMLCanvasElement;
+    private isFromClipboard: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, rectangleSelectionService: RectangleSelectionService) {
         super();
         this.setValues(canvasContext, selectionCanvas, rectangleSelectionService);
     }
 
-    setValues(
+    private setValues(
         canvasContext: CanvasRenderingContext2D,
         selectionCanvas: HTMLCanvasElement,
         rectangleSelectionService: RectangleSelectionService,
