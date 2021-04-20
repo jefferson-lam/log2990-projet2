@@ -9,6 +9,7 @@ import { LineService } from './line-service';
 
 // tslint:disable:no-any
 // tslint:disable:max-file-line-count
+// tslint:disable: no-string-literal
 describe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
@@ -38,17 +39,17 @@ describe('LineService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand');
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
-        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
+        setPreviewValuesSpy = spyOn(service['previewCommand'], 'setValues');
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
 
-        service.initialPoint = { x: 394, y: 432 };
-        service.linePathData = [service.initialPoint, { x: 133, y: 256 }, { x: 257, y: 399 }];
-        service.mousePosition = { x: 289, y: 400 };
+        service['initialPoint'] = { x: 394, y: 432 };
+        service.linePathData = [service['initialPoint'], { x: 133, y: 256 }, { x: 257, y: 399 }];
+        service['mousePosition'] = { x: 289, y: 400 };
 
         const offsetX = 25;
         mouseEvent = {
@@ -139,61 +140,61 @@ describe('LineService', () => {
     });
 
     it('onKeyboardDown event should set shiftDown to true and call stickToClosest45Angle and drawPreview if inUse && shift key', () => {
-        const closestAnglespy = spyOn(service, 'stickToClosest45Angle');
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const closestAnglespy = spyOn<any>(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
         const shiftKeyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.shiftDown = false;
+        service['shiftDown'] = false;
         service.inUse = true;
         service.onKeyboardDown(shiftKeyboardEvent);
 
         expect(closestAnglespy).toHaveBeenCalled();
         expect(drawPreviewSpy).toHaveBeenCalled();
-        expect(service.shiftDown).toBeTrue();
+        expect(service['shiftDown']).toBeTrue();
     });
 
     it('onKeyboardDown event should not set shiftDown to true and not call stickToClosest45Angle and drawPreview if inUse && not shift key', () => {
-        const closestAnglespy = spyOn(service, 'stickToClosest45Angle');
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const closestAnglespy = spyOn<any>(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
         const shiftKeyboardEvent = {
             key: 'e',
         } as KeyboardEvent;
 
-        service.shiftDown = false;
+        service['shiftDown'] = false;
         service.inUse = true;
         service.onKeyboardDown(shiftKeyboardEvent);
 
         expect(closestAnglespy).not.toHaveBeenCalled();
         expect(drawPreviewSpy).not.toHaveBeenCalled();
-        expect(service.shiftDown).toBeFalse();
+        expect(service['shiftDown']).toBeFalse();
     });
 
     it('onKeyboardDown event should not set shiftDown to true and not call stickToClosest45Angle and drawPreview if not inUse && shift key', () => {
-        const closestAnglespy = spyOn(service, 'stickToClosest45Angle');
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const closestAnglespy = spyOn<any>(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
         const shiftKeyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.shiftDown = false;
+        service['shiftDown'] = false;
         service.inUse = false;
         service.onKeyboardDown(shiftKeyboardEvent);
 
         expect(closestAnglespy).not.toHaveBeenCalled();
         expect(drawPreviewSpy).not.toHaveBeenCalled();
-        expect(service.shiftDown).toBeFalse();
+        expect(service['shiftDown']).toBeFalse();
     });
 
     it('on shift keyboard down event should not call stickToClosest45Angle and drawPreview if not inUse', () => {
-        const closestAnglespy = spyOn(service, 'stickToClosest45Angle');
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const closestAnglespy = spyOn<any>(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
         const shiftKeyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
 
-        service.shiftDown = false;
+        service['shiftDown'] = false;
         service.inUse = false;
         service.onKeyboardDown(shiftKeyboardEvent);
 
@@ -202,32 +203,32 @@ describe('LineService', () => {
     });
 
     it('stickToClosest45Angle should call calculateAngle', () => {
-        const calculateAngleSpy = spyOn(service, 'calculateAngle');
+        const calculateAngleSpy = spyOn<any>(service, 'calculateAngle');
 
-        service.stickToClosest45Angle();
+        service['stickToClosest45Angle']();
 
         expect(calculateAngleSpy).toHaveBeenCalled();
-        expect(calculateAngleSpy).toHaveBeenCalledWith(service.linePathData[service.linePathData.length - 2], service.mousePosition);
+        expect(calculateAngleSpy).toHaveBeenCalledWith(service.linePathData[service.linePathData.length - 2], service['mousePosition']);
     });
 
     it('stickToClosest45Angle should call roundAngleToNearestMultiple', () => {
-        const roundAngleSpy = spyOn(service, 'roundAngleToNearestMultiple');
+        const roundAngleSpy = spyOn<any>(service, 'roundAngleToNearestMultiple');
 
-        service.stickToClosest45Angle();
+        service['stickToClosest45Angle']();
 
         expect(roundAngleSpy).toHaveBeenCalled();
     });
 
     it('stickToClosest45Angle should call calculateLengthAndFlatten', () => {
-        const calculateLengthSpy = spyOn(service, 'calculateLengthAndFlatten').and.callThrough();
+        const calculateLengthSpy = spyOn<any>(service, 'calculateLengthAndFlatten').and.callThrough();
 
-        service.stickToClosest45Angle();
+        service['stickToClosest45Angle']();
 
         expect(calculateLengthSpy).toHaveBeenCalled();
     });
 
     it('stickToClosest45Angle should call rotateline', () => {
-        service.stickToClosest45Angle();
+        service['stickToClosest45Angle']();
 
         expect(rotateLineSpy).toHaveBeenCalled();
     });
@@ -237,7 +238,7 @@ describe('LineService', () => {
             key: 'Shift',
         } as KeyboardEvent;
         service.inUse = true;
-        service.shiftDown = true;
+        service['shiftDown'] = true;
         service.onKeyboardUp(shiftKeyboardEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(setPreviewValuesSpy).toHaveBeenCalled();
@@ -270,7 +271,7 @@ describe('LineService', () => {
             key: 'Backspace',
         } as KeyboardEvent;
         const popSpy = spyOn(service.linePathData, 'pop');
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
 
         service.inUse = true;
         service.onKeyboardUp(backspaceKeyboardEvent);
@@ -295,13 +296,13 @@ describe('LineService', () => {
     it('onMouseDown should start drawing if user has not started a drawing yet', () => {
         service.onMouseDown(mouseEvent);
         expect(service.inUse).toBeTruthy();
-        expect(service.initialPoint).toEqual({ x: 25, y: 25 });
+        expect(service['initialPoint']).toEqual({ x: 25, y: 25 });
         expect(service.linePathData[0]).toEqual({ x: 25, y: 25 });
         expect(service.linePathData.length).toBe(2);
     });
 
     it('onMouseDown should call drawPreview if inUse', () => {
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
         service.inUse = true;
         service.onMouseDown(mouseEvent);
         expect(drawPreviewSpy).toHaveBeenCalled();
@@ -315,7 +316,7 @@ describe('LineService', () => {
     });
 
     it('on mouse dblclick should remove last two points and call finisLine()', () => {
-        const finishLineSpy = spyOn(service, 'finishLine');
+        const finishLineSpy = spyOn<any>(service, 'finishLine');
         const spliceSpy = spyOn(service.linePathData, 'splice');
 
         service.inUse = true;
@@ -327,7 +328,7 @@ describe('LineService', () => {
     });
 
     it('mouse double click should not do anything if user is not drawing', () => {
-        const finishLineSpy = spyOn(service, 'finishLine');
+        const finishLineSpy = spyOn<any>(service, 'finishLine');
         const spliceSpy = spyOn(service.linePathData, 'splice');
 
         service.inUse = false;
@@ -339,7 +340,7 @@ describe('LineService', () => {
     });
 
     it('onMouseMove should not draw if user is not drawing', () => {
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
         const getPositionSpy = spyOn(service, 'getPositionFromMouse');
 
         service.inUse = false;
@@ -359,11 +360,11 @@ describe('LineService', () => {
     });
 
     it('onMouseMove should call stickToClosest45Angle and drawPreview if inUse and shiftDown', () => {
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
-        const closestAngleSpy = spyOn(service, 'stickToClosest45Angle');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
+        const closestAngleSpy = spyOn<any>(service, 'stickToClosest45Angle');
 
         service.inUse = true;
-        service.shiftDown = true;
+        service['shiftDown'] = true;
         service.onMouseMove(mouseEvent);
 
         expect(closestAngleSpy).toHaveBeenCalled();
@@ -371,48 +372,48 @@ describe('LineService', () => {
     });
 
     it('onMouseMove should call calculateDistance and drawPreview if inUse and not shiftDown', () => {
-        const drawPreviewSpy = spyOn(service, 'drawPreview');
-        const calculateDistanceSpy = spyOn(service, 'calculateDistance');
+        const drawPreviewSpy = spyOn<any>(service, 'drawPreview');
+        const calculateDistanceSpy = spyOn<any>(service, 'calculateDistance');
 
         service.inUse = true;
-        service.shiftDown = false;
+        service['shiftDown'] = false;
         service.onMouseMove(mouseEvent);
 
         expect(calculateDistanceSpy).toHaveBeenCalled();
-        expect(calculateDistanceSpy).toHaveBeenCalledWith(service.mousePosition, service.initialPoint);
+        expect(calculateDistanceSpy).toHaveBeenCalledWith(service['mousePosition'], service['initialPoint']);
         expect(drawPreviewSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should set last point of path to initial point if distance with mousePosition less than 20px and inUse and not shiftDown', () => {
-        const calculateDistanceSpy = spyOn(service, 'calculateDistance').and.callFake(() => {
+        const calculateDistanceSpy = spyOn<any>(service, 'calculateDistance').and.callFake(() => {
             return LineConstants.PIXEL_PROXIMITY_LIMIT - 1;
         });
 
         service.inUse = true;
-        service.shiftDown = false;
+        service['shiftDown'] = false;
         service.onMouseMove(mouseEvent);
 
         expect(calculateDistanceSpy).toHaveBeenCalled();
-        expect(calculateDistanceSpy).toHaveBeenCalledWith(service.mousePosition, service.initialPoint);
-        expect(service.linePathData[service.linePathData.length - 1]).toBe(service.initialPoint);
+        expect(calculateDistanceSpy).toHaveBeenCalledWith(service['mousePosition'], service['initialPoint']);
+        expect(service.linePathData[service.linePathData.length - 1]).toBe(service['initialPoint']);
     });
 
     it('onMouseMove should set last point of path to mousePosition if distance between mousePosition and initilaPoint greater than 20px and inUse and not shiftDown', () => {
-        const calculateDistanceSpy = spyOn(service, 'calculateDistance').and.callFake(() => {
+        const calculateDistanceSpy = spyOn<any>(service, 'calculateDistance').and.callFake(() => {
             return LineConstants.PIXEL_PROXIMITY_LIMIT + 1;
         });
 
         service.inUse = true;
-        service.shiftDown = false;
+        service['shiftDown'] = false;
         service.onMouseMove(mouseEvent);
 
         expect(calculateDistanceSpy).toHaveBeenCalled();
-        expect(calculateDistanceSpy).toHaveBeenCalledWith(service.mousePosition, service.initialPoint);
-        expect(service.linePathData[service.linePathData.length - 1]).toBe(service.mousePosition);
+        expect(calculateDistanceSpy).toHaveBeenCalledWith(service['mousePosition'], service['initialPoint']);
+        expect(service.linePathData[service.linePathData.length - 1]).toBe(service['mousePosition']);
     });
 
     it('finishLine should create and execute new LineCommand', () => {
-        service.finishLine();
+        service['finishLine']();
 
         expect(executeSpy).toHaveBeenCalled();
     });
@@ -420,7 +421,7 @@ describe('LineService', () => {
     it('finishLine should clear previewCtx,path and set inUse to false', () => {
         const clearPathSpy = spyOn<any>(service, 'clearPath');
 
-        service.finishLine();
+        service['finishLine']();
 
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
@@ -445,7 +446,7 @@ describe('LineService', () => {
 
         const expectedDistance = 88;
 
-        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(expectedDistance);
+        expect(Math.round(service['calculateDistance'](service['initialPoint'], currentPoint))).toEqual(expectedDistance);
     });
 
     it('calculateDistance with +dx and -dy gives accurate euclidea distance', () => {
@@ -456,7 +457,7 @@ describe('LineService', () => {
 
         const expectedDistance = 86;
 
-        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(expectedDistance);
+        expect(Math.round(service['calculateDistance'](service['initialPoint'], currentPoint))).toEqual(expectedDistance);
     });
 
     it('calculateDistance with -dx and +dy gives accurate euclidea distance', () => {
@@ -467,7 +468,7 @@ describe('LineService', () => {
 
         const expectedDistance = 159;
 
-        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(expectedDistance);
+        expect(Math.round(service['calculateDistance'](service['initialPoint'], currentPoint))).toEqual(expectedDistance);
     });
 
     it('calculateDistance with -dx and -dy gives accurate euclidea distance', () => {
@@ -478,7 +479,7 @@ describe('LineService', () => {
 
         const expectedDistance = 282;
 
-        expect(Math.round(service.calculateDistance(service.initialPoint, currentPoint))).toEqual(expectedDistance);
+        expect(Math.round(service['calculateDistance'](service['initialPoint'], currentPoint))).toEqual(expectedDistance);
     });
 
     /**
@@ -503,7 +504,7 @@ describe('LineService', () => {
 
         const expectedAngle = 291;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     it('calculate angle of two points should return correct angle in 2nd quadrant', () => {
@@ -514,7 +515,7 @@ describe('LineService', () => {
 
         const expectedAngle = 201;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     it('calculate angle of two points should return correct angle in 3rd quadrant', () => {
@@ -525,7 +526,7 @@ describe('LineService', () => {
 
         const expectedAngle = 150;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     it('calculate angle of two points should return correct angle in 4th quadrant', () => {
@@ -536,7 +537,7 @@ describe('LineService', () => {
 
         const expectedAngle = 79;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     it('calculate angle of two points should return correct angle when points are 90deg', () => {
@@ -547,7 +548,7 @@ describe('LineService', () => {
 
         const expectedAngle = 270;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     it('calculate angle of two points should return correct angle when points are 180deg ', () => {
@@ -558,7 +559,7 @@ describe('LineService', () => {
 
         const expectedAngle = 180;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     it('calculate angle of two points should return correct angle when points are 270deg', () => {
@@ -569,7 +570,7 @@ describe('LineService', () => {
 
         const expectedAngle = 90;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     it('calculate angle of two points should return correct angle when points are 0deg', () => {
@@ -580,7 +581,7 @@ describe('LineService', () => {
 
         const expectedAngle = 0;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     it('calculate angle of two points should return 0deg angle when points are the same', () => {
@@ -591,7 +592,7 @@ describe('LineService', () => {
 
         const expectedAngle = 0;
 
-        expect(Math.round(service.calculateAngle(service.initialPoint, currentPoint))).toEqual(expectedAngle);
+        expect(Math.round(service['calculateAngle'](service['initialPoint'], currentPoint))).toEqual(expectedAngle);
     });
 
     /**
@@ -619,7 +620,7 @@ describe('LineService', () => {
         const angle = 22.4;
         const multiple = 45;
         const expectedAngle = 0;
-        expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
     });
 
     it('rounding edges 22.5deg and 67.4 with a multiple of 45 should round to 45', () => {
@@ -629,7 +630,7 @@ describe('LineService', () => {
         const multiple = 45;
         const expectedAngle = 45;
         angles.forEach((angle) => {
-            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+            expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
         });
     });
 
@@ -640,7 +641,7 @@ describe('LineService', () => {
         const multiple = 45;
         const expectedAngle = 90;
         angles.forEach((angle) => {
-            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+            expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
         });
     });
 
@@ -651,7 +652,7 @@ describe('LineService', () => {
         const multiple = 45;
         const expectedAngle = 90;
         angles.forEach((angle) => {
-            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+            expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
         });
     });
 
@@ -662,7 +663,7 @@ describe('LineService', () => {
         const multiple = 45;
         const expectedAngle = 135;
         angles.forEach((angle) => {
-            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+            expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
         });
     });
 
@@ -673,7 +674,7 @@ describe('LineService', () => {
         const multiple = 45;
         const expectedAngle = 180;
         angles.forEach((angle) => {
-            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+            expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
         });
     });
 
@@ -684,7 +685,7 @@ describe('LineService', () => {
         const multiple = 45;
         const expectedAngle = 225;
         angles.forEach((angle) => {
-            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+            expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
         });
     });
 
@@ -695,7 +696,7 @@ describe('LineService', () => {
         const multiple = 45;
         const expectedAngle = 270;
         angles.forEach((angle) => {
-            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+            expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
         });
     });
 
@@ -706,7 +707,7 @@ describe('LineService', () => {
         const multiple = 45;
         const expectedAngle = 315;
         angles.forEach((angle) => {
-            expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+            expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
         });
     });
 
@@ -714,7 +715,7 @@ describe('LineService', () => {
         const angle = 337.5;
         const multiple = 45;
         const expectedAngle = 360;
-        expect(service.roundAngleToNearestMultiple(angle, multiple)).toEqual(expectedAngle);
+        expect(service['roundAngleToNearestMultiple'](angle, multiple)).toEqual(expectedAngle);
     });
 
     it('calculate length of rotated line with intercardinal degree angle returns correctly flattened line with correct length', () => {
@@ -727,13 +728,13 @@ describe('LineService', () => {
             x: 303,
             y: 270,
         };
-        expect(service.calculateLengthAndFlatten(initialPoint, service.mousePosition, LineConstants.DEGREES_135)).toEqual(expectedPoint);
+        expect(service['calculateLengthAndFlatten'](initialPoint, service['mousePosition'], LineConstants.DEGREES_135)).toEqual(expectedPoint);
 
-        expect(service.calculateLengthAndFlatten(initialPoint, service.mousePosition, LineConstants.DEGREES_45)).toEqual(expectedPoint);
+        expect(service['calculateLengthAndFlatten'](initialPoint, service['mousePosition'], LineConstants.DEGREES_45)).toEqual(expectedPoint);
 
-        expect(service.calculateLengthAndFlatten(initialPoint, service.mousePosition, LineConstants.DEGREES_315)).toEqual(expectedPoint);
+        expect(service['calculateLengthAndFlatten'](initialPoint, service['mousePosition'], LineConstants.DEGREES_315)).toEqual(expectedPoint);
 
-        expect(service.calculateLengthAndFlatten(initialPoint, service.mousePosition, LineConstants.DEGREES_225)).toEqual(expectedPoint);
+        expect(service['calculateLengthAndFlatten'](initialPoint, service['mousePosition'], LineConstants.DEGREES_225)).toEqual(expectedPoint);
     });
 
     it(' calculate length of rotated line with 270 degrees angle return correctly flattened line with correct length', () => {
@@ -747,9 +748,9 @@ describe('LineService', () => {
             y: 270,
         };
 
-        expect(service.calculateLengthAndFlatten(initialPoint, service.mousePosition, LineConstants.DEGREES_270)).toEqual(expectedPoint);
+        expect(service['calculateLengthAndFlatten'](initialPoint, service['mousePosition'], LineConstants.DEGREES_270)).toEqual(expectedPoint);
 
-        expect(service.calculateLengthAndFlatten(initialPoint, service.mousePosition, LineConstants.DEGREES_90)).toEqual(expectedPoint);
+        expect(service['calculateLengthAndFlatten'](initialPoint, service['mousePosition'], LineConstants.DEGREES_90)).toEqual(expectedPoint);
     });
 
     it('calculate length of rotated line with 180 degrees angle return correctly flattened line with correct length', () => {
@@ -763,9 +764,9 @@ describe('LineService', () => {
             y: 270,
         };
 
-        expect(service.calculateLengthAndFlatten(initialPoint, service.mousePosition, LineConstants.DEGREES_180)).toEqual(expectedPoint);
+        expect(service['calculateLengthAndFlatten'](initialPoint, service['mousePosition'], LineConstants.DEGREES_180)).toEqual(expectedPoint);
 
-        expect(service.calculateLengthAndFlatten(initialPoint, service.mousePosition, LineConstants.DEGREES_0)).toEqual(expectedPoint);
+        expect(service['calculateLengthAndFlatten'](initialPoint, service['mousePosition'], LineConstants.DEGREES_0)).toEqual(expectedPoint);
     });
 
     it('rotate with 45 degrees returns correct calculated value', () => {
@@ -784,7 +785,7 @@ describe('LineService', () => {
             y: 158,
         };
 
-        expect(service.rotateLine(initialPoint, currentPoint, LineConstants.DEGREES_45)).toEqual(expectedPoint);
+        expect(service['rotateLine'](initialPoint, currentPoint, LineConstants.DEGREES_45)).toEqual(expectedPoint);
     });
 
     it('rotate with 135 degrees returns correct calculated end point', () => {
@@ -803,7 +804,7 @@ describe('LineService', () => {
             y: 158,
         };
 
-        expect(service.rotateLine(initialPoint, currentPoint, LineConstants.DEGREES_135)).toEqual(expectedPoint);
+        expect(service['rotateLine'](initialPoint, currentPoint, LineConstants.DEGREES_135)).toEqual(expectedPoint);
     });
 
     it('rotate with 225 degrees returns correct calculated end point', () => {
@@ -822,7 +823,7 @@ describe('LineService', () => {
             y: 382,
         };
 
-        expect(service.rotateLine(initialPoint, currentPoint, LineConstants.DEGREES_225)).toEqual(expectedPoint);
+        expect(service['rotateLine'](initialPoint, currentPoint, LineConstants.DEGREES_225)).toEqual(expectedPoint);
     });
 
     it('rotate with 315 degrees returns correct calculated end point', () => {
@@ -841,13 +842,13 @@ describe('LineService', () => {
             y: 382,
         };
 
-        expect(service.rotateLine(initialPoint, currentPoint, LineConstants.DEGREES_315)).toEqual(expectedPoint);
+        expect(service['rotateLine'](initialPoint, currentPoint, LineConstants.DEGREES_315)).toEqual(expectedPoint);
     });
 
     it('onToolChange should call onMouseDoubleClick', () => {
         service.onToolChange();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(service.inUse).toBeFalsy();
-        expect(service.shiftDown).toBeFalsy();
+        expect(service['shiftDown']).toBeFalsy();
     });
 });
