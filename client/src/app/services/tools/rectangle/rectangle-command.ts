@@ -10,7 +10,7 @@ export class RectangleCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
     width: number;
     height: number;
     borderColor: string;
