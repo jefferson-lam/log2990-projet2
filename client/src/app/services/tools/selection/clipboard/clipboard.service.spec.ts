@@ -14,6 +14,7 @@ import { RectangleSelectionService } from '@app/services/tools/selection/rectang
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
+// tslint:disable: no-string-literal
 describe('ClipboardService', () => {
     let service: ClipboardService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -73,7 +74,7 @@ describe('ClipboardService', () => {
         service = TestBed.inject(ClipboardService);
         toolManagerService = TestBed.inject(ToolManagerService);
 
-        service.currentTool = rectangleSelectionServiceStub;
+        service['currentTool'] = rectangleSelectionServiceStub;
         (Object.getOwnPropertyDescriptor(drawServiceSpy, 'baseCtx')?.get as jasmine.Spy<() => CanvasRenderingContext2D>).and.returnValue(
             canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D,
         );
@@ -96,20 +97,20 @@ describe('ClipboardService', () => {
 
     it('currenttool should change to Rectangle if toolManagers subject changes', () => {
         toolManagerService.currentToolSubject.next(rectangleSelectionServiceStub);
-        expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
-        expect(service.currentTool).toEqual(rectangleSelectionServiceStub);
+        expect(service['currentTool']).toBeInstanceOf(RectangleSelectionService);
+        expect(service['currentTool']).toEqual(rectangleSelectionServiceStub);
     });
 
     it('currenttool should change to Ellipse if toolManagers subject changes', () => {
         toolManagerService.currentToolSubject.next(ellipseSelectionServiceStub);
-        expect(service.currentTool).toBeInstanceOf(EllipseSelectionService);
-        expect(service.currentTool).toEqual(ellipseSelectionServiceStub);
+        expect(service['currentTool']).toBeInstanceOf(EllipseSelectionService);
+        expect(service['currentTool']).toEqual(ellipseSelectionServiceStub);
     });
 
     it('currenttool should change to Lasso if toolManagers subject changes', () => {
         toolManagerService.currentToolSubject.next(lassoSelectionServiceStub);
-        expect(service.currentTool).toBeInstanceOf(LassoSelectionService);
-        expect(service.currentTool).toEqual(lassoSelectionServiceStub);
+        expect(service['currentTool']).toBeInstanceOf(LassoSelectionService);
+        expect(service['currentTool']).toEqual(lassoSelectionServiceStub);
     });
 
     it('should be created', () => {
@@ -120,7 +121,7 @@ describe('ClipboardService', () => {
         canvasTestHelper.selectionCanvas.width = 0;
         canvasTestHelper.selectionCanvas.height = 0;
         service.copySelection();
-        expect(service.clipboard).toEqual(new ImageData(1, 1));
+        expect(service['clipboard']).toEqual(new ImageData(1, 1));
     });
 
     it('copySelection should copy selection data to clipboard', () => {
@@ -133,24 +134,24 @@ describe('ClipboardService', () => {
             canvasTestHelper.selectionCanvas.width,
             canvasTestHelper.selectionCanvas.width,
         );
-        expect(service.clipboard).not.toBe(new ImageData(1, 1));
-        expect(service.currentTool).toBeInstanceOf(RectangleSelectionService);
+        expect(service['clipboard']).not.toBe(new ImageData(1, 1));
+        expect(service['currentTool']).toBeInstanceOf(RectangleSelectionService);
     });
 
     it('pasteSelection annuls selection if active ', () => {
         // initializing clipboard with random values, or else data is empty
-        for (let i = 0; i < service.clipboard.data.length; ++i) {
-            service.clipboard.data[i] = 1;
+        for (let i = 0; i < service['clipboard'].data.length; ++i) {
+            service['clipboard'].data[i] = 1;
         }
 
-        const confirmSelectionSpy = spyOn(service.currentTool, 'confirmSelection').and.callThrough();
+        const confirmSelectionSpy = spyOn(service['currentTool'], 'confirmSelection').and.callThrough();
         service.pasteSelection();
         expect(confirmSelectionSpy).toHaveBeenCalled();
     });
 
     it('pasteSelection changes to selection tool used during copy', () => {
-        for (let i = 0; i < service.clipboard.data.length; ++i) {
-            service.clipboard.data[i] = 1;
+        for (let i = 0; i < service['clipboard'].data.length; ++i) {
+            service['clipboard'].data[i] = 1;
         }
         const selectToolSpy = spyOn(toolManagerService, 'selectTool').and.callThrough();
         service.pasteSelection();
@@ -158,8 +159,8 @@ describe('ClipboardService', () => {
     });
 
     it('pasteSelection pastes clipboard data to moved selection canvas', () => {
-        for (let i = 0; i < service.clipboard.data.length; ++i) {
-            service.clipboard.data[i] = 1;
+        for (let i = 0; i < service['clipboard'].data.length; ++i) {
+            service['clipboard'].data[i] = 1;
         }
         const putImageDataSpy = spyOn(drawServiceSpy.selectionCtx, 'putImageData').and.callThrough();
         service.pasteSelection();
@@ -167,24 +168,24 @@ describe('ClipboardService', () => {
     });
 
     it('pasteSelection moves selection canvas to corner of drawing canvas', () => {
-        for (let i = 0; i < service.clipboard.data.length; ++i) {
-            service.clipboard.data[i] = 1;
+        for (let i = 0; i < service['clipboard'].data.length; ++i) {
+            service['clipboard'].data[i] = 1;
         }
         service.pasteSelection();
-        expect(canvasTestHelper.selectionCanvas.height).toEqual(service.clipboard.height);
-        expect(canvasTestHelper.selectionCanvas.width).toEqual(service.clipboard.width);
+        expect(canvasTestHelper.selectionCanvas.height).toEqual(service['clipboard'].height);
+        expect(canvasTestHelper.selectionCanvas.width).toEqual(service['clipboard'].width);
         expect(canvasTestHelper.selectionCanvas.style.left).toEqual('0px');
         expect(canvasTestHelper.selectionCanvas.style.top).toEqual('0px');
 
-        expect(canvasTestHelper.previewSelectionCanvas.height).toEqual(service.clipboard.height);
-        expect(canvasTestHelper.previewSelectionCanvas.width).toEqual(service.clipboard.width);
+        expect(canvasTestHelper.previewSelectionCanvas.height).toEqual(service['clipboard'].height);
+        expect(canvasTestHelper.previewSelectionCanvas.width).toEqual(service['clipboard'].width);
         expect(canvasTestHelper.previewSelectionCanvas.style.left).toEqual('0px');
         expect(canvasTestHelper.previewSelectionCanvas.style.top).toEqual('0px');
     });
 
     it('pasteSelection moves resizers along with selection canvas', () => {
-        for (let i = 0; i < service.clipboard.data.length; ++i) {
-            service.clipboard.data[i] = 1;
+        for (let i = 0; i < service['clipboard'].data.length; ++i) {
+            service['clipboard'].data[i] = 1;
         }
         service.pasteSelection();
         expect(resizerHandlerServiceSpy.setResizerPositions).toHaveBeenCalled();
@@ -192,35 +193,35 @@ describe('ClipboardService', () => {
 
     it('pasteSelection does nothing if clipboard is empty ', () => {
         const putImageDataSpy = spyOn(drawServiceSpy.selectionCtx, 'putImageData').and.callThrough();
-        const someSpy = spyOn(service.clipboard.data, 'some').and.returnValue(false);
+        const someSpy = spyOn(service['clipboard'].data, 'some').and.returnValue(false);
         service.pasteSelection();
         expect(someSpy).toHaveBeenCalled();
         expect(putImageDataSpy).not.toHaveBeenCalled();
     });
 
     it('pasteSelection doesnt undo if theres no active selection', () => {
-        for (let i = 0; i < service.clipboard.data.length; ++i) {
-            service.clipboard.data[i] = 1;
+        for (let i = 0; i < service['clipboard'].data.length; ++i) {
+            service['clipboard'].data[i] = 1;
         }
         canvasTestHelper.selectionCanvas.width = 0;
         canvasTestHelper.selectionCanvas.height = 0;
-        const mouseDownSpy = spyOn(service.currentTool, 'onMouseDown').and.callThrough();
+        const mouseDownSpy = spyOn(service['currentTool'], 'onMouseDown').and.callThrough();
         service.pasteSelection();
         expect(mouseDownSpy).not.toHaveBeenCalled();
     });
 
     it('deleteSelection undoes active selection', () => {
         service.deleteSelection();
-        expect(service.currentTool.isManipulating).toBeFalse();
-        expect(service.currentTool.isEscapeDown).toBeFalse();
+        expect(service['currentTool'].isManipulating).toBeFalse();
+        expect(service['currentTool'].isEscapeDown).toBeFalse();
     });
 
     it('deleteSelection fills active selection using EllipseClipboardCommand ', () => {
-        service.currentTool = ellipseSelectionServiceStub;
+        service['currentTool'] = ellipseSelectionServiceStub;
         canvasTestHelper.selectionCanvas.width = 1;
         canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
-        expect(service.isCircle).toEqual(service.currentTool.isCircle);
+        expect(service.isCircle).toEqual(service['currentTool'].isCircle);
         expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
@@ -228,18 +229,18 @@ describe('ClipboardService', () => {
         canvasTestHelper.selectionCanvas.width = 1;
         canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
-        expect(service.selectionHeight).toEqual(service.currentTool.selectionHeight);
-        expect(service.selectionWidth).toEqual(service.currentTool.selectionWidth);
+        expect(service.selectionHeight).toEqual(service['currentTool'].selectionHeight);
+        expect(service.selectionWidth).toEqual(service['currentTool'].selectionWidth);
         expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
     it('deleteSelection fills active selection using LassoClipboardCommand', () => {
-        service.currentTool = lassoSelectionServiceStub;
+        service['currentTool'] = lassoSelectionServiceStub;
         canvasTestHelper.selectionCanvas.width = 1;
         canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
-        expect(service.selectionHeight).toEqual(service.currentTool.selectionHeight);
-        expect(service.selectionWidth).toEqual(service.currentTool.selectionWidth);
+        expect(service.selectionHeight).toEqual(service['currentTool'].selectionHeight);
+        expect(service.selectionWidth).toEqual(service['currentTool'].selectionWidth);
         expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
@@ -259,19 +260,19 @@ describe('ClipboardService', () => {
     });
 
     it('copySelection should save last selection tool (ellipse)', () => {
-        service.currentTool = ellipseSelectionServiceStub;
+        service['currentTool'] = ellipseSelectionServiceStub;
         service.copySelection();
-        expect(service.lastSelectionTool).toEqual(ToolManagerConstants.ELLIPSE_SELECTION_KEY);
+        expect(service['lastSelectionTool']).toEqual(ToolManagerConstants.ELLIPSE_SELECTION_KEY);
     });
 
     it('copySelection should save last selection tool (rectangle)', () => {
-        service.currentTool = rectangleSelectionServiceStub;
+        service['currentTool'] = rectangleSelectionServiceStub;
         service.copySelection();
-        expect(service.lastSelectionTool).toEqual(ToolManagerConstants.RECTANGLE_SELECTION_KEY);
+        expect(service['lastSelectionTool']).toEqual(ToolManagerConstants.RECTANGLE_SELECTION_KEY);
     });
 
     it('getCurrentSelectionToolName should return correct name with Lasso', () => {
-        service.currentTool = lassoSelectionServiceStub;
+        service['currentTool'] = lassoSelectionServiceStub;
         // tslint:disable:no-string-literal
         const result = service['getCurrentSelectionToolName']();
         expect(result).toEqual(ToolManagerConstants.LASSO_SELECTION_KEY);
