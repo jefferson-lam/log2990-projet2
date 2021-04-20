@@ -49,6 +49,13 @@
                     </mat-icon>
                 </li>
             </ul>
+          <ul class="info">
+            <li id="infoButton" (click)="showToolInfo()">
+              <mat-icon matTooltip="Info sur l'outil actif" [matTooltipPosition]="'right'">
+                info
+              </mat-icon>
+            </li>
+          </ul>
         </div>
         <div id="right-column">
             <ul class="options-sidebar">
@@ -105,6 +112,7 @@
                 </li>
             </ul>
         </div>
+
     </div>
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">

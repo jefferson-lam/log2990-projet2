@@ -6,6 +6,7 @@ import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-
 import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-carrousel/main-page-carrousel.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
+import { ToolInfoComponent } from '@app/components/sidebar/tool-info/tool-info.component';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EMPTY, Observable, Subject } from 'rxjs';
@@ -293,6 +294,22 @@ describe('PopupManagerService', () => {
     it('openSavePopUp should not open anything if pop up is open', () => {
         service.isPopUpOpen = true;
         service.openSavePopUp();
+
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+        expect(service.isPopUpOpen).toBeTrue();
+    });
+
+    it("openToolInfoPopUp should open ToolInfoComponent if pop up isn't open", () => {
+        service.openToolInfoPopUp();
+
+        expect(onToolChangeSpy).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(ToolInfoComponent);
+    });
+
+    it('openToolInfoPopUp should not open anything if pop up is open', () => {
+        service.isPopUpOpen = true;
+        service.openToolInfoPopUp();
 
         expect(dialogSpy.open).not.toHaveBeenCalled();
         expect(service.isPopUpOpen).toBeTrue();
