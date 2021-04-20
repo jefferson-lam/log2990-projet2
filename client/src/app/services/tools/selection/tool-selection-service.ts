@@ -20,6 +20,7 @@ export class ToolSelectionService extends Tool {
     selectionToolFillMode: ToolConstants.FillMode;
     selectionToolPrimaryColor: string;
     selectionToolSecondaryColor: string;
+    selectionToolWithJunction: boolean;
     isManipulating: boolean;
 
     constructor(
@@ -125,10 +126,14 @@ export class ToolSelectionService extends Tool {
         if (this.selectionTool.secondaryColor != undefined) {
             this.selectionToolSecondaryColor = this.selectionTool.secondaryColor;
         }
+        if (this.selectionTool.withJunction != undefined) {
+            this.selectionToolWithJunction = this.selectionTool.withJunction;
+        }
     }
 
     setSelectionSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'white';
+        this.selectionTool.setWithJunction(false);
         this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
         this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
         this.selectionTool.setPrimaryColor('black');
@@ -139,6 +144,7 @@ export class ToolSelectionService extends Tool {
     resetSelectedToolSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'black';
         this.selectionTool.setFillMode(this.selectionToolFillMode);
+        this.selectionTool.setWithJunction(this.selectionToolWithJunction);
         this.selectionTool.setLineWidth(this.selectionToolLineWidth);
         this.selectionTool.setPrimaryColor(this.selectionToolPrimaryColor);
         this.selectionTool.setSecondaryColor(this.selectionToolSecondaryColor);
