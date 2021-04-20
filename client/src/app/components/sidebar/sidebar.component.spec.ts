@@ -46,7 +46,11 @@ describe('SidebarComponent', () => {
             ['refresh', 'executeCommand', 'undo', 'redo'],
             ['isUndoAllowed', 'isRedoAllowed'],
         );
-        popupManagerSpy = jasmine.createSpyObj('PopupManagerService', ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp'], ['isPopupOpen']);
+        popupManagerSpy = jasmine.createSpyObj(
+            'PopupManagerService',
+            ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp', 'openToolInfoPopUp'],
+            ['isPopupOpen'],
+        );
         pencilStub = new PencilService({} as DrawingService, undoRedoServiceSpy);
         eraserStub = new EraserService({} as DrawingService, undoRedoServiceSpy);
         lineStub = new LineService({} as DrawingService, undoRedoServiceSpy);
@@ -242,6 +246,13 @@ describe('SidebarComponent', () => {
         saveDrawingButton.click();
         fixture.detectChanges();
         expect(popupManagerSpy.openSavePopUp).toHaveBeenCalled();
+    });
+
+    it('pressing on showToolInfo should emit to editor', () => {
+        const infoButton = fixture.debugElement.nativeElement.querySelector('#infoButton');
+        infoButton.click();
+        fixture.detectChanges();
+        expect(popupManagerSpy.openToolInfoPopUp).toHaveBeenCalled();
     });
 
     it('clicking on undo button when isUndoAllowed should call undoRedoService.undo', () => {

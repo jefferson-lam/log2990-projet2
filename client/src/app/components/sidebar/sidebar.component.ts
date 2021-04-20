@@ -56,6 +56,10 @@ export class SidebarComponent {
         this.popupManager.openSavePopUp();
     }
 
+    showToolInfo(): void {
+        this.popupManager.openToolInfoPopUp();
+    }
+
     openGridOptions(): void {
         this.isGridOptionsDisplayed = !this.isGridOptionsDisplayed;
     }

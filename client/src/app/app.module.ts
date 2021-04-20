@@ -62,6 +62,7 @@ import { SidebarRectangleComponent } from './components/sidebar/sidebar-tools-op
 import { SidebarStampComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-stamp/sidebar-stamp.component';
 import { SidebarTextComponent } from './components/sidebar/sidebar-tools-options-2.0/sidebar-text/sidebar-text.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { ToolInfoComponent } from './components/sidebar/tool-info/tool-info.component';
 
 @NgModule({
     declarations: [
@@ -102,6 +103,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SidebarMagnetismComponent,
         SidebarStampComponent,
         SidebarTextComponent,
+        ToolInfoComponent,
     ],
     entryComponents: [MainPageCarrouselComponent, ExportCompletePageComponent],
     imports: [

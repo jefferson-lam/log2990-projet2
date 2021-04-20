@@ -106,6 +106,37 @@ mat-icon {
     color: #ddd;
 }
 
+.info li:hover{
+    color: #607d8b;
+    background-color: #ddd;
+    left: 0.1em;
+}
+
+.info li:active{
+    background-color: #4682b4;
+    color: #ddd;
+}
+
+.info li {
+    color: white;
+    cursor: pointer;
+    width: 38px;
+    position: absolute;
+    bottom: 10px;
+    background-color: #e07a5f;
+    margin: 6px 6px 6px 6px;
+    padding-top: 2px;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px, rgba(0, 0, 0, 0.23) 0 3px 6px;
+}
+
+.info {
+    margin: 0 0 16px -2px;
+    padding: 0;
+    width: 50px;
+    justify-content: flex-start;
+}
+
 .selected {
     background-color: #4682b4;
     color: red;
