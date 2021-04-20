@@ -139,21 +139,23 @@ describe('PolygoneCommand', () => {
         expect(getRadiiSpy).toHaveBeenCalled();
     });
 
-    it('drawPolygone should call drawTypePolygone and change primary color', () => {
+    it('drawPolygone should call drawShape if radiusWithin < lineWidth', () => {
         spyOn<any>(command, 'getRadiiX').and.callFake(() => {
             return mockRadii;
         });
-        const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
-        command['fillMode'] = ToolConstants.FillMode.FILL_ONLY;
+        command['lineWidth'] = mockRadii[0] + 1;
+        const drawTypeSpy = spyOn<any>(command, 'drawShape');
+        command['fillMode'] = ToolConstants.FillMode.OUTLINE;
         // tslint:disable:no-string-literal
         command['drawPolygone'](command['ctx']);
         expect(drawTypeSpy).toHaveBeenCalled();
     });
 
-    it('drawPolygone should call drawTypePolygone and not change primary color', () => {
+    it('drawPolygone should call drawTypePolygone and not change primary color if radiusWithin > lineWidth', () => {
         spyOn<any>(command, 'getRadiiX').and.callFake(() => {
-            return mockRadii;
+            return mockRadii[0];
         });
+        command['lineWidth'] = mockRadii[0] - 1;
         const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
         command['fillMode'] = ToolConstants.FillMode.OUTLINE;
         // tslint:disable:no-string-literal
@@ -161,13 +163,25 @@ describe('PolygoneCommand', () => {
         expect(drawTypeSpy).toHaveBeenCalled();
     });
 
+    it('drawPolygone should call drawTypePolygone and change primary color', () => {
+        spyOn<any>(command, 'getRadiiX').and.callFake(() => {
+            return mockRadii[0];
+        });
+        const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
+        command['fillMode'] = ToolConstants.FillMode.FILL_ONLY;
+        command['lineWidth'] = mockRadii[0] - 1;
+        // tslint:disable:no-string-literal
+        command['drawPolygone'](command['ctx']);
+        expect(drawTypeSpy).toHaveBeenCalled();
+    });
+
     it('drawPolygone should call drawTypePolygone with fill mode change', () => {
         spyOn<any>(command, 'getRadiiX').and.callFake(() => {
-            return mockRadii;
+            return mockRadii[0];
         });
         const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
         command['fillMode'] = ToolConstants.FillMode.OUTLINE_FILL;
-        command['lineWidth'] = mockRadii[0];
+        command['lineWidth'] = mockRadii[0] - 1;
         // tslint:disable:no-string-literal
         command['drawPolygone'](command['ctx']);
         expect(drawTypeSpy).toHaveBeenCalled();
@@ -188,7 +202,21 @@ describe('PolygoneCommand', () => {
         expect(fillSpy).toHaveBeenCalled();
     });
 
-    it('drawTypePolygone should not change fillStyle and fill if FillMode.OUTLINE', () => {
+    it('drawTypePolygone should call fill if FillMode.FILL_ONLY', () => {
+        command['radiusWithin'] = mockRadius;
+        command['centerPosition'].x = mockPoint.x;
+        command['centerPosition'].y = mockPoint.y;
+        command['numberSides'] = PolygoneConstants.MIN_SIDES_COUNT;
+        command['fillMode'] = ToolConstants.FillMode.FILL_ONLY;
+        command['primaryColor'] = TEST_PRIM_COLOR;
+        command['borderColor'] = TEST_PRIM_COLOR;
+        command['lineWidth'] = TEST_LINE_WIDTH;
+        const fillSpy = spyOn(testCtx, 'fill');
+        command['drawTypePolygone'](testCtx);
+        expect(fillSpy).toHaveBeenCalled();
+    });
+
+    it('drawTypePolygone should call fill if FillMode.OUTLINE', () => {
         command['radiusWithin'] = mockRadius;
         command['centerPosition'].x = mockPoint.x;
         command['centerPosition'].y = mockPoint.y;
@@ -199,8 +227,7 @@ describe('PolygoneCommand', () => {
         command['lineWidth'] = TEST_LINE_WIDTH;
         const fillSpy = spyOn(testCtx, 'fill');
         command['drawTypePolygone'](testCtx);
-        expect(testCtx.fillStyle).not.toEqual(TEST_PRIMARY_COLOR_HEX);
-        expect(fillSpy).not.toHaveBeenCalled();
+        expect(fillSpy).toHaveBeenCalled();
     });
 
     it('drawTypePolygone should call ctx lineTo for odd sides', () => {

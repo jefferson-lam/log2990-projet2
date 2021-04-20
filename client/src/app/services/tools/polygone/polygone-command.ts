@@ -40,30 +40,69 @@ export class PolygoneCommand extends Command {
     private drawPolygone(ctx: CanvasRenderingContext2D): void {
         this.getPolygoneCenter(this.cornerCoords[ShapeConstants.START_INDEX], this.cornerCoords[ShapeConstants.END_INDEX]);
 
-        const xRadius = this.getRadiiX(this.cornerCoords);
-        this.radiusWithin = xRadius - this.lineWidth / 2;
+        this.radiusWithin = this.getRadiiX(this.cornerCoords);
         if (this.radiusWithin < 0) {
             return;
         }
         this.borderColor = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (this.radiusWithin > this.lineWidth / 2) {
+        if (this.radiusWithin > this.lineWidth) {
             this.drawTypePolygone(ctx);
         } else {
             this.primaryColor = this.borderColor;
-            this.drawTypePolygone(ctx);
+            this.drawShape(ctx);
         }
     }
 
+    private drawBorderShape(ctx: CanvasRenderingContext2D): void {
+        ctx.save();
+        ctx.beginPath();
+        const ANGLE_EVEN = ShapeConstants.END_ANGLE / this.numberSides;
+        if (this.numberSides % 2 !== 0) {
+            for (let i = 0; i <= this.numberSides; i++) {
+                const angle = ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI;
+                ctx.lineTo(this.centerPosition.x + this.radiusWithin * Math.cos(angle), this.centerPosition.y + this.radiusWithin * Math.sin(angle));
+            }
+            this.radiusWithin -= this.lineWidth;
+            for (let i = 0; i <= this.numberSides; i++) {
+                const angle = ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI;
+                ctx.lineTo(this.centerPosition.x + this.radiusWithin * Math.cos(angle), this.centerPosition.y + this.radiusWithin * Math.sin(angle));
+            }
+        } else {
+            for (let i = 0; i <= this.numberSides; i++) {
+                ctx.lineTo(
+                    this.centerPosition.x + this.radiusWithin * Math.cos(ANGLE_EVEN * i),
+                    this.centerPosition.y + this.radiusWithin * Math.sin(ANGLE_EVEN * i),
+                );
+            }
+            this.radiusWithin -= this.lineWidth;
+            for (let i = 0; i <= this.numberSides; i++) {
+                ctx.lineTo(
+                    this.centerPosition.x + this.radiusWithin * Math.cos(ANGLE_EVEN * i),
+                    this.centerPosition.y + this.radiusWithin * Math.sin(ANGLE_EVEN * i),
+                );
+            }
+        }
+        ctx.clip('evenodd');
+        ctx.fillStyle = this.borderColor;
+        ctx.fill();
+        ctx.restore();
+    }
+
     private drawTypePolygone(ctx: CanvasRenderingContext2D): void {
-        this.drawShape(ctx);
-        ctx.strokeStyle = this.borderColor;
-        ctx.lineWidth = this.lineWidth;
-        ctx.stroke();
-        if (this.fillMode !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = this.primaryColor;
-            this.radiusWithin -= this.lineWidth / 2;
-            this.drawShape(ctx);
-            ctx.fill();
+        switch (this.fillMode) {
+            case ToolConstants.FillMode.OUTLINE:
+                this.drawBorderShape(ctx);
+                break;
+            case ToolConstants.FillMode.FILL_ONLY:
+                ctx.fillStyle = this.primaryColor;
+                this.drawShape(ctx);
+                ctx.fill();
+                break;
+            case ToolConstants.FillMode.OUTLINE_FILL:
+                this.drawBorderShape(ctx);
+                ctx.fillStyle = this.primaryColor;
+                this.drawShape(ctx);
+                ctx.fill();
         }
     }
 
