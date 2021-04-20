@@ -9,6 +9,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EraserService } from './eraser-service';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('EraserService', () => {
     let service: EraserService;
     let mouseEvent: MouseEvent;
@@ -39,8 +40,8 @@ describe('EraserService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand');
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
-        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
+        setPreviewValuesSpy = spyOn(service['previewCommand'], 'setValues');
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
