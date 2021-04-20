@@ -107,24 +107,19 @@ describe('EllipseCommand', () => {
         });
         const drawTypeSpy = spyOn<any>(command, 'drawTypeEllipse');
 
-        command.fillMode = ToolConstants.FillMode.FILL_ONLY;
-        command.lineWidth = mockRadii[0] * 2;
+        command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
+        command.radiiPosition.x = mockRadii[0];
+        command.radiiPosition.y = mockRadii[1];
+        command.borderColor = command.primaryColor;
+        command.lineWidth = EllipseConstants.HIDDEN_BORDER_WIDTH;
 
         // tslint:disable:no-string-literal
         command['drawEllipse'](command['ctx'], command.cornerCoords);
 
         expect(drawTypeSpy).toHaveBeenCalled();
-        expect(drawTypeSpy).toHaveBeenCalledWith(
-            baseCtxStub,
-            mockPoint.x,
-            mockPoint.y,
-            mockRadii[0],
-            mockRadii[1],
-            ToolConstants.FillMode.OUTLINE_FILL,
-            command.primaryColor,
-            command.primaryColor,
-            EllipseConstants.HIDDEN_BORDER_WIDTH,
-        );
+        expect(drawTypeSpy).toHaveBeenCalledWith(baseCtxStub);
     });
 
     it('drawEllipse should call drawTypeEllipse with changed radius if radii bigger than lineWidths', () => {
@@ -138,27 +133,45 @@ describe('EllipseCommand', () => {
 
         command.fillMode = ToolConstants.FillMode.FILL_ONLY;
         command.lineWidth = mockRadii[0];
-
-        // const xRadius = mockRadii[0] - command.lineWidth / 2;
-        // const yRadius = mockRadii[1] - command.lineWidth / 2;
-        const xRadius = mockRadii[0];
-        const yRadius = mockRadii[1];
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
+        command.radiiPosition.x = mockRadii[0] - command.lineWidth / 2;
+        command.radiiPosition.y = mockRadii[1] - command.lineWidth / 2;
+        command.borderColor = command.primaryColor;
 
         // tslint:disable:no-string-literal
         command['drawEllipse'](command['ctx'], command.cornerCoords);
 
         expect(drawTypeSpy).toHaveBeenCalled();
-        expect(drawTypeSpy).toHaveBeenCalledWith(
-            baseCtxStub,
-            mockPoint.x,
-            mockPoint.y,
-            xRadius,
-            yRadius,
-            ToolConstants.FillMode.OUTLINE_FILL,
-            command.primaryColor,
-            command.primaryColor,
-            0,
+        expect(drawTypeSpy).toHaveBeenCalledWith(baseCtxStub);
+    });
+
+    it('should make an ellipse with border and fill color of same color on FillMode.FILL_ONLY', () => {
+        ellipseService.setFillMode(ToolConstants.FillMode.FILL_ONLY);
+
+        command.setValues(baseCtxStub, ellipseService);
+
+        command.execute();
+
+        // Trace test ellipse to be compared with stub.
+        testCtx.fillStyle = TEST_PRIMARY_COLOR;
+        testCtx.beginPath();
+        testCtx.ellipse(
+            TEST_START_X,
+            TEST_START_Y,
+            TEST_X_RADIUS + ellipseService.lineWidth / 2,
+            TEST_Y_RADIUS + ellipseService.lineWidth / 2,
+            EllipseConstants.ROTATION,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
         );
+        testCtx.fill();
+
+        const imageData: ImageData = baseCtxStub.getImageData(0, 0, END_X, END_Y);
+        const testData: ImageData = testCtx.getImageData(0, 0, END_X, END_Y);
+        for (let i = 0; i < imageData.data.length; i++) {
+            expect(imageData.data[i]).toEqual(testData.data[i]);
+        }
     });
 
     it('should make an ellipse with only border on FillMode.OUTLINE', () => {
@@ -169,22 +182,31 @@ describe('EllipseCommand', () => {
         command.execute();
 
         // Trace test ellipse to be compared with stub.
+        testCtx.save();
         testCtx.beginPath();
-        testCtx.setLineDash([]);
-        testCtx.lineJoin = 'round';
+        const smallRadii = { x: TEST_X_RADIUS - ellipseService.lineWidth / 2, y: TEST_Y_RADIUS - ellipseService.lineWidth / 2 };
         testCtx.ellipse(
             TEST_START_X,
             TEST_START_Y,
-            TEST_X_RADIUS,
-            TEST_Y_RADIUS,
+            smallRadii.x,
+            smallRadii.y,
             EllipseConstants.ROTATION,
             ShapeConstants.START_ANGLE,
             ShapeConstants.END_ANGLE,
         );
-
-        testCtx.strokeStyle = TEST_SECONDARY_COLOR;
-        testCtx.lineWidth = ellipseService.lineWidth;
-        testCtx.stroke();
+        testCtx.ellipse(
+            TEST_START_X,
+            TEST_START_Y,
+            smallRadii.x + ellipseService.lineWidth,
+            smallRadii.y + ellipseService.lineWidth,
+            EllipseConstants.ROTATION,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
+        );
+        testCtx.clip('evenodd');
+        testCtx.fillStyle = TEST_SECONDARY_COLOR;
+        testCtx.fill();
+        testCtx.restore();
 
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, END_X, END_Y);
         const testData: ImageData = testCtx.getImageData(0, 0, END_X, END_Y);
@@ -196,15 +218,20 @@ describe('EllipseCommand', () => {
     it('should only call ctx.ellipse once if xRadius is smaller than lineWidth / 2', () => {
         const ellipseSpy = spyOn(command['ctx'], 'ellipse');
         const LINE_WIDTH = 5;
-        const FILL_METHOD = ToolConstants.FillMode.OUTLINE_FILL;
 
-        const xRadius = LINE_WIDTH / 2 - 1;
-        const yRadius = LINE_WIDTH / 2 - 1;
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
+        command.radiiPosition.x = LINE_WIDTH / 2 - 1;
+        command.radiiPosition.y = LINE_WIDTH / 2 - 1;
+        command.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
+        command.primaryColor = 'black';
+        command.borderColor = 'black';
+        command.lineWidth = LINE_WIDTH;
 
         // tslint:disable:no-string-literal
-        command['drawTypeEllipse'](command['ctx'], mockPoint.x, mockPoint.y, xRadius, yRadius, FILL_METHOD, 'black', 'black', LINE_WIDTH);
+        command['drawTypeEllipse'](command['ctx']);
 
-        expect(ellipseSpy).toHaveBeenCalledTimes(1);
+        expect(ellipseSpy).toHaveBeenCalledTimes(2);
     });
 
     it('getEllipseCenter should set displacement to shortest side if isCircle', () => {
@@ -217,10 +244,10 @@ describe('EllipseCommand', () => {
         const yVector = end.y - start.y;
 
         // tslint:disable:no-string-literal
-        const center = command['getEllipseCenter'](start, end, true);
+        command['getEllipseCenter'](start, end, true);
 
-        expect(center.x).toEqual(start.x + Math.sign(xVector) * shortestSide);
-        expect(center.y).toEqual(start.y + Math.sign(yVector) * shortestSide);
+        expect(command.centerPosition.x).toEqual(start.x + Math.sign(xVector) * shortestSide);
+        expect(command.centerPosition.y).toEqual(start.y + Math.sign(yVector) * shortestSide);
     });
 
     it('getRadiiXAndY should set radius to shortest side if isCircle', () => {
@@ -235,9 +262,9 @@ describe('EllipseCommand', () => {
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
 
         // tslint:disable:no-string-literal
-        const radii = command['getRadiiXAndY'](command.cornerCoords);
+        command['getRadiiXAndY'](command.cornerCoords);
 
-        expect(radii[0]).toEqual(shortestSide);
-        expect(radii[1]).toEqual(shortestSide);
+        expect(command.radiiPosition.x).toEqual(shortestSide);
+        expect(command.radiiPosition.y).toEqual(shortestSide);
     });
 });
