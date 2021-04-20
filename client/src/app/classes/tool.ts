@@ -14,7 +14,7 @@ export abstract class Tool {
     secondaryColor?: string;
     junctionRadius?: number;
     withJunction?: boolean;
-    initNumberSides?: number;
+    numberSides?: number;
     waterDropWidth?: number;
     emissionCount?: number;
     mouseDownCoord: Vec2;

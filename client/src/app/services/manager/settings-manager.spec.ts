@@ -69,7 +69,7 @@ describe('SettingsManagerService', () => {
     it('setSidesCount should set the sides count correctly of current tool', () => {
         const EXPECTED_SIDES_COUNT = 10;
         service.setSidesCount(EXPECTED_SIDES_COUNT);
-        expect(toolSpy.initNumberSides).toEqual(EXPECTED_SIDES_COUNT);
+        expect(toolSpy.numberSides).toEqual(EXPECTED_SIDES_COUNT);
     });
 
     it('setWaterDropWidth should call setWaterDropWidth of toolManager', () => {

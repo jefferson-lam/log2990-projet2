@@ -13,7 +13,6 @@ export class RectangleCommand extends Command {
     cornerCoords: Vec2[] = [];
     width: number;
     height: number;
-    fillColor: string;
     borderColor: string;
 
     constructor(canvasContext: CanvasRenderingContext2D, rectangleService: RectangleService) {
@@ -45,14 +44,14 @@ export class RectangleCommand extends Command {
             this.height = Math.sign(this.height) * shortestSide;
         }
         this.borderColor = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (Math.abs(this.width) > this.lineWidth && Math.abs(this.height) > this.lineWidth) {
+        if (Math.abs(this.width) > this.lineWidth * 2 && Math.abs(this.height) > this.lineWidth * 2) {
             this.width -= Math.sign(this.width) * this.lineWidth;
             this.height -= Math.sign(this.height) * this.lineWidth;
-            this.fillColor = this.primaryColor;
             this.drawTypeRectangle(ctx, path);
         } else {
             this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
             this.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
+            this.primaryColor = this.borderColor;
             this.drawTypeRectangle(ctx, path);
         }
     }
@@ -68,8 +67,13 @@ export class RectangleCommand extends Command {
         ctx.lineWidth = this.lineWidth;
         ctx.stroke();
         if (this.fillMode !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = this.fillColor;
-            ctx.fill();
+            ctx.fillStyle = this.primaryColor;
+            const fillStartX = startX + (Math.sign(this.width) * this.lineWidth) / 2;
+            const fillStartY = startY + (Math.sign(this.height) * this.lineWidth) / 2;
+            const fillWidth = this.width - Math.sign(this.width) * this.lineWidth;
+            const fillHeight = this.height - Math.sign(this.height) * this.lineWidth;
+
+            ctx.fillRect(fillStartX, fillStartY, fillWidth, fillHeight);
         }
     }
 }
