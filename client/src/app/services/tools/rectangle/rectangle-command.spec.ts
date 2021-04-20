@@ -7,6 +7,7 @@ import { RectangleCommand } from '@app/services/tools/rectangle/rectangle-comman
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('RectangleCommand', () => {
     let command: RectangleCommand;
     let rectangleService: RectangleService;
@@ -75,20 +76,20 @@ describe('RectangleCommand', () => {
     it('setValues should set values', () => {
         command.setValues({} as CanvasRenderingContext2D, rectangleService);
 
-        expect(command.isSquare).toEqual(rectangleService.isSquare);
-        expect(command.lineWidth).toEqual(rectangleService.lineWidth);
-        expect(command.fillMode).toEqual(rectangleService.fillMode);
-        expect(command.primaryColor).toEqual(rectangleService.primaryColor);
-        expect(command.secondaryColor).toEqual(rectangleService.secondaryColor);
+        expect(command['isSquare']).toEqual(rectangleService.isSquare);
+        expect(command['lineWidth']).toEqual(rectangleService.lineWidth);
+        expect(command['fillMode']).toEqual(rectangleService.fillMode);
+        expect(command['primaryColor']).toEqual(rectangleService.primaryColor);
+        expect(command['secondaryColor']).toEqual(rectangleService.secondaryColor);
         expect(command.cornerCoords).toEqual(rectangleService.cornerCoords);
     });
 
     it('drawRectangle should call drawTypeRectangle with unchanged width & height if smaller or equal to lineWidth', () => {
         const width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
 
-        command.isSquare = false;
-        command.lineWidth = width;
-        command.fillMode = ToolConstants.FillMode.FILL_ONLY;
+        command['isSquare'] = false;
+        command['lineWidth'] = width;
+        command['fillMode'] = ToolConstants.FillMode.FILL_ONLY;
 
         // tslint:disable:no-string-literal
         command['drawRectangle'](command['ctx'], command.cornerCoords);
@@ -105,9 +106,9 @@ describe('RectangleCommand', () => {
         width = Math.sign(width) * shortestSide;
         height = Math.sign(height) * shortestSide;
 
-        command.isSquare = true;
-        command.lineWidth = width;
-        command.fillMode = ToolConstants.FillMode.FILL_ONLY;
+        command['isSquare'] = true;
+        command['lineWidth'] = width;
+        command['fillMode'] = ToolConstants.FillMode.FILL_ONLY;
 
         // tslint:disable:no-string-literal
         command['drawRectangle'](command['ctx'], command.cornerCoords);
@@ -120,9 +121,9 @@ describe('RectangleCommand', () => {
         const width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
         const height = command.cornerCoords[ShapeConstants.END_INDEX].y - command.cornerCoords[ShapeConstants.START_INDEX].y;
 
-        command.isSquare = false;
-        command.lineWidth = Math.min(Math.abs(height), Math.abs(width)) - 1;
-        command.fillMode = ToolConstants.FillMode.FILL_ONLY;
+        command['isSquare'] = false;
+        command['lineWidth'] = Math.min(Math.abs(height), Math.abs(width)) - 1;
+        command['fillMode'] = ToolConstants.FillMode.FILL_ONLY;
 
         // tslint:disable:no-string-literal
         command['drawRectangle'](command['ctx'], command.cornerCoords);
