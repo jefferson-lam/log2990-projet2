@@ -229,8 +229,8 @@ describe('ClipboardService', () => {
         canvasTestHelper.selectionCanvas.width = 1;
         canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
-        expect(service.selectionHeight).toEqual(service['currentTool'].selectionHeight);
-        expect(service.selectionWidth).toEqual(service['currentTool'].selectionWidth);
+        expect(service.selectionHeight).toEqual(service['currentTool']['selectionHeight']);
+        expect(service.selectionWidth).toEqual(service['currentTool']['selectionWidth']);
         expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
@@ -239,8 +239,8 @@ describe('ClipboardService', () => {
         canvasTestHelper.selectionCanvas.width = 1;
         canvasTestHelper.selectionCanvas.height = 1;
         service.deleteSelection();
-        expect(service.selectionHeight).toEqual(service['currentTool'].selectionHeight);
-        expect(service.selectionWidth).toEqual(service['currentTool'].selectionWidth);
+        expect(service.selectionHeight).toEqual(service['currentTool']['selectionHeight']);
+        expect(service.selectionWidth).toEqual(service['currentTool']['selectionWidth']);
         expect(undoRedoServiceSpy.executeCommand).toHaveBeenCalled();
     });
 
