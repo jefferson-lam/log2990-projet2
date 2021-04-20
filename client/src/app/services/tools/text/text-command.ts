@@ -4,18 +4,18 @@ import * as TextConstants from '@app/constants/text-constants';
 import { TextService } from '@app/services/tools/text/text-service';
 
 export class TextCommand extends Command {
-    primaryColor: string;
-    fontSize: number;
-    fontStyle: string;
-    textAlign: string;
-    fontWeight: string;
-    fontFamily: string;
-    text: string;
-    splitText: string[];
-    spanLeftPosition: number;
-    spanTopPosition: number;
+    private primaryColor: string;
+    private fontSize: number;
+    private fontStyle: string;
+    private textAlign: string;
+    private fontWeight: string;
+    private fontFamily: string;
+    private text: string;
+    private splitText: string[];
+    private spanLeftPosition: number;
+    private spanTopPosition: number;
 
-    cornerCoords: Vec2;
+    private cornerCoords: Vec2;
 
     constructor(canvasContext: CanvasRenderingContext2D, textService: TextService) {
         super();
