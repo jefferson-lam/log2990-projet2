@@ -344,5 +344,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.isManipulating = false;
         this.isCircle = false;
         this.isShiftDown = false;
+        this.ellipseService.isCircle = false;
     }
 }
