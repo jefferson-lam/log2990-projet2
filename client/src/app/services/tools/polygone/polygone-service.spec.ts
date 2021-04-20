@@ -10,6 +10,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { PolygoneService } from './polygone-service';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('PolygoneService', () => {
     let service: PolygoneService;
     let mouseEvent: MouseEvent;
@@ -37,7 +38,7 @@ describe('PolygoneService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
