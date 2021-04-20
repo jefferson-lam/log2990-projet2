@@ -6,15 +6,15 @@ import { END_ANGLE, START_ANGLE } from '@app/constants/shapes-constants';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 
 export class EllipseClipboardCommand extends Command {
-    pathData: Vec2[];
-    isCircle: boolean;
+    private pathData: Vec2[];
+    private isCircle: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService) {
         super();
         this.setValues(canvasContext, clipboardService);
     }
 
-    setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
+    private setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
         this.ctx = canvasContext;
         this.pathData = Object.assign([], clipboardService.pathData);
         this.isCircle = clipboardService.isCircle;
