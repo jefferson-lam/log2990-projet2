@@ -20,9 +20,9 @@ export class EllipseService extends Tool {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    mousePosition: Vec2;
+    private mousePosition: Vec2;
 
-    previewCommand: EllipseCommand;
+    private previewCommand: EllipseCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);

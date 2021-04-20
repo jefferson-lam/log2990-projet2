@@ -11,6 +11,7 @@ import { EllipseService } from './ellipse-service';
 
 // tslint:disable:max-file-line-count
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('EllipseService', () => {
     let service: EllipseService;
     let mouseEvent: MouseEvent;
@@ -26,10 +27,6 @@ describe('EllipseService', () => {
     let setPreviewValuesSpy: jasmine.Spy;
     let undoRedoService: UndoRedoService;
 
-    // let drawEllipseSpy: jasmine.Spy<any>;
-    // let testCanvas: HTMLCanvasElement;
-    // let testCtx: CanvasRenderingContext2D;
-
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         TestBed.configureTestingModule({
@@ -44,8 +41,8 @@ describe('EllipseService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand');
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
-        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
+        setPreviewValuesSpy = spyOn(service['previewCommand'], 'setValues');
 
         // Configuration of spy of service
         // tslint:disable:no-string-literal
