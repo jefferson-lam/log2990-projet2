@@ -35,6 +35,7 @@ describe('ToolSelectionService', () => {
             'setPrimaryColor',
             'setSecondaryColor',
             'setLineWidth',
+            'setWithJunction',
         ]);
         TestBed.configureTestingModule({
             providers: [
@@ -142,6 +143,7 @@ describe('ToolSelectionService', () => {
         service.selectionTool.fillMode = undefined;
         service.selectionTool.primaryColor = undefined;
         service.selectionTool.secondaryColor = undefined;
+        service.selectionTool.withJunction = undefined;
         service.getSelectedToolSettings();
         expect(service.selectionToolLineWidth).toEqual(1);
         expect(service.selectionToolPrimaryColor).toEqual('white');
@@ -154,11 +156,13 @@ describe('ToolSelectionService', () => {
         service.selectionTool.fillMode = FillMode.OUTLINE_FILL;
         service.selectionTool.primaryColor = 'red';
         service.selectionTool.secondaryColor = 'black';
+        service.selectionTool.withJunction = false;
         service.getSelectedToolSettings();
         expect(service.selectionToolLineWidth).toEqual(lineWidth);
         expect(service.selectionToolFillMode).toEqual(FillMode.OUTLINE_FILL);
         expect(service.selectionToolPrimaryColor).toEqual('red');
         expect(service.selectionToolSecondaryColor).toEqual('black');
+        expect(service.selectionToolWithJunction).toEqual(false);
     });
 
     it('resetCanvasState should reset the canvas to its default values', () => {
