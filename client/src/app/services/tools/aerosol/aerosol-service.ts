@@ -87,7 +87,7 @@ export class AerosolService extends Tool {
         return AerosolConstants.EMISSION_RATE / this.emissionCount;
     }
 
-    clearPath(): void {
+    private clearPath(): void {
         this.pathData = [];
     }
 

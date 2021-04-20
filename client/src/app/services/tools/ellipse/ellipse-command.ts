@@ -6,15 +6,15 @@ import * as ToolConstants from '@app/constants/tool-constants';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 
 export class EllipseCommand extends Command {
-    isCircle: boolean;
-    lineWidth: number;
-    fillMode: ToolConstants.FillMode;
-    primaryColor: string;
-    secondaryColor: string;
-    cornerCoords: Vec2[] = [];
-    centerPosition: Vec2;
-    radiiPosition: Vec2;
-    borderColor: string;
+    private isCircle: boolean;
+    private lineWidth: number;
+    private fillMode: ToolConstants.FillMode;
+    private primaryColor: string;
+    private secondaryColor: string;
+    private cornerCoords: Vec2[] = [];
+    private centerPosition: Vec2;
+    private radiiPosition: Vec2;
+    private borderColor: string;
 
     constructor(canvasContext: CanvasRenderingContext2D, ellipseService: EllipseService) {
         super();
