@@ -33,7 +33,8 @@ describe('StampService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeCommandSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
+        // tslint:disable-next-line: no-string-literal
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
@@ -193,13 +194,13 @@ describe('StampService', () => {
 
     it('changeRotationAngleOnAlt should change rotation angle', () => {
         service.changeRotationAngleOnAlt();
-        expect(service.degreesRotation).toEqual(1);
+        expect(service['degreesRotation']).toEqual(1);
     });
 
     it('changeRotationAngleNormal should change rotation angle', () => {
         const EXPECTED_ANGLE = 15;
         service.changeRotationAngleNormal();
-        expect(service.degreesRotation).toEqual(EXPECTED_ANGLE);
+        expect(service['degreesRotation']).toEqual(EXPECTED_ANGLE);
     });
 
     it('setImageSource should change image source', () => {
@@ -230,7 +231,7 @@ describe('StampService', () => {
     });
 
     it('drawCursor should set position, previewCommand values and execute previewCommand', () => {
-        const setPreviewCommandValuesSpy = spyOn(service.previewCommand, 'setValues');
+        const setPreviewCommandValuesSpy = spyOn(service['previewCommand'], 'setValues');
         const expectedPosition = { x: 2, y: 40 };
 
         service.drawCursor(expectedPosition);
