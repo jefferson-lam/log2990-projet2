@@ -17,7 +17,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class RectangleSelectionService extends ToolSelectionService {
     transformValues: Vec2;
     isSquare: boolean;
-    isShiftDown: boolean;
+    private isShiftDown: boolean;
     isEscapeDown: boolean;
     pathData: Vec2[];
     inUse: boolean;
@@ -148,7 +148,7 @@ export class RectangleSelectionService extends ToolSelectionService {
         }
     }
 
-    initializeSelection(event: MouseEvent): void {
+    private initializeSelection(event: MouseEvent): void {
         this.lockMouseInsideCanvas(event);
         this.rectangleService.inUse = false;
         super.onMouseUp(event);
