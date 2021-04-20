@@ -34,7 +34,7 @@ export class SettingsManagerService {
     }
 
     setSidesCount(newSidesCount: number): void {
-        this.toolManager.currentTool.initNumberSides = newSidesCount;
+        this.toolManager.currentTool.numberSides = newSidesCount;
     }
 
     setWaterDropWidth(newSize: number): void {

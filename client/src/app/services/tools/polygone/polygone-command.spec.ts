@@ -78,6 +78,20 @@ describe('PolygoneCommand', () => {
         expect(command['cornerCoords']).toEqual(polygoneService.cornerCoords);
     });
 
+    it('drawPolygone should call drawTypePolygone if radiusWithin > this.lineWidth / 2', () => {
+        command['lineWidth'] = 2;
+        spyOn<any>(command, 'getRadiiX').and.callFake(() => {
+            // tslint:disable-next-line:no-magic-numbers
+            return 100;
+        });
+        const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
+
+        // tslint:disable:no-string-literal
+        command['drawPolygone'](command['ctx']);
+
+        expect(drawTypeSpy).toHaveBeenCalled();
+    });
+
     it('drawPolygone should not set radiusWithin if negative', () => {
         spyOn<any>(command, 'getRadiiX').and.callFake(() => {
             return mockNegativeRadius;
