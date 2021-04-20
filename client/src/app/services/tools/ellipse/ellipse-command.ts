@@ -11,7 +11,7 @@ export class EllipseCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
     centerPosition: Vec2;
     radiiPosition: Vec2;
     borderColor: string;
@@ -43,12 +43,12 @@ export class EllipseCommand extends Command {
         this.getRadiiXAndY(path);
 
         this.borderColor = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        if (this.radiiPosition.x > this.lineWidth / 2 && this.radiiPosition.y > this.lineWidth / 2) {
+        if (this.radiiPosition.x > this.lineWidth && this.radiiPosition.y > this.lineWidth) {
             this.radiiPosition.x -= this.lineWidth / 2;
             this.radiiPosition.y -= this.lineWidth / 2;
             this.drawTypeEllipse(ctx);
         } else {
-            this.lineWidth = EllipseConstants.HIDDEN_BORDER_WIDTH;
+            this.lineWidth = 0;
             this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
             this.primaryColor = this.borderColor;
             this.drawTypeEllipse(ctx);
@@ -73,26 +73,85 @@ export class EllipseCommand extends Command {
         this.centerPosition.y = start.y + Math.sign(yVector) * displacementY;
     }
 
-    private drawTypeEllipse(ctx: CanvasRenderingContext2D): void {
+    private getSmallRadiiXY(): Vec2 {
+        const smallRadii: Vec2 = {} as Vec2;
+        smallRadii.x =
+            Math.abs(this.radiiPosition.x - this.lineWidth / 2) < this.radiiPosition.x + this.lineWidth / 2
+                ? Math.abs(this.radiiPosition.x - this.lineWidth / 2)
+                : this.radiiPosition.x + this.lineWidth / 2;
+        smallRadii.y =
+            Math.abs(this.radiiPosition.y - this.lineWidth / 2) < this.radiiPosition.y + this.lineWidth / 2
+                ? Math.abs(this.radiiPosition.y - this.lineWidth / 2)
+                : this.radiiPosition.y + this.lineWidth / 2;
+        return smallRadii;
+    }
+
+    private drawBorderEllipse(ctx: CanvasRenderingContext2D): void {
+        ctx.save();
         ctx.beginPath();
-        ctx.setLineDash([]);
-        ctx.lineJoin = 'round';
+        const smallRadii = this.getSmallRadiiXY();
         ctx.ellipse(
             this.centerPosition.x,
             this.centerPosition.y,
-            this.radiiPosition.x,
-            this.radiiPosition.y,
+            smallRadii.x,
+            smallRadii.y,
             EllipseConstants.ROTATION,
             ShapeConstants.START_ANGLE,
             ShapeConstants.END_ANGLE,
         );
+        ctx.ellipse(
+            this.centerPosition.x,
+            this.centerPosition.y,
+            smallRadii.x + this.lineWidth,
+            smallRadii.y + this.lineWidth,
+            EllipseConstants.ROTATION,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
+        );
+        ctx.clip('evenodd');
+        ctx.fillStyle = this.borderColor;
+        ctx.fill();
+        ctx.restore();
+    }
 
-        ctx.strokeStyle = this.borderColor;
-        ctx.lineWidth = this.lineWidth;
-        ctx.stroke();
-        if (this.fillMode !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = this.primaryColor;
-            ctx.fill();
+    private drawCenterEllipse(ctx: CanvasRenderingContext2D): void {
+        ctx.fillStyle = this.primaryColor;
+        ctx.beginPath();
+        ctx.ellipse(
+            this.centerPosition.x,
+            this.centerPosition.y,
+            this.radiiPosition.x - this.lineWidth / 2,
+            this.radiiPosition.y - this.lineWidth / 2,
+            EllipseConstants.ROTATION,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
+        );
+        ctx.fill();
+    }
+
+    private drawFullEllipse(ctx: CanvasRenderingContext2D): void {
+        ctx.fillStyle = this.primaryColor;
+        ctx.beginPath();
+        ctx.ellipse(
+            this.centerPosition.x,
+            this.centerPosition.y,
+            this.radiiPosition.x + this.lineWidth / 2,
+            this.radiiPosition.y + this.lineWidth / 2,
+            EllipseConstants.ROTATION,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
+        );
+        ctx.fill();
+    }
+
+    private drawTypeEllipse(ctx: CanvasRenderingContext2D): void {
+        if (this.fillMode !== ToolConstants.FillMode.FILL_ONLY) this.drawBorderEllipse(ctx);
+
+        if (this.radiiPosition.x - this.lineWidth / 2 <= 0 || this.radiiPosition.y - this.lineWidth / 2 <= 0) return;
+        if (this.fillMode === ToolConstants.FillMode.OUTLINE_FILL) {
+            this.drawCenterEllipse(ctx);
+        } else if (this.fillMode === ToolConstants.FillMode.FILL_ONLY) {
+            this.drawFullEllipse(ctx);
         }
     }
 

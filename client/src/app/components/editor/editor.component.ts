@@ -11,9 +11,9 @@ import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 export class EditorComponent {
     constructor(public shortcutManager: ShortcutManagerService, private toolManager: ToolManagerService, private scroller: ScrollDispatcher) {
         this.scroller.scrolled().subscribe((element) => {
-            if (element instanceof CdkScrollable) {
-                this.toolManager.scrolled(element.measureScrollOffset('left'), element.measureScrollOffset('top'));
-            }
+            if (!(element instanceof CdkScrollable)) return;
+            if (element.getElementRef().nativeElement.id !== 'drawing-container') return;
+            this.toolManager.scrolled(element.measureScrollOffset('left'), element.measureScrollOffset('top'));
         });
     }
 

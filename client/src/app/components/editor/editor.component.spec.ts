@@ -96,14 +96,26 @@ describe('EditorComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should call toolManager.scrolled when scroll event emitted and a CdkScrollable', () => {
-        const mockScrollable = new CdkScrollable({} as ElementRef, scrollDispatcherSpy, {} as NgZone);
+    it("should call toolManager.scrolled when scroll event emitted and a CdkScrollable with element.id === 'drawing-container'", () => {
+        const mockRef = { nativeElement: { id: 'drawing-container' } } as ElementRef;
+        const mockScrollable = new CdkScrollable(mockRef, scrollDispatcherSpy, {} as NgZone);
         const scrollOffsetSpy = spyOn(mockScrollable, 'measureScrollOffset');
         scrollOffsetSpy.and.callFake(() => {
             return 1;
         });
         scrollSubject.next(mockScrollable);
         expect(toolManagerSpy.scrolled).toHaveBeenCalled();
+    });
+
+    it("should not call toolManager.scrolled when scroll event emitted and a CdkScrollable with element.id !== 'drawing-container'", () => {
+        const mockRef = { nativeElement: { id: 'not-drawing-container' } } as ElementRef;
+        const mockScrollable = new CdkScrollable(mockRef, scrollDispatcherSpy, {} as NgZone);
+        const scrollOffsetSpy = spyOn(mockScrollable, 'measureScrollOffset');
+        scrollOffsetSpy.and.callFake(() => {
+            return 1;
+        });
+        scrollSubject.next(mockScrollable);
+        expect(toolManagerSpy.scrolled).not.toHaveBeenCalled();
     });
 
     it('should not call toolManager.scrolled when scroll event emitted but not a CdkScrollable', () => {

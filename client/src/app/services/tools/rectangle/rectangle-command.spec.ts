@@ -54,8 +54,8 @@ describe('RectangleCommand', () => {
         rectangleService.cornerCoords = Object.assign([], pathStub);
 
         rectangleService.setLineWidth(TEST_LINE_WIDTH);
-        rectangleService.setPrimaryColor(TEST_PRIMARY_COLOR);
-        rectangleService.setSecondaryColor(TEST_SECONDARY_COLOR);
+        rectangleService.primaryColor = TEST_PRIMARY_COLOR;
+        rectangleService.secondaryColor = TEST_SECONDARY_COLOR;
 
         command = new RectangleCommand(baseCtxStub, rectangleService);
         drawRectangleSpy = spyOn<any>(command, 'drawRectangle').and.callThrough();
@@ -116,12 +116,12 @@ describe('RectangleCommand', () => {
         expect(drawRectangleTypeSpy).toHaveBeenCalledWith(baseCtxStub, pathStub);
     });
 
-    it('drawRectangle should call drawTypeRectangle with changed width & height if bigger than lineWidth', () => {
+    it('drawRectangle should call drawTypeRectangle with changed width & height if bigger than 2*lineWidth', () => {
         const width = command.cornerCoords[ShapeConstants.END_INDEX].x - command.cornerCoords[ShapeConstants.START_INDEX].x;
         const height = command.cornerCoords[ShapeConstants.END_INDEX].y - command.cornerCoords[ShapeConstants.START_INDEX].y;
 
         command.isSquare = false;
-        command.lineWidth = Math.min(Math.abs(height), Math.abs(width)) - 1;
+        command.lineWidth = Math.min(Math.abs(height), Math.abs(width)) / 2 - 1;
         command.fillMode = ToolConstants.FillMode.FILL_ONLY;
 
         // tslint:disable:no-string-literal
@@ -132,7 +132,7 @@ describe('RectangleCommand', () => {
     });
 
     it('FillMode.FILL_ONLY should fill all pixels between start and end point with the same color.', () => {
-        rectangleService.setFillMode(ToolConstants.FillMode.FILL_ONLY);
+        rectangleService.fillMode = ToolConstants.FillMode.FILL_ONLY;
 
         command.setValues(baseCtxStub, rectangleService);
         command.execute();
@@ -154,7 +154,7 @@ describe('RectangleCommand', () => {
     });
 
     it('drawRectangle should fill all pixels with border color if width or height to be is smaller than line width.', () => {
-        rectangleService.setFillMode(ToolConstants.FillMode.OUTLINE);
+        rectangleService.fillMode = ToolConstants.FillMode.OUTLINE;
         rectangleService.setLineWidth(BIG_TEST_LINE_WIDTH);
 
         command.setValues(baseCtxStub, rectangleService);
@@ -177,7 +177,7 @@ describe('RectangleCommand', () => {
     });
 
     it('drawRectangle should fill only border with line width between start and end on FillMode.OUTLINE.', () => {
-        rectangleService.setFillMode(ToolConstants.FillMode.OUTLINE);
+        rectangleService.fillMode = ToolConstants.FillMode.OUTLINE;
 
         command.setValues(baseCtxStub, rectangleService);
         command.execute();

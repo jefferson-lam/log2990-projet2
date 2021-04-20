@@ -17,8 +17,8 @@
                 <li id="cutButton" [class.unclickable]="!clipboardService.isSelected()" (click)="cutSelection()">
                     <mat-icon matTooltip="Couper la sélection (Ctrl-X)" [matTooltipPosition]="'right'">content_cut</mat-icon>
                 </li>
-                <li id="deleteButton" [class.unclickable]="!clipboardService.isSelected()" (click)="deleteSelection()">
-                    <mat-icon matTooltip="Supprimer la sélection (Touche Del)" [matTooltipPosition]="'right'">clear</mat-icon>
+                <li id="selectAllButton" (click)="selectAll()">
+                    <mat-icon matTooltip="Tout sélectionner (Ctrl-A)" [matTooltipPosition]="'right'"> aspect_ratio </mat-icon>
                 </li>
             </ul>
             <ul class="grid-magnet">
@@ -66,12 +66,11 @@
                 <li id="redoButton" [class.unclickable]="!undoRedoService.isRedoAllowed" (click)="redo()">
                     <mat-icon matTooltip="Recommencer (Ctrl-Shift-Z)" [matTooltipPosition]="'right'">redo</mat-icon>
                 </li>
-
-                <li id="selectAllButton" (click)="selectAll()">
-                    <mat-icon matTooltip="Tout sélectionner (Ctrl-A)" [matTooltipPosition]="'right'"> aspect_ratio </mat-icon>
-                </li>
                 <li id="pasteButton" [class.unclickable]="clipboardService.isClipboardEmpty()" (click)="pasteSelection()">
                     <mat-icon matTooltip="Coller la sélection (Ctrl-V)" [matTooltipPosition]="'right'">content_paste</mat-icon>
+                </li>
+                <li id="deleteButton" [class.unclickable]="!clipboardService.isSelected()" (click)="deleteSelection()">
+                    <mat-icon matTooltip="Supprimer la sélection (Touche Del)" [matTooltipPosition]="'right'">clear</mat-icon>
                 </li>
                 <li class="blankButton">
                     <mat-icon> select_all </mat-icon>

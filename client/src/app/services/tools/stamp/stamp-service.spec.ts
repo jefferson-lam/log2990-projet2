@@ -202,18 +202,6 @@ describe('StampService', () => {
         expect(service.degreesRotation).toEqual(EXPECTED_ANGLE);
     });
 
-    it('setImageSource should change image source', () => {
-        const EXPECTED_SOURCE = 'ok_boomer.svg';
-        service.setImageSource(EXPECTED_SOURCE);
-        expect(service.imageSource).toEqual(EXPECTED_SOURCE);
-    });
-
-    it('setImageZoomFactor should change zoom factor', () => {
-        const EXPECTED_ZOOM_FACTOR = 14;
-        service.setImageZoomFactor(EXPECTED_ZOOM_FACTOR);
-        expect(service.imageZoomFactor).toEqual(EXPECTED_ZOOM_FACTOR);
-    });
-
     it('setAngleRotation should change rotation angle', () => {
         const DEGREES_ANGLE = 36;
         const RAD_ANGLE = 0.6283185307179586;

@@ -42,10 +42,6 @@ export class LineService extends Tool {
         this.primaryColor = LineConstants.DEFAULT_PRIMARY_COLOR;
     }
 
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
-    }
-
     setLineWidth(width: number): void {
         if (width < LineConstants.MIN_LINE_WIDTH) {
             this.lineWidth = LineConstants.MIN_LINE_WIDTH;
@@ -64,10 +60,6 @@ export class LineService extends Tool {
         } else {
             this.junctionRadius = junctionRadius;
         }
-    }
-
-    setWithJunction(hasJunction: boolean): void {
-        this.withJunction = hasJunction;
     }
 
     /**

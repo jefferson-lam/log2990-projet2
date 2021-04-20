@@ -11,8 +11,8 @@ import { EllipseSelectionCommand } from '@app/services/tools/selection/ellipse/e
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-// tslint:disable:max-file-line-count
 
+// tslint:disable:max-file-line-count
 @Injectable({
     providedIn: 'root',
 })
@@ -117,6 +117,7 @@ export class EllipseSelectionService extends ToolSelectionService {
 
     onToolEnter(): void {
         super.onToolEnter();
+        this.ellipseService.drawnFromSelection = true;
     }
 
     onToolChange(): void {
@@ -131,6 +132,7 @@ export class EllipseSelectionService extends ToolSelectionService {
             this.onKeyboardUp(resetKeyboardEvent);
             this.ellipseService.inUse = false;
         }
+        this.ellipseService.drawnFromSelection = false;
     }
 
     fillEllipse(ctx: CanvasRenderingContext2D, pathData: Vec2[], isCircle: boolean): void {
@@ -194,11 +196,14 @@ export class EllipseSelectionService extends ToolSelectionService {
         super.onMouseUp(event);
 
         this.computeSelectionDimensions();
-        if (!this.validateSelectionHeightAndWidth()) return;
-        this.setSelectionCanvasSize(this.selectionWidth, this.selectionHeight);
 
+        if (!this.validateSelectionHeightAndWidth()) return;
+
+        this.setSelectionCanvasSize(this.selectionWidth, this.selectionHeight);
         this.selectEllipse(this.drawingService.selectionCtx, this.drawingService.baseCtx, this.pathData);
         this.setSelectionCanvasPosition(this.pathData[SelectionConstants.START_INDEX]);
+
+        this.drawingService.previewSelectionCanvas.focus();
 
         this.inUse = false;
         this.isManipulating = true;
@@ -339,5 +344,6 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.isManipulating = false;
         this.isCircle = false;
         this.isShiftDown = false;
+        this.ellipseService.isCircle = false;
     }
 }

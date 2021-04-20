@@ -22,6 +22,8 @@ export class EllipseService extends Tool {
     secondaryColor: string;
     mousePosition: Vec2;
 
+    drawnFromSelection: boolean;
+
     previewCommand: EllipseCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
@@ -34,6 +36,7 @@ export class EllipseService extends Tool {
         this.cornerCoords = new Array<Vec2>(ShapeConstants.MAX_PATH_DATA_SIZE);
         this.clearCornerCoords();
         this.previewCommand = new EllipseCommand(this.drawingService.previewCtx, this);
+        this.drawnFromSelection = false;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -56,27 +59,29 @@ export class EllipseService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.inUse) {
-            this.mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[ShapeConstants.END_INDEX] = this.mousePosition;
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (!this.inUse) return;
+        this.mousePosition = this.getPositionFromMouse(event);
+        this.cornerCoords[ShapeConstants.END_INDEX] = this.mousePosition;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
+        this.previewCommand.setValues(this.drawingService.previewCtx, this);
+        this.previewCommand.execute();
 
+        if (!this.drawnFromSelection) {
             this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.inUse) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            const exitCoords = this.getPositionFromMouse(event);
-            this.cornerCoords[ShapeConstants.END_INDEX] = exitCoords;
+        if (!this.inUse) return;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        const exitCoords = this.getPositionFromMouse(event);
+        this.cornerCoords[ShapeConstants.END_INDEX] = exitCoords;
 
-            this.previewCommand.setValues(this.drawingService.previewCtx, this);
-            this.previewCommand.execute();
+        this.previewCommand.setValues(this.drawingService.previewCtx, this);
+        this.previewCommand.execute();
 
+        if (!this.drawnFromSelection) {
             this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
         }
     }
@@ -92,13 +97,14 @@ export class EllipseService extends Tool {
     }
 
     onKeyboardDown(event: KeyboardEvent): void {
-        if (this.inUse) {
-            if (event.key === 'Shift') {
-                this.isCircle = true;
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (!this.inUse) return;
+        if (event.key === 'Shift') {
+            this.isCircle = true;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.previewCommand.setValues(this.drawingService.previewCtx, this);
+            this.previewCommand.execute();
 
-                this.previewCommand.setValues(this.drawingService.previewCtx, this);
-                this.previewCommand.execute();
+            if (!this.drawnFromSelection) {
                 this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
             }
         }
@@ -113,7 +119,9 @@ export class EllipseService extends Tool {
                 this.previewCommand.setValues(this.drawingService.previewCtx, this);
                 this.previewCommand.execute();
 
-                this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
+                if (!this.drawnFromSelection) {
+                    this.drawPredictionRectangle(this.drawingService.previewCtx, this.cornerCoords);
+                }
             }
         } else {
             this.isCircle = false;
@@ -128,18 +136,6 @@ export class EllipseService extends Tool {
         } else {
             this.lineWidth = width;
         }
-    }
-
-    setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.fillMode = newFillMode;
-    }
-
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
-    }
-
-    setSecondaryColor(newColor: string): void {
-        this.secondaryColor = newColor;
     }
 
     private getRadiiXAndY(path: Vec2[]): number[] {

@@ -48,8 +48,8 @@ describe('PolygoneCommand', () => {
         mockRadius = TEST_X_RADIUS;
         mockNegativeRadius = END_NEG_X;
 
-        polygoneService.setPrimaryColor(TEST_PRIM_COLOR);
-        polygoneService.setSecondaryColor(TEST_SECOND_COLOR);
+        polygoneService.primaryColor = TEST_PRIM_COLOR;
+        polygoneService.secondaryColor = TEST_SECOND_COLOR;
         polygoneService.setLineWidth(TEST_LINE_WIDTH);
         polygoneService.cornerCoords[0] = { x: 0, y: 0 };
         polygoneService.cornerCoords[1] = { x: END_X, y: END_Y };
@@ -75,6 +75,20 @@ describe('PolygoneCommand', () => {
         expect(command.secondaryColor).toEqual(polygoneService.secondaryColor);
         expect(command.lineWidth).toEqual(polygoneService.lineWidth);
         expect(command.cornerCoords).toEqual(polygoneService.cornerCoords);
+    });
+
+    it('drawPolygone should call drawTypePolygone if radiusWithin > this.lineWidth / 2', () => {
+        command.lineWidth = 2;
+        spyOn<any>(command, 'getRadiiX').and.callFake(() => {
+            // tslint:disable-next-line:no-magic-numbers
+            return 100;
+        });
+        const drawTypeSpy = spyOn<any>(command, 'drawTypePolygone');
+
+        // tslint:disable:no-string-literal
+        command['drawPolygone'](command['ctx']);
+
+        expect(drawTypeSpy).toHaveBeenCalled();
     });
 
     it('drawPolygone should not set radiusWithin if negative', () => {

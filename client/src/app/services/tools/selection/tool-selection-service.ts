@@ -20,6 +20,7 @@ export class ToolSelectionService extends Tool {
     selectionToolFillMode: ToolConstants.FillMode;
     selectionToolPrimaryColor: string;
     selectionToolSecondaryColor: string;
+    selectionToolWithJunction: boolean;
     isManipulating: boolean;
 
     constructor(
@@ -39,6 +40,7 @@ export class ToolSelectionService extends Tool {
     undoSelection(): void {}
 
     onMouseDown(event: MouseEvent): void {
+        this.setSelectionSettings();
         this.selectionTool.onMouseDown(event);
     }
 
@@ -124,23 +126,28 @@ export class ToolSelectionService extends Tool {
         if (this.selectionTool.secondaryColor != undefined) {
             this.selectionToolSecondaryColor = this.selectionTool.secondaryColor;
         }
+        if (this.selectionTool.withJunction != undefined) {
+            this.selectionToolWithJunction = this.selectionTool.withJunction;
+        }
     }
 
     setSelectionSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'white';
-        this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
-        this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
-        this.selectionTool.setPrimaryColor('black');
-        this.selectionTool.setSecondaryColor('black');
+        this.selectionTool.withJunction = false;
+        this.selectionTool.fillMode = ToolConstants.FillMode.OUTLINE;
+        this.selectionTool.lineWidth = SelectionConstants.SELECTION_LINE_WIDTH;
+        this.selectionTool.primaryColor = 'black';
+        this.selectionTool.secondaryColor = 'black';
         this.drawingService.previewCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
     }
 
     resetSelectedToolSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'black';
-        this.selectionTool.setFillMode(this.selectionToolFillMode);
-        this.selectionTool.setLineWidth(this.selectionToolLineWidth);
-        this.selectionTool.setPrimaryColor(this.selectionToolPrimaryColor);
-        this.selectionTool.setSecondaryColor(this.selectionToolSecondaryColor);
+        this.selectionTool.fillMode = this.selectionToolFillMode;
+        this.selectionTool.withJunction = this.selectionToolWithJunction;
+        this.selectionTool.lineWidth = this.selectionToolLineWidth;
+        this.selectionTool.primaryColor = this.selectionToolPrimaryColor;
+        this.selectionTool.secondaryColor = this.selectionToolSecondaryColor;
         this.drawingService.previewCtx.setLineDash([]);
     }
 
@@ -163,6 +170,7 @@ export class ToolSelectionService extends Tool {
         this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
         this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+        this.drawingService.previewSelectionCanvas.focus();
     }
 
     resetCanvasState(canvas: HTMLCanvasElement): void {
