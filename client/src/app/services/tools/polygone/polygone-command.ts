@@ -12,7 +12,7 @@ export class PolygoneCommand extends Command {
     primaryColor: string;
     secondaryColor: string;
     borderColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
 
     centerPosition: Vec2;
     radiusWithin: number;
@@ -46,21 +46,35 @@ export class PolygoneCommand extends Command {
             return;
         }
         this.borderColor = this.fillMode === ToolConstants.FillMode.FILL_ONLY ? this.primaryColor : this.secondaryColor;
-        this.drawTypePolygone(ctx);
+        if (this.radiusWithin > this.lineWidth / 2) {
+            this.drawTypePolygone(ctx);
+        } else {
+            this.primaryColor = this.borderColor;
+            this.drawTypePolygone(ctx);
+        }
     }
 
     private drawTypePolygone(ctx: CanvasRenderingContext2D): void {
+        this.drawShape(ctx);
+        ctx.strokeStyle = this.borderColor;
+        ctx.lineWidth = this.lineWidth;
+        ctx.stroke();
+        if (this.fillMode !== ToolConstants.FillMode.OUTLINE) {
+            ctx.fillStyle = this.primaryColor;
+            this.radiusWithin -= this.lineWidth / 2;
+            this.drawShape(ctx);
+            ctx.fill();
+        }
+    }
+
+    private drawShape(ctx: CanvasRenderingContext2D): void {
         const ANGLE_EVEN = ShapeConstants.END_ANGLE / this.numberSides;
         ctx.beginPath();
         ctx.lineJoin = 'round';
         if (this.numberSides % 2 !== 0) {
             for (let i = 0; i < this.numberSides; i++) {
-                ctx.lineTo(
-                    this.centerPosition.x +
-                        this.radiusWithin * Math.cos(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
-                    this.centerPosition.y +
-                        this.radiusWithin * Math.sin(ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI),
-                );
+                const angle = ANGLE_EVEN * i - (PolygoneConstants.ANGLE_ODD / PolygoneConstants.ANGLE_LONG) * Math.PI;
+                ctx.lineTo(this.centerPosition.x + this.radiusWithin * Math.cos(angle), this.centerPosition.y + this.radiusWithin * Math.sin(angle));
             }
         } else {
             ctx.moveTo(this.centerPosition.x + this.radiusWithin, this.centerPosition.y);
@@ -72,13 +86,6 @@ export class PolygoneCommand extends Command {
             }
         }
         ctx.closePath();
-        ctx.strokeStyle = this.borderColor;
-        ctx.lineWidth = this.lineWidth;
-        ctx.stroke();
-        if (this.fillMode !== ToolConstants.FillMode.OUTLINE) {
-            ctx.fillStyle = this.primaryColor;
-            ctx.fill();
-        }
     }
 
     private getPolygoneCenter(start: Vec2, end: Vec2): void {

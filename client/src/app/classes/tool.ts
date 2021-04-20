@@ -14,11 +14,16 @@ export abstract class Tool {
     secondaryColor?: string;
     junctionRadius?: number;
     withJunction?: boolean;
+    numberSides?: number;
+    waterDropWidth?: number;
+    emissionCount?: number;
     mouseDownCoord: Vec2;
     mouseDown: boolean;
     inUse: boolean;
     name: string;
     scroll: Vec2;
+    imageSource: string;
+    imageZoomFactor: number;
 
     constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {
         this.inUse = false;
@@ -54,21 +59,7 @@ export abstract class Tool {
 
     setLineWidth(width: number): void {}
 
-    setFillMode(newFillMode: ToolConstants.FillMode): void {}
-
     setJunctionRadius(newJunctionRadius: number): void {}
-
-    setWithJunction(hasJunction: boolean): void {}
-
-    setPrimaryColor(primaryColor: string): void {}
-
-    setSecondaryColor(secondaryColor: string): void {}
-
-    setSidesCount(newSidesCount: number): void {}
-
-    setWaterDropWidth(newSize: number): void {}
-
-    setEmissionCount(newEmissionCount: number): void {}
 
     setToleranceValue(newToleranceValue: number): void {}
 
@@ -81,10 +72,6 @@ export abstract class Tool {
     setTextBold(fontWeight: string): void {}
 
     setTextItalic(fontStyle: string): void {}
-
-    setImageSource(newImageSource: string): void {}
-
-    setImageZoomFactor(newFactor: number): void {}
 
     setAngleRotation(newAngle: number): void {}
 

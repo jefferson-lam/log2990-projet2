@@ -62,12 +62,6 @@ describe('LineService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('setPrimaryColor should correctly set primary color to wanted color', () => {
-        const EXPECTED_COLOR = 'blue';
-        service.setPrimaryColor(EXPECTED_COLOR);
-        expect(service.primaryColor).toEqual(EXPECTED_COLOR);
-    });
-
     it('setLineWidth should correctly set the services internal lineWidth attribute', () => {
         const newLineWidth = 50;
         service.setLineWidth(newLineWidth);
@@ -114,18 +108,6 @@ describe('LineService', () => {
         const newJunctionRadius = 20;
         service.setJunctionRadius(newJunctionRadius);
         expect(service.junctionRadius).toEqual(newJunctionRadius);
-    });
-
-    it('setWithJunction should set to false if entered value is false', () => {
-        service.withJunction = true;
-        service.setWithJunction(false);
-        expect(service.withJunction).toBeFalsy();
-    });
-
-    it('setWithJunction should set to true if entered value is true', () => {
-        service.withJunction = false;
-        service.setWithJunction(true);
-        expect(service.withJunction).toBeTruthy();
     });
 
     it('keyboard down events should not do anything if user is not drawing', () => {

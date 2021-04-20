@@ -165,21 +165,6 @@ describe('AerosolService', () => {
         expect(service.lineWidth).toEqual(AerosolConstants.INIT_LINE_WIDTH);
     });
 
-    it('setWaterDropWidth should set particle size when called', () => {
-        service.setWaterDropWidth(AerosolConstants.INIT_WATERDROP_WIDTH);
-        expect(service.waterDropWidth).toEqual(AerosolConstants.INIT_WATERDROP_WIDTH);
-    });
-
-    it('setEmissionCount should set emission count when called', () => {
-        service.setEmissionCount(AerosolConstants.INIT_EMISSION_COUNT);
-        expect(service.emissionCount).toEqual(AerosolConstants.INIT_EMISSION_COUNT);
-    });
-
-    it('setPrimaryColor should set color when called', () => {
-        service.setPrimaryColor('black');
-        expect(service.primaryColor).toEqual('black');
-    });
-
     it('onToolChange should call onMouseUp', () => {
         const onMouseUpSpy = spyOn(service, 'onMouseUp');
 
