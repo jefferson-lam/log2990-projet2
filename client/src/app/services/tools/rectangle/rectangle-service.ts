@@ -20,9 +20,9 @@ export class RectangleService extends Tool {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    mousePosition: Vec2;
+    private mousePosition: Vec2;
 
-    previewCommand: RectangleCommand;
+    private previewCommand: RectangleCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
