@@ -4,16 +4,16 @@ import * as SelectionConstants from '@app/constants/selection-constants';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 
 export class RectangleClipboardCommand extends Command {
-    pathData: Vec2[];
-    selectionWidth: number;
-    selectionHeight: number;
+    private pathData: Vec2[];
+    private selectionWidth: number;
+    private selectionHeight: number;
 
     constructor(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService) {
         super();
         this.setValues(canvasContext, clipboardService);
     }
 
-    setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
+    private setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
         this.ctx = canvasContext;
         this.pathData = Object.assign([], clipboardService.pathData);
         this.selectionHeight = clipboardService.selectionHeight;
