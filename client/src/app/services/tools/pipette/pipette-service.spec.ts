@@ -8,6 +8,7 @@ import { ColorService } from '@app/services/color/color.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PipetteService } from './pipette-service';
 
+// tslint:disable: no-any
 describe('PipetteService', () => {
     let service: PipetteService;
     let colorService: ColorService;
