@@ -101,7 +101,7 @@ describe('SidebarPipetteComponent', () => {
         component.inBound = false;
         const arrayData = new Uint8ClampedArray([0, 0, 0, 0]);
         const pixelData = new ImageData(arrayData, 1, 1);
-        pipetteService.previewData = pixelData;
+        pipetteService['previewData'] = pixelData;
 
         const putImageDataSpy = spyOn(component['ctx'], 'putImageData');
         component['drawPreview']();

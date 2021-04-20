@@ -9,6 +9,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { PencilService } from './pencil-service';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('PencilService', () => {
     let service: PencilService;
     let mouseEvent: MouseEvent;
@@ -37,8 +38,8 @@ describe('PencilService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
-        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
+        setPreviewValuesSpy = spyOn(service['previewCommand'], 'setValues');
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
