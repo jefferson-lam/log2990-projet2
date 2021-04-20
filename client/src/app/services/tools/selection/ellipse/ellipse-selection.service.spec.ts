@@ -12,6 +12,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
 // tslint:disable:max-file-line-count
+// tslint:disable: no-any
 describe('EllipseToolSelectionService', () => {
     let service: EllipseSelectionService;
     let mouseEvent: MouseEvent;
@@ -81,7 +82,7 @@ describe('EllipseToolSelectionService', () => {
         parentMouseEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseEnter');
         parentResetSelectedToolSettingsSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'resetSelectedToolSettings');
 
-        clipEllipseSpy = spyOn(service, 'clipEllipse').and.callThrough();
+        clipEllipseSpy = spyOn<any>(service, 'clipEllipse').and.callThrough();
         baseCtxDrawImage = spyOn(baseCtxStub, 'drawImage').and.callThrough();
         baseCtxEllipseSpy = spyOn(baseCtxStub, 'ellipse').and.callThrough();
         baseCtxFillSpy = spyOn(baseCtxStub, 'fill').and.callThrough();
@@ -251,14 +252,14 @@ describe('EllipseToolSelectionService', () => {
         service.inUse = true;
         service.onKeyboardDown(shiftKeyboardEvent);
         expect(service.isCircle).toBeTruthy();
-        expect(service.isShiftDown).toBeTruthy();
+        expect(service['isShiftDown']).toBeTruthy();
     });
 
     it('onKeyboardDown inUse with shift should not call if isShiftDown is true', () => {
-        service.isShiftDown = true;
+        service['isShiftDown'] = true;
         service.inUse = true;
         service.onKeyboardDown({ key: 'Shift' } as KeyboardEvent);
-        expect(service.isShiftDown).toBeTruthy();
+        expect(service['isShiftDown']).toBeTruthy();
         expect(service.isCircle).toBeFalsy();
     });
 
@@ -305,18 +306,18 @@ describe('EllipseToolSelectionService', () => {
         const shiftKeyboardEvent = {
             key: 'Shift',
         } as KeyboardEvent;
-        service.isShiftDown = true;
+        service['isShiftDown'] = true;
         service.inUse = true;
         service.onKeyboardUp(shiftKeyboardEvent);
         expect(service.isCircle).toBeFalsy();
-        expect(service.isShiftDown).toBeFalsy();
+        expect(service['isShiftDown']).toBeFalsy();
     });
 
     it('onKeyboardUp inUse with shift key should not call if shiftDown is false', () => {
-        service.isShiftDown = false;
+        service['isShiftDown'] = false;
         service.inUse = true;
         service.onKeyboardUp({ key: 'Shift' } as KeyboardEvent);
-        expect(service.isShiftDown).toBeFalsy();
+        expect(service['isShiftDown']).toBeFalsy();
     });
 
     it('onKeyboardUp inUse with esc key and isEscapeDown true should call appropriate functions', () => {
@@ -393,7 +394,7 @@ describe('EllipseToolSelectionService', () => {
             { x: 25, y: 40 },
             { x: 100, y: 250 },
         ];
-        service.fillEllipse(baseCtxStub, service.pathData, false);
+        service['fillEllipse'](baseCtxStub, service.pathData, false);
         expect(baseCtxEllipseSpy).toHaveBeenCalled();
         expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
@@ -420,7 +421,7 @@ describe('EllipseToolSelectionService', () => {
         ];
         service.selectionWidth = sw;
         service.selectionHeight = sh;
-        service.clipEllipse(baseCtxStub, service.pathData[0], 0);
+        service['clipEllipse'](baseCtxStub, service.pathData[0], 0);
         expect(baseCtxEllipseSpy).toHaveBeenCalled();
         expect(baseCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
@@ -441,7 +442,7 @@ describe('EllipseToolSelectionService', () => {
         const yRadius = 105;
         const expectedXRadius = xRadius + DRAWN_ELLIPSE_RADIUS_OFFSET;
         const expectedYRadius = yRadius + DRAWN_ELLIPSE_RADIUS_OFFSET;
-        service.drawOutlineEllipse(selectionCtxStub, { x: expectedStartX, y: expectedStartY }, { x: xRadius, y: yRadius });
+        service['drawOutlineEllipse'](selectionCtxStub, { x: expectedStartX, y: expectedStartY }, { x: xRadius, y: yRadius });
         expect(selectionCtxEllipseSpy).toHaveBeenCalled();
         expect(selectionCtxEllipseSpy).toHaveBeenCalledWith(
             expectedStartX,
