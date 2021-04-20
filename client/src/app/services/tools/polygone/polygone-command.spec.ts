@@ -187,7 +187,21 @@ describe('PolygoneCommand', () => {
         expect(fillSpy).toHaveBeenCalled();
     });
 
-    it('drawTypePolygone should not change fillStyle and fill if FillMode.OUTLINE', () => {
+    it('drawTypePolygone should call fill if FillMode.FILL_ONLY', () => {
+        command.radiusWithin = mockRadius;
+        command.centerPosition.x = mockPoint.x;
+        command.centerPosition.y = mockPoint.y;
+        command.numberSides = PolygoneConstants.MIN_SIDES_COUNT;
+        command.fillMode = ToolConstants.FillMode.FILL_ONLY;
+        command.primaryColor = TEST_PRIM_COLOR;
+        command.borderColor = TEST_PRIM_COLOR;
+        command.lineWidth = TEST_LINE_WIDTH;
+        const fillSpy = spyOn(testCtx, 'fill');
+        command['drawTypePolygone'](testCtx);
+        expect(fillSpy).toHaveBeenCalled();
+    });
+
+    it('drawTypePolygone should call fill if FillMode.OUTLINE', () => {
         command.radiusWithin = mockRadius;
         command.centerPosition.x = mockPoint.x;
         command.centerPosition.y = mockPoint.y;
@@ -198,8 +212,7 @@ describe('PolygoneCommand', () => {
         command.lineWidth = TEST_LINE_WIDTH;
         const fillSpy = spyOn(testCtx, 'fill');
         command['drawTypePolygone'](testCtx);
-        expect(testCtx.fillStyle).not.toEqual(TEST_PRIMARY_COLOR_HEX);
-        expect(fillSpy).not.toHaveBeenCalled();
+        expect(fillSpy).toHaveBeenCalled();
     });
 
     it('drawTypePolygone should call ctx lineTo for odd sides', () => {
