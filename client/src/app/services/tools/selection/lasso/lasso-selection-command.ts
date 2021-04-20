@@ -2,20 +2,24 @@ import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
 import { LassoSelectionService } from './lasso-selection';
 export class LassoSelectionCommand extends Command {
-    selectionWidth: number;
-    selectionHeight: number;
-    transformValues: Vec2;
+    private selectionWidth: number;
+    private selectionHeight: number;
+    private transformValues: Vec2;
     topLeft: Vec2;
-    pathData: Vec2[];
-    selectionCanvas: HTMLCanvasElement;
-    isFromClipboard: boolean;
+    private pathData: Vec2[];
+    private selectionCanvas: HTMLCanvasElement;
+    private isFromClipboard: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, lassoSelectionService: LassoSelectionService) {
         super();
         this.setValues(canvasContext, selectionCanvas, lassoSelectionService);
     }
 
-    setValues(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, lassoSelectionService: LassoSelectionService): void {
+    private setValues(
+        canvasContext: CanvasRenderingContext2D,
+        selectionCanvas: HTMLCanvasElement,
+        lassoSelectionService: LassoSelectionService,
+    ): void {
         this.ctx = canvasContext;
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
         this.pathData = Object.assign([], lassoSelectionService.pathData);
