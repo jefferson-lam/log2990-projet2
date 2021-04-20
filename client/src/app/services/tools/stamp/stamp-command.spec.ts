@@ -36,9 +36,9 @@ describe('StampCommand', () => {
         command.setValues({} as CanvasRenderingContext2D, stampService);
 
         expect(loadSpy).toHaveBeenCalled();
-        expect(command.rotationAngle).toEqual(stampService.rotationAngle);
-        expect(command.imageZoomFactor).toEqual(stampService.imageZoomFactor);
-        expect(command.position).toEqual(stampService.position);
+        expect(command['rotationAngle']).toEqual(stampService.rotationAngle);
+        expect(command['imageZoomFactor']).toEqual(stampService.imageZoomFactor);
+        expect(command['position']).toEqual(stampService.position);
     });
 
     it('addStamp should call pasteStamp and canvas functions', () => {
@@ -53,9 +53,9 @@ describe('StampCommand', () => {
         expect(pasteStampSpy).toHaveBeenCalled();
         expect(saveSpy).toHaveBeenCalled();
         expect(translateSpy).toHaveBeenCalled();
-        expect(translateSpy).toHaveBeenCalledWith(command.position.x, command.position.y);
+        expect(translateSpy).toHaveBeenCalledWith(command['position'].x, command['position'].y);
         expect(rotateSpy).toHaveBeenCalled();
-        expect(rotateSpy).toHaveBeenCalledWith(command.rotationAngle);
+        expect(rotateSpy).toHaveBeenCalledWith(command['rotationAngle']);
         expect(restoreSpy).toHaveBeenCalled();
     });
 
@@ -67,16 +67,16 @@ describe('StampCommand', () => {
     });
 
     it('getStampSize should set zoom factor to one and return right value if zoom factor zero', () => {
-        command.imageZoomFactor = 0;
+        command['imageZoomFactor'] = 0;
         const result = command['getStampSize']();
-        expect(command.imageZoomFactor).toEqual(1);
+        expect(command['imageZoomFactor']).toEqual(1);
         expect(result).toBe(StampConstants.INIT_STAMP_SIZE / 2);
     });
 
     it('getStampSize should return right value', () => {
         // tslint:disable-next-line:no-magic-numbers
-        command.imageZoomFactor = -2;
-        const expectedValue = StampConstants.INIT_STAMP_SIZE / 2 / Math.abs(command.imageZoomFactor);
+        command['imageZoomFactor'] = -2;
+        const expectedValue = StampConstants.INIT_STAMP_SIZE / 2 / Math.abs(command['imageZoomFactor']);
         const result = command['getStampSize']();
         expect(result).toBe(expectedValue);
     });

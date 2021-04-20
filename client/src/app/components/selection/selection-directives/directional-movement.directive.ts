@@ -29,19 +29,19 @@ export class DirectionalMovementDirective {
         this.shortcutManager.selectionMovementOnKeyboardUp(event, this);
     }
 
-    translateLeft(numPixels: number): void {
+    private translateLeft(numPixels: number): void {
         this.element.nativeElement.style.left = parseInt(this.element.nativeElement.style.left, 10) - numPixels + 'px';
     }
 
-    translateRight(numPixels: number): void {
+    private translateRight(numPixels: number): void {
         this.element.nativeElement.style.left = parseInt(this.element.nativeElement.style.left, 10) + numPixels + 'px';
     }
 
-    translateUp(numPixels: number): void {
+    private translateUp(numPixels: number): void {
         this.element.nativeElement.style.top = parseInt(this.element.nativeElement.style.top, 10) - numPixels + 'px';
     }
 
-    translateDown(numPixels: number): void {
+    private translateDown(numPixels: number): void {
         this.element.nativeElement.style.top = parseInt(this.element.nativeElement.style.top, 10) + numPixels + 'px';
     }
 

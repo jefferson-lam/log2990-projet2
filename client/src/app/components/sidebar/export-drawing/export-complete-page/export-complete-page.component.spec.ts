@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ImgurService } from '@app/services/imgur/imgur.service';
 import { ExportCompletePageComponent } from './export-complete-page.component';
 
+// tslint:disable: no-string-literal
 describe('ExportCompletePageComponent', () => {
     let component: ExportCompletePageComponent;
     let fixture: ComponentFixture<ExportCompletePageComponent>;
@@ -30,7 +31,7 @@ describe('ExportCompletePageComponent', () => {
         const urlHeader = document.getElementById('urlLink') as HTMLElement;
         component.imageUrl = 'www.thisisalink.com';
 
-        component.setUrlText();
+        component['setUrlText']();
         expect(urlHeader.innerText).toEqual('www.thisisalink.com');
     });
 

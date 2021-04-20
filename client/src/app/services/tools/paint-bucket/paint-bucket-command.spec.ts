@@ -7,6 +7,8 @@ import { PaintBucketCommand } from './paint-bucket-command';
 import { PaintBucketService } from './paint-bucket-service';
 
 // tslint:disable:max-file-line-count
+// tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('PaintBucketCommand', () => {
     let command: PaintBucketCommand;
     let paintBucketService: PaintBucketService;
@@ -60,8 +62,8 @@ describe('PaintBucketCommand', () => {
         paintBucketService.primaryColorRgba = fillColor;
         command = new PaintBucketCommand(baseCtxStub, paintBucketService);
 
-        floodFillSpy = spyOn(command, 'floodFill').and.callThrough();
-        fillSpy = spyOn(command, 'fill').and.callThrough();
+        floodFillSpy = spyOn<any>(command, 'floodFill').and.callThrough();
+        fillSpy = spyOn<any>(command, 'fill').and.callThrough();
     });
 
     it('should be created', () => {
@@ -69,21 +71,21 @@ describe('PaintBucketCommand', () => {
     });
 
     it('execute should call floodfill if left mouse button', () => {
-        command.mouseButtonClicked = MouseButton.Left;
+        command['mouseButtonClicked'] = MouseButton.Left;
         command.execute();
         expect(floodFillSpy).toHaveBeenCalled();
         expect(fillSpy).not.toHaveBeenCalled();
     });
 
     it('execute should call floodfill if right mouse button', () => {
-        command.mouseButtonClicked = MouseButton.Right;
+        command['mouseButtonClicked'] = MouseButton.Right;
         command.execute();
         expect(fillSpy).toHaveBeenCalled();
         expect(floodFillSpy).not.toHaveBeenCalled();
     });
 
     it('execute should not call if not valid mouse button', () => {
-        command.mouseButtonClicked = MouseButton.Forward;
+        command['mouseButtonClicked'] = MouseButton.Forward;
         command.execute();
         expect(fillSpy).not.toHaveBeenCalled();
         expect(floodFillSpy).not.toHaveBeenCalled();
@@ -91,23 +93,23 @@ describe('PaintBucketCommand', () => {
 
     it('setValues should set values', () => {
         command.setValues({} as CanvasRenderingContext2D, paintBucketService);
-        expect(command.primaryColorRgba).toEqual(paintBucketService.primaryColorRgba);
+        expect(command['primaryColorRgba']).toEqual(paintBucketService.primaryColorRgba);
         expect(command.primaryColor).toEqual(paintBucketService.primaryColor);
-        expect(command.startX).toEqual(paintBucketService.startX);
-        expect(command.startY).toEqual(paintBucketService.startY);
-        expect(command.toleranceValue).toEqual(paintBucketService.toleranceValue);
-        expect(command.mouseButtonClicked).toEqual(paintBucketService.mouseButtonClicked);
+        expect(command['startX']).toEqual(paintBucketService.startX);
+        expect(command['startY']).toEqual(paintBucketService.startY);
+        expect(command['toleranceValue']).toEqual(paintBucketService.toleranceValue);
+        expect(command['mouseButtonClicked']).toEqual(paintBucketService.mouseButtonClicked);
     });
 
     it('rgba2number should correctly convert rgba to decimal', () => {
         const expectedColor = -12145986;
-        const result = command.rgba2number(fillColor);
+        const result = command['rgba2number'](fillColor);
         expect(result).toEqual(expectedColor);
     });
 
     it('normaliseTolerance should return correct tolerance value', () => {
         const expectedTolerance = 256;
-        const result = command.normaliseTolerance(TOLERANCE_50, DIMENSION_4D);
+        const result = command['normaliseTolerance'](TOLERANCE_50, DIMENSION_4D);
         expect(result).toEqual(expectedTolerance);
     });
 
@@ -115,7 +117,7 @@ describe('PaintBucketCommand', () => {
         // White -> #FF000000 -> 4278190080
         const hexColor = 4278190080;
         const expectedColor = { red: 0, green: 0, blue: 0, alpha: 1 };
-        const result = command.number2rgba(hexColor);
+        const result = command['number2rgba'](hexColor);
         expect(result).toEqual(expectedColor);
     });
 
@@ -123,7 +125,7 @@ describe('PaintBucketCommand', () => {
         // Black -> #FF000000 -> 4294967295
         const hexColor = 4294967295;
         const expectedColor = { red: 255, green: 255, blue: 255, alpha: 1 };
-        const result = command.number2rgba(hexColor);
+        const result = command['number2rgba'](hexColor);
         expect(result).toEqual(expectedColor);
     });
 
@@ -131,7 +133,7 @@ describe('PaintBucketCommand', () => {
         // Red -> #FF0000FF -> 4278190335
         const hexColor = 4278190335;
         const expectedColor = { red: 255, green: 0, blue: 0, alpha: 1 };
-        const result = command.number2rgba(hexColor);
+        const result = command['number2rgba'](hexColor);
         expect(result).toEqual(expectedColor);
     });
 
@@ -139,7 +141,7 @@ describe('PaintBucketCommand', () => {
         // Green -> #FF00FF00 -> 4278255360
         const hexColor = 4278255360;
         const expectedColor = { red: 0, green: 255, blue: 0, alpha: 1 };
-        const result = command.number2rgba(hexColor);
+        const result = command['number2rgba'](hexColor);
         expect(result).toEqual(expectedColor);
     });
 
@@ -147,7 +149,7 @@ describe('PaintBucketCommand', () => {
         // Blue -> #FFFF0000 -> 4294901760
         const hexColor = 4294901760;
         const expectedColor = { red: 0, green: 0, blue: 255, alpha: 1 };
-        const result = command.number2rgba(hexColor);
+        const result = command['number2rgba'](hexColor);
         expect(result).toEqual(expectedColor);
     });
 
@@ -155,7 +157,7 @@ describe('PaintBucketCommand', () => {
         // Light blue -> #FFCDC21C -> 4291674652
         const hexColor = 4291674652;
         const expectedColor = { red: 28, green: 194, blue: 205, alpha: 1 };
-        const result = command.number2rgba(hexColor);
+        const result = command['number2rgba'](hexColor);
         expect(result).toEqual(expectedColor);
     });
 
@@ -163,7 +165,7 @@ describe('PaintBucketCommand', () => {
         // Light blue -> #FFCDC21C -> 4291674652
         const hexColor = 4291674652;
         const expectedColor = { red: 28, green: 194, blue: 205, alpha: 1 };
-        const result = command.number2rgba(hexColor);
+        const result = command['number2rgba'](hexColor);
         expect(result).toEqual(expectedColor);
     });
 
@@ -181,7 +183,7 @@ describe('PaintBucketCommand', () => {
             alpha: 255,
         } as Rgba;
         const expectedDistance = 510;
-        const distance = command.calculateColorDistance(blackRgba, whiteRgba);
+        const distance = command['calculateColorDistance'](blackRgba, whiteRgba);
         expect(distance).toEqual(expectedDistance);
     });
 
@@ -199,7 +201,7 @@ describe('PaintBucketCommand', () => {
             alpha: 255,
         } as Rgba;
         const expectedDistance = 510;
-        const distance = command.calculateColorDistance(whiteRgba, blackRgba);
+        const distance = command['calculateColorDistance'](whiteRgba, blackRgba);
         expect(distance).toEqual(expectedDistance);
     });
 
@@ -217,7 +219,7 @@ describe('PaintBucketCommand', () => {
             alpha: 0,
         } as Rgba;
         const expectedDistance = 0;
-        const distance = command.calculateColorDistance(whiteRgba, blackRgba);
+        const distance = command['calculateColorDistance'](whiteRgba, blackRgba);
         expect(distance).toEqual(expectedDistance);
     });
 
@@ -235,7 +237,7 @@ describe('PaintBucketCommand', () => {
             alpha: 125,
         } as Rgba;
         const expectedDistance = 150;
-        const distance = command.calculateColorDistance(whiteRgba, blackRgba);
+        const distance = command['calculateColorDistance'](whiteRgba, blackRgba);
         expect(distance).toEqual(expectedDistance);
     });
 
@@ -247,7 +249,7 @@ describe('PaintBucketCommand', () => {
     // Return true if valid, false if not.
 
     it('should return true if both colors are the same and if tolerance is 0', () => {
-        command.toleranceValue = 0;
+        command['toleranceValue'] = 0;
         const currentRgba = {
             red: 128,
             green: 180,
@@ -260,12 +262,12 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     it('should return false if both colors are not the same and if tolerance is 0', () => {
-        command.toleranceValue = 0;
+        command['toleranceValue'] = 0;
         const currentRgba = {
             red: 127,
             green: 180,
@@ -278,14 +280,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(false);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(false);
     });
 
     // Tolerance: 25/100 -> 64/255 -> 128/512
     it('should return true if both colors distance of 0 and if tolerance is 25', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_25, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 128,
             green: 180,
@@ -298,14 +300,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     // Distance: 128
     it('should return true if both colors distance of 25 and if tolerance is 25', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_25, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 97,
             green: 72,
@@ -318,14 +320,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     // Distance: 129
     it('should return false if both colors distance of 26 and if tolerance is 25', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_25, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 97,
             green: 71,
@@ -338,14 +340,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(false);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(false);
     });
 
     // Tolerance: 50/100 -> 128/255 -> 256/512
     it('should return true if both colors distance of 0 and if tolerance is 50', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_50, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 128,
             green: 180,
@@ -358,14 +360,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     // Distance: 256
     it('should return true if both colors distance of 50 and if tolerance is 50', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_50, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 50,
             green: 72,
@@ -378,14 +380,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     // Distance: 257
     it('should return false if both colors distance of 51 and if tolerance is 50', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_50, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 50,
             green: 72,
@@ -398,14 +400,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(false);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(false);
     });
 
     // Tolerance: 75/100 -> 191/255 -> 382/512
     it('should return true if both colors distance of 0 and if tolerance is 75', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_75, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 128,
             green: 180,
@@ -418,14 +420,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     // Distance: 384, tolerance = 382
     it('should return true if both colors distance of 75 and if tolerance is 75', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_75, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 50,
             green: 41,
@@ -438,14 +440,14 @@ describe('PaintBucketCommand', () => {
             blue: 255,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     // Distance: 385, tolerance 384
     it('should return false if both colors distance of 76 and if tolerance is 76', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(TOLERANCE_75, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 50,
             green: 30,
@@ -458,14 +460,14 @@ describe('PaintBucketCommand', () => {
             blue: 255,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(false);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(false);
     });
 
     // Tolerance: 100/100 -> 255/255 -> 512/512
     it('should return true if both colors distance of 0 and if tolerance is 100', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(MAX_TOLERANCE, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 128,
             green: 180,
@@ -478,14 +480,14 @@ describe('PaintBucketCommand', () => {
             blue: 232,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     // Distance: 510, tolerance = 510
     it('should return true if both colors distance of 100 and if tolerance is 100', () => {
         const toleranceValue = Math.round(Math.sqrt(Math.pow(MAX_TOLERANCE, 2) * DIMENSION_4D));
-        command.toleranceValue = toleranceValue;
+        command['toleranceValue'] = toleranceValue;
         const currentRgba = {
             red: 0,
             green: 0,
@@ -498,8 +500,8 @@ describe('PaintBucketCommand', () => {
             blue: 255,
             alpha: 255,
         } as Rgba;
-        const distance = command.calculateColorDistance(currentRgba, targetRgba);
-        expect(distance <= command.toleranceValue).toEqual(true);
+        const distance = command['calculateColorDistance'](currentRgba, targetRgba);
+        expect(distance <= command['toleranceValue']).toEqual(true);
     });
 
     // Testing floodfill functionality by drawing rectangles and filling rectangle, and checking if
@@ -511,12 +513,12 @@ describe('PaintBucketCommand', () => {
         const rect1StartY = 25;
         const rect2StartX = 100;
         const rect2StartY = 100;
-        command.toleranceValue = DEFAULT_TOLERANCE_VALUE;
+        command['toleranceValue'] = DEFAULT_TOLERANCE_VALUE;
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
 
-        command.fill(baseCtxStub);
+        command['fill'](baseCtxStub);
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
         for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
@@ -542,13 +544,13 @@ describe('PaintBucketCommand', () => {
         const rect2StartX = 100;
         const rect2StartY = 100;
         const tolerance = 192;
-        command.toleranceValue = tolerance;
+        command['toleranceValue'] = tolerance;
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillStyle = '#1bc42c'; // dark green
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
 
-        command.fill(baseCtxStub);
+        command['fill'](baseCtxStub);
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
         for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
@@ -574,13 +576,13 @@ describe('PaintBucketCommand', () => {
         const rect2StartX = 100;
         const rect2StartY = 100;
         const tolerance = 255;
-        command.toleranceValue = tolerance;
+        command['toleranceValue'] = tolerance;
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillStyle = '#1bc42c'; // dark green
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
 
-        command.fill(baseCtxStub);
+        command['fill'](baseCtxStub);
         const imageData = baseCtxStub.getImageData(0, 0, baseCtxStub.canvas.width, baseCtxStub.canvas.height);
         for (let i = 0; i + COLOR_RANGE < imageData.data.length; i += NEXT_COLOR_INCREMENT) {
             expect(imageData.data[i]).toEqual(fillColor.red);
@@ -602,9 +604,9 @@ describe('PaintBucketCommand', () => {
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
-        command.toleranceValue = DEFAULT_TOLERANCE_VALUE;
+        command['toleranceValue'] = DEFAULT_TOLERANCE_VALUE;
 
-        command.floodFill(baseCtxStub);
+        command['floodFill'](baseCtxStub);
 
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
@@ -633,8 +635,8 @@ describe('PaintBucketCommand', () => {
         baseCtxStub.fillStyle = '#1bc42c'; // dark green
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
-        command.toleranceValue = DEFAULT_TOLERANCE_VALUE;
-        command.floodFill(baseCtxStub);
+        command['toleranceValue'] = DEFAULT_TOLERANCE_VALUE;
+        command['floodFill'](baseCtxStub);
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
         for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
@@ -664,8 +666,8 @@ describe('PaintBucketCommand', () => {
         baseCtxStub.fillRect(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         baseCtxStub.fillStyle = 'green';
         baseCtxStub.fillRect(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
-        command.toleranceValue = tolerance;
-        command.floodFill(baseCtxStub);
+        command['toleranceValue'] = tolerance;
+        command['floodFill'](baseCtxStub);
         const rect1 = baseCtxStub.getImageData(rect1StartX, rect1StartY, rectangleWidth, rectangleHeight);
         const rect2 = baseCtxStub.getImageData(rect2StartX, rect2StartY, rectangleWidth, rectangleHeight);
         for (let i = 0; i + COLOR_RANGE < rect1.data.length; i += NEXT_COLOR_INCREMENT) {
@@ -685,8 +687,8 @@ describe('PaintBucketCommand', () => {
 
     it('floodfill should fill all connected pixels whose color is close if called with 100 toleranceValue', () => {
         const tolerance = 255;
-        command.toleranceValue = tolerance;
-        command.floodFill(baseCtxStub);
+        command['toleranceValue'] = tolerance;
+        command['floodFill'](baseCtxStub);
         const imageData = baseCtxStub.getImageData(0, 0, baseCtxStub.canvas.width, baseCtxStub.canvas.height);
         for (let i = 0; i + ALPHA_INDEX < imageData.data.length; i += NEXT_COLOR_INCREMENT) {
             expect(imageData.data[i]).toEqual(fillColor.red);
@@ -700,7 +702,7 @@ describe('PaintBucketCommand', () => {
         baseCtxStub.canvas.width = 1;
         baseCtxStub.canvas.height = 1;
         expect(() => {
-            command.floodFill(baseCtxStub);
+            command['floodFill'](baseCtxStub);
         }).not.toThrow();
     });
 });

@@ -5,6 +5,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarAerosolComponent } from './sidebar-aerosol.component';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('SidebarAerosolComponent', () => {
     let component: SidebarAerosolComponent;
     let fixture: ComponentFixture<SidebarAerosolComponent>;
@@ -27,9 +28,9 @@ describe('SidebarAerosolComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        toolSizeChangedSubscribeSpy = spyOn(component.toolSizeChanged, 'subscribe');
-        waterDropSizeChangedSubcribeSpy = spyOn(component.waterDropSizeChanged, 'subscribe');
-        emitEmissionNumberSubscribeSpy = spyOn(component.numberOfEmissions, 'subscribe');
+        toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
+        waterDropSizeChangedSubcribeSpy = spyOn(component['waterDropSizeChanged'], 'subscribe');
+        emitEmissionNumberSubscribeSpy = spyOn(component['numberOfEmissions'], 'subscribe');
     });
 
     it('should create', () => {
@@ -37,21 +38,21 @@ describe('SidebarAerosolComponent', () => {
     });
 
     it('emitToolSize should emit tool size', () => {
-        const emitSpy = spyOn(component.toolSizeChanged, 'emit');
+        const emitSpy = spyOn(component['toolSizeChanged'], 'emit');
         component.toolSize = NO_JUNCTION_RADIUS;
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitWaterDropSize should emit particle size', () => {
-        const emitSpy = spyOn(component.waterDropSizeChanged, 'emit');
+        const emitSpy = spyOn(component['waterDropSizeChanged'], 'emit');
         component.waterDropSize = AerosolConstants.INIT_WATERDROP_WIDTH;
         component.emitWaterDropSize();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitEmissionNumber should emit number of emissions', () => {
-        const emitSpy = spyOn(component.numberOfEmissions, 'emit');
+        const emitSpy = spyOn(component['numberOfEmissions'], 'emit');
         component.emissionCount = AerosolConstants.INIT_LINE_WIDTH;
         component.emitEmissionNumber();
         expect(emitSpy).toHaveBeenCalled();

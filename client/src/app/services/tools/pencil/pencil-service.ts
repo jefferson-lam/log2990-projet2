@@ -15,7 +15,7 @@ export class PencilService extends Tool {
     pathData: Vec2[];
     lineWidth: number;
     primaryColor: string;
-    previewCommand: PencilCommand;
+    private previewCommand: PencilCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);

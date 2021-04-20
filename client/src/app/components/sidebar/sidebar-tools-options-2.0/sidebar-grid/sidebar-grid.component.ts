@@ -20,12 +20,12 @@ export class SidebarGridComponent implements OnInit {
     opacityValue: number;
     isGridOptionsDisplayed: boolean;
 
-    @ViewChild('toggleGrid') toggleGrid: MatSlideToggle;
-    @ViewChild('widthSlider') widthSlider: MatSlider;
+    @ViewChild('toggleGrid') private toggleGrid: MatSlideToggle;
+    @ViewChild('widthSlider') private widthSlider: MatSlider;
 
-    @Output() squareWidthChanged: EventEmitter<number>;
-    @Output() opacityValueChanged: EventEmitter<number>;
-    @Output() visibilityValueChanged: EventEmitter<boolean>;
+    @Output() private squareWidthChanged: EventEmitter<number>;
+    @Output() private opacityValueChanged: EventEmitter<number>;
+    @Output() private visibilityValueChanged: EventEmitter<boolean>;
 
     constructor(public canvasGridService: CanvasGridService) {
         this.maxSquareWidth = GridConstants.MAX_SQUARE_WIDTH;

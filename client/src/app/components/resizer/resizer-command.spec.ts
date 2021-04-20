@@ -6,6 +6,7 @@ import { ResizerCommand } from './resizer-command';
 import createSpyObj = jasmine.createSpyObj;
 
 // tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('ResizerCommand', () => {
     let service: ResizerCommand;
     const numberValue: number = CanvasConstants.DEFAULT_WIDTH;
@@ -50,11 +51,11 @@ describe('ResizerCommand', () => {
         service = TestBed.inject(ResizerCommand);
 
         canvasSizeSubject = spyOn(drawingServiceSpy.canvasSizeSubject, 'next');
-        previewCtxDrawImageSpy = spyOn(service.previewCtx, 'drawImage').and.callThrough();
-        baseCtxDrawImageSpy = spyOn(service.baseCtx, 'drawImage').and.callThrough();
+        previewCtxDrawImageSpy = spyOn(service['previewCtx'], 'drawImage').and.callThrough();
+        baseCtxDrawImageSpy = spyOn(service['baseCtx'], 'drawImage').and.callThrough();
 
-        service.previewWidth = CanvasConstants.MIN_WIDTH_CANVAS;
-        service.previewHeight = CanvasConstants.MIN_HEIGHT_CANVAS;
+        service['previewWidth'] = CanvasConstants.MIN_WIDTH_CANVAS;
+        service['previewHeight'] = CanvasConstants.MIN_HEIGHT_CANVAS;
     });
 
     it('should be created', () => {
@@ -72,7 +73,7 @@ describe('ResizerCommand', () => {
     });
 
     it('execute should call resizeCanvas', () => {
-        const resizeCanvasSpy = spyOn(service, 'resizeCanvas');
+        const resizeCanvasSpy = spyOn<any>(service, 'resizeCanvas');
 
         service.execute();
 
@@ -80,72 +81,72 @@ describe('ResizerCommand', () => {
     });
 
     it('resizeCanvas should call drawImage 2 times (once for preview, once for base)', () => {
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(previewCtxDrawImageSpy).toHaveBeenCalled();
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
     });
 
     it('resizeCanvas should call resizeBaseCanvas', () => {
-        const resizeBaseSpy = spyOn(service, 'resizeBaseCanvas');
+        const resizeBaseSpy = spyOn<any>(service, 'resizeBaseCanvas');
 
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(resizeBaseSpy).toHaveBeenCalled();
     });
 
     it('resizeCanvas should call resizePreviewCanvas', () => {
-        const resizePreviewSpy = spyOn(service, 'resizePreviewCanvas');
+        const resizePreviewSpy = spyOn<any>(service, 'resizePreviewCanvas');
 
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(resizePreviewSpy).toHaveBeenCalled();
     });
 
     it('resizeCanvas should call whiteOut with baseCtx', () => {
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(drawingServiceSpy.whiteOut).toHaveBeenCalled();
-        expect(drawingServiceSpy.whiteOut).toHaveBeenCalledWith(service.baseCtx);
+        expect(drawingServiceSpy.whiteOut).toHaveBeenCalledWith(service['baseCtx']);
     });
 
     it('resizeCanvas should call placeResizers', () => {
-        const placeResizersSpy = spyOn(service, 'placeResizers');
+        const placeResizersSpy = spyOn<any>(service, 'placeResizers');
 
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(placeResizersSpy).toHaveBeenCalled();
     });
 
     it('resizeCanvas should emit new size', () => {
-        service.resizeCanvas();
+        service['resizeCanvas']();
 
         expect(canvasSizeSubject).toHaveBeenCalled();
-        expect(canvasSizeSubject).toHaveBeenCalledWith([service.previewWidth, service.previewHeight]);
+        expect(canvasSizeSubject).toHaveBeenCalledWith([service['previewWidth'], service['previewHeight']]);
     });
 
     it('placeResizers should set resizers positions', () => {
-        service.placeResizers();
+        service['placeResizers']();
 
-        expect(service.sideResizer.style.left).toBe(service.baseCtx.canvas.width + 'px');
-        expect(service.sideResizer.style.top).toBe(service.baseCtx.canvas.height / 2 + 'px');
-        expect(service.cornerResizer.style.left).toBe(service.baseCtx.canvas.width + 'px');
-        expect(service.cornerResizer.style.top).toBe(service.baseCtx.canvas.height + 'px');
-        expect(service.bottomResizer.style.left).toBe(service.baseCtx.canvas.width / 2 + 'px');
-        expect(service.bottomResizer.style.top).toBe(service.baseCtx.canvas.height + 'px');
+        expect(service['sideResizer'].style.left).toBe(service['baseCtx'].canvas.width + 'px');
+        expect(service['sideResizer'].style.top).toBe(service['baseCtx'].canvas.height / 2 + 'px');
+        expect(service['cornerResizer'].style.left).toBe(service['baseCtx'].canvas.width + 'px');
+        expect(service['cornerResizer'].style.top).toBe(service['baseCtx'].canvas.height + 'px');
+        expect(service['bottomResizer'].style.left).toBe(service['baseCtx'].canvas.width / 2 + 'px');
+        expect(service['bottomResizer'].style.top).toBe(service['baseCtx'].canvas.height + 'px');
     });
 
     it('resizeBaseCanvas should set new canvas size', () => {
-        service.resizeBaseCanvas();
+        service['resizeBaseCanvas']();
 
-        expect(service.baseCtx.canvas.width).toBe(service.previewWidth);
-        expect(service.baseCtx.canvas.height).toBe(service.previewHeight);
+        expect(service['baseCtx'].canvas.width).toBe(service['previewWidth']);
+        expect(service['baseCtx'].canvas.height).toBe(service['previewHeight']);
     });
 
     it('resizePreviewCanvas should set new canvas size', () => {
-        service.resizePreviewCanvas();
+        service['resizePreviewCanvas']();
 
-        expect(service.previewCtx.canvas.width).toBe(service.previewWidth);
-        expect(service.previewCtx.canvas.height).toBe(service.previewHeight);
+        expect(service['previewCtx'].canvas.width).toBe(service['previewWidth']);
+        expect(service['previewCtx'].canvas.height).toBe(service['previewHeight']);
     });
 });

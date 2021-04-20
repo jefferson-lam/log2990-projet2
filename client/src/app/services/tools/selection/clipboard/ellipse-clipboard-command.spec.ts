@@ -6,6 +6,7 @@ import { END_ANGLE, END_INDEX, START_ANGLE, START_INDEX } from '@app/constants/s
 import { ClipboardService } from './clipboard.service';
 import { EllipseClipboardCommand } from './ellipse-clipboard-command';
 
+// tslint:disable:no-string-literal
 describe('EllipseClipboardCommandService', () => {
     let command: EllipseClipboardCommand;
     let clipboardService: ClipboardService;
@@ -43,9 +44,9 @@ describe('EllipseClipboardCommandService', () => {
     });
 
     it('setValues should bind correct values to Command', () => {
-        command.setValues(baseCtxStub, clipboardService);
-        expect(command.isCircle).toEqual(clipboardService.isCircle);
-        expect(command.pathData).toEqual(clipboardService.pathData);
+        command['setValues'](baseCtxStub, clipboardService);
+        expect(command['isCircle']).toEqual(clipboardService.isCircle);
+        expect(command['pathData']).toEqual(clipboardService.pathData);
     });
 
     it('execute should correctly call with correct parameters', () => {
@@ -67,8 +68,8 @@ describe('EllipseClipboardCommandService', () => {
     });
 
     it('getEllipseCenter should set displacement to shortest side if isCircle', () => {
-        const start = command.pathData[START_INDEX];
-        const end = command.pathData[END_INDEX];
+        const start = command['pathData'][START_INDEX];
+        const end = command['pathData'][END_INDEX];
 
         const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
 
@@ -83,19 +84,18 @@ describe('EllipseClipboardCommandService', () => {
     });
 
     it('getRadiiXAndY should set radius to shortest side if isCircle', () => {
-        command.isCircle = true;
+        command['isCircle'] = true;
 
-        const start = command.pathData[START_INDEX];
+        const start = command['pathData'][START_INDEX];
 
-        const end = command.pathData[END_INDEX];
+        const end = command['pathData'][END_INDEX];
 
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;
 
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
 
-        // tslint:disable:no-string-literal
-        const radii = command['getRadiiXAndY'](command.pathData);
+        const radii = command['getRadiiXAndY'](command['pathData']);
 
         expect(radii.x).toEqual(shortestSide);
         expect(radii.y).toEqual(shortestSide);

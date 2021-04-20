@@ -5,15 +5,15 @@ import * as ToolConstants from '@app/constants/tool-constants';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 
 export class RectangleCommand extends Command {
-    isSquare: boolean;
-    lineWidth: number;
-    fillMode: ToolConstants.FillMode;
-    primaryColor: string;
-    secondaryColor: string;
-    cornerCoords: Vec2[];
-    width: number;
-    height: number;
-    borderColor: string;
+    private isSquare: boolean;
+    private lineWidth: number;
+    private fillMode: ToolConstants.FillMode;
+    private primaryColor: string;
+    private secondaryColor: string;
+    cornerCoords: Vec2[] = [];
+    private width: number;
+    private height: number;
+    private borderColor: string;
 
     constructor(canvasContext: CanvasRenderingContext2D, rectangleService: RectangleService) {
         super();

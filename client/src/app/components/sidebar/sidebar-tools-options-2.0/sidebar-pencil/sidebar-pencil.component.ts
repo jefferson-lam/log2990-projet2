@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import * as PencilConstants from '@app/constants/pencil-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
@@ -14,10 +13,7 @@ export class SidebarPencilComponent implements OnInit {
     tickInterval: number;
     toolSize: number | undefined;
 
-    @Input() newTool: Tool;
-    @Input() selected: number;
-
-    @Output() toolSizeChanged: EventEmitter<number>;
+    @Output() private toolSizeChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.max = PencilConstants.MAX_SIZE_PENCIL;

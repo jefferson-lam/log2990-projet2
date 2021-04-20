@@ -11,7 +11,7 @@ export class CursorManagerService {
     private cursors: Map<Tool, string>;
     previewCanvas: HTMLCanvasElement;
     mousePosition: Vec2;
-    onCanvas: boolean;
+    private onCanvas: boolean;
 
     constructor(public undoRedoService: UndoRedoService, public toolManager: ToolManagerService) {
         this.onCanvas = false;

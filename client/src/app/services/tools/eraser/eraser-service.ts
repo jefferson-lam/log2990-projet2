@@ -14,7 +14,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class EraserService extends Tool {
     pathData: Vec2[];
     lineWidth: number;
-    previewCommand: EraserCommand;
+    private previewCommand: EraserCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);

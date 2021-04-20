@@ -105,7 +105,6 @@ describe('TagValidatorComponent', () => {
         const testTag = '😂';
         component.validateTag(testTag);
         expect(component.noSpecialCharacterDivClass).toEqual('Failed');
-        expect(component.unsatisfiedRequirements).not.toEqual(0);
     });
 
     it("characterTagsValidator should set noSpecialCharactersDivClass to 'Satisfied' if tag doesn't have special characters", () => {

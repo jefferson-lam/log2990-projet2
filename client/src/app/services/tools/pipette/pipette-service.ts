@@ -7,7 +7,6 @@ import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PipetteConstants from '@app/constants/pipette-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
@@ -15,16 +14,15 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class PipetteService extends Tool {
-    mousePosition: Vec2;
-    ctx: CanvasRenderingContext2D;
-    toolManager: ToolManagerService;
+    private mousePosition: Vec2;
+    private ctx: CanvasRenderingContext2D;
 
-    inBound: boolean;
-    inBoundSource: Subject<boolean>;
+    private inBound: boolean;
+    private inBoundSource: Subject<boolean>;
     inBoundObservable: Observable<boolean>;
 
-    previewData: ImageData;
-    previewDataSource: Subject<ImageData>;
+    private previewData: ImageData;
+    private previewDataSource: Subject<ImageData>;
     previewDataObservable: Observable<ImageData>;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, public colorService: ColorService) {
@@ -74,7 +72,7 @@ export class PipetteService extends Tool {
         this.setInBound(true);
     }
 
-    pixelDataToRgba(data: ImageData): Rgba {
+    private pixelDataToRgba(data: ImageData): Rgba {
         const redPixel = data.data[PipetteConstants.RED_POSTITION];
         const greenPixel = data.data[PipetteConstants.GREEN_POSTITION];
         const bluePixel = data.data[PipetteConstants.BLUE_POSTITION];
@@ -84,14 +82,14 @@ export class PipetteService extends Tool {
         return color;
     }
 
-    setPrimaryColorAsRgba(color: Rgba): void {
+    private setPrimaryColorAsRgba(color: Rgba): void {
         if (color.alpha !== 0) {
             this.colorService.setPrimaryColor(color);
             this.colorService.saveColor(color);
         }
     }
 
-    setSecondaryColorAsRgba(color: Rgba): void {
+    private setSecondaryColorAsRgba(color: Rgba): void {
         if (color.alpha !== 0) {
             this.colorService.setSecondaryColor(color);
             this.colorService.saveColor(color);
@@ -108,7 +106,7 @@ export class PipetteService extends Tool {
         this.previewDataSource.next(this.previewData);
     }
 
-    setInBound(bool: boolean): void {
+    private setInBound(bool: boolean): void {
         this.inBound = bool;
         this.inBoundSource.next(this.inBound);
     }

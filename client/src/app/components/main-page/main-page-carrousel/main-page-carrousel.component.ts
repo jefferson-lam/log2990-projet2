@@ -28,21 +28,16 @@ export class MainPageCarrouselComponent {
     serverErrorMessage: string;
     deleted: boolean;
     noValidDrawing: boolean;
-    visible: boolean;
     selectable: boolean;
     removable: boolean;
-    deleteClick: boolean;
     drawingLoading: boolean;
     imageNotInServer: boolean;
 
     separatorKeysCodes: number[];
-    allTags: string[];
     tagsInSearch: string[];
 
-    drawingCounter: number;
-    fetchedDrawingByTag: string[];
+    private drawingCounter: number;
     showCasedDrawings: ImageFormat[];
-    placeHolderDrawing: ImageFormat;
     previewDrawings: ImageFormat[];
 
     constructor(
@@ -56,14 +51,11 @@ export class MainPageCarrouselComponent {
         this.serverErrorMessage = '';
         this.deleted = false;
         this.noValidDrawing = false;
-        this.visible = true;
         this.selectable = true;
         this.removable = true;
         this.separatorKeysCodes = [ENTER, COMMA];
-        this.allTags = [''];
         this.tagsInSearch = [];
         this.drawingCounter = 0;
-        this.placeHolderDrawing = new ImageFormat();
         this.previewDrawings = [];
         this.resetShowcasedDrawings();
         this.matDialogRef.disableClose = true;

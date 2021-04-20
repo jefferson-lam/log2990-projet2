@@ -6,7 +6,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PopupManagerService } from '@app/services/manager/popup-manager.service';
 import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-main-page',
@@ -15,7 +14,6 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class MainPageComponent implements OnInit {
     readonly title: string;
-    message: BehaviorSubject<string>;
     ongoingDrawing: boolean;
 
     constructor(
@@ -27,7 +25,6 @@ export class MainPageComponent implements OnInit {
         public shortcutManager: ShortcutManagerService,
     ) {
         this.title = 'LOG2990';
-        this.message = new BehaviorSubject<string>('');
     }
 
     ngOnInit(): void {

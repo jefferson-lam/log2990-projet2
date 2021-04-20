@@ -21,7 +21,7 @@ export class PolygoneService extends Tool {
     primaryColor: string;
     secondaryColor: string;
 
-    previewCommand: PolygoneCommand;
+    private previewCommand: PolygoneCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);

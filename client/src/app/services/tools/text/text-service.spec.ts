@@ -6,6 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { TextService } from './text-service';
 
+// tslint:disable: no-any
 describe('TextService', () => {
     let service: TextService;
     let mouseEvent: MouseEvent;
@@ -39,8 +40,8 @@ describe('TextService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
-        drawSpy = spyOn(service, 'drawTextOnCanvas');
-        setSpanValuesSpy = spyOn(service, 'setSpanValues');
+        drawSpy = spyOn<any>(service, 'drawTextOnCanvas');
+        setSpanValuesSpy = spyOn<any>(service, 'setSpanValues');
 
         service.cornerCoords = { x: 0, y: 0 };
 
@@ -69,7 +70,7 @@ describe('TextService', () => {
 
     it('onMouseDown should not call anything if not inUse', () => {
         const rightClick = { button: MouseConstants.MouseButton.Right } as MouseEvent;
-        const createTextBoxSpy = spyOn(service, 'createTextBox');
+        const createTextBoxSpy = spyOn<any>(service, 'createTextBox');
         service.inUse = false;
 
         service.onMouseDown(rightClick);
@@ -80,7 +81,7 @@ describe('TextService', () => {
 
     it('onMouseDown should call drawTextOnCanvas() if inUse, lockKeyBoard and not escapeKeyUsed', () => {
         service.lockKeyboard = true;
-        service.escapeKeyUsed = false;
+        service['escapeKeyUsed'] = false;
 
         service.onMouseDown(mouseEvent);
 
@@ -98,7 +99,7 @@ describe('TextService', () => {
 
     it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false and escape key true', () => {
         service.lockKeyboard = false;
-        service.escapeKeyUsed = true;
+        service['escapeKeyUsed'] = true;
 
         service.onMouseDown(mouseEvent);
 
@@ -107,7 +108,7 @@ describe('TextService', () => {
 
     it('onMouseDown should not call drawTextOnCanvas if lockKeyboard is false and escape key false', () => {
         service.lockKeyboard = false;
-        service.escapeKeyUsed = false;
+        service['escapeKeyUsed'] = false;
 
         service.onMouseDown(mouseEvent);
 
@@ -116,7 +117,7 @@ describe('TextService', () => {
 
     it('onMouseDown should not call drawTextOnCanvas if lockKeyboard and escape key are true', () => {
         service.lockKeyboard = true;
-        service.escapeKeyUsed = true;
+        service['escapeKeyUsed'] = true;
 
         service.onMouseDown(mouseEvent);
 
@@ -124,9 +125,9 @@ describe('TextService', () => {
     });
 
     it('onMouseDown should call createTextBox if inUse and (not lockKeyBoard or escapeKeyUsed)', () => {
-        const createTextBoxSpy = spyOn(service, 'createTextBox');
+        const createTextBoxSpy = spyOn<any>(service, 'createTextBox');
         service.lockKeyboard = false;
-        service.escapeKeyUsed = false;
+        service['escapeKeyUsed'] = false;
 
         service.onMouseDown(mouseEvent);
 
@@ -160,29 +161,29 @@ describe('TextService', () => {
     it('onEscapeKeyDown should set placeHolderSpan.style.display to none and escapeKeyUsed to true', () => {
         service.onEscapeKeyDown();
         expect(service.placeHolderSpan.style.display).toBe('none');
-        expect(service.escapeKeyUsed).toBeTrue();
+        expect(service['escapeKeyUsed']).toBeTrue();
     });
 
     it('createTextBox should set mouseDownCoord to correct position', () => {
-        service.createTextBox(mouseEvent);
+        service['createTextBox'](mouseEvent);
         expect(service.cornerCoords.x).toEqual(mouseEvent.x - CanvasConstants.LEFT_MARGIN);
         expect(service.cornerCoords.y).toEqual(mouseEvent.y);
     });
 
     it('createTextBox should call setSpanValues', () => {
-        service.createTextBox(mouseEvent);
+        service['createTextBox'](mouseEvent);
         expect(setSpanValuesSpy).toHaveBeenCalled();
     });
 
     it('createTextBox should set lockKeyboard to true, escapeKeyUsed to false', () => {
-        service.createTextBox(mouseEvent);
+        service['createTextBox'](mouseEvent);
         expect(service.lockKeyboard).toBeTrue();
-        expect(service.escapeKeyUsed).toBeFalse();
+        expect(service['escapeKeyUsed']).toBeFalse();
     });
 
     it('drawTextOnCanvas should call multiple functions and call new command', () => {
         drawSpy.and.callThrough();
-        service.drawTextOnCanvas();
+        service['drawTextOnCanvas']();
 
         expect(executeSpy).toHaveBeenCalled();
         expect(service.inUse).toEqual(false);
@@ -193,7 +194,7 @@ describe('TextService', () => {
 
     it('setSpanValues should set right values of span', () => {
         setSpanValuesSpy.and.callThrough();
-        service.setSpanValues();
+        service['setSpanValues']();
 
         expect(service.placeHolderSpan.style.zIndex).toEqual('2');
         expect(service.placeHolderSpan.style.visibility).toEqual('visible');
@@ -202,7 +203,7 @@ describe('TextService', () => {
         expect(service.placeHolderSpan.style.left).toEqual(service.cornerCoords.x + 'px');
         expect(service.placeHolderSpan.style.top).toEqual(service.cornerCoords.y + 'px');
         expect(service.lockKeyboard).toEqual(false);
-        expect(service.escapeKeyUsed).toEqual(false);
+        expect(service['escapeKeyUsed']).toEqual(false);
         expect(service.placeHolderSpan.style.fontSize).toEqual('20px');
         expect(service.placeHolderSpan.style.position).toEqual('absolute');
         expect(service.placeHolderSpan.style.textAlign).toEqual('center');
@@ -252,7 +253,7 @@ describe('TextService', () => {
 
     it('onToolChange should call drawTextOnCanvas if lockKeyboard and not escapeKeyUsed', () => {
         service.lockKeyboard = true;
-        service.escapeKeyUsed = false;
+        service['escapeKeyUsed'] = false;
         service.onToolChange();
         expect(service.lockKeyboard).toBeFalse();
         expect(drawSpy).toHaveBeenCalled();
@@ -261,28 +262,28 @@ describe('TextService', () => {
 
     it('onToolChange should not call drawTextOnCanvas if not lockKeyboard and escapeKeyUsed', () => {
         service.lockKeyboard = false;
-        service.escapeKeyUsed = true;
+        service['escapeKeyUsed'] = true;
         service.onToolChange();
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('onToolChange should not call drawTextOnCanvas if lockKeyboard and escapeKeyUsed', () => {
         service.lockKeyboard = true;
-        service.escapeKeyUsed = true;
+        service['escapeKeyUsed'] = true;
         service.onToolChange();
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('onToolChange should not call drawTextOnCanvas if not lockKeyboard and not escapeKeyUsed', () => {
         service.lockKeyboard = false;
-        service.escapeKeyUsed = false;
+        service['escapeKeyUsed'] = false;
         service.onToolChange();
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('onToolChange should set hasTextBoxBeenCreated and lockKeyboard false if lockKeyboard and escapeKeyUsed', () => {
         service.lockKeyboard = true;
-        service.escapeKeyUsed = false;
+        service['escapeKeyUsed'] = false;
         const textSpy = service['hasTextBoxBeenCreated'];
         service.onToolChange();
         expect(service.lockKeyboard).toBeFalse();

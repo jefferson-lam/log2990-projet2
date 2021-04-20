@@ -6,6 +6,7 @@ import { SelectionComponent } from '@app/components/selection/selection.componen
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { ResizeRight } from './resize-right';
 
+// tslint:disable: no-string-literal
 describe('ResizeWidthService', () => {
     let service: ResizeRight;
     let moveEvent: CdkDragMove;
@@ -27,7 +28,7 @@ describe('ResizeWidthService', () => {
         } as SelectionComponent;
         service.selectionComponent.previewSelectionCanvas.width = CanvasConstants.DEFAULT_WIDTH;
         service.selectionComponent.previewSelectionCanvas.height = CanvasConstants.MIN_HEIGHT_CANVAS;
-        service.lastWidth = CanvasConstants.DEFAULT_WIDTH + 1;
+        service['lastWidth'] = CanvasConstants.DEFAULT_WIDTH + 1;
 
         service.selectionComponent.initialPosition = {
             x: 10,
@@ -60,7 +61,7 @@ describe('ResizeWidthService', () => {
     it('resize should set lastWidth to current width', () => {
         service.selectionComponent.previewSelectionCanvas.width = 2;
         service.resize(moveEvent);
-        expect(service.lastWidth).toBe(service.selectionComponent.previewSelectionCanvas.width);
+        expect(service['lastWidth']).toBe(service.selectionComponent.previewSelectionCanvas.width);
         expect(service.selectionComponent.borderCanvas.width).toEqual(service.selectionComponent.previewSelectionCanvas.width);
         expect(service.selectionComponent.borderCanvas.style.left).toEqual(service.selectionComponent.previewSelectionCanvas.style.left);
     });
@@ -86,7 +87,7 @@ describe('ResizeWidthService', () => {
     it('resizeWidth should set lastWidth to calculated width and call resizeSquare', () => {
         service.selectionComponent.previewSelectionCanvas.width = 2;
         service.resizeWidth(moveEvent, reference);
-        expect(service.lastWidth).toBe(Math.abs(pointerPosition - reference.x));
+        expect(service['lastWidth']).toBe(Math.abs(pointerPosition - reference.x));
         expect(resizeSquareSpy).toHaveBeenCalled();
         expect(resizeSquareSpy).toHaveBeenCalledWith(false, moveEvent.pointerPosition.y);
         expect(service.selectionComponent.borderCanvas.style.left).toEqual(service.selectionComponent.previewSelectionCanvas.style.left);
@@ -158,13 +159,13 @@ describe('ResizeWidthService', () => {
 
     it('restoreLastDimensions should set width to lastWidth', () => {
         service.restoreLastDimensions();
-        expect(service.selectionComponent.previewSelectionCanvas.width).toBe(service.lastWidth);
+        expect(service.selectionComponent.previewSelectionCanvas.width).toBe(service['lastWidth']);
         expect(service.selectionComponent.borderCanvas.width).toEqual(service.selectionComponent.previewSelectionCanvas.width);
     });
 
     it('restoreLastDimensions should set style.left if style.left under initial left', () => {
         service.selectionComponent.previewSelectionCanvas.style.left = service.selectionComponent.initialPosition.x - 1 + 'px';
-        const difference = service.selectionComponent.previewSelectionCanvas.width - service.lastWidth;
+        const difference = service.selectionComponent.previewSelectionCanvas.width - service['lastWidth'];
         const expectedLeft = parseInt(service.selectionComponent.previewSelectionCanvas.style.left, 10) + difference + 'px';
         service.restoreLastDimensions();
         expect(service.selectionComponent.previewSelectionCanvas.style.left).toBe(expectedLeft);

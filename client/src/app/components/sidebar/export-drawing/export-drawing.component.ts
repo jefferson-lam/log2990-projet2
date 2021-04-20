@@ -14,24 +14,24 @@ import { ExportErrorPageComponent } from './export-error-page/export-error-page.
     styleUrls: ['./export-drawing.component.scss'],
 })
 export class ExportDrawingComponent implements AfterViewInit, OnInit {
-    @ViewChild('exportImg', { static: false }) exportImg: ElementRef<HTMLImageElement>;
-    @ViewChild('exportCanvas', { static: true }) exportCanvasRef: ElementRef<HTMLCanvasElement>;
-    exportCanvas: HTMLCanvasElement;
-    exportCtx: CanvasRenderingContext2D;
+    @ViewChild('exportImg', { static: false }) private exportImg: ElementRef<HTMLImageElement>;
+    @ViewChild('exportCanvas', { static: true }) private exportCanvasRef: ElementRef<HTMLCanvasElement>;
+    private exportCanvas: HTMLCanvasElement;
+    private exportCtx: CanvasRenderingContext2D;
     canvasStyleWidth: string;
     canvasStyleHeight: string;
 
-    link: HTMLAnchorElement;
+    private link: HTMLAnchorElement;
 
     baseCanvas: HTMLCanvasElement;
-    baseCtx: CanvasRenderingContext2D;
+    private baseCtx: CanvasRenderingContext2D;
 
     type: string;
     name: string;
     filter: string;
 
     url: string;
-    popUpToggle: ExportDrawingConstants.PopUpToggle;
+    private popUpToggle: ExportDrawingConstants.PopUpToggle;
 
     constructor(drawingService: DrawingService, private imgurService: ImgurService, public newDialog: MatDialog) {
         this.baseCanvas = drawingService.canvas;
@@ -57,7 +57,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.refreshCanvas();
     }
 
-    changeWhiteToAlpha(imgData: ImageData): void {
+    private changeWhiteToAlpha(imgData: ImageData): void {
         // tslint:disable-next-line:no-magic-numbers
         for (let i = 0; i < imgData.data.length; i += 4) {
             if (imgData.data[i] === MAX_RGB_VALUE && imgData.data[i + 1] === MAX_RGB_VALUE && imgData.data[i + 2] === MAX_RGB_VALUE) {
@@ -71,7 +71,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.exportCtx.putImageData(imgData, 0, 0);
     }
 
-    refreshCanvas(clearBackground: boolean = false): void {
+    private refreshCanvas(clearBackground: boolean = false): void {
         const imgData = this.baseCtx.getImageData(0, 0, this.baseCanvas.width, this.baseCanvas.height);
         if (clearBackground) {
             this.changeWhiteToAlpha(imgData);
@@ -82,7 +82,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.exportImg.nativeElement.src = this.exportCanvas.toDataURL();
     }
 
-    setPopupSizes(): void {
+    private setPopupSizes(): void {
         if (this.baseCanvas.height > this.baseCanvas.width) {
             this.canvasStyleWidth = (this.baseCanvas.width / this.baseCanvas.height) * MAX_EXPORT_CANVAS_HEIGHT + 'px';
             this.canvasStyleHeight = MAX_EXPORT_CANVAS_HEIGHT + 'px';
@@ -111,7 +111,7 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         this.imgurService.exportDrawing(this.exportCanvas.toDataURL('image/' + this.type), this.name);
     }
 
-    openPopUp(): void {
+    private openPopUp(): void {
         if (this.popUpToggle === ExportDrawingConstants.PopUpToggle.ERROR && this.imgurService.mutex === 1) {
             this.openErrorPopUp();
         } else if (this.imgurService.mutex) {
@@ -119,12 +119,12 @@ export class ExportDrawingComponent implements AfterViewInit, OnInit {
         }
     }
 
-    openErrorPopUp(): void {
+    private openErrorPopUp(): void {
         this.newDialog.open(ExportErrorPageComponent);
         this.imgurService.mutex--;
     }
 
-    openCompletePopUp(): void {
+    private openCompletePopUp(): void {
         this.newDialog.open(ExportCompletePageComponent);
         this.imgurService.mutex--;
     }

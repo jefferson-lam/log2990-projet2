@@ -10,9 +10,9 @@ import { Subject } from 'rxjs';
 export class MagnetismService {
     isMagnetismOn: boolean;
     magnetizedPoint: MagnestismConstants.MagnetizedPoint;
-    topLeftResizerCoords: Vec2;
-    bottomRightResizerCoords: Vec2;
-    referenceResizerCoords: Vec2;
+    private topLeftResizerCoords: Vec2;
+    private bottomRightResizerCoords: Vec2;
+    private referenceResizerCoords: Vec2;
     magnetismStateSubject: Subject<boolean>;
     transformValues: Vec2;
 

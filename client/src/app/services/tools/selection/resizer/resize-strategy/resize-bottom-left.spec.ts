@@ -5,6 +5,7 @@ import { ResizeStrategy } from '@app/classes/resize-strategy';
 import { SelectionComponent } from '@app/components/selection/selection.component';
 import { ResizeBottomLeft } from './resize-bottom-left';
 
+// tslint:disable: no-string-literal
 describe('ResizeBottomLeftService', () => {
     let service: ResizeBottomLeft;
     let mockComponent: SelectionComponent;
@@ -28,19 +29,19 @@ describe('ResizeBottomLeftService', () => {
     });
 
     it('resize should set oppositePoint if isShiftDown true', () => {
-        spyOn(service.resizeWidth, 'resizeWidth');
-        spyOn(service.resizeHeight, 'resizeHeight');
+        spyOn(service['resizeWidth'], 'resizeWidth');
+        spyOn(service['resizeHeight'], 'resizeHeight');
 
         service.resize({} as CdkDragMove, true);
 
-        expect(service.oppositePoint).toBeTruthy();
-        expect(service.oppositePoint.x).toBe(service.selectionComponent.bottomRight.x);
-        expect(service.oppositePoint.y).toBe(service.selectionComponent.initialPosition.y);
+        expect(service['oppositePoint']).toBeTruthy();
+        expect(service['oppositePoint'].x).toBe(service.selectionComponent.bottomRight.x);
+        expect(service['oppositePoint'].y).toBe(service.selectionComponent.initialPosition.y);
     });
 
     it('resize should call resizeWidth/Height methods of resizeWidth and resizeHeight if isShiftDown true', () => {
-        const resizeWidthSpy = spyOn(service.resizeWidth, 'resizeWidth');
-        const resizeHeightSpy = spyOn(service.resizeHeight, 'resizeHeight');
+        const resizeWidthSpy = spyOn(service['resizeWidth'], 'resizeWidth');
+        const resizeHeightSpy = spyOn(service['resizeHeight'], 'resizeHeight');
 
         service.resize({} as CdkDragMove, true);
 
@@ -49,8 +50,8 @@ describe('ResizeBottomLeftService', () => {
     });
 
     it('resize should call resize methods of resizeWidth and resizeHeight if isShiftDown false', () => {
-        const resizeWidthSpy = spyOn(service.resizeWidth, 'resizePreview');
-        const resizeHeightSpy = spyOn(service.resizeHeight, 'resizePreview');
+        const resizeWidthSpy = spyOn(service['resizeWidth'], 'resizePreview');
+        const resizeHeightSpy = spyOn(service['resizeHeight'], 'resizePreview');
 
         service.resize({} as CdkDragMove, false);
 
@@ -59,8 +60,8 @@ describe('ResizeBottomLeftService', () => {
     });
 
     it('resizeSquare should call resizeSquare methods of super,resizeWidth and resizeHeight with true', () => {
-        const resizeWidthSpy = spyOn(service.resizeWidth, 'resizeSquare');
-        const resizeHeightSpy = spyOn(service.resizeHeight, 'resizeSquare');
+        const resizeWidthSpy = spyOn(service['resizeWidth'], 'resizeSquare');
+        const resizeHeightSpy = spyOn(service['resizeHeight'], 'resizeSquare');
         const superSpy = spyOn(ResizeStrategy.prototype, 'resizeSquare');
 
         service.resizeSquare();
@@ -74,8 +75,8 @@ describe('ResizeBottomLeftService', () => {
 
     it('assignComponent should set selectionComponent', () => {
         service.selectionComponent = {} as SelectionComponent;
-        spyOn(service.resizeWidth, 'assignComponent');
-        spyOn(service.resizeHeight, 'assignComponent');
+        spyOn(service['resizeWidth'], 'assignComponent');
+        spyOn(service['resizeHeight'], 'assignComponent');
 
         service.assignComponent(mockComponent);
 
@@ -83,8 +84,8 @@ describe('ResizeBottomLeftService', () => {
     });
 
     it('assignComponent should call assignComponent methods of resizeWidth and resizeHeight', () => {
-        const resizeWidthSpy = spyOn(service.resizeWidth, 'assignComponent');
-        const resizeHeightSpy = spyOn(service.resizeHeight, 'assignComponent');
+        const resizeWidthSpy = spyOn(service['resizeWidth'], 'assignComponent');
+        const resizeHeightSpy = spyOn(service['resizeHeight'], 'assignComponent');
 
         service.assignComponent(mockComponent);
 
@@ -95,8 +96,8 @@ describe('ResizeBottomLeftService', () => {
     });
 
     it('restoreLastDimensions should call restoreLastDimensions methods of resizeWidth and resizeHeight', () => {
-        const resizeWidthSpy = spyOn(service.resizeWidth, 'restoreLastDimensions');
-        const resizeHeightSpy = spyOn(service.resizeHeight, 'restoreLastDimensions');
+        const resizeWidthSpy = spyOn(service['resizeWidth'], 'restoreLastDimensions');
+        const resizeHeightSpy = spyOn(service['resizeHeight'], 'restoreLastDimensions');
 
         service.restoreLastDimensions();
 

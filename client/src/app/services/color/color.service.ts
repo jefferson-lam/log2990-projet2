@@ -7,16 +7,16 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class ColorService {
-    primaryColor: Rgba;
-    primaryColorSource: Subject<Rgba>;
+    private primaryColor: Rgba;
+    private primaryColorSource: Subject<Rgba>;
     primaryObservable: Observable<Rgba>;
 
-    secondaryColor: Rgba;
-    secondaryColorSource: Subject<Rgba>;
+    private secondaryColor: Rgba;
+    private secondaryColorSource: Subject<Rgba>;
     secondaryObservable: Observable<Rgba>;
 
     savedColors: Rgba[];
-    savedColorsSource: Subject<Rgba[]>;
+    private savedColorsSource: Subject<Rgba[]>;
     savedColorsObservable: Observable<Rgba[]>;
 
     constructor() {

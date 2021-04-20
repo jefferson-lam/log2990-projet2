@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSlider } from '@angular/material/slider';
 import { Stamp } from '@app/classes/stamp';
-import { Tool } from '@app/classes/tool';
 import * as StampConstants from '@app/constants/stamp-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
@@ -21,20 +20,19 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
     maxAngle: number;
     zoomFactor: number;
     tickInterval: number;
-    currentTool: Tool;
     stamps: Map<number, Stamp>;
 
-    @ViewChild('relaxedEgg', { static: false }) relaxedEgg: ElementRef<HTMLElement>;
-    @ViewChild('sleepyEgg', { static: false }) sleepyEgg: ElementRef<HTMLElement>;
-    @ViewChild('hungryEgg', { static: false }) hungryEgg: ElementRef<HTMLElement>;
-    @ViewChild('toastEgg', { static: false }) toastEgg: ElementRef<HTMLElement>;
-    @ViewChild('huskyPortrait', { static: false }) huskyPortrait: ElementRef<HTMLElement>;
-    @ViewChild('corgiPortrait', { static: false }) corgiPortrait: ElementRef<HTMLElement>;
+    @ViewChild('relaxedEgg', { static: false }) private relaxedEgg: ElementRef<HTMLElement>;
+    @ViewChild('sleepyEgg', { static: false }) private sleepyEgg: ElementRef<HTMLElement>;
+    @ViewChild('hungryEgg', { static: false }) private hungryEgg: ElementRef<HTMLElement>;
+    @ViewChild('toastEgg', { static: false }) private toastEgg: ElementRef<HTMLElement>;
+    @ViewChild('huskyPortrait', { static: false }) private huskyPortrait: ElementRef<HTMLElement>;
+    @ViewChild('corgiPortrait', { static: false }) private corgiPortrait: ElementRef<HTMLElement>;
     @ViewChild('angleSlider') angleSlider: MatSlider;
 
-    @Output() stampSourceChanged: EventEmitter<string>;
-    @Output() zoomFactorChanged: EventEmitter<number>;
-    @Output() rotationAngleChanged: EventEmitter<number>;
+    @Output() private stampSourceChanged: EventEmitter<string>;
+    @Output() private zoomFactorChanged: EventEmitter<number>;
+    @Output() private rotationAngleChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService, public stampService: StampService) {
         this.rotationAngle = this.stampService.realRotationValues;
@@ -83,7 +81,7 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
         this.emitRotateAngle();
     }
 
-    resetBorders(): void {
+    private resetBorders(): void {
         this.relaxedEgg.nativeElement.style.border = '';
         this.sleepyEgg.nativeElement.style.border = '';
         this.hungryEgg.nativeElement.style.border = '';
@@ -92,12 +90,12 @@ export class SidebarStampComponent implements OnInit, AfterViewInit {
         this.corgiPortrait.nativeElement.style.border = '';
     }
 
-    changeBorderIndicator(imageIndex: number): void {
+    private changeBorderIndicator(imageIndex: number): void {
         this.resetBorders();
         (this.stamps.get(imageIndex) as Stamp).element.style.border = '2px dashed floralwhite';
     }
 
-    changeStampSource(stampIndex: number): void {
+    private changeStampSource(stampIndex: number): void {
         this.stampClickState = true;
         this.imageSource = (this.stamps.get(stampIndex) as Stamp).imageSource;
     }

@@ -6,6 +6,7 @@ import { END_ANGLE, END_INDEX, START_ANGLE, START_INDEX } from '@app/constants/s
 import { EllipseSelectionCommand } from './ellipse-selection-command';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
+// tslint:disable: no-string-literal
 describe('EllipseSelectionCommandService', () => {
     let command: EllipseSelectionCommand;
     let ellipseSelectionService: EllipseSelectionService;
@@ -65,12 +66,12 @@ describe('EllipseSelectionCommandService', () => {
     });
 
     it('setValues should bind correct values to Command', () => {
-        command.setValues(baseCtxStub, selectionCtxStub.canvas, ellipseSelectionService);
-        expect(command.selectionCanvas).toEqual(selectionCtxStub.canvas);
-        expect(command.selectionHeight).toEqual(TEST_SELECTION_HEIGHT);
-        expect(command.selectionWidth).toEqual(TEST_SELECTION_WIDTH);
-        expect(command.transformValues).toEqual(TEST_TRANSFORM_VALUES);
-        expect(command.isCircle).toEqual(TEST_IS_CIRCLE);
+        command['setValues'](baseCtxStub, selectionCtxStub.canvas, ellipseSelectionService);
+        expect(command['selectionCanvas']).toEqual(selectionCtxStub.canvas);
+        expect(command['selectionHeight']).toEqual(TEST_SELECTION_HEIGHT);
+        expect(command['selectionWidth']).toEqual(TEST_SELECTION_WIDTH);
+        expect(command['transformValues']).toEqual(TEST_TRANSFORM_VALUES);
+        expect(command['isCircle']).toEqual(TEST_IS_CIRCLE);
     });
 
     it('execute should correctly call with correct parameters', () => {
@@ -99,8 +100,8 @@ describe('EllipseSelectionCommandService', () => {
     });
 
     it('getEllipseCenter should set displacement to shortest side if isCircle', () => {
-        const start = command.pathData[START_INDEX];
-        const end = command.pathData[END_INDEX];
+        const start = command['pathData'][START_INDEX];
+        const end = command['pathData'][END_INDEX];
 
         const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
 
@@ -115,11 +116,11 @@ describe('EllipseSelectionCommandService', () => {
     });
 
     it('getRadiiXAndY should set radius to shortest side if isCircle', () => {
-        command.isCircle = true;
+        command['isCircle'] = true;
 
-        const start = command.pathData[START_INDEX];
+        const start = command['pathData'][START_INDEX];
 
-        const end = command.pathData[END_INDEX];
+        const end = command['pathData'][END_INDEX];
 
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;
@@ -127,14 +128,14 @@ describe('EllipseSelectionCommandService', () => {
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
 
         // tslint:disable:no-string-literal
-        const radii = command['getRadiiXAndY'](command.pathData);
+        const radii = command['getRadiiXAndY'](command['pathData']);
 
         expect(radii.x).toEqual(shortestSide);
         expect(radii.y).toEqual(shortestSide);
     });
 
     it('execute should not fill shape if isFromClipboard is set to true', () => {
-        command.isFromClipboard = true;
+        command['isFromClipboard'] = true;
         command.execute();
         expect(baseCtxFillSpy).not.toHaveBeenCalled();
     });

@@ -21,7 +21,7 @@ export class EllipseSelectionService extends ToolSelectionService {
     isManipulating: boolean;
     transformValues: Vec2;
     isCircle: boolean;
-    isShiftDown: boolean;
+    private isShiftDown: boolean;
     isEscapeDown: boolean;
     pathData: Vec2[];
     selectionHeight: number;
@@ -135,7 +135,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         this.ellipseService.drawnFromSelection = false;
     }
 
-    fillEllipse(ctx: CanvasRenderingContext2D, pathData: Vec2[], isCircle: boolean): void {
+    private fillEllipse(ctx: CanvasRenderingContext2D, pathData: Vec2[], isCircle: boolean): void {
         const ellipseCenter = this.getEllipseCenter(pathData[SelectionConstants.START_INDEX], pathData[SelectionConstants.END_INDEX], isCircle);
         const startX = ellipseCenter.x;
         const startY = ellipseCenter.y;
@@ -148,7 +148,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.fill();
     }
 
-    clipEllipse(ctx: CanvasRenderingContext2D, start: Vec2, offset: number): void {
+    private clipEllipse(ctx: CanvasRenderingContext2D, start: Vec2, offset: number): void {
         const end: Vec2 = {
             x: start.x + this.selectionWidth,
             y: start.y + this.selectionHeight,
@@ -174,7 +174,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.clip();
     }
 
-    drawOutlineEllipse(ctx: CanvasRenderingContext2D, start: Vec2, radius: Vec2): void {
+    private drawOutlineEllipse(ctx: CanvasRenderingContext2D, start: Vec2, radius: Vec2): void {
         const offset = SelectionConstants.DRAWN_ELLIPSE_RADIUS_OFFSET;
         ctx.beginPath();
         ctx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
@@ -190,7 +190,7 @@ export class EllipseSelectionService extends ToolSelectionService {
         ctx.stroke();
     }
 
-    initializeSelection(event: MouseEvent): void {
+    private initializeSelection(event: MouseEvent): void {
         this.lockMouseInsideCanvas(event);
         this.ellipseService.inUse = false;
         super.onMouseUp(event);
