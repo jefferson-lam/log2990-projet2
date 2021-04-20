@@ -113,7 +113,7 @@ describe('EllipseCommand', () => {
         command.radiiPosition.x = mockRadii[0];
         command.radiiPosition.y = mockRadii[1];
         command.borderColor = command.primaryColor;
-        command.lineWidth = EllipseConstants.HIDDEN_BORDER_WIDTH;
+        command.lineWidth = 0;
 
         // tslint:disable:no-string-literal
         command['drawEllipse'](command['ctx'], command.cornerCoords);

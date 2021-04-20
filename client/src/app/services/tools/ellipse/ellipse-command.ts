@@ -11,7 +11,7 @@ export class EllipseCommand extends Command {
     fillMode: ToolConstants.FillMode;
     primaryColor: string;
     secondaryColor: string;
-    cornerCoords: Vec2[] = [];
+    cornerCoords: Vec2[];
     centerPosition: Vec2;
     radiiPosition: Vec2;
     borderColor: string;
@@ -39,7 +39,6 @@ export class EllipseCommand extends Command {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.lineWidth = 1;
         this.getEllipseCenter(path[ShapeConstants.START_INDEX], path[ShapeConstants.END_INDEX], this.isCircle);
         this.getRadiiXAndY(path);
 
@@ -49,7 +48,7 @@ export class EllipseCommand extends Command {
             this.radiiPosition.y -= this.lineWidth / 2;
             this.drawTypeEllipse(ctx);
         } else {
-            this.lineWidth = EllipseConstants.HIDDEN_BORDER_WIDTH;
+            this.lineWidth = 0;
             this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
             this.primaryColor = this.borderColor;
             this.drawTypeEllipse(ctx);
