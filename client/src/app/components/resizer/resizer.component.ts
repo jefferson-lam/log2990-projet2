@@ -15,13 +15,13 @@ export class ResizerComponent implements AfterViewInit {
     @Input() baseCtx: CanvasRenderingContext2D;
     @Input() previewCtx: CanvasRenderingContext2D;
 
-    isSideResizerDown: boolean;
-    isCornerResizerDown: boolean;
-    isBottomResizerDown: boolean;
+    private isSideResizerDown: boolean;
+    private isCornerResizerDown: boolean;
+    private isBottomResizerDown: boolean;
 
-    @ViewChild('sideResizer', { static: false }) sideResizer: ElementRef<HTMLElement>;
-    @ViewChild('cornerResizer', { static: false }) cornerResizer: ElementRef<HTMLElement>;
-    @ViewChild('bottomResizer', { static: false }) bottomResizer: ElementRef<HTMLElement>;
+    @ViewChild('sideResizer', { static: false }) private sideResizer: ElementRef<HTMLElement>;
+    @ViewChild('cornerResizer', { static: false }) private cornerResizer: ElementRef<HTMLElement>;
+    @ViewChild('bottomResizer', { static: false }) private bottomResizer: ElementRef<HTMLElement>;
 
     constructor(private undoRedoService: UndoRedoService, private drawingService: DrawingService) {
         this.isSideResizerDown = false;
@@ -54,7 +54,7 @@ export class ResizerComponent implements AfterViewInit {
         this.drawPreviewOfNewSize();
     }
 
-    drawPreviewOfNewSize(): void {
+    private drawPreviewOfNewSize(): void {
         this.sideResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
         this.sideResizer.nativeElement.style.top = this.previewCtx.canvas.height / 2 + 'px';
         this.cornerResizer.nativeElement.style.left = this.previewCtx.canvas.width + 'px';
@@ -76,7 +76,7 @@ export class ResizerComponent implements AfterViewInit {
         this.isBottomResizerDown = false;
     }
 
-    lockMinCanvasValue(): void {
+    private lockMinCanvasValue(): void {
         if (this.previewCtx.canvas.width < CanvasConstants.MIN_WIDTH_CANVAS) {
             this.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
 

@@ -4,6 +4,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarLineComponent } from './sidebar-line.component';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('SidebarLineComponent', () => {
     let component: SidebarLineComponent;
     let fixture: ComponentFixture<SidebarLineComponent>;
@@ -26,9 +27,9 @@ describe('SidebarLineComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        toolSizeChangedSubscribeSpy = spyOn(component.toolSizeChanged, 'subscribe');
-        withJunctionChangedSubcribeSpy = spyOn(component.withJunctionChanged, 'subscribe');
-        junctionRadiusChangedSubscribeSpy = spyOn(component.junctionRadiusChanged, 'subscribe');
+        toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
+        withJunctionChangedSubcribeSpy = spyOn(component['withJunctionChanged'], 'subscribe');
+        junctionRadiusChangedSubscribeSpy = spyOn(component['junctionRadiusChanged'], 'subscribe');
     });
 
     it('should create', () => {
@@ -36,20 +37,20 @@ describe('SidebarLineComponent', () => {
     });
 
     it('emitJunctionRadius should emit junction radius', () => {
-        const emitSpy = spyOn(component.junctionRadiusChanged, 'emit');
+        const emitSpy = spyOn(component['junctionRadiusChanged'], 'emit');
         component.junctionRadius = 0;
         component.emitJunctionRadius();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitWithJunction should set boolean ', () => {
-        const emitSpy = spyOn(component.withJunctionChanged, 'emit');
+        const emitSpy = spyOn(component['withJunctionChanged'], 'emit');
         component.emitWithJunction();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitToolSize should emit tool size', () => {
-        const emitSpy = spyOn(component.toolSizeChanged, 'emit');
+        const emitSpy = spyOn(component['toolSizeChanged'], 'emit');
         component.toolSize = NO_JUNCTION_RADIUS;
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();

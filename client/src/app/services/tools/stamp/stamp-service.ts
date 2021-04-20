@@ -19,11 +19,11 @@ export class StampService extends Tool {
     realRotationValues: number;
     rotationAngle: number;
     imageZoomFactor: number;
-    degreesRotation: number;
+    private degreesRotation: number;
 
     angleSubject: Subject<number>;
 
-    previewCommand: StampCommand;
+    private previewCommand: StampCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);

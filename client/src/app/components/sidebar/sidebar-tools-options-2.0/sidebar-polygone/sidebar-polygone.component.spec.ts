@@ -6,6 +6,7 @@ import * as ToolsConstants from '@app/constants/tool-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarPolygoneComponent } from './sidebar-polygone.component';
 
+// tslint:disable: no-string-literal
 describe('SidebarPolygoneComponent', () => {
     let polygoneComponent: SidebarPolygoneComponent;
     let fixture: ComponentFixture<SidebarPolygoneComponent>;
@@ -26,9 +27,9 @@ describe('SidebarPolygoneComponent', () => {
         polygoneComponent = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        toolSizeChangedSubscribeSpy = spyOn(polygoneComponent.toolSizeChanged, 'subscribe');
-        fillModeChangedSubscribeSpy = spyOn(polygoneComponent.fillModeChanged, 'subscribe');
-        numberOfSidesSpy = spyOn(polygoneComponent.numberOfPolySides, 'subscribe');
+        toolSizeChangedSubscribeSpy = spyOn(polygoneComponent['toolSizeChanged'], 'subscribe');
+        fillModeChangedSubscribeSpy = spyOn(polygoneComponent['fillModeChanged'], 'subscribe');
+        numberOfSidesSpy = spyOn(polygoneComponent['numberOfPolySides'], 'subscribe');
     });
 
     it('should create', () => {
@@ -36,7 +37,7 @@ describe('SidebarPolygoneComponent', () => {
     });
 
     it('emitToolSize should emit tool size', () => {
-        const emitSpy = spyOn(polygoneComponent.toolSizeChanged, 'emit');
+        const emitSpy = spyOn(polygoneComponent['toolSizeChanged'], 'emit');
         polygoneComponent.toolSize = ShapeConstants.INITIAL_BORDER_WIDTH;
         polygoneComponent.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
@@ -44,13 +45,13 @@ describe('SidebarPolygoneComponent', () => {
 
     it('emitFillMode should emit fill mode', () => {
         const newFillMode = ToolsConstants.FillMode.FILL_ONLY;
-        const emitSpy = spyOn(polygoneComponent.fillModeChanged, 'emit');
+        const emitSpy = spyOn(polygoneComponent['fillModeChanged'], 'emit');
         polygoneComponent.emitFillMode(newFillMode);
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitPolygoneSideNumber should emit sides number', () => {
-        const emitSpy = spyOn(polygoneComponent.numberOfPolySides, 'emit');
+        const emitSpy = spyOn(polygoneComponent['numberOfPolySides'], 'emit');
         polygoneComponent.polygoneSidesCount = PolygoneConstants.INIT_SIDES_COUNT;
         polygoneComponent.emitPolygoneSideNumber();
         expect(emitSpy).toHaveBeenCalled();

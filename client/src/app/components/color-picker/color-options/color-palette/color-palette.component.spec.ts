@@ -5,6 +5,7 @@ import { Rgba } from '@app/classes/rgba';
 import { ColorService } from '@app/services/color/color.service';
 import { ColorPaletteComponent } from './color-palette.component';
 
+// tslint:disable: no-string-literal
 describe('ColorPaletteComponent', () => {
     let component: ColorPaletteComponent;
     let fixture: ComponentFixture<ColorPaletteComponent>;
@@ -29,7 +30,7 @@ describe('ColorPaletteComponent', () => {
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         colorService = TestBed.inject(ColorService);
-        component.ctx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        component['ctx'] = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         mouseEventDown = {
             offsetX: 25,
             offsetY: 25,
@@ -50,7 +51,7 @@ describe('ColorPaletteComponent', () => {
     });
 
     it('AfterViewInit should call draw', () => {
-        const fillRectSpy = spyOn(component.ctx, 'fillRect');
+        const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.ngAfterViewInit();
         expect(fillRectSpy).toHaveBeenCalled();
     });
@@ -69,46 +70,46 @@ describe('ColorPaletteComponent', () => {
     });
 
     it('draw should call fillRect()', () => {
-        const fillRectSpy = spyOn(component.ctx, 'fillRect');
+        const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.ngAfterViewInit();
         expect(fillRectSpy).toHaveBeenCalled();
     });
 
     it('draw should call createLinearGradient()', () => {
-        const createLinearGradientSpy = spyOn(component.ctx, 'createLinearGradient').and.callThrough();
+        const createLinearGradientSpy = spyOn(component['ctx'], 'createLinearGradient').and.callThrough();
         component.ngAfterViewInit();
         expect(createLinearGradientSpy).toHaveBeenCalled();
     });
 
     it('draw should call beginPath() if (this.selectedPosition) is true', () => {
-        const beginPathSpy = spyOn(component.ctx, 'beginPath');
-        component.selectedPosition = { x: placeholderX, y: placeholderY };
+        const beginPathSpy = spyOn(component['ctx'], 'beginPath');
+        component['selectedPosition'] = { x: placeholderX, y: placeholderY };
         component.ngAfterViewInit();
         expect(beginPathSpy).toHaveBeenCalled();
     });
 
     it('draw should call arc() if (this.selectedPosition) is true', () => {
-        const arcSpy = spyOn(component.ctx, 'arc');
-        component.selectedPosition = { x: placeholderX, y: placeholderY };
+        const arcSpy = spyOn(component['ctx'], 'arc');
+        component['selectedPosition'] = { x: placeholderX, y: placeholderY };
         component.ngAfterViewInit();
         expect(arcSpy).toHaveBeenCalled();
     });
 
     it('draw should call stroke() if (this.selectedPosition) is true', () => {
-        const strokeSpy = spyOn(component.ctx, 'stroke');
-        component.selectedPosition = { x: placeholderX, y: placeholderY };
+        const strokeSpy = spyOn(component['ctx'], 'stroke');
+        component['selectedPosition'] = { x: placeholderX, y: placeholderY };
         component.ngAfterViewInit();
         expect(strokeSpy).toHaveBeenCalled();
     });
 
     it('draw should not call stroke() if (this.selectedPosition) is false', () => {
-        const strokeSpy = spyOn(component.ctx, 'stroke');
+        const strokeSpy = spyOn(component['ctx'], 'stroke');
         component.ngAfterViewInit();
         expect(strokeSpy).not.toHaveBeenCalled();
     });
 
     it('should call draw() if hue changes', () => {
-        const fillRectSpy = spyOn(component.ctx, 'fillRect');
+        const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.ngOnChanges({
             hue: new SimpleChange(null, colorPlaceholderBlack, false),
         });
@@ -117,7 +118,7 @@ describe('ColorPaletteComponent', () => {
     });
 
     it('should not call draw() if hue doesnt change', () => {
-        const fillRectSpy = spyOn(component.ctx, 'fillRect');
+        const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.ngOnChanges({});
         fixture.detectChanges();
         expect(fillRectSpy).not.toHaveBeenCalled();
@@ -125,19 +126,19 @@ describe('ColorPaletteComponent', () => {
 
     it('should call setColorAtPosition() if hue changes', () => {
         const getColorAtPositionSpy = spyOn(colorService, 'getColorAtPosition');
-        component.selectedPosition = { x: 1, y: 1 };
+        component['selectedPosition'] = { x: 1, y: 1 };
         component.ngOnChanges({
             hue: new SimpleChange(null, colorPlaceholderBlack, false),
         });
         fixture.detectChanges();
         expect(getColorAtPositionSpy).toHaveBeenCalledWith(
-            component.ctx,
-            component.selectedPosition.x,
-            component.selectedPosition.y,
+            component['ctx'],
+            component['selectedPosition'].x,
+            component['selectedPosition'].y,
             component.currentOpacity,
         );
-        expect(component.selectedPosition.x).toEqual(1);
-        expect(component.selectedPosition.y).toEqual(1);
+        expect(component['selectedPosition'].x).toEqual(1);
+        expect(component['selectedPosition'].y).toEqual(1);
     });
 
     it('onMouseUp should set mousedown to false', () => {
@@ -146,22 +147,22 @@ describe('ColorPaletteComponent', () => {
         component.onMouseUp(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
-        expect(component.mousedown).toEqual(false);
+        expect(component['mousedown']).toEqual(false);
     });
 
     it('onMouseDown should set mouseDown to true', () => {
         component.onMouseDown(mouseEventDown);
-        expect(component.mousedown).toEqual(true);
+        expect(component['mousedown']).toEqual(true);
     });
 
     it('onMouseDown should set selectedPosition to {offset.X, offSet.Y}', () => {
         component.onMouseDown(mouseEventDown);
         const currentPosition = { x: mouseEventDown.offsetX, y: mouseEventDown.offsetY };
-        expect(component.selectedPosition).toEqual(currentPosition);
+        expect(component['selectedPosition']).toEqual(currentPosition);
     });
 
     it('onMouseDown should call draw()', () => {
-        const fillRectSpy = spyOn(component.ctx, 'fillRect');
+        const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.onMouseDown(mouseEventDown);
         expect(fillRectSpy).toHaveBeenCalled();
     });
@@ -171,46 +172,46 @@ describe('ColorPaletteComponent', () => {
         const currentPosition = { x: mouseEventDown.offsetX, y: mouseEventDown.offsetY };
         component.onMouseDown(mouseEventDown);
         expect(getColorAtPositionSpy).toHaveBeenCalled();
-        expect(getColorAtPositionSpy).toHaveBeenCalledWith(component.ctx, currentPosition.x, currentPosition.y, component.currentOpacity);
+        expect(getColorAtPositionSpy).toHaveBeenCalledWith(component['ctx'], currentPosition.x, currentPosition.y, component.currentOpacity);
     });
 
     it('onMouseMove should set selectedPosition to (offSet.X, offSet.Y) if mouseDown is true', () => {
-        component.mousedown = true;
+        component['mousedown'] = true;
         const currentPosition = { x: mouseEventMove.offsetX, y: mouseEventMove.offsetY };
         component.onMouseMove(mouseEventMove);
-        expect(component.selectedPosition).toEqual(currentPosition);
+        expect(component['selectedPosition']).toEqual(currentPosition);
     });
 
     it('onMouseMove should call draw() mouseDown is true', () => {
-        component.mousedown = true;
-        const fillRectSpy = spyOn(component.ctx, 'fillRect');
+        component['mousedown'] = true;
+        const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.onMouseMove(mouseEventMove);
         expect(fillRectSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should call setColorAtPosition with current position if mouseDown is true', () => {
-        component.mousedown = true;
+        component['mousedown'] = true;
         const getColorAtPositionSpy = spyOn(colorService, 'getColorAtPosition');
         component.onMouseMove(mouseEventMove);
         expect(getColorAtPositionSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should not set selectedPosition to (offSet.X, offSet.Y) if mouseDown is false', () => {
-        component.mousedown = false;
+        component['mousedown'] = false;
         const currentPosition = { x: mouseEventMove.offsetX, y: mouseEventMove.offsetY };
         component.onMouseMove(mouseEventMove);
-        expect(component.selectedPosition).not.toEqual(currentPosition);
+        expect(component['selectedPosition']).not.toEqual(currentPosition);
     });
 
     it('onMouseMove should not call draw() if mouseDown is false', () => {
-        component.mousedown = false;
-        const fillRectSpy = spyOn(component.ctx, 'fillRect');
+        component['mousedown'] = false;
+        const fillRectSpy = spyOn(component['ctx'], 'fillRect');
         component.onMouseMove(mouseEventMove);
         expect(fillRectSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseMove should not call setColorAtPosition if mouseDown is false', () => {
-        component.mousedown = false;
+        component['mousedown'] = false;
         const getColorAtPositionSpy = spyOn(colorService, 'getColorAtPosition');
         component.onMouseMove(mouseEventMove);
         expect(getColorAtPositionSpy).not.toHaveBeenCalled();

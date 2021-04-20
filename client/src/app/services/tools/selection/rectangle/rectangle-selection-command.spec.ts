@@ -5,6 +5,7 @@ import { START_INDEX } from '@app/constants/selection-constants';
 import { RectangleSelectionCommand } from './rectangle-selection-command';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
+// tslint:disable: no-string-literal
 describe('RectangleSelectionCommandService', () => {
     let command: RectangleSelectionCommand;
     let rectangleSelectionService: RectangleSelectionService;
@@ -63,13 +64,13 @@ describe('RectangleSelectionCommandService', () => {
     });
 
     it('setValues should bind correct values to Command', () => {
-        command.setValues(baseCtxStub, selectionCtxStub.canvas, rectangleSelectionService);
-        expect(command.selectionCanvas).toEqual(selectionCtxStub.canvas);
-        expect(command.selectionHeight).toEqual(TEST_SELECTION_HEIGHT);
-        expect(command.selectionWidth).toEqual(TEST_SELECTION_WIDTH);
-        expect(command.initialSelectionHeight).toEqual(TEST_SELECTION_HEIGHT);
-        expect(command.initialSelectionWidth).toEqual(TEST_SELECTION_WIDTH);
-        expect(command.transformValues).toEqual(TEST_TRANSFORM_VALUES);
+        command['setValues'](baseCtxStub, selectionCtxStub.canvas, rectangleSelectionService);
+        expect(command['selectionCanvas']).toEqual(selectionCtxStub.canvas);
+        expect(command['selectionHeight']).toEqual(TEST_SELECTION_HEIGHT);
+        expect(command['selectionWidth']).toEqual(TEST_SELECTION_WIDTH);
+        expect(command['initialSelectionHeight']).toEqual(TEST_SELECTION_HEIGHT);
+        expect(command['initialSelectionWidth']).toEqual(TEST_SELECTION_WIDTH);
+        expect(command['transformValues']).toEqual(TEST_TRANSFORM_VALUES);
         expect(command.isSquare).toEqual(TEST_IS_SQUARE);
     });
 
@@ -77,16 +78,16 @@ describe('RectangleSelectionCommandService', () => {
         command.execute();
         expect(baseCtxFillRectSpy).toHaveBeenCalled();
         expect(baseCtxFillRectSpy).toHaveBeenCalledWith(
-            command.pathData[START_INDEX].x,
-            command.pathData[START_INDEX].y,
-            command.initialSelectionWidth,
-            command.initialSelectionHeight,
+            command['pathData'][START_INDEX].x,
+            command['pathData'][START_INDEX].y,
+            command['initialSelectionWidth'],
+            command['initialSelectionHeight'],
         );
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
     });
 
     it('execute should not fill shape if isFromClipboard is set to true', () => {
-        command.isFromClipboard = true;
+        command['isFromClipboard'] = true;
         command.execute();
         expect(baseCtxFillRectSpy).not.toHaveBeenCalled();
     });

@@ -5,6 +5,7 @@ import { START_INDEX } from '@app/constants/selection-constants';
 import { ClipboardService } from './clipboard.service';
 import { RectangleClipboardCommand } from './rectangle-clipboard-command';
 
+// tslint:disable: no-string-literal
 describe('RectangleClipboardCommandService', () => {
     let command: RectangleClipboardCommand;
     let clipboardService: ClipboardService;
@@ -44,19 +45,19 @@ describe('RectangleClipboardCommandService', () => {
     });
 
     it('setValues should bind correct values to Command', () => {
-        command.setValues(baseCtxStub, clipboardService);
-        expect(command.selectionHeight).toEqual(clipboardService.selectionHeight);
-        expect(command.selectionWidth).toEqual(clipboardService.selectionWidth);
+        command['setValues'](baseCtxStub, clipboardService);
+        expect(command['selectionHeight']).toEqual(clipboardService.selectionHeight);
+        expect(command['selectionWidth']).toEqual(clipboardService.selectionWidth);
     });
 
     it('execute should correctly fillRect with correct parameters', () => {
         command.execute();
         expect(baseCtxFillRectSpy).toHaveBeenCalled();
         expect(baseCtxFillRectSpy).toHaveBeenCalledWith(
-            command.pathData[START_INDEX].x,
-            command.pathData[START_INDEX].y,
-            command.selectionWidth,
-            command.selectionHeight,
+            command['pathData'][START_INDEX].x,
+            command['pathData'][START_INDEX].y,
+            command['selectionWidth'],
+            command['selectionHeight'],
         );
     });
 });

@@ -8,6 +8,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { RectangleService } from './rectangle-service';
 
+// tslint:disable: no-string-literal
 describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
@@ -35,8 +36,8 @@ describe('RectangleService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand');
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
-        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
+        setPreviewValuesSpy = spyOn(service['previewCommand'], 'setValues');
 
         // Configuration of spy of service
         // tslint:disable:no-string-literal

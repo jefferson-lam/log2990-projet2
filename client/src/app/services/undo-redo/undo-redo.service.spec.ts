@@ -44,10 +44,10 @@ describe('UndoRedoService', () => {
         refreshSpy = spyOn(service, 'refresh').and.callThrough();
         emitSpy = spyOn(service['actionsAllowedSource'], 'next');
 
-        undoPopSpy = spyOn(service.undoPile, 'pop');
-        undoPushSpy = spyOn(service.undoPile, 'push');
-        redoPopSpy = spyOn(service.redoPile, 'pop');
-        redoPushSpy = spyOn(service.redoPile, 'push');
+        undoPopSpy = spyOn(service['undoPile'], 'pop');
+        undoPushSpy = spyOn(service['undoPile'], 'push');
+        redoPopSpy = spyOn(service['redoPile'], 'pop');
+        redoPushSpy = spyOn(service['redoPile'], 'push');
         updateSpy = spyOn(service, 'updateActionsAllowed');
     });
 
@@ -58,8 +58,8 @@ describe('UndoRedoService', () => {
     it('reset should empty piles', () => {
         service.reset();
 
-        expect(service.undoPile).toEqual(mockEmptyPile);
-        expect(service.redoPile).toEqual(mockEmptyPile);
+        expect(service['undoPile']).toEqual(mockEmptyPile);
+        expect(service['redoPile']).toEqual(mockEmptyPile);
     });
 
     it('reset should call updateActionsAllowed with true', () => {
@@ -70,7 +70,7 @@ describe('UndoRedoService', () => {
     });
 
     it('executeCommand should push command on undoPile', () => {
-        Object.assign(service.undoPile, mockEmptyPile);
+        Object.assign(service['undoPile'], mockEmptyPile);
 
         service.executeCommand(commandStub);
 
@@ -78,8 +78,8 @@ describe('UndoRedoService', () => {
     });
 
     it('executeCommand should call updateActionsAllowed with true', () => {
-        Object.assign(service.undoPile, mockEmptyPile);
-        Object.assign(service.redoPile, mockEmptyPile);
+        Object.assign(service['undoPile'], mockEmptyPile);
+        Object.assign(service['redoPile'], mockEmptyPile);
 
         service.executeCommand(commandStub);
 
@@ -155,9 +155,9 @@ describe('UndoRedoService', () => {
     });
 
     it('refresh should execute commands', () => {
-        service.undoPile = mockPile;
-        const forEachSpy = spyOn(service.undoPile, 'forEach').and.callThrough();
-        const executeSpy = spyOn(service.undoPile[0], 'execute');
+        service['undoPile'] = mockPile;
+        const forEachSpy = spyOn(service['undoPile'], 'forEach').and.callThrough();
+        const executeSpy = spyOn(service['undoPile'][0], 'execute');
 
         service.refresh();
 
@@ -186,25 +186,25 @@ describe('UndoRedoService', () => {
     });
 
     it('isUndoPileEmpty should return true if undo pile is empty', () => {
-        service.undoPile = [];
+        service['undoPile'] = [];
         const result = service.isUndoPileEmpty();
         expect(result).toBeTrue();
     });
 
     it('isUndoPileEmpty should return false if undo pile is not empty', () => {
-        service.undoPile = [{} as Command];
+        service['undoPile'] = [{} as Command];
         const result = service.isUndoPileEmpty();
         expect(result).toBeFalse();
     });
 
     it('isRedoPileEmpty should return true if redo pile is empty', () => {
-        service.redoPile = [];
+        service['redoPile'] = [];
         const result = service.isRedoPileEmpty();
         expect(result).toBeTrue();
     });
 
     it('isRedoPileEmpty should return false if redo pile is not empty', () => {
-        service.redoPile = [{} as Command];
+        service['redoPile'] = [{} as Command];
         const result = service.isRedoPileEmpty();
         expect(result).toBeFalse();
     });

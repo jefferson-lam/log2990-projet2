@@ -7,8 +7,8 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class UndoRedoService {
-    undoPile: Command[];
-    redoPile: Command[];
+    private undoPile: Command[];
+    private redoPile: Command[];
     isUndoAllowed: boolean;
     isRedoAllowed: boolean;
 

@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { ClipboardService } from './clipboard.service';
 import { LassoClipboardCommand } from './lasso-clipboard-command';
 
+// tslint:disable: no-string-literal
 describe('LassoClipboardCommand', () => {
     let command: LassoClipboardCommand;
     let clipboardService: ClipboardService;
@@ -36,8 +37,8 @@ describe('LassoClipboardCommand', () => {
     });
 
     it('setValues should bind correct values to Command', () => {
-        command.setValues(baseCtxStub, clipboardService);
-        expect(command.pathData).toEqual(clipboardService.pathData);
+        command['setValues'](baseCtxStub, clipboardService);
+        expect(command['pathData']).toEqual(clipboardService.pathData);
     });
 
     it('execute should correctly call with correct parameters', () => {
@@ -52,9 +53,9 @@ describe('LassoClipboardCommand', () => {
         const lineToSpy = spyOn(baseCtxStub, 'lineTo');
         const fillSpy = spyOn(baseCtxStub, 'fill');
         // tslint:disable:no-string-literal
-        command['fillLasso'](baseCtxStub, command.pathData, 'white');
+        command['fillLasso'](baseCtxStub, command['pathData'], 'white');
         expect(moveToSpy).toHaveBeenCalled();
-        for (const point of command.pathData) {
+        for (const point of command['pathData']) {
             expect(lineToSpy).toHaveBeenCalledWith(point.x, point.y);
         }
         expect(fillSpy).toHaveBeenCalled();

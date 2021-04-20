@@ -19,11 +19,9 @@ export class TagInputComponent {
         this.maxTagsCountRequirement = TagInputConstants.MAX_TAGS_COUNT_REQUIREMENT;
         this.isSavePossible = false;
     }
-    @ViewChild('tagInput') tagInput: ElementRef;
-    currentTag: string;
+    @ViewChild('tagInput') private tagInput: ElementRef;
     tags: string[];
     isSavePossible: boolean;
-    unsatisfiedRequirements: number;
 
     @Output() areTagsValidEvent: EventEmitter<boolean>;
 

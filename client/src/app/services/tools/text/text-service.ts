@@ -18,8 +18,7 @@ export class TextService extends Tool {
     fontFamily: string;
     fontWeight: string;
     textAlign: string;
-    spanWidth: number;
-    escapeKeyUsed: boolean;
+    private escapeKeyUsed: boolean;
     lockKeyboard: boolean;
     hasWeightChanged: boolean;
     hasStyleChanged: boolean;
@@ -27,7 +26,6 @@ export class TextService extends Tool {
 
     placeHolderSpan: HTMLSpanElement;
     cornerCoords: Vec2;
-    previewCommand: TextCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
@@ -72,7 +70,7 @@ export class TextService extends Tool {
         this.escapeKeyUsed = true;
     }
 
-    createTextBox(event: MouseEvent): void {
+    private createTextBox(event: MouseEvent): void {
         this.cornerCoords = this.getPositionFromMouse(event);
         this.setSpanValues();
         this.lockKeyboard = true;
@@ -80,7 +78,7 @@ export class TextService extends Tool {
         this.setSelectedText();
     }
 
-    drawTextOnCanvas(): void {
+    private drawTextOnCanvas(): void {
         const command: Command = new TextCommand(this.drawingService.baseCtx, this);
         this.undoRedoService.executeCommand(command);
         this.inUse = false;
@@ -89,7 +87,7 @@ export class TextService extends Tool {
         this.lockKeyboard = false;
     }
 
-    setSpanValues(): void {
+    private setSpanValues(): void {
         this.placeHolderSpan.innerText = 'Ajoutez votre texte ici...';
 
         this.setSpanPosition();

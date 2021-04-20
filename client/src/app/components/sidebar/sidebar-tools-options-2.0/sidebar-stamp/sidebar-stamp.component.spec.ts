@@ -6,6 +6,8 @@ import { StampService } from '@app/services/tools/stamp/stamp-service';
 import { Subject } from 'rxjs';
 import { SidebarStampComponent } from './sidebar-stamp.component';
 
+// tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('SidebarStampComponent', () => {
     let stampServiceSpy: jasmine.SpyObj<StampService>;
     let stampComponent: SidebarStampComponent;
@@ -32,9 +34,9 @@ describe('SidebarStampComponent', () => {
         fixture = TestBed.createComponent(SidebarStampComponent);
         stampComponent = fixture.componentInstance;
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        stampSourceSpy = spyOn(stampComponent.stampSourceChanged, 'subscribe').and.callThrough();
-        zoomFactorSpy = spyOn(stampComponent.zoomFactorChanged, 'subscribe').and.callThrough();
-        rotationAngleSpy = spyOn(stampComponent.rotationAngleChanged, 'subscribe').and.callThrough();
+        stampSourceSpy = spyOn(stampComponent['stampSourceChanged'], 'subscribe').and.callThrough();
+        zoomFactorSpy = spyOn(stampComponent['zoomFactorChanged'], 'subscribe').and.callThrough();
+        rotationAngleSpy = spyOn(stampComponent['rotationAngleChanged'], 'subscribe').and.callThrough();
 
         fixture.detectChanges();
     });
@@ -86,8 +88,8 @@ describe('SidebarStampComponent', () => {
     });
 
     it('setStamp should call changeStampSource, changeBorderIndicator, emitImageSrc and emitRotateAngle', () => {
-        const changeStampSourceSpy = spyOn(stampComponent, 'changeStampSource');
-        const changeBorderIndicatorSpy = spyOn(stampComponent, 'changeBorderIndicator');
+        const changeStampSourceSpy = spyOn<any>(stampComponent, 'changeStampSource');
+        const changeBorderIndicatorSpy = spyOn<any>(stampComponent, 'changeBorderIndicator');
         const emitImageSrcSpy = spyOn(stampComponent, 'emitImageSrc');
         const emitRotateAngleSpy = spyOn(stampComponent, 'emitRotateAngle');
 
@@ -102,101 +104,102 @@ describe('SidebarStampComponent', () => {
     });
 
     it('changeBorderIndicator should call resetBorders', () => {
-        const resetBorderSpy = spyOn(stampComponent, 'resetBorders');
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
+        const resetBorderSpy = spyOn<any>(stampComponent, 'resetBorders');
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_6);
         expect(resetBorderSpy).toHaveBeenCalled();
     });
 
     it("resetBorders should set all border styles to ''", () => {
-        stampComponent.resetBorders();
-        expect(stampComponent.relaxedEgg.nativeElement.style.border).toBe('');
-        expect(stampComponent.sleepyEgg.nativeElement.style.border).toBe('');
-        expect(stampComponent.hungryEgg.nativeElement.style.border).toBe('');
-        expect(stampComponent.toastEgg.nativeElement.style.border).toBe('');
-        expect(stampComponent.huskyPortrait.nativeElement.style.border).toBe('');
-        expect(stampComponent.corgiPortrait.nativeElement.style.border).toBe('');
+        stampComponent['resetBorders']();
+        // tslint:disable-next-line: no-string-literal
+        expect(stampComponent['relaxedEgg'].nativeElement.style.border).toBe('');
+        expect(stampComponent['sleepyEgg'].nativeElement.style.border).toBe('');
+        expect(stampComponent['hungryEgg'].nativeElement.style.border).toBe('');
+        expect(stampComponent['toastEgg'].nativeElement.style.border).toBe('');
+        expect(stampComponent['huskyPortrait'].nativeElement.style.border).toBe('');
+        expect(stampComponent['corgiPortrait'].nativeElement.style.border).toBe('');
     });
 
     it('changeBorderIndicator should call resetBorders', () => {
-        const resetBorderSpy = spyOn(stampComponent, 'resetBorders');
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
+        const resetBorderSpy = spyOn<any>(stampComponent, 'resetBorders');
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_6);
         expect(resetBorderSpy).toHaveBeenCalled();
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_6);
-        expect(stampComponent.corgiPortrait.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_6);
+        expect(stampComponent['corgiPortrait'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_5);
-        expect(stampComponent.huskyPortrait.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_5);
+        expect(stampComponent['huskyPortrait'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_4);
-        expect(stampComponent.toastEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_4);
+        expect(stampComponent['toastEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_3);
-        expect(stampComponent.hungryEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_3);
+        expect(stampComponent['hungryEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_2);
-        expect(stampComponent.sleepyEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_2);
+        expect(stampComponent['sleepyEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeBorderIndicator should change border style', () => {
-        stampComponent.changeBorderIndicator(StampConstants.IMAGE_INDEX_1);
-        expect(stampComponent.relaxedEgg.nativeElement.style.border).toEqual('2px dashed floralwhite');
+        stampComponent['changeBorderIndicator'](StampConstants.IMAGE_INDEX_1);
+        expect(stampComponent['relaxedEgg'].nativeElement.style.border).toEqual('2px dashed floralwhite');
     });
 
     it('changeStampSource should change imageSource value of index 1', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_1);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_1);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_1.svg');
     });
 
     it('changeStampSource should change imageSource value of index 2', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_2);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_2);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_2.svg');
     });
 
     it('changeStampSource should change imageSource value of index 3', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_3);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_3);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_3.svg');
     });
 
     it('changeStampSource should change imageSource value of index 4', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_4);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_4);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_4.svg');
     });
 
     it('changeStampSource should change imageSource value of index 5', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_5);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_5);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_5.svg');
     });
 
     it('changeStampSource should change imageSource value of index 6', () => {
         stampComponent.imageSource = 'hello.svg';
-        stampComponent.changeStampSource(StampConstants.IMAGE_INDEX_6);
+        stampComponent['changeStampSource'](StampConstants.IMAGE_INDEX_6);
 
         expect(stampComponent.imageSource).toEqual('assets/stamp_6.svg');
     });
 
     it('emitImageSrc should emit image source', () => {
-        const emitSpy = spyOn(stampComponent.stampSourceChanged, 'emit');
+        const emitSpy = spyOn(stampComponent['stampSourceChanged'], 'emit');
         stampComponent.imageSource = 'hello.svg';
         stampComponent.emitImageSrc();
 
@@ -204,7 +207,7 @@ describe('SidebarStampComponent', () => {
     });
 
     it('emitImageSrc should change image source', () => {
-        const emitSpy = spyOn(stampComponent.stampSourceChanged, 'emit');
+        const emitSpy = spyOn(stampComponent['stampSourceChanged'], 'emit');
         stampComponent.imageSource = 'hello.svg';
         stampComponent.emitImageSrc();
 
@@ -213,14 +216,14 @@ describe('SidebarStampComponent', () => {
     });
 
     it('emitZoomFactor should emit zoom factor', () => {
-        const emitSpy = spyOn(stampComponent.zoomFactorChanged, 'emit');
+        const emitSpy = spyOn(stampComponent['zoomFactorChanged'], 'emit');
         stampComponent.zoomFactor = StampConstants.INIT_ZOOM_FACTOR;
         stampComponent.emitZoomFactor();
         expect(emitSpy).toHaveBeenCalled();
     });
 
     it('emitRotateAngle should emit rotating angle', () => {
-        const emitSpy = spyOn(stampComponent.rotationAngleChanged, 'emit');
+        const emitSpy = spyOn(stampComponent['rotationAngleChanged'], 'emit');
         stampComponent.rotationAngle = StampConstants.INIT_ROTATION_ANGLE;
         stampComponent.emitRotateAngle();
         expect(emitSpy).toHaveBeenCalled();

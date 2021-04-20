@@ -17,9 +17,9 @@ export class SidebarLineComponent implements OnInit {
     withJunction: boolean;
     junctionRadius: number | undefined;
 
-    @Output() toolSizeChanged: EventEmitter<number>;
-    @Output() withJunctionChanged: EventEmitter<boolean>;
-    @Output() junctionRadiusChanged: EventEmitter<number>;
+    @Output() private toolSizeChanged: EventEmitter<number>;
+    @Output() private withJunctionChanged: EventEmitter<boolean>;
+    @Output() private junctionRadiusChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.minLineWidth = LineConstants.MIN_LINE_WIDTH;

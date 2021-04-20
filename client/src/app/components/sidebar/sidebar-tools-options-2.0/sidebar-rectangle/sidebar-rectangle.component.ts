@@ -14,8 +14,8 @@ export class SidebarRectangleComponent implements OnInit {
     toolSize: number | undefined;
     fillMode: number | undefined;
 
-    @Output() toolSizeChanged: EventEmitter<number>;
-    @Output() fillModeChanged: EventEmitter<number>;
+    @Output() private toolSizeChanged: EventEmitter<number>;
+    @Output() private fillModeChanged: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.max = ShapeConstants.MAX_BORDER_WIDTH;

@@ -3,17 +3,17 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 import { DatabaseService } from '@app/services/database/database.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
 import { of, Subject } from 'rxjs';
 import { MainPageCarrouselComponent } from './main-page-carrousel.component';
 
 import SpyObj = jasmine.SpyObj;
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { DiscardChangesPopupComponent } from '@app/components/main-page/discard-changes-popup/discard-changes-popup.component';
 // tslint:disable: max-file-line-count
 // tslint:disable: no-string-literal
 describe('MainPageCarrouselComponent', () => {
@@ -95,20 +95,20 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('resetShowcasedDrawings should call getDrawingsByTag if tagsValue has more than one tag', () => {
-        component.tagsInSearch = ['test1', 'test2'];
+        component['tagsInSearch'] = ['test1', 'test2'];
         component['resetShowcasedDrawings']();
-        expect(databaseServiceSpy.getDrawingsByTags).toHaveBeenCalledWith(component.tagsInSearch);
+        expect(databaseServiceSpy.getDrawingsByTags).toHaveBeenCalledWith(component['tagsInSearch']);
     });
 
     it('resetShowcasedDrawings should call getDrawings if tagsValue has no tags', () => {
-        component.tagsInSearch = [];
+        component['tagsInSearch'] = [];
         component['resetShowcasedDrawings']();
         expect(databaseServiceSpy.getDrawings).toHaveBeenCalled();
         expect(databaseServiceSpy.getDrawingsByTags).not.toHaveBeenCalled();
     });
 
     it('showcasePreviewDrawing should set drawing counter to previewDrawings.length -1 if drawingCounter currently at 0', () => {
-        component.drawingCounter = 0;
+        component['drawingCounter'] = 0;
         component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
@@ -127,13 +127,13 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '2' },
         ];
         component.showcasePreviousDrawing();
-        expect(component.drawingCounter).toEqual(EXPECTED_DRAWING_COUNTER);
+        expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
         expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
     it('showcasePreviewDrawing should set drawing counter to drawingCounter - 1 if drawingCounter not 0', () => {
         const TEST_START_DRAWING_COUNTER = 2;
-        component.drawingCounter = TEST_START_DRAWING_COUNTER;
+        component['drawingCounter'] = TEST_START_DRAWING_COUNTER;
         component.previewDrawings = [
             { image: '', name: '', id: '1' },
             { image: '', name: '', id: '2' },
@@ -152,7 +152,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
         component.showcasePreviousDrawing();
-        expect(component.drawingCounter).toEqual(EXPECTED_DRAWING_COUNTER);
+        expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
         expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
@@ -163,7 +163,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
             { image: '', name: '', id: '4' },
         ];
-        component.drawingCounter = component.previewDrawings.length - 1;
+        component['drawingCounter'] = component.previewDrawings.length - 1;
         component.showCasedDrawings = [
             { image: '', name: '', id: '4' },
             { image: '', name: '', id: '1' },
@@ -176,7 +176,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
         ];
         component.showcaseNextDrawing();
-        expect(component.drawingCounter).toEqual(EXPECTED_DRAWING_COUNTER);
+        expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
         expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
@@ -193,7 +193,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '3' },
         ];
         const START_DRAWING_COUNTER = 0; // smaller than previewDrawings.length - showCaasedDrawings.length
-        component.drawingCounter = START_DRAWING_COUNTER;
+        component['drawingCounter'] = START_DRAWING_COUNTER;
         const EXPECTED_DRAWING_COUNTER = 1;
         const EXPECTED_SHOWCASED_DRAWINGS = [
             { image: '', name: '', id: '2' },
@@ -201,7 +201,7 @@ describe('MainPageCarrouselComponent', () => {
             { image: '', name: '', id: '4' },
         ];
         component.showcaseNextDrawing();
-        expect(component.drawingCounter).toEqual(EXPECTED_DRAWING_COUNTER);
+        expect(component['drawingCounter']).toEqual(EXPECTED_DRAWING_COUNTER);
         expect(component.showCasedDrawings).toEqual(EXPECTED_SHOWCASED_DRAWINGS);
     });
 
@@ -214,7 +214,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         const input = document.createElement('input');
         const event = { value: 'test', input } as MatChipInputEvent;
-        const spyTagPushed = spyOn(component.tagsInSearch, 'push');
+        const spyTagPushed = spyOn(component['tagsInSearch'], 'push');
         component['checkIfTagExists']('test');
         component.addTag(event);
         expect(spyTagPushed).toHaveBeenCalled();
@@ -230,7 +230,7 @@ describe('MainPageCarrouselComponent', () => {
         ];
         const input = document.createElement('input');
         const event = { value: 'test', input } as MatChipInputEvent;
-        const spyTagPushed = spyOn(component.tagsInSearch, 'push');
+        const spyTagPushed = spyOn(component['tagsInSearch'], 'push');
         component['checkIfTagExists']('test');
         component.addTag(event);
         expect(spyTagPushed).not.toHaveBeenCalled();
@@ -240,14 +240,14 @@ describe('MainPageCarrouselComponent', () => {
     it('addTag should send error message', () => {
         const input = document.createElement('input');
         const event = { value: 'test', input } as MatChipInputEvent;
-        const spyTagPushed = spyOn(component.tagsInSearch, 'push');
+        const spyTagPushed = spyOn(component['tagsInSearch'], 'push');
         component.addTag(event);
         expect(spyTagPushed).not.toHaveBeenCalled();
         expect(component.tagErrorPresent).toEqual(true);
     });
 
     it('addTag should send error message if tag is already in search bar', () => {
-        component.tagsInSearch = ['test', 'test2'];
+        component['tagsInSearch'] = ['test', 'test2'];
         const input = document.createElement('input');
         const event = { value: 'test', input } as MatChipInputEvent;
         component['setErrorInTag']('Étiquette déjà incluse. Veuillez mettre une étiquette différente.');
@@ -259,7 +259,7 @@ describe('MainPageCarrouselComponent', () => {
     it('addTag should not add tag if tag is already in input', () => {
         const input = document.createElement('input');
         const event = { value: '', input } as MatChipInputEvent;
-        const spyTagPushed = spyOn(component.tagsInSearch, 'push');
+        const spyTagPushed = spyOn(component['tagsInSearch'], 'push');
         component.addTag(event);
         expect(spyTagPushed).not.toHaveBeenCalled();
         expect(component.tagErrorPresent).toEqual(false);
@@ -271,8 +271,8 @@ describe('MainPageCarrouselComponent', () => {
     });
 
     it('removeTag should not remove tag in index', () => {
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
-        component.tagsInSearch = ['test', 'test2', 'test3', 'test4'];
+        const spySplice = spyOn(component['tagsInSearch'], 'splice');
+        component['tagsInSearch'] = ['test', 'test2', 'test3', 'test4'];
         component.removeTag('test3');
         expect(spySplice).not.toHaveBeenCalled();
     });
@@ -284,8 +284,8 @@ describe('MainPageCarrouselComponent', () => {
                 body: '{"_id":"000000000000000000000000","title":"TEST","tags":["test1", "test2"]}',
             }),
         );
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
-        component.tagsInSearch = [];
+        const spySplice = spyOn(component['tagsInSearch'], 'splice');
+        component['tagsInSearch'] = [];
         component.removeTag('test3');
         expect(spySplice).not.toHaveBeenCalled();
     });
@@ -294,7 +294,6 @@ describe('MainPageCarrouselComponent', () => {
         const popSpy = spyOn(component.showCasedDrawings, 'pop');
         component.showCasedDrawings = [];
         component.showcasePreviousDrawing();
-        expect(component.noValidDrawing).toBeTrue();
         expect(popSpy).not.toHaveBeenCalled();
     });
 
@@ -337,11 +336,9 @@ describe('MainPageCarrouselComponent', () => {
 
     it('showCaseNextDrawing should not move to any drawing whatsoever if number of drawings in showcase is 0.', () => {
         component.showCasedDrawings = [];
-        component.noValidDrawing = false;
 
         component.showcaseNextDrawing();
 
-        expect(component.noValidDrawing).toBeTrue();
         expect(component.showCasedDrawings.length).toEqual(0);
     });
 
@@ -446,7 +443,6 @@ describe('MainPageCarrouselComponent', () => {
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
-        expect(component.imageNotInServer).toBeFalse();
         flush();
     }));
 
@@ -458,8 +454,6 @@ describe('MainPageCarrouselComponent', () => {
         component.deleteDrawing();
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
-        tick(TICK_TIME);
-        expect(component.imageNotInServer).toBeFalse();
         flush();
     }));
 
@@ -471,8 +465,8 @@ describe('MainPageCarrouselComponent', () => {
             }),
         );
         tick(TICK_TIME);
-        component.tagsInSearch = ['test1', 'test2', 'test3', 'test4'];
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
+        component['tagsInSearch'] = ['test1', 'test2', 'test3', 'test4'];
+        const spySplice = spyOn(component['tagsInSearch'], 'splice');
         component.removeTag('test3');
         tick(TICK_TIME);
         expect(spySplice).toHaveBeenCalled();
@@ -488,8 +482,8 @@ describe('MainPageCarrouselComponent', () => {
                 body: '',
             }),
         );
-        component.tagsInSearch = [];
-        const spySplice = spyOn(component.tagsInSearch, 'splice');
+        component['tagsInSearch'] = [];
+        const spySplice = spyOn(component['tagsInSearch'], 'splice');
         component.removeTag('test');
         tick(TICK_TIME);
         expect(spySplice).not.toHaveBeenCalled();

@@ -11,12 +11,10 @@ export class ColorPickerComponent implements OnInit {
     // Code provided by Lukas Marx (https://malcoded.com/posts/angular-color-picker/)
     primaryColor: Rgba;
     secondaryColor: Rgba;
-    savedColors: Rgba[];
     showPrimaryOptions: boolean;
     showSecondaryOptions: boolean;
 
     constructor(public colorService: ColorService) {
-        this.savedColors = new Array();
         this.showPrimaryOptions = false;
         this.showSecondaryOptions = false;
     }
@@ -27,9 +25,6 @@ export class ColorPickerComponent implements OnInit {
         });
         this.colorService.secondaryObservable.subscribe((color: Rgba) => {
             this.secondaryColor = color;
-        });
-        this.colorService.savedColorsObservable.subscribe((colors: Rgba[]) => {
-            this.savedColors = colors;
         });
     }
 

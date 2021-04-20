@@ -9,13 +9,12 @@ import { ColorService } from '@app/services/color/color.service';
     styleUrls: ['./color-history.component.scss'],
 })
 export class ColorHistoryComponent implements AfterViewInit, OnInit {
-    ctx: CanvasRenderingContext2D;
-    primary: Rgba;
-    secondary: Rgba;
-    @ViewChild('canvas', { static: true })
-    canvas: ElementRef<HTMLCanvasElement>;
+    private ctx: CanvasRenderingContext2D;
+    private primary: Rgba;
+    private secondary: Rgba;
+    @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 
-    savedColors: Rgba[];
+    private savedColors: Rgba[];
 
     constructor(public colorService: ColorService) {
         this.savedColors = new Array();

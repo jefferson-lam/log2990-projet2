@@ -4,10 +4,10 @@ import * as StampConstants from '@app/constants/stamp-constants';
 import { StampService } from '@app/services/tools/stamp/stamp-service';
 
 export class StampCommand extends Command {
-    position: Vec2;
-    rotationAngle: number;
-    stamp: HTMLImageElement;
-    imageZoomFactor: number;
+    private position: Vec2;
+    private rotationAngle: number;
+    private stamp: HTMLImageElement;
+    private imageZoomFactor: number;
 
     constructor(canvasContext: CanvasRenderingContext2D, stampService: StampService) {
         super();

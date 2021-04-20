@@ -6,16 +6,16 @@ import * as ToolConstants from '@app/constants/tool-constants';
 import { PolygoneService } from '@app/services/tools/polygone/polygone-service';
 
 export class PolygoneCommand extends Command {
-    numberSides: number;
-    lineWidth: number;
-    fillMode: ToolConstants.FillMode;
-    primaryColor: string;
-    secondaryColor: string;
-    borderColor: string;
-    cornerCoords: Vec2[];
+    private numberSides: number;
+    private lineWidth: number;
+    private fillMode: ToolConstants.FillMode;
+    private primaryColor: string;
+    private secondaryColor: string;
+    private borderColor: string;
+    private cornerCoords: Vec2[] = [];
 
-    centerPosition: Vec2;
-    radiusWithin: number;
+    private centerPosition: Vec2;
+    private radiusWithin: number;
 
     constructor(canvasContext: CanvasRenderingContext2D, polygoneService: PolygoneService) {
         super();

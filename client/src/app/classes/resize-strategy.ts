@@ -8,8 +8,8 @@ import { SelectionComponent } from '@app/components/selection/selection.componen
 })
 export class ResizeStrategy {
     selectionComponent: SelectionComponent;
-    lastWidth: number;
-    lastHeight: number;
+    protected lastWidth: number;
+    protected lastHeight: number;
 
     assignComponent(component: SelectionComponent): void {
         this.selectionComponent = component;

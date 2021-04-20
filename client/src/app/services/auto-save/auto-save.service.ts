@@ -14,7 +14,7 @@ export class AutoSaveService {
         });
     }
 
-    autoSaveDrawing(): void {
+    private autoSaveDrawing(): void {
         if (this.drawingService.canvas) {
             localStorage.setItem('autosave', this.drawingService.canvas.toDataURL('image/png'));
         }

@@ -13,6 +13,7 @@ import { KeyboardListenerDirective } from './keyboard-listener.directive';
 
 class ToolStub extends Tool {}
 
+// tslint:disable: no-string-literal
 describe('KeyboardListenerDirective', () => {
     let toolManager: ToolManagerService;
     let drawingService: DrawingService;
@@ -53,24 +54,25 @@ describe('KeyboardListenerDirective', () => {
 
     it('directives currenttool should change to Rectangle if toolManagers subject changes', () => {
         toolManager.currentToolSubject.next(rectangleSelectionService);
-        expect(directive.currentTool).toBeInstanceOf(RectangleSelectionService);
-        expect(directive.currentTool).toEqual(rectangleSelectionService);
+        expect(directive['currentTool']).toBeInstanceOf(RectangleSelectionService);
+        expect(directive['currentTool']).toEqual(rectangleSelectionService);
     });
 
     it('directives currenttool should change to Ellipse if toolManagers subject changes', () => {
         toolManager.currentToolSubject.next(ellipseSelectionService);
-        expect(directive.currentTool).toBeInstanceOf(EllipseSelectionService);
-        expect(directive.currentTool).toEqual(ellipseSelectionService);
+        expect(directive['currentTool']).toBeInstanceOf(EllipseSelectionService);
+        expect(directive['currentTool']).toEqual(ellipseSelectionService);
     });
 
     it('directives currenttool should not change if tool is not of type ToolSelectionService', () => {
         toolManager.currentToolSubject.next(toolStub);
-        expect(directive.currentTool).toBeUndefined();
+        expect(directive['currentTool']).toBeUndefined();
     });
 
     it("should call select tool when 'Escape' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'Escape' });
-        directive.currentTool = rectangleSelectionService;
+
+        directive['currentTool'] = rectangleSelectionService;
         directive.onEscapeDown(eventSpy);
         expect(keyboardDownEventSpy).toHaveBeenCalled();
         expect(keyboardDownEventSpy).toHaveBeenCalledWith(eventSpy);
@@ -78,7 +80,7 @@ describe('KeyboardListenerDirective', () => {
 
     it("should call select tool when 'Escape' key is up", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'Escape' });
-        directive.currentTool = rectangleSelectionService;
+        directive['currentTool'] = rectangleSelectionService;
         directive.onEscapeUp(eventSpy);
         expect(keyboardUpEventSpy).toHaveBeenCalled();
         expect(keyboardUpEventSpy).toHaveBeenCalledWith(eventSpy);

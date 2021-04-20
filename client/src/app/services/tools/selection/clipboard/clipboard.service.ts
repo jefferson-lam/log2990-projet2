@@ -16,12 +16,12 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class ClipboardService {
-    outlineClipboard: ImageData;
-    clipboard: ImageData;
-    currentTool: RectangleSelectionService | EllipseSelectionService | LassoSelectionService;
-    lastSelectionTool: string;
+    private outlineClipboard: ImageData;
+    private clipboard: ImageData;
+    private currentTool: RectangleSelectionService | EllipseSelectionService | LassoSelectionService;
+    private lastSelectionTool: string;
     pathData: Vec2[];
-    isPasted: boolean;
+    private isPasted: boolean;
     isCircle: boolean;
     selectionHeight: number;
     selectionWidth: number;

@@ -95,14 +95,14 @@ describe('SaveDrawingComponent', () => {
 
     it('verifyTagsValid should set isSavePossible to true if areTagsValid is already true', () => {
         const TAGS_ARE_VALID = true;
-        component.isTitleValid = true;
+        component['isTitleValid'] = true;
         component.verifyTagsValid(TAGS_ARE_VALID);
         expect(component.isSavePossible).toBeTrue();
     });
 
     it('verifyTagsValid should set isSavePossible to false if areTagsValid is already false', () => {
         const TAGS_ARE_VALID = true;
-        component.isTitleValid = false;
+        component['isTitleValid'] = false;
         component.verifyTagsValid(TAGS_ARE_VALID);
         expect(component.isSavePossible).toBeFalse();
     });

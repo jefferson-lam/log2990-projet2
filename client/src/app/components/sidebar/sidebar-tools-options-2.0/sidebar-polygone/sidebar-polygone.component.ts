@@ -18,9 +18,9 @@ export class SidebarPolygoneComponent implements OnInit {
     polygoneSidesCount: number;
     fillMode: number | undefined;
 
-    @Output() toolSizeChanged: EventEmitter<number>;
-    @Output() fillModeChanged: EventEmitter<number>;
-    @Output() numberOfPolySides: EventEmitter<number>;
+    @Output() private toolSizeChanged: EventEmitter<number>;
+    @Output() private fillModeChanged: EventEmitter<number>;
+    @Output() private numberOfPolySides: EventEmitter<number>;
 
     constructor(public settingsManager: SettingsManagerService) {
         this.max = ShapeConstants.MAX_BORDER_WIDTH;

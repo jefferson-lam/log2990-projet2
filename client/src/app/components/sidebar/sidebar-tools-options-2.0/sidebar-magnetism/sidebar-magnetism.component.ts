@@ -9,13 +9,13 @@ import { MagnetismService } from '@app/services/magnetism/magnetism.service';
     styleUrls: ['./sidebar-magnetism.component.scss'],
 })
 export class SidebarMagnetismComponent implements OnInit {
-    @ViewChild('toggleMagnetism') magnetismToggle: MatSlideToggle;
+    @ViewChild('toggleMagnetism') private magnetismToggle: MatSlideToggle;
 
     isMagnetismOn: boolean;
     MAGNETISM_CORNERS: typeof MagnestismConstants.MagnetizedPoint;
 
-    @Output() magnetismValueChanged: EventEmitter<boolean>;
-    @Output() magnetizedPointChanged: EventEmitter<MagnestismConstants.MagnetizedPoint>;
+    @Output() private magnetismValueChanged: EventEmitter<boolean>;
+    @Output() private magnetizedPointChanged: EventEmitter<MagnestismConstants.MagnetizedPoint>;
 
     constructor(public magnetismService: MagnetismService) {
         this.magnetismValueChanged = new EventEmitter();

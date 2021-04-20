@@ -13,11 +13,11 @@ export class RgbSelectorComponent implements OnChanges {
     blue: number;
     invalidInput: boolean;
 
-    @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
-    @ViewChild('greenInput', { static: false }) greenInput: ElementRef<HTMLInputElement>;
-    @ViewChild('blueInput', { static: false }) blueInput: ElementRef<HTMLInputElement>;
+    @ViewChild('redInput', { static: false }) private redInput: ElementRef<HTMLInputElement>;
+    @ViewChild('greenInput', { static: false }) private greenInput: ElementRef<HTMLInputElement>;
+    @ViewChild('blueInput', { static: false }) private blueInput: ElementRef<HTMLInputElement>;
 
-    @Input() initialColor: Rgba;
+    @Input() private initialColor: Rgba;
 
     @Output() newColor: EventEmitter<Rgba>;
 

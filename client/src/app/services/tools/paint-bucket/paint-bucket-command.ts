@@ -8,12 +8,12 @@ import { PaintBucketService } from './paint-bucket-service';
 // tslint:disable:no-bitwise
 // tslint:disable:cyclomatic-complexity
 export class PaintBucketCommand extends Command {
-    primaryColorRgba: Rgba;
+    private primaryColorRgba: Rgba;
     primaryColor: string;
-    toleranceValue: number;
-    startX: number;
-    startY: number;
-    mouseButtonClicked: MouseButton;
+    private toleranceValue: number;
+    private startX: number;
+    private startY: number;
+    private mouseButtonClicked: MouseButton;
 
     constructor(canvasContext: CanvasRenderingContext2D, paintBucketService: PaintBucketService) {
         super();
@@ -41,7 +41,7 @@ export class PaintBucketCommand extends Command {
         }
     }
 
-    fill(ctx: CanvasRenderingContext2D): void {
+    private fill(ctx: CanvasRenderingContext2D): void {
         const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
         const pixelData: PixelData = {
             width: imageData.width,
@@ -68,7 +68,7 @@ export class PaintBucketCommand extends Command {
     // Referenced from:
     // https://stackoverflow.com/questions/65359146/canvas-floodfill-leaves-white-pixels-at-edges-for-png-images-with-transparent
     // Uses the span-fill flood fill algorithm.
-    floodFill(ctx: CanvasRenderingContext2D): void {
+    private floodFill(ctx: CanvasRenderingContext2D): void {
         let pixelPosition;
         let distance;
         let leftEdge = false;
@@ -151,17 +151,17 @@ export class PaintBucketCommand extends Command {
         ctx.putImageData(imageData, 0, 0);
     }
 
-    normaliseTolerance(toleranceValue: number, normalisationFactor: number): number {
+    private normaliseTolerance(toleranceValue: number, normalisationFactor: number): number {
         const normalisedTolerance = Math.sqrt(toleranceValue * toleranceValue * normalisationFactor);
         return normalisedTolerance;
     }
 
-    rgba2number(fillColor: Rgba): number {
+    private rgba2number(fillColor: Rgba): number {
         return (fillColor.alpha << BIT_24) + (fillColor.blue << BIT_16) + (fillColor.green << BIT_8) + fillColor.red;
     }
 
     // This number is stored in #AABBGGRR format, hence the shifting.
-    number2rgba(color: number): Rgba {
+    private number2rgba(color: number): Rgba {
         const rgba = {
             red: color & MAX_RGB_VALUE,
             green: (color >> BIT_8) & MAX_RGB_VALUE,
@@ -171,7 +171,7 @@ export class PaintBucketCommand extends Command {
         return rgba;
     }
 
-    calculateColorDistance(currentColor: Rgba, fillColor: Rgba): number {
+    private calculateColorDistance(currentColor: Rgba, fillColor: Rgba): number {
         const R = currentColor.red - fillColor.red;
         const G = currentColor.green - fillColor.green;
         const B = currentColor.blue - fillColor.blue;

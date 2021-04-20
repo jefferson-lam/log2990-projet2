@@ -4,6 +4,8 @@ import * as PipetteConstants from '@app/constants/pipette-constants';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 import { SidebarPipetteComponent } from './sidebar-pipette.component';
 
+// tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('SidebarPipetteComponent', () => {
     let component: SidebarPipetteComponent;
     let fixture: ComponentFixture<SidebarPipetteComponent>;
@@ -28,20 +30,20 @@ describe('SidebarPipetteComponent', () => {
     });
 
     it('ngOnInit should call drawPreview()', () => {
-        const drawPreviewSpy = spyOn(component, 'drawPreview');
+        const drawPreviewSpy = spyOn<any>(component, 'drawPreview');
         component.ngOnInit();
         expect(drawPreviewSpy).toHaveBeenCalled();
     });
 
     it('drawPreview should call clearRect()', () => {
-        const clearRectSpy = spyOn(component.ctx, 'clearRect');
-        component.drawPreview();
+        const clearRectSpy = spyOn(component['ctx'], 'clearRect');
+        component['drawPreview']();
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
     it('drawPreview should call clearRect()', () => {
-        const clearRectSpy = spyOn(component.ctx, 'clearRect');
-        component.drawPreview();
+        const clearRectSpy = spyOn(component['ctx'], 'clearRect');
+        component['drawPreview']();
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
@@ -52,13 +54,13 @@ describe('SidebarPipetteComponent', () => {
             arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
         }
         const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-        component.ctx.putImageData(pixelData, 0, 0);
+        component['ctx'].putImageData(pixelData, 0, 0);
 
-        const clipSpy = spyOn(component, 'clipPreview');
-        const zoomSpy = spyOn(component, 'zoomPreview');
-        const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
-        const previewStrokeSpy = spyOn(component, 'previewStroke');
-        component.drawPreview();
+        const clipSpy = spyOn<any>(component, 'clipPreview');
+        const zoomSpy = spyOn<any>(component, 'zoomPreview');
+        const centerPixelStrokeSpy = spyOn<any>(component, 'centerPixelStroke');
+        const previewStrokeSpy = spyOn<any>(component, 'previewStroke');
+        component['drawPreview']();
         expect(clipSpy).toHaveBeenCalled();
         expect(zoomSpy).toHaveBeenCalled();
         expect(centerPixelStrokeSpy).toHaveBeenCalled();
@@ -68,13 +70,13 @@ describe('SidebarPipetteComponent', () => {
     it('drawPreview should not call canvas functions if inBound is false', () => {
         component.inBound = false;
         const pixelData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-        component.ctx.putImageData(pixelData, 0, 0);
+        component['ctx'].putImageData(pixelData, 0, 0);
 
-        const clipSpy = spyOn(component, 'clipPreview');
-        const zoomSpy = spyOn(component, 'zoomPreview');
-        const centerPixelStrokeSpy = spyOn(component, 'centerPixelStroke');
-        const previewStrokeSpy = spyOn(component, 'previewStroke');
-        component.drawPreview();
+        const clipSpy = spyOn<any>(component, 'clipPreview');
+        const zoomSpy = spyOn<any>(component, 'zoomPreview');
+        const centerPixelStrokeSpy = spyOn<any>(component, 'centerPixelStroke');
+        const previewStrokeSpy = spyOn<any>(component, 'previewStroke');
+        component['drawPreview']();
         expect(clipSpy).not.toHaveBeenCalled();
         expect(zoomSpy).not.toHaveBeenCalled();
         expect(centerPixelStrokeSpy).not.toHaveBeenCalled();
@@ -88,10 +90,10 @@ describe('SidebarPipetteComponent', () => {
             arrayData[i] = PipetteConstants.NON_TRANSPARENT_FF;
         }
         const pixelData = new ImageData(arrayData, PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-        component.rawData = pixelData;
+        component['rawData'] = pixelData;
 
-        const putImageDataSpy = spyOn(component.ctx, 'putImageData');
-        component.drawPreview();
+        const putImageDataSpy = spyOn(component['ctx'], 'putImageData');
+        component['drawPreview']();
         expect(putImageDataSpy).toHaveBeenCalled();
     });
 
@@ -99,19 +101,19 @@ describe('SidebarPipetteComponent', () => {
         component.inBound = false;
         const arrayData = new Uint8ClampedArray([0, 0, 0, 0]);
         const pixelData = new ImageData(arrayData, 1, 1);
-        pipetteService.previewData = pixelData;
+        pipetteService['previewData'] = pixelData;
 
-        const putImageDataSpy = spyOn(component.ctx, 'putImageData');
-        component.drawPreview();
+        const putImageDataSpy = spyOn(component['ctx'], 'putImageData');
+        component['drawPreview']();
         expect(putImageDataSpy).not.toHaveBeenCalled();
     });
 
     it('clipPreview should call canvas functions', () => {
-        const beginPathSpy = spyOn(component.ctx, 'beginPath');
-        const arcSpy = spyOn(component.ctx, 'arc');
-        const clipSpy = spyOn(component.ctx, 'clip');
-        const closePathSpy = spyOn(component.ctx, 'closePath');
-        component.clipPreview();
+        const beginPathSpy = spyOn(component['ctx'], 'beginPath');
+        const arcSpy = spyOn(component['ctx'], 'arc');
+        const clipSpy = spyOn(component['ctx'], 'clip');
+        const closePathSpy = spyOn(component['ctx'], 'closePath');
+        component['clipPreview']();
         expect(beginPathSpy).toHaveBeenCalled();
         expect(arcSpy).toHaveBeenCalled();
         expect(clipSpy).toHaveBeenCalled();
@@ -119,23 +121,23 @@ describe('SidebarPipetteComponent', () => {
     });
 
     it('zoomPreview should call drawImage()', () => {
-        const drawImageSpy = spyOn(component.ctx, 'drawImage');
-        component.zoomPreview();
+        const drawImageSpy = spyOn(component['ctx'], 'drawImage');
+        component['zoomPreview']();
         expect(drawImageSpy).toHaveBeenCalled();
     });
 
     it('centerPixelStroke should call strokeRect()', () => {
-        const strokeRectSpy = spyOn(component.ctx, 'strokeRect');
-        component.centerPixelStroke();
+        const strokeRectSpy = spyOn(component['ctx'], 'strokeRect');
+        component['centerPixelStroke']();
         expect(strokeRectSpy).toHaveBeenCalled();
     });
 
     it('previewStroke should call canvas functions', () => {
-        const beginPathSpy = spyOn(component.ctx, 'beginPath');
-        const arcSpy = spyOn(component.ctx, 'arc');
-        const strokeSpy = spyOn(component.ctx, 'stroke');
-        const closePathSpy = spyOn(component.ctx, 'closePath');
-        component.previewStroke();
+        const beginPathSpy = spyOn(component['ctx'], 'beginPath');
+        const arcSpy = spyOn(component['ctx'], 'arc');
+        const strokeSpy = spyOn(component['ctx'], 'stroke');
+        const closePathSpy = spyOn(component['ctx'], 'closePath');
+        component['previewStroke']();
         expect(beginPathSpy).toHaveBeenCalled();
         expect(arcSpy).toHaveBeenCalled();
         expect(strokeSpy).toHaveBeenCalled();

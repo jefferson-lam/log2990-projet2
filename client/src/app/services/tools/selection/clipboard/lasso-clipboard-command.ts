@@ -3,14 +3,14 @@ import { Vec2 } from '@app/classes/vec2';
 import { ClipboardService } from '@app/services/tools/selection/clipboard/clipboard.service';
 
 export class LassoClipboardCommand extends Command {
-    pathData: Vec2[];
+    private pathData: Vec2[];
 
     constructor(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService) {
         super();
         this.setValues(canvasContext, clipboardService);
     }
 
-    setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
+    private setValues(canvasContext: CanvasRenderingContext2D, clipboardService: ClipboardService): void {
         this.ctx = canvasContext;
         this.pathData = Object.assign([], clipboardService.pathData);
     }

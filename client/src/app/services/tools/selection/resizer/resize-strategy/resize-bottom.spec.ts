@@ -6,6 +6,7 @@ import { SelectionComponent } from '@app/components/selection/selection.componen
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { ResizeBottom } from './resize-bottom';
 
+// tslint:disable: no-string-literal
 describe('ResizeHeightService', () => {
     let service: ResizeBottom;
     let moveEvent: CdkDragMove;
@@ -26,7 +27,7 @@ describe('ResizeHeightService', () => {
         } as SelectionComponent;
         service.selectionComponent.previewSelectionCanvas.height = CanvasConstants.DEFAULT_HEIGHT;
         service.selectionComponent.previewSelectionCanvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
-        service.lastHeight = CanvasConstants.DEFAULT_HEIGHT + 1;
+        service['lastHeight'] = CanvasConstants.DEFAULT_HEIGHT + 1;
 
         service.selectionComponent.initialPosition = {
             x: 10,
@@ -53,7 +54,7 @@ describe('ResizeHeightService', () => {
     it('resize should set lastHeight to current height', () => {
         service.selectionComponent.previewSelectionCanvas.height = 2;
         service.resize(moveEvent);
-        expect(service.lastHeight).toBe(service.selectionComponent.previewSelectionCanvas.height);
+        expect(service['lastHeight']).toBe(service.selectionComponent.previewSelectionCanvas.height);
         expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
         expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
     });
@@ -83,7 +84,7 @@ describe('ResizeHeightService', () => {
     it('resizeHeight should set lastHeight to calculated height and call resizeSquare', () => {
         service.selectionComponent.previewSelectionCanvas.height = 2;
         service.resizeHeight(moveEvent, reference);
-        expect(service.lastHeight).toBe(Math.abs(moveEvent.pointerPosition.y - reference.y));
+        expect(service['lastHeight']).toBe(Math.abs(moveEvent.pointerPosition.y - reference.y));
         expect(resizeSquareSpy).toHaveBeenCalled();
         expect(resizeSquareSpy).toHaveBeenCalledWith(false, moveEvent.pointerPosition.y);
         expect(service.selectionComponent.borderCanvas.style.top).toEqual(service.selectionComponent.previewSelectionCanvas.style.top);
@@ -154,13 +155,13 @@ describe('ResizeHeightService', () => {
 
     it('restoreLastDimensions should set height to lastHeight', () => {
         service.restoreLastDimensions();
-        expect(service.selectionComponent.previewSelectionCanvas.height).toBe(service.lastHeight);
+        expect(service.selectionComponent.previewSelectionCanvas.height).toBe(service['lastHeight']);
         expect(service.selectionComponent.borderCanvas.height).toEqual(service.selectionComponent.previewSelectionCanvas.height);
     });
 
     it('restoreLastDimensions should set style.top if style.top over initial top', () => {
         service.selectionComponent.previewSelectionCanvas.style.top = service.selectionComponent.initialPosition.y - 1 + 'px';
-        const difference = service.selectionComponent.previewSelectionCanvas.height - service.lastHeight;
+        const difference = service.selectionComponent.previewSelectionCanvas.height - service['lastHeight'];
         const expectedTop = parseInt(service.selectionComponent.previewSelectionCanvas.style.top, 10) + difference + 'px';
         service.restoreLastDimensions();
         expect(service.selectionComponent.previewSelectionCanvas.style.top).toBe(expectedTop);
