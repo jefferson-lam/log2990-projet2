@@ -161,39 +161,14 @@ describe('RectangleCommand', () => {
         command.setValues(baseCtxStub, rectangleService);
         command.execute();
 
-        testCtx.beginPath();
-        testCtx.lineJoin = 'miter';
-        testCtx.rect(START_X, START_Y, TEST_X_OFFSET, TEST_Y_OFFSET);
-        testCtx.strokeStyle = TEST_SECONDARY_COLOR;
-        testCtx.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
-        testCtx.stroke();
-        testCtx.fillStyle = TEST_SECONDARY_COLOR;
-        testCtx.fill();
-
-        const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
-        const testData: ImageData = testCtx.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
-        for (let i = 0; i < imageData.data.length; i++) {
-            expect(imageData.data[i]).toEqual(testData.data[i]);
-        }
+        expect(drawRectangleTypeSpy).toHaveBeenCalledWith(baseCtxStub, command['cornerCoords']);
     });
 
-    it('drawRectangle should fill only border with line width between start and end on FillMode.OUTLINE.', () => {
-        rectangleService.fillMode = ToolConstants.FillMode.OUTLINE;
+    it('drawRectangle not call fill rect of base CTX if fill mode is OUTLINE.', () => {
+        command['fillMode'] = ToolConstants.FillMode.OUTLINE;
+        const spy = spyOn(baseCtxStub, 'fillRect');
+        command['drawTypeRectangle'](baseCtxStub, command['cornerCoords']);
 
-        command.setValues(baseCtxStub, rectangleService);
-        command.execute();
-
-        testCtx.beginPath();
-        testCtx.lineJoin = 'miter';
-        testCtx.strokeStyle = TEST_SECONDARY_COLOR;
-        testCtx.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
-        testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
-        testCtx.stroke();
-
-        const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
-        const testData: ImageData = testCtx.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
-        for (let i = 0; i < imageData.data.length; i++) {
-            expect(imageData.data[i]).toEqual(testData.data[i]);
-        }
+        expect(spy).not.toHaveBeenCalled();
     });
 });
