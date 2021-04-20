@@ -4,6 +4,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarEllipseComponent } from './sidebar-ellipse.component';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('SidebarEllipseComponent', () => {
     let component: SidebarEllipseComponent;
     let fixture: ComponentFixture<SidebarEllipseComponent>;
@@ -23,8 +24,8 @@ describe('SidebarEllipseComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        toolSizeChangedSubscribeSpy = spyOn(component.toolSizeChanged, 'subscribe');
-        fillModeChangedSubscribeSpy = spyOn(component.fillModeChanged, 'subscribe');
+        toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
+        fillModeChangedSubscribeSpy = spyOn(component['fillModeChanged'], 'subscribe');
     });
 
     it('should create', () => {
@@ -32,7 +33,7 @@ describe('SidebarEllipseComponent', () => {
     });
 
     it('emitToolSize should emit tool size', () => {
-        const emitSpy = spyOn(component.toolSizeChanged, 'emit');
+        const emitSpy = spyOn(component['toolSizeChanged'], 'emit');
         component.toolSize = 0;
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();
@@ -40,7 +41,7 @@ describe('SidebarEllipseComponent', () => {
 
     it('emitFillMode should emit fill mode', () => {
         const newFillMode = 1;
-        const emitSpy = spyOn(component.fillModeChanged, 'emit');
+        const emitSpy = spyOn(component['fillModeChanged'], 'emit');
         component.emitFillMode(newFillMode);
         expect(emitSpy).toHaveBeenCalled();
     });

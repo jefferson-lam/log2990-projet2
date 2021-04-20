@@ -1,9 +1,9 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ImageFormat } from '@app/classes/image-format';
-import { DiscardChangesPopupComponent } from '@app/components/main-page/main-page-carrousel/discard-changes-popup/discard-changes-popup.component';
 import * as CarouselConstants from '@app/constants/carousel-constants';
 import { DatabaseService } from '@app/services/database/database.service';
 import { LocalServerService } from '@app/services/local-server/local-server.service';
@@ -23,30 +23,42 @@ export class MainPageCarrouselComponent {
     @Input() newTagAdded: boolean;
     @Input() deleteDrawingTrue: boolean;
 
-    tagErrorPresent: boolean = false;
-    tagErrorMessage: string = '';
-    serverErrorMessage: string = '';
-    deleted: boolean = false;
-    noValidDrawing: boolean = false;
-    visible: boolean = true;
-    selectable: boolean = true;
-    removable: boolean = true;
-    deleteClick: boolean;
+    tagErrorPresent: boolean;
+    tagErrorMessage: string;
+    serverErrorMessage: string;
+    deleted: boolean;
+    noValidDrawing: boolean;
+    selectable: boolean;
+    removable: boolean;
     drawingLoading: boolean;
     imageNotInServer: boolean;
 
-    separatorKeysCodes: number[] = [ENTER, COMMA];
-    allTags: string[] = [''];
-    tagsInSearch: string[] = [];
+    separatorKeysCodes: number[];
+    tagsInSearch: string[];
 
-    drawingCounter: number = 0;
-    fetchedDrawingByTag: string[];
+    private drawingCounter: number;
     showCasedDrawings: ImageFormat[];
-    placeHolderDrawing: ImageFormat = new ImageFormat();
-    previewDrawings: ImageFormat[] = [];
+    previewDrawings: ImageFormat[];
 
-    constructor(private database: DatabaseService, private localServerService: LocalServerService, public dialog: MatDialog) {
+    constructor(
+        private database: DatabaseService,
+        private localServerService: LocalServerService,
+        private router: Router,
+        public matDialogRef: MatDialogRef<MainPageCarrouselComponent>,
+    ) {
+        this.tagErrorPresent = false;
+        this.tagErrorMessage = '';
+        this.serverErrorMessage = '';
+        this.deleted = false;
+        this.noValidDrawing = false;
+        this.selectable = true;
+        this.removable = true;
+        this.separatorKeysCodes = [ENTER, COMMA];
+        this.tagsInSearch = [];
+        this.drawingCounter = 0;
+        this.previewDrawings = [];
         this.resetShowcasedDrawings();
+        this.matDialogRef.disableClose = true;
     }
 
     addTag(event: MatChipInputEvent): void {
@@ -80,7 +92,6 @@ export class MainPageCarrouselComponent {
         this.resetShowcasedDrawings();
     }
 
-    @HostListener('keydown.ArrowLeft', ['$event'])
     showcasePreviousDrawing(): void {
         this.noValidDrawing = false;
         if (this.showCasedDrawings.length === 0) {
@@ -96,7 +107,7 @@ export class MainPageCarrouselComponent {
         this.showCasedDrawings.pop();
         this.showCasedDrawings.unshift(this.previewDrawings[this.drawingCounter]);
     }
-    @HostListener('keydown.ArrowRight', ['$event'])
+
     showcaseNextDrawing(): void {
         let newDrawingIndex: number;
         this.noValidDrawing = false;
@@ -150,12 +161,13 @@ export class MainPageCarrouselComponent {
         }
     }
 
-    openEditorWithDrawing(dataUrl: string): void {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.data = {
-            dataUrl,
-        };
-        this.dialog.open(DiscardChangesPopupComponent, dialogConfig);
+    openDrawing(dataUrl: string): void {
+        if (localStorage.getItem('autosave')) {
+            this.matDialogRef.close({ autosave: true, data: dataUrl });
+        } else {
+            localStorage.setItem('autosave', dataUrl);
+            this.router.navigate(['/', 'editor']);
+        }
     }
 
     private checkIfTagExists(tag: string): boolean {

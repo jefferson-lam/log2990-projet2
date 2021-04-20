@@ -1,6 +1,7 @@
 import { Directive, HostListener } from '@angular/core';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
+import { LassoSelectionService } from '@app/services/tools/selection/lasso/lasso-selection';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
 import { ToolSelectionService } from '@app/services/tools/selection/tool-selection-service';
 import { Subscription } from 'rxjs';
@@ -9,12 +10,16 @@ import { Subscription } from 'rxjs';
     selector: '[appKeyboardListener]',
 })
 export class KeyboardListenerDirective {
-    currentTool: ToolSelectionService;
+    private currentTool: ToolSelectionService;
     currentToolSubscriber: Subscription;
 
     constructor(public toolManager: ToolManagerService) {
         this.currentToolSubscriber = this.toolManager.currentToolSubject.asObservable().subscribe((currentTool) => {
-            if (currentTool instanceof RectangleSelectionService || currentTool instanceof EllipseSelectionService) {
+            if (
+                currentTool instanceof RectangleSelectionService ||
+                currentTool instanceof EllipseSelectionService ||
+                currentTool instanceof LassoSelectionService
+            ) {
                 this.currentTool = currentTool;
             }
         });

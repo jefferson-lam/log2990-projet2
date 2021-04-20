@@ -6,18 +6,22 @@ import * as LineConstants from '@app/constants/line-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineCommand } from '@app/services/tools/line/line-command';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class LineService extends Tool {
-    mousePosition: Vec2;
-    initialPoint: Vec2;
+    private mousePosition: Vec2;
+    private initialPoint: Vec2;
     linePathData: Vec2[];
+    addPointSubject: Subject<Vec2>;
+    currentPointSubject: Subject<Vec2>;
+    removePointSubject: Subject<boolean>;
 
-    previewCommand: LineCommand;
+    private previewCommand: LineCommand;
 
-    shiftDown: boolean;
+    private shiftDown: boolean;
 
     withJunction: boolean;
     junctionRadius: number;
@@ -27,16 +31,15 @@ export class LineService extends Tool {
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
         this.clearPath();
+        this.addPointSubject = new Subject<Vec2>();
+        this.currentPointSubject = new Subject<Vec2>();
+        this.removePointSubject = new Subject<boolean>();
         this.previewCommand = new LineCommand(drawingService.previewCtx, this);
         this.shiftDown = false;
         this.withJunction = false;
         this.junctionRadius = LineConstants.MIN_JUNCTION_RADIUS;
         this.lineWidth = LineConstants.MIN_LINE_WIDTH;
         this.primaryColor = LineConstants.DEFAULT_PRIMARY_COLOR;
-    }
-
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
     }
 
     setLineWidth(width: number): void {
@@ -47,23 +50,16 @@ export class LineService extends Tool {
         } else {
             this.lineWidth = width;
         }
-        if (this.lineWidth > this.junctionRadius) {
-            this.setJunctionRadius(this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR);
-        }
     }
 
     setJunctionRadius(junctionRadius: number): void {
-        if (junctionRadius < this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR || junctionRadius < LineConstants.MIN_JUNCTION_RADIUS) {
-            this.junctionRadius = this.lineWidth / LineConstants.MIN_JUNCTION_TO_LINE_FACTOR;
+        if (junctionRadius < LineConstants.MIN_JUNCTION_RADIUS) {
+            this.junctionRadius = LineConstants.MIN_JUNCTION_RADIUS;
         } else if (junctionRadius > LineConstants.MAX_JUNCTION_RADIUS) {
             this.junctionRadius = LineConstants.MAX_JUNCTION_RADIUS;
         } else {
             this.junctionRadius = junctionRadius;
         }
-    }
-
-    setWithJunction(hasJunction: boolean): void {
-        this.withJunction = hasJunction;
     }
 
     /**
@@ -100,8 +96,14 @@ export class LineService extends Tool {
                 this.inUse = false;
                 break;
             case 'Backspace':
+                const lastPoint = this.linePathData[this.linePathData.length - 2];
+                if (lastPoint === this.initialPoint && this.linePathData.length === 2) {
+                    return;
+                }
                 this.linePathData.pop();
-                this.finishLine();
+                this.removePointSubject.next(true);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawPreview();
                 break;
         }
     }
@@ -113,8 +115,10 @@ export class LineService extends Tool {
             this.initialPoint = this.getPositionFromMouse(event);
             this.linePathData[LineConstants.STARTING_POINT] = this.initialPoint;
             this.linePathData.push(this.initialPoint);
+            this.addPointSubject.next(this.initialPoint);
         } else {
             this.linePathData.push(this.linePathData[this.linePathData.length - 1]);
+            this.addPointSubject.next(this.linePathData[this.linePathData.length - 1]);
             this.drawPreview();
         }
     }
@@ -139,10 +143,11 @@ export class LineService extends Tool {
         } else {
             this.linePathData[this.linePathData.length - 1] = this.mousePosition;
         }
+        this.currentPointSubject.next(this.linePathData[this.linePathData.length - 1]);
         this.drawPreview();
     }
 
-    finishLine(): void {
+    private finishLine(): void {
         const command: Command = new LineCommand(this.drawingService.baseCtx, this);
         this.undoRedoService.executeCommand(command);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -151,7 +156,7 @@ export class LineService extends Tool {
         this.shiftDown = false;
     }
 
-    stickToClosest45Angle(): void {
+    private stickToClosest45Angle(): void {
         const angle = this.calculateAngle(this.linePathData[this.linePathData.length - 2], this.mousePosition);
         const finalAngle = this.roundAngleToNearestMultiple(angle, LineConstants.DEGREES_45);
         const finalLineCoord: Vec2 = this.calculateLengthAndFlatten(this.linePathData[this.linePathData.length - 2], this.mousePosition, finalAngle);
@@ -162,7 +167,7 @@ export class LineService extends Tool {
         );
     }
 
-    drawPreview(): void {
+    private drawPreview(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.previewCommand.setValues(this.drawingService.previewCtx, this);
         this.previewCommand.execute();
@@ -180,7 +185,7 @@ export class LineService extends Tool {
      * Case 90, 270:
      *     Distance in y plane needs to be equal to the y position of the mouse.
      */
-    calculateLengthAndFlatten(initialPoint: Vec2, mousePosition: Vec2, angle: number): Vec2 {
+    private calculateLengthAndFlatten(initialPoint: Vec2, mousePosition: Vec2, angle: number): Vec2 {
         let lineLength = 0;
         switch (angle) {
             case LineConstants.DEGREES_45:
@@ -207,7 +212,7 @@ export class LineService extends Tool {
 
     // Application of trigonometric laws to determine position of new point in the
     // angle defined by user relative to the initial point.
-    rotateLine(initialPoint: Vec2, currentPoint: Vec2, angle: number): Vec2 {
+    private rotateLine(initialPoint: Vec2, currentPoint: Vec2, angle: number): Vec2 {
         const radians = (Math.PI / LineConstants.DEGREES_180) * angle;
         return {
             x: Math.round(
@@ -220,13 +225,13 @@ export class LineService extends Tool {
     }
 
     // Application of pythagorean theorem to compute euclidean distance.
-    calculateDistance(initialPoint: Vec2, currentPoint: Vec2): number {
+    private calculateDistance(initialPoint: Vec2, currentPoint: Vec2): number {
         return Math.abs(Math.sqrt(Math.pow(currentPoint.x - initialPoint.x, 2) + Math.pow(currentPoint.y - initialPoint.y, 2)));
     }
 
     // Application of inverse tangent to compute the angle between two points.
     // Returns angle in degrees.
-    calculateAngle(initialPoint: Vec2, currentPoint: Vec2): number {
+    private calculateAngle(initialPoint: Vec2, currentPoint: Vec2): number {
         let angle = (Math.atan2(initialPoint.y - currentPoint.y, currentPoint.x - initialPoint.x) * LineConstants.DEGREES_180) / Math.PI;
         if (angle < LineConstants.DEGREES_0) {
             angle += LineConstants.DEGREES_360;
@@ -234,7 +239,7 @@ export class LineService extends Tool {
         return angle;
     }
 
-    roundAngleToNearestMultiple(angleBetweenTwoPoints: number, multiple: number): number {
+    private roundAngleToNearestMultiple(angleBetweenTwoPoints: number, multiple: number): number {
         // We add to the angle the multiple divided by two in order to make sure that when we
         // the nearest multiple can always be obtained by rounding down. We floor the result in order to
         // eliminate floating point numbers, and the include the edge case: 0 as an final angle.

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PencilConstants from '@app/constants/pencil-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -8,6 +9,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { PencilService } from './pencil-service';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('PencilService', () => {
     let service: PencilService;
     let mouseEvent: MouseEvent;
@@ -36,29 +38,24 @@ describe('PencilService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
-        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
+        setPreviewValuesSpy = spyOn(service['previewCommand'], 'setValues');
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 25,
             button: 0,
         } as MouseEvent;
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
-    });
-
-    it('setPrimaryColor should set primary color to wanted color', () => {
-        const EXPECTED_COLOR_RANDOM = 'blue';
-        service.setPrimaryColor(EXPECTED_COLOR_RANDOM);
-        expect(service.primaryColor).toEqual(EXPECTED_COLOR_RANDOM);
     });
 
     it('setLineWidth should set size to MIN_SIZE_PENCIL if under MIN_SIZE_PENCIL', () => {
@@ -90,8 +87,8 @@ describe('PencilService', () => {
 
     it('mouseDown should set inUse property to false on right click', () => {
         const mouseEventRClick = {
-            offsetX: 25,
-            offsetY: 25,
+            x: 25,
+            y: 25,
             button: MouseConstants.MouseButton.Right,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
@@ -165,9 +162,9 @@ describe('PencilService', () => {
 
     // Exemple de test d'intégration qui est quand même utile
     it('should change the pixel of the canvas ', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { x: CanvasConstants.LEFT_MARGIN, y: 0, button: 0 } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { x: 1 + CanvasConstants.LEFT_MARGIN, y: 0, button: 0 } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         // Premier pixel seulement

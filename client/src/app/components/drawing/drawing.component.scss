@@ -16,6 +16,12 @@ canvas {
     z-index: 1;
 }
 
+#gridLayer {
+    z-index: 14;
+    pointer-events: none;
+}
+
 #canvas-container {
     position: relative;
 }
+

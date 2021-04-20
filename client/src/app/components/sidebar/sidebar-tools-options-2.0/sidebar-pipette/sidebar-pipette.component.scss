@@ -4,21 +4,14 @@
 #settings-container {
     color: #eee;
     margin-left: 10px;
+    overflow-x: hidden;
 }
 #title {
     font-weight: bolder;
     font-size: x-large;
     color: #eee;
-}
-#width-setting {
-    display: block;
-    margin-top: 10px;
-}
-#pipettePreview {
-    width: 220px;
-    height: 220px;
-    margin-left: -10px;
+    margin-left: 10px;
 }
 #colorPicker {
-    margin-left: -20px;
+    margin-left: -10px;
 }

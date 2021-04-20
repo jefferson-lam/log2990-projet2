@@ -3,6 +3,7 @@
     flex-direction: column;
     display: flex;
     height: 100%;
+    outline: none;
 }
 
 #galleryPreview {
@@ -11,26 +12,31 @@
 }
 
 #deleteButton {
-    background-color: #6c5b7b;
-    color: white;
     text-align: center;
     font-family: 'Rubik', serif;
     z-index: 100;
+    align-content: center;
+    font-size: large;
+    background-color: coral;
+    margin: auto;
+    width: 210px;
 }
 
 #exitButton {
-    background-color: #f88b86;
-    margin-left: auto;
     text-align: center;
-    bottom: 0;
-    color: white;
     font-family: 'Rubik', serif;
+    z-index: 100;
+    align-content: center;
+    font-size: large;
+    background-color: coral;
+    margin: auto;
+    width: 210px;
 }
 
 #exitButton:hover,
 #deleteButton:hover {
-    color: black;
-    background-color: slategrey;
+    color: beige;
+    background-color: #0c3164;
 }
 
 #acceptTag {

@@ -1,0 +1,68 @@
+* {
+  font-family: 'Rubik', serif;
+}
+
+.newTitle {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-self: center;
+  font-size: 22px;
+  font-family: Rubik, serif;
+  padding-bottom: 15px;
+}
+
+#closeButton {
+  left: 22%;
+  align-content: center;
+  font-size: large;
+  background-color: coral;
+  margin-bottom: 20px;
+  width: 125px;
+}
+
+#closeButton:hover{
+  color: beige;
+  background-color: #0c3164;
+}
+
+.modal-dialog {
+  width: 500px;
+  height: auto;
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
+  overflow: hidden;
+}
+
+.mat-dialog-title {
+  text-align: center;
+  font-family: 'Rubik', serif;
+}
+
+.toolInfo{
+  padding-bottom: 20px;
+}
+
+#creditTag{
+  font-style: italic;
+  font-size: xx-small;
+}
+
+.spacerSubTitle{
+  padding-top: 10px;
+}
+
+.spacerFunctions{
+  padding-top: 10px;
+  color: #4682b4;
+  padding-left: 20px;
+}
+
+a{
+  outline: white;
+  text-decoration: white;
+  padding-top: 20px;
+}
+
+

@@ -1,0 +1,42 @@
+* {
+    font-family: 'Rubik', serif;
+}
+
+#settingsContainer {
+    color: #eee;
+    margin-left: 10px;
+    overflow-x: hidden;
+}
+
+#title {
+    font-weight: bolder;
+    font-size: x-large;
+}
+
+#settingsWrapper {
+    margin-left: 10px;
+}
+
+#imagesContainer {
+    flex-direction: column-reverse;
+    margin-top: 10px;
+    height: 100%;
+}
+
+.image {
+    border-radius: 25px;
+}
+
+.image:hover {
+    background-color: floralwhite;
+    border: 2px dashed floralwhite;
+}
+
+.image:active {
+    background-color: #4682b4;
+    border: 2px dashed floralwhite;
+}
+
+#colorPicker {
+    margin-left: -20px;
+}

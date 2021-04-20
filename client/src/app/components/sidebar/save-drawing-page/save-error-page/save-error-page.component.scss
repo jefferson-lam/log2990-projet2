@@ -1,9 +1,23 @@
-#saveErrorDiv {
-    text-align: center;
+#wrapper {
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
 }
 
 #errorDivHeader {
-    margin: auto;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-self: center;
+    font-size: x-large;
+    padding-bottom: 25px;
+    font-family: Rubik, serif;
+}
+
+#saveErrorDiv {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 #errorDiv {
@@ -22,15 +36,30 @@
 #reason {
     color: red;
     font-size: 15px;
+    display: flex;
+    justify-content: center;
+    font-family: Rubik, serif;
 }
 
 #buttonDiv {
     display: flex;
     justify-content: center;
+    margin-top: 50px;
 }
 
-button {
+#closebutton {
+    align-content: center;
     font-size: large;
     background-color: coral;
     width: 125px;
 }
+
+#closebutton:hover {
+    color: beige;
+    background-color: #0c3164;
+}
+
+.mat-button{
+  font-family: Rubik, serif;
+}
+

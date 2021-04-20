@@ -1,3 +1,4 @@
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -13,20 +14,30 @@ export abstract class Tool {
     secondaryColor?: string;
     junctionRadius?: number;
     withJunction?: boolean;
+    numberSides?: number;
+    waterDropWidth?: number;
+    emissionCount?: number;
     mouseDownCoord: Vec2;
-    mouseDown: boolean = false;
-    inUse: boolean = false;
+    mouseDown: boolean;
+    inUse: boolean;
     name: string;
+    scroll: Vec2;
+    imageSource: string;
+    imageZoomFactor: number;
 
-    constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {}
+    constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService) {
+        this.inUse = false;
+        this.mouseDown = false;
+        this.scroll = { x: 0, y: 0 };
+    }
 
     onKeyboardDown(event: KeyboardEvent): void {}
 
     onKeyboardUp(event: KeyboardEvent): void {}
 
-    onKeyboardPress(event: KeyboardEvent): void {}
+    onEscapeKeyDown(): void {}
 
-    onMouseClick(event: MouseEvent): void {}
+    onMouseClick(): void {}
 
     onMouseDoubleClick(event: MouseEvent): void {}
 
@@ -40,29 +51,37 @@ export abstract class Tool {
 
     onMouseEnter(event: MouseEvent): void {}
 
-    onToolEnter(mousePosition: Vec2): void {}
+    onMouseWheel(event: WheelEvent): void {}
+
+    onToolEnter(): void {}
 
     onToolChange(): void {}
 
     setLineWidth(width: number): void {}
 
-    setFillMode(newFillMode: ToolConstants.FillMode): void {}
-
     setJunctionRadius(newJunctionRadius: number): void {}
 
-    setWithJunction(hasJunction: boolean): void {}
+    setToleranceValue(newToleranceValue: number): void {}
 
-    setPrimaryColor(primaryColor: string): void {}
+    setFontFamily(fontFamily: string): void {}
 
-    setSecondaryColor(secondaryColor: string): void {}
+    setFontSize(fontSize: number): void {}
 
-    setSidesCount(newSidesCount: number): void {}
+    setTextAlign(textAlign: string): void {}
 
-    setWaterDropWidth(newSize: number): void {}
+    setTextBold(fontWeight: string): void {}
 
-    setEmissionCount(newEmissionCount: number): void {}
+    setTextItalic(fontStyle: string): void {}
+
+    setAngleRotation(newAngle: number): void {}
+
+    onScroll(left: number, top: number): void {
+        this.scroll = { x: left, y: top };
+    }
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
-        return { x: event.offsetX, y: event.offsetY };
+        return { x: event.x - CanvasConstants.LEFT_MARGIN + this.scroll.x, y: event.y + this.scroll.y };
     }
+
+    drawCursor(mousePosition: Vec2): void {}
 }

@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as PipetteConstants from '@app/constants/pipette-constants';
-import { ColorService } from '@app/services/color/color.service';
 import { PipetteService } from '@app/services/tools/pipette/pipette-service';
 
 @Component({
@@ -9,16 +8,16 @@ import { PipetteService } from '@app/services/tools/pipette/pipette-service';
     styleUrls: ['./sidebar-pipette.component.scss'],
 })
 export class SidebarPipetteComponent implements OnInit {
-    ctx: CanvasRenderingContext2D;
-    colorService: ColorService;
-    rawData: ImageData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
-    previewData: ImageData = new ImageData(PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
-    inBound: boolean = false;
+    private ctx: CanvasRenderingContext2D;
+    private rawData: ImageData;
+    inBound: boolean;
 
-    constructor(public pipetteService: PipetteService) {}
+    constructor(public pipetteService: PipetteService) {
+        this.rawData = new ImageData(PipetteConstants.RAWDATA_SIZE, PipetteConstants.RAWDATA_SIZE);
+        this.inBound = false;
+    }
 
-    @ViewChild('canvas', { static: true })
-    canvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('canvas', { static: true }) private canvas: ElementRef<HTMLCanvasElement>;
 
     ngOnInit(): void {
         this.pipetteService.previewDataObservable.subscribe((previewData: ImageData) => {
@@ -31,7 +30,7 @@ export class SidebarPipetteComponent implements OnInit {
         });
     }
 
-    drawPreview(): void {
+    private drawPreview(): void {
         if (!this.ctx) {
             this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         }
@@ -39,24 +38,24 @@ export class SidebarPipetteComponent implements OnInit {
         this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
 
         if (this.inBound) {
-            this.clipPreview(this.ctx);
+            this.clipPreview();
             this.ctx.putImageData(this.rawData, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION);
-            this.zoomPreview(this.ctx);
-            this.centerPixelStroke(this.ctx);
-            this.previewStroke(this.ctx);
+            this.zoomPreview();
+            this.centerPixelStroke();
+            this.previewStroke();
         } else {
             this.ctx.clearRect(0, 0, PipetteConstants.PREVIEWDATA_SIZE, PipetteConstants.PREVIEWDATA_SIZE);
         }
     }
 
-    clipPreview(ctx: CanvasRenderingContext2D): void {
+    private clipPreview(): void {
         this.ctx.beginPath();
         this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.clip();
         this.ctx.closePath();
     }
 
-    zoomPreview(ctx: CanvasRenderingContext2D): void {
+    private zoomPreview(): void {
         this.ctx.drawImage(
             this.ctx.canvas,
             PipetteConstants.RAWDATA_POSITION,
@@ -70,7 +69,7 @@ export class SidebarPipetteComponent implements OnInit {
         );
     }
 
-    centerPixelStroke(ctx: CanvasRenderingContext2D): void {
+    private centerPixelStroke(): void {
         this.ctx.strokeStyle = PipetteConstants.BLACK_STROKE;
         this.ctx.lineWidth = PipetteConstants.CENTER_PIXEL_LINE_WIDTH;
         this.ctx.strokeRect(
@@ -81,7 +80,7 @@ export class SidebarPipetteComponent implements OnInit {
         );
     }
 
-    previewStroke(ctx: CanvasRenderingContext2D): void {
+    private previewStroke(): void {
         this.ctx.beginPath();
         this.ctx.arc(PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, PipetteConstants.RAWDATA_POSITION, 0, Math.PI * 2, true);
         this.ctx.lineWidth = PipetteConstants.OUTER_BORDER_LINE_WIDTH;

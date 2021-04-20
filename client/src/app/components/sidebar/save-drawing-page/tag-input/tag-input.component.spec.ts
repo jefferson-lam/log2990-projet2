@@ -101,6 +101,18 @@ describe('TagValidatorComponent', () => {
         expect(component.isSavePossible).toEqual(true);
     });
 
+    it('characterTagsValidator should set noSpecialCharactersDivClass to "Failed" if tag has special characters', () => {
+        const testTag = '😂';
+        component.validateTag(testTag);
+        expect(component.noSpecialCharacterDivClass).toEqual('Failed');
+    });
+
+    it("characterTagsValidator should set noSpecialCharactersDivClass to 'Satisfied' if tag doesn't have special characters", () => {
+        const testTag = 'NoLaughingAllowed';
+        component.validateTag(testTag);
+        expect(component.noSpecialCharacterDivClass).toEqual('Satisfied');
+    });
+
     it('validateTag should set maxTagsCountDivClass to "Failed" if tag already has max amount of tags allowed', () => {
         const testTag = 'test';
         for (let i = 0; i < DatabaseConstants.MAX_TAGS_COUNT; i++) {

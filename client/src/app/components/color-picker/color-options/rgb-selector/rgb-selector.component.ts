@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 
 @Component({
     selector: 'app-rgb-selector',
@@ -7,20 +8,28 @@ import { Rgba } from '@app/classes/rgba';
     styleUrls: ['./rgb-selector.component.scss'],
 })
 export class RgbSelectorComponent implements OnChanges {
-    red: string = '0';
-    green: string = '0';
-    blue: string = '0';
-    invalidInput: boolean = false;
+    red: number;
+    green: number;
+    blue: number;
+    invalidInput: boolean;
 
-    @ViewChild('redInput', { static: false }) redInput: ElementRef<HTMLInputElement>;
-    @ViewChild('greenInput', { static: false }) greenInput: ElementRef<HTMLInputElement>;
-    @ViewChild('blueInput', { static: false }) blueInput: ElementRef<HTMLInputElement>;
+    @ViewChild('redInput', { static: false }) private redInput: ElementRef<HTMLInputElement>;
+    @ViewChild('greenInput', { static: false }) private greenInput: ElementRef<HTMLInputElement>;
+    @ViewChild('blueInput', { static: false }) private blueInput: ElementRef<HTMLInputElement>;
 
-    @Input()
-    initialColor: Rgba = { red: '255', green: '255', blue: '255', alpha: 1 };
+    @Input() private initialColor: Rgba;
 
-    @Output()
-    newColor: EventEmitter<Rgba> = new EventEmitter();
+    @Output() newColor: EventEmitter<Rgba>;
+
+    constructor(public shortcutManager: ShortcutManagerService) {
+        this.red = 0;
+        this.green = 0;
+        this.blue = 0;
+        this.invalidInput = false;
+        this.initialColor = { red: 255, green: 255, blue: 255, alpha: 1 };
+        this.newColor = new EventEmitter();
+        this.invalidInput = false;
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.initialColor) {
@@ -44,19 +53,18 @@ export class RgbSelectorComponent implements OnChanges {
         }
     }
 
-    emitColor(newColor: EventEmitter<Rgba>): void {
+    printDecToHex(dec: number): string {
+        return dec.toString(16).toUpperCase();
+    }
+    private emitColor(newColor: EventEmitter<Rgba>): void {
         newColor.emit({ red: this.red, green: this.green, blue: this.blue, alpha: this.initialColor.alpha });
     }
 
-    isValidHexCode(code: string): boolean {
+    private isValidHexCode(code: string): boolean {
         return /^[a-fA-F0-9]+$/i.test(code);
     }
 
-    convertHexToDec(hex: string): string {
-        return parseInt(hex, 16).toString();
-    }
-
-    printDecToHex(dec: string): string {
-        return parseInt(dec, 10).toString(16).toUpperCase();
+    private convertHexToDec(hex: string): number {
+        return parseInt(hex, 16);
     }
 }

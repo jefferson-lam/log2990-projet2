@@ -1,16 +1,26 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MIN_HEIGHT_CANVAS } from '@app/constants/canvas-constants';
+import * as ExportDrawingConstants from '@app/constants/export-drawing-constants';
 import { MAX_EXPORT_CANVAS_HEIGHT, MAX_EXPORT_CANVAS_WIDTH } from '@app/constants/popup-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ImgurService } from '@app/services/imgur/imgur.service';
+import { Observable, Subject } from 'rxjs';
+import { ExportCompletePageComponent } from './export-complete-page/export-complete-page.component';
 import { ExportDrawingComponent } from './export-drawing.component';
+import { ExportErrorPageComponent } from './export-error-page/export-error-page.component';
 
+// tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('ExportDrawingComponent', () => {
     let component: ExportDrawingComponent;
     let fixture: ComponentFixture<ExportDrawingComponent>;
     let drawingStub: DrawingService;
+    let dialogSpy: jasmine.SpyObj<MatDialog>;
+    let imgurStub: ImgurService;
 
     let testCanvas: HTMLCanvasElement;
     let testCtx: CanvasRenderingContext2D;
@@ -19,11 +29,22 @@ describe('ExportDrawingComponent', () => {
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
-
+        imgurStub = new ImgurService();
+        dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', '_getAfterAllClosed'], ['afterAllClosed', '_afterAllClosedAtThisLevel']);
+        (Object.getOwnPropertyDescriptor(dialogSpy, '_afterAllClosedAtThisLevel')?.get as jasmine.Spy<() => Subject<any>>).and.returnValue(
+            new Subject<any>(),
+        );
+        (Object.getOwnPropertyDescriptor(dialogSpy, 'afterAllClosed')?.get as jasmine.Spy<() => Observable<void>>).and.returnValue(
+            dialogSpy['_afterAllClosedAtThisLevel'].asObservable(),
+        );
         TestBed.configureTestingModule({
             imports: [FormsModule],
             declarations: [ExportDrawingComponent],
-            providers: [{ provide: DrawingService, useValue: drawingStub }],
+            providers: [
+                { provide: DrawingService, useValue: drawingStub },
+                { provide: MatDialog, useValue: dialogSpy },
+                { provide: ImgurService, useValue: imgurStub },
+            ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
 
@@ -36,9 +57,10 @@ describe('ExportDrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ExportDrawingComponent);
         component = fixture.componentInstance;
+        component.newDialog = dialogSpy;
         fixture.detectChanges();
 
-        clickSpy = spyOn(component.link, 'click');
+        clickSpy = spyOn(component['link'], 'click');
     });
 
     it('should create', () => {
@@ -46,7 +68,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('ngAfterViewInit should call refreshCanvas', () => {
-        const refreshSpy = spyOn(component, 'refreshCanvas');
+        const refreshSpy = spyOn<any>(component, 'refreshCanvas');
         component.ngAfterViewInit();
 
         expect(refreshSpy).toHaveBeenCalled();
@@ -57,19 +79,19 @@ describe('ExportDrawingComponent', () => {
         testCtx.fillRect(0, 0, 1, 1);
         let imgData = testCtx.getImageData(0, 0, testCanvas.width, testCanvas.height);
 
-        component.changeWhiteToAlpha(imgData);
+        component['changeWhiteToAlpha'](imgData);
 
-        imgData = component.exportCtx.getImageData(0, 0, 1, 1);
+        imgData = component['exportCtx'].getImageData(0, 0, 1, 1);
         for (const rgbValue of imgData.data) {
             expect(rgbValue).toBe(0);
         }
     });
 
     it('refreshCanvas should get baseCtx imageData and draw on exportCtx', () => {
-        const baseSpy = spyOn(component.baseCtx, 'getImageData').and.callThrough();
-        const exportSpy = spyOn(component.exportCtx, 'drawImage');
+        const baseSpy = spyOn(component['baseCtx'], 'getImageData').and.callThrough();
+        const exportSpy = spyOn(component['exportCtx'], 'drawImage');
 
-        component.refreshCanvas();
+        component['refreshCanvas']();
 
         expect(baseSpy).toHaveBeenCalled();
         expect(baseSpy).toHaveBeenCalledWith(0, 0, component.baseCanvas.width, component.baseCanvas.height);
@@ -77,17 +99,17 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('refreshCanvas should call changeWhiteToAlpha if passed argument true', () => {
-        const changeWhiteToAlphaSpy = spyOn(component, 'changeWhiteToAlpha');
+        const changeWhiteToAlphaSpy = spyOn<any>(component, 'changeWhiteToAlpha');
 
-        component.refreshCanvas(true);
+        component['refreshCanvas'](true);
 
         expect(changeWhiteToAlphaSpy).toHaveBeenCalled();
     });
 
     it('refreshCanvas should call putImageData with exportCtx if no argument passed', () => {
-        const exportSpy = spyOn(component.exportCtx, 'putImageData');
+        const exportSpy = spyOn(component['exportCtx'], 'putImageData');
 
-        component.refreshCanvas();
+        component['refreshCanvas']();
 
         expect(exportSpy).toHaveBeenCalled();
     });
@@ -95,43 +117,43 @@ describe('ExportDrawingComponent', () => {
     it("setPopupSizes should set canvasStyleHeight to MAX_EXPORT_CANVAS_HEIGHT+'px' if height bigger than width", () => {
         component.baseCanvas.height = MIN_HEIGHT_CANVAS + 1;
         component.baseCanvas.width = MIN_HEIGHT_CANVAS;
-        component.setPopupSizes();
+        component['setPopupSizes']();
 
         expect(component.canvasStyleHeight).toBe(MAX_EXPORT_CANVAS_HEIGHT + 'px');
     });
 
-    it("setPopupSizes should set canvasStyleWidth to (canvas.width/canvas.height)*MAX_EXPORT_CANVAS_WIDTH+'px' if height bigger than width", () => {
+    it("setPopupSizes should set canvasStyleWidth to (canvas.width/canvas.height)*MAX_EXPORT_CANVAS_HEIGHT+'px' if height bigger than width", () => {
         component.baseCanvas.height = MIN_HEIGHT_CANVAS + 1;
         component.baseCanvas.width = MIN_HEIGHT_CANVAS;
-        component.setPopupSizes();
+        component['setPopupSizes']();
 
-        expect(component.canvasStyleWidth).toBe((component.baseCanvas.width / component.baseCanvas.height) * MAX_EXPORT_CANVAS_WIDTH + 'px');
+        expect(component.canvasStyleWidth).toBe((component.baseCanvas.width / component.baseCanvas.height) * MAX_EXPORT_CANVAS_HEIGHT + 'px');
     });
 
     it("setPopupSizes should set canvasStyleWidth to MAX_EXPORT_CANVAS_WIDTH+'px' if width bigger than height", () => {
         component.baseCanvas.height = MIN_HEIGHT_CANVAS;
         component.baseCanvas.width = MIN_HEIGHT_CANVAS + 1;
-        component.setPopupSizes();
+        component['setPopupSizes']();
 
         expect(component.canvasStyleWidth).toBe(MAX_EXPORT_CANVAS_WIDTH + 'px');
     });
 
-    it("setPopupSizes should set canvasStyleWidth to (canvas.height/canvas.width)*MAX_EXPORT_CANVAS_HEIGHT+'px' if width bigger than height", () => {
+    it("setPopupSizes should set canvasStyleWidth to (canvas.height/canvas.width)*MAX_EXPORT_CANVAS_WIDTH+'px' if width bigger than height", () => {
         component.baseCanvas.height = MIN_HEIGHT_CANVAS;
         component.baseCanvas.width = MIN_HEIGHT_CANVAS + 1;
-        component.setPopupSizes();
+        component['setPopupSizes']();
 
-        expect(component.canvasStyleHeight).toBe((component.baseCanvas.height / component.baseCanvas.width) * MAX_EXPORT_CANVAS_HEIGHT + 'px');
+        expect(component.canvasStyleHeight).toBe((component.baseCanvas.height / component.baseCanvas.width) * MAX_EXPORT_CANVAS_WIDTH + 'px');
     });
 
     it('applyFilter should set filter of exportCtx', () => {
         component.applyFilter('invert(100%)');
 
-        expect(component.exportCtx.filter).toBe('invert(100%)');
+        expect(component['exportCtx'].filter).toBe('invert(100%)');
     });
 
     it('applyFilter should call refreshCanvas with true if not invert filter', () => {
-        const refreshSpy = spyOn(component, 'refreshCanvas');
+        const refreshSpy = spyOn<any>(component, 'refreshCanvas');
 
         component.applyFilter('sepia(100%)');
 
@@ -140,7 +162,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('applyFilter should call refreshCanvas without arguments if invert filter', () => {
-        const refreshSpy = spyOn(component, 'refreshCanvas');
+        const refreshSpy = spyOn<any>(component, 'refreshCanvas');
 
         component.applyFilter('invert(100%)');
 
@@ -149,14 +171,81 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('saveImage should set link href with image data and click it', () => {
-        const imgDataSpy = spyOn(component.exportCanvas, 'toDataURL').and.callThrough();
+        const imgDataSpy = spyOn(component['exportCanvas'], 'toDataURL').and.callThrough();
 
         component.saveImage();
 
-        expect(component.link.download).toBe(component.name + '.' + component.type);
+        expect(component['link'].download).toBe(component.name + '.' + component.type);
         expect(imgDataSpy).toHaveBeenCalled();
         expect(imgDataSpy).toHaveBeenCalledWith('image/' + component.type);
-        expect(component.link.href).not.toBeUndefined();
+        expect(component['link'].href).not.toBeUndefined();
         expect(clickSpy).toHaveBeenCalled();
+    });
+
+    it('exportToImgur should set link href with image data and call imgurService.exportDrawing', () => {
+        const imgDataSpy = spyOn(component['exportCanvas'], 'toDataURL').and.callThrough();
+        const exportDrawingSpy = spyOn(imgurStub, 'exportDrawing');
+
+        component.exportToImgur();
+
+        expect(imgDataSpy).toHaveBeenCalled();
+        expect(imgDataSpy).toHaveBeenCalledWith('image/' + component.type);
+        expect(exportDrawingSpy).toHaveBeenCalledWith(component['exportCanvas'].toDataURL('image/' + component.type), component.name);
+    });
+
+    it('openPopUp should not do anything if popUpToggle and mutex are 0', () => {
+        const openErrorPopUpSpy = spyOn<any>(component, 'openErrorPopUp');
+        const openCompletePopUpSpy = spyOn<any>(component, 'openCompletePopUp');
+        component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.NONE;
+        imgurStub.mutex = 0;
+
+        component['openPopUp']();
+        expect(openErrorPopUpSpy).not.toHaveBeenCalled();
+        expect(openCompletePopUpSpy).not.toHaveBeenCalled();
+    });
+
+    it('openPopUp should call openErrorPopUp if popUpToggle is 2 and mutex is 1', () => {
+        const openCompletePopUpSpy = spyOn<any>(component, 'openErrorPopUp');
+        component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.ERROR;
+        imgurStub.mutex = 1;
+
+        component['openPopUp']();
+        expect(openCompletePopUpSpy).toHaveBeenCalled();
+    });
+
+    it('openPopUp should call openCompletePopUp if popUpToggle is 1 and mutex is 1', () => {
+        const openCompletePopUpSpy = spyOn<any>(component, 'openCompletePopUp');
+        component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.COMPLETE;
+        imgurStub.mutex = 1;
+
+        component['openPopUp']();
+        expect(openCompletePopUpSpy).toHaveBeenCalled();
+    });
+
+    it('openPopUp should not call openCompletePopUp or openErrorPopUp if popUpToggle is 1 and mutex is 0', () => {
+        const openCompletePopUpSpy = spyOn<any>(component, 'openCompletePopUp');
+        const openErrorPopUpSpy = spyOn<any>(component, 'openErrorPopUp');
+        component['popUpToggle'] = ExportDrawingConstants.PopUpToggle.COMPLETE;
+        imgurStub.mutex = 0;
+
+        component['openPopUp']();
+        expect(openCompletePopUpSpy).not.toHaveBeenCalled();
+        expect(openErrorPopUpSpy).not.toHaveBeenCalled();
+    });
+
+    it('openErrorPopUp should open ExportErrorPageComponent dialog', () => {
+        imgurStub.mutex = 1;
+        component['openErrorPopUp']();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(ExportErrorPageComponent);
+        expect(imgurStub.mutex).toEqual(0);
+    });
+
+    it('openCompletePopUp should open ExportCompletePageComponent dialog', () => {
+        imgurStub.mutex = 1;
+        component['openCompletePopUp']();
+        expect(dialogSpy.open).toHaveBeenCalled();
+        expect(dialogSpy.open).toHaveBeenCalledWith(ExportCompletePageComponent);
+        expect(imgurStub.mutex).toEqual(0);
     });
 });

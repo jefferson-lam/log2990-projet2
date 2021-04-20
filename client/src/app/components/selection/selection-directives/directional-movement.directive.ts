@@ -1,59 +1,47 @@
 import { Directive, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
+import * as DirectionalMovementConstants from '@app/constants/directional-movement-constants';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 
-const NUM_PIXELS = 3;
-const FIRST_PRESS_DELAY_MS = 500;
-const CONTINUOUS_PRESS_DELAY_MS = 100;
 @Directive({
     selector: '[appDirectionalMovement]',
 })
 export class DirectionalMovementDirective {
-    keyPressed: Map<string, number> = new Map();
-    leftMovement: number;
-    private hasMovedOnce: boolean = false;
-    @Output() canvasMovement: EventEmitter<boolean> = new EventEmitter();
+    keyPressed: Map<string, number>;
+    hasMovedOnce: boolean;
+    @Output() canvasMovement: EventEmitter<boolean>;
 
-    constructor(private element: ElementRef) {}
+    constructor(private element: ElementRef, public shortcutManager: ShortcutManagerService) {
+        this.keyPressed = new Map();
+        this.hasMovedOnce = false;
+        this.canvasMovement = new EventEmitter();
+    }
 
     @HostListener('keydown.ArrowLeft', ['$event'])
     @HostListener('keydown.ArrowDown', ['$event'])
     @HostListener('keydown.ArrowRight', ['$event'])
     @HostListener('keydown.ArrowUp', ['$event'])
     async onKeyboardDown(event: KeyboardEvent): Promise<void> {
-        event.preventDefault();
-        if (!this.keyPressed.get(event.key)) {
-            this.keyPressed.set(event.key, event.timeStamp);
-            this.translateSelection();
-            await this.delay(FIRST_PRESS_DELAY_MS);
-        }
-
-        if (this.hasMovedOnce) {
-            return;
-        }
-
-        this.hasMovedOnce = true;
-        await this.delay(CONTINUOUS_PRESS_DELAY_MS);
-        this.translateSelection();
-        this.hasMovedOnce = false;
+        await this.shortcutManager.selectionMovementOnArrowDown(event, this);
     }
 
     @HostListener('keyup', ['$event'])
     onKeyboardUp(event: KeyboardEvent): void {
-        this.keyPressed.set(event.key, 0);
+        this.shortcutManager.selectionMovementOnKeyboardUp(event, this);
     }
 
-    translateLeft(numPixels: number): void {
+    private translateLeft(numPixels: number): void {
         this.element.nativeElement.style.left = parseInt(this.element.nativeElement.style.left, 10) - numPixels + 'px';
     }
 
-    translateRight(numPixels: number): void {
+    private translateRight(numPixels: number): void {
         this.element.nativeElement.style.left = parseInt(this.element.nativeElement.style.left, 10) + numPixels + 'px';
     }
 
-    translateUp(numPixels: number): void {
+    private translateUp(numPixels: number): void {
         this.element.nativeElement.style.top = parseInt(this.element.nativeElement.style.top, 10) - numPixels + 'px';
     }
 
-    translateDown(numPixels: number): void {
+    private translateDown(numPixels: number): void {
         this.element.nativeElement.style.top = parseInt(this.element.nativeElement.style.top, 10) + numPixels + 'px';
     }
 
@@ -61,18 +49,18 @@ export class DirectionalMovementDirective {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    private translateSelection(): void {
+    translateSelection(numPixels: number = DirectionalMovementConstants.NUM_PIXELS): void {
         if (this.keyPressed.get('ArrowLeft')) {
-            this.translateLeft(NUM_PIXELS);
+            this.translateLeft(numPixels);
         }
         if (this.keyPressed.get('ArrowUp')) {
-            this.translateUp(NUM_PIXELS);
+            this.translateUp(numPixels);
         }
         if (this.keyPressed.get('ArrowRight')) {
-            this.translateRight(NUM_PIXELS);
+            this.translateRight(numPixels);
         }
         if (this.keyPressed.get('ArrowDown')) {
-            this.translateDown(NUM_PIXELS);
+            this.translateDown(numPixels);
         }
         this.canvasMovement.emit(true);
     }

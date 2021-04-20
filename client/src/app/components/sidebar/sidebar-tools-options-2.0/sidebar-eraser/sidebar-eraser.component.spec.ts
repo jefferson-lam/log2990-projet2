@@ -4,6 +4,7 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
 import { SidebarEraserComponent } from './sidebar-eraser.component';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('SidebarEraserComponent', () => {
     let component: SidebarEraserComponent;
     let fixture: ComponentFixture<SidebarEraserComponent>;
@@ -22,7 +23,7 @@ describe('SidebarEraserComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         settingsManagerService = TestBed.inject(SettingsManagerService);
-        toolSizeChangedSubscribeSpy = spyOn(component.toolSizeChanged, 'subscribe');
+        toolSizeChangedSubscribeSpy = spyOn(component['toolSizeChanged'], 'subscribe');
     });
 
     it('should create', () => {
@@ -42,7 +43,7 @@ describe('SidebarEraserComponent', () => {
     });
 
     it('emitToolSize should emit tool size', () => {
-        const emitSpy = spyOn(component.toolSizeChanged, 'emit');
+        const emitSpy = spyOn(component['toolSizeChanged'], 'emit');
         component.toolSize = 1;
         component.emitToolSize();
         expect(emitSpy).toHaveBeenCalled();

@@ -14,7 +14,7 @@ export class PencilCommand extends Command {
 
     setValues(canvasContext: CanvasRenderingContext2D, pencilService: PencilService): void {
         this.ctx = canvasContext;
-        this.path = pencilService.pathData;
+        this.path = Object.assign([], pencilService.pathData);
         this.lineWidth = pencilService.lineWidth;
         this.primaryColor = pencilService.primaryColor;
     }

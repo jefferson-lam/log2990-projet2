@@ -1,146 +1,119 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Tool } from '@app/classes/tool';
-import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
-import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
-import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
-import { WHITE_RGBA_DECIMAL } from '@app/constants/color-constants';
-import { MAX_HEIGHT_FORM, MAX_WIDTH_FORM } from '@app/constants/popup-constants';
-import { RECTANGLE_SELECTION_KEY } from '@app/constants/tool-manager-constants';
-import { SettingsManagerService } from '@app/services/manager/settings-manager';
+import { CdkScrollable, ScrollDispatcher } from '@angular/cdk/scrolling';
+import { Component, HostListener } from '@angular/core';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
-import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
-import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Component({
     selector: 'app-editor',
     templateUrl: './editor.component.html',
     styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent implements OnInit {
-    currentTool: Tool;
-    isPopUpOpen: boolean;
-    isUndoSelection: boolean;
-
-    constructor(
-        public toolManager: ToolManagerService,
-        public newDialog: MatDialog,
-        public settingsManager: SettingsManagerService,
-        public undoRedoService: UndoRedoService,
-    ) {
-        this.currentTool = toolManager.currentTool;
-        this.settingsManager.editorComponent = this;
-        this.isPopUpOpen = false;
-        this.isUndoSelection = false;
-    }
-
-    ngOnInit(): void {
-        this.newDialog.afterAllClosed.subscribe(() => {
-            this.isPopUpOpen = false;
+export class EditorComponent {
+    constructor(public shortcutManager: ShortcutManagerService, private toolManager: ToolManagerService, private scroller: ScrollDispatcher) {
+        this.scroller.scrolled().subscribe((element) => {
+            if (!(element instanceof CdkScrollable)) return;
+            if (element.getElementRef().nativeElement.id !== 'drawing-container') return;
+            this.toolManager.scrolled(element.measureScrollOffset('left'), element.measureScrollOffset('top'));
         });
     }
 
-    @HostListener('window:keydown.control.e', ['$event'])
-    onCtrlEKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.openExportPopUp();
-    }
-
-    @HostListener('window:keydown.control.o', ['$event'])
-    onCtrlOKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.openNewDrawingPopUp();
-    }
-
-    @HostListener('window:keydown.control.s', ['$event'])
-    onCtrlSKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.openSavePopUp();
-    }
-
-    @HostListener('window:keydown.control.shift.z', ['$event'])
-    onCtrlShiftZKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        if (!this.isPopUpOpen && !this.currentTool.inUse) {
-            this.undoRedoService.redo();
-        }
-    }
-
-    @HostListener('window:keydown.control.z', ['$event'])
-    onCtrlZKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-            if (this.currentTool.isManipulating) {
-                this.currentTool.undoSelection();
-                this.isUndoSelection = true;
-            }
-        }
-        if (!this.isPopUpOpen && !this.currentTool.inUse && !this.isUndoSelection) {
-            this.undoRedoService.undo();
-        }
-        this.isUndoSelection = false;
-    }
-
-    @HostListener('window:keydown', ['$event'])
-    onKeyboardDown(event: KeyboardEvent): void {
-        if (!this.isPopUpOpen && event.key.match(/^(1|2|c|l|e|r|s|a|3|i)$/)) {
-            this.setTool(this.toolManager.selectTool(event));
-        }
+    @HostListener('window:keydown.g', ['$event'])
+    onGKeyDown(): void {
+        this.shortcutManager.onGKeyDown();
     }
 
     @HostListener('window:keydown.control.a', ['$event'])
     onCtrlAKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.setTool(this.toolManager.getTool(RECTANGLE_SELECTION_KEY));
-        if (this.currentTool instanceof RectangleSelectionService) {
-            this.currentTool.selectAll();
-        }
+        this.shortcutManager.onCtrlAKeyDown(event);
     }
 
-    setTool(newTool: Tool): void {
-        this.currentTool = newTool;
+    @HostListener('window:keydown.control.e', ['$event'])
+    onCtrlEKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlEKeyDown(event);
     }
 
-    openExportPopUp(): void {
-        if (!this.isPopUpOpen) {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.currentTool.onToolChange();
-            }
-            this.newDialog.open(ExportDrawingComponent, {
-                maxWidth: MAX_WIDTH_FORM + 'px',
-                maxHeight: MAX_HEIGHT_FORM + 'px',
-            });
-            this.isPopUpOpen = true;
-        }
+    @HostListener('window:keydown.control.g', ['$event'])
+    onCtrlGKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlGKeyDown(event);
     }
 
-    openNewDrawingPopUp(): void {
-        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.currentTool.onToolChange();
-            }
-            this.newDialog.open(NewDrawingBoxComponent);
-            this.isPopUpOpen = true;
-        }
+    @HostListener('window:keydown.control.o', ['$event'])
+    onCtrlOKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlOKeyDown(event);
     }
 
-    openSavePopUp(): void {
-        if (!this.isCanvasEmpty() && !this.isPopUpOpen) {
-            if (this.currentTool instanceof RectangleSelectionService || this.currentTool instanceof EllipseSelectionService) {
-                this.currentTool.onToolChange();
-            }
-            this.newDialog.open(SaveDrawingComponent);
-            this.isPopUpOpen = true;
-        }
+    @HostListener('window:keydown.control.s', ['$event'])
+    onCtrlSKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlSKeyDown(event);
     }
 
-    isCanvasEmpty(): boolean {
-        // Thanks to user Kaiido on stackoverflow.com
-        // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank/17386803#comment96825186_17386803
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        const baseCtx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
-        const pixelBuffer = new Uint32Array(baseCtx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
-        return !pixelBuffer.some((color) => color !== WHITE_RGBA_DECIMAL);
+    @HostListener('window:keydown.control.shift.z', ['$event'])
+    onCtrlShiftZKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlShiftZKeyDown(event);
+    }
+
+    @HostListener('window:keydown.control.z', ['$event'])
+    onCtrlZKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlZKeyDown(event);
+    }
+
+    @HostListener('window:keydown.alt', ['$event'])
+    onAltDown(event: KeyboardEvent): void {
+        this.shortcutManager.onAltDown(event);
+    }
+
+    @HostListener('window:keyup.alt', ['$event'])
+    onAltUp(): void {
+        this.shortcutManager.onAltUp();
+    }
+
+    @HostListener('window:keydown.control.c', ['$event'])
+    onCtrlCKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlCKeyDown(event);
+    }
+
+    @HostListener('window:keydown.control.v', ['$event'])
+    onCtrlVKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlVKeyDown(event);
+    }
+
+    @HostListener('window:keydown.escape', ['$event'])
+    onEscapeKeyDown(): void {
+        this.shortcutManager.onEscapeKeyDown();
+    }
+
+    @HostListener('window:keydown.control.x', ['$event'])
+    onCtrlXKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onCtrlXKeyDown(event);
+    }
+
+    @HostListener('window:keydown.delete', ['$event'])
+    onDeleteKeyDown(event: KeyboardEvent): void {
+        this.shortcutManager.onDeleteKeyDown(event);
+    }
+
+    @HostListener('window:keydown.-', ['$event'])
+    onMinusKeyDown(): void {
+        this.shortcutManager.onMinusKeyDown();
+    }
+
+    @HostListener('window:keydown.+', ['$event'])
+    onPlusKeyDown(): void {
+        this.shortcutManager.onPlusKeyDown();
+    }
+
+    @HostListener('window:keydown.m', ['$event'])
+    onMKeyDown(): void {
+        this.shortcutManager.onMKeyDown();
+    }
+
+    @HostListener('window:keydown.=', ['$event'])
+    onEqualKeyDown(): void {
+        this.shortcutManager.onEqualKeyDown();
+    }
+
+    @HostListener('window:keydown', ['$event'])
+    onKeyboardDown(event: KeyboardEvent): void {
+        if (!event.ctrlKey) this.shortcutManager.onKeyboardDown(event);
     }
 }

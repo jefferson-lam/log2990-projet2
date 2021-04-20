@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
-import * as ToolConstants from '@app/constants/tool-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { RectangleService } from './rectangle-service';
 
+// tslint:disable: no-string-literal
 describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
@@ -35,17 +36,18 @@ describe('RectangleService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand');
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
-        setPreviewValuesSpy = spyOn(service.previewCommand, 'setValues');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
+        setPreviewValuesSpy = spyOn(service['previewCommand'], 'setValues');
 
         // Configuration of spy of service
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 40,
             button: 0,
         } as MouseEvent;
     });
@@ -129,7 +131,7 @@ describe('RectangleService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: MouseConstants.PRIMARY_BUTTON,
+            buttons: MouseConstants.MouseButton.Middle,
         } as MouseEvent;
         service.inUse = true;
 
@@ -141,7 +143,7 @@ describe('RectangleService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: MouseConstants.PRIMARY_BUTTON,
+            buttons: MouseConstants.MouseButton.Middle,
         } as MouseEvent;
         service.inUse = false;
 
@@ -268,43 +270,13 @@ describe('RectangleService', () => {
     it('setLineWidth should change size of lineWidth to min width if width is lower than min', () => {
         const LOWER_TEST_WIDTH = -1;
         service.setLineWidth(LOWER_TEST_WIDTH);
-        expect(service.lineWidth).toEqual(RectangleConstants.MIN_BORDER_WIDTH);
+        expect(service.lineWidth).toEqual(ShapeConstants.MIN_BORDER_WIDTH);
     });
 
     it('setLineWidth should change size of lineWidth to max width if width is bigger than max', () => {
         const RANDOM_TEST_WIDTH = 70;
         service.setLineWidth(RANDOM_TEST_WIDTH);
-        expect(service.lineWidth).toEqual(RectangleConstants.MAX_BORDER_WIDTH);
-    });
-
-    it('setFillMode should change to FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.FILL_ONLY;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setFillMode should change to OUTLINE mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setFillMode should change to OUTLINE_FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE_FILL;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setPrimaryColor should change primary color to wanted color', () => {
-        const EXPECTED_RANDOM_COLOR = 'blue';
-        service.setPrimaryColor(EXPECTED_RANDOM_COLOR);
-        expect(service.primaryColor).toEqual(EXPECTED_RANDOM_COLOR);
-    });
-
-    it('setSecondaryColor should change secondary color to wanted color', () => {
-        const EXPECTED_RANDOM_COLOR = 'green';
-        service.setSecondaryColor(EXPECTED_RANDOM_COLOR);
-        expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
+        expect(service.lineWidth).toEqual(ShapeConstants.MAX_BORDER_WIDTH);
     });
 
     it('onToolChange should call onMouseUp', () => {

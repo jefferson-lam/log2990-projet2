@@ -1,44 +1,51 @@
 import { Command } from '@app/classes/command';
 import { Vec2 } from '@app/classes/vec2';
-import { END_ANGLE, END_INDEX, ROTATION, START_ANGLE, START_INDEX } from '@app/constants/ellipse-constants';
+import { ROTATION } from '@app/constants/ellipse-constants';
+import { END_ANGLE, END_INDEX, START_ANGLE, START_INDEX } from '@app/constants/shapes-constants';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 
 export class EllipseSelectionCommand extends Command {
-    selectionWidth: number;
-    selectionHeight: number;
-    transformValues: Vec2;
-    isCircle: boolean;
-    cornerCoords: Vec2[] = [];
-    selectionCanvas: HTMLCanvasElement;
+    private selectionWidth: number;
+    private selectionHeight: number;
+    private transformValues: Vec2;
+    private isCircle: boolean;
+    private pathData: Vec2[];
+    private selectionCanvas: HTMLCanvasElement;
+    private isFromClipboard: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, ellipseSelectionService: EllipseSelectionService) {
         super();
         this.setValues(canvasContext, selectionCanvas, ellipseSelectionService);
     }
-    setValues(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, ellipseSelectionService: EllipseSelectionService): void {
+
+    private setValues(
+        canvasContext: CanvasRenderingContext2D,
+        selectionCanvas: HTMLCanvasElement,
+        ellipseSelectionService: EllipseSelectionService,
+    ): void {
         this.ctx = canvasContext;
-        this.cornerCoords = Object.assign([], ellipseSelectionService.cornerCoords);
+        this.pathData = Object.assign([], ellipseSelectionService.pathData);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
-        this.selectionHeight = ellipseSelectionService.selectionHeight;
-        this.selectionWidth = ellipseSelectionService.selectionWidth;
+        this.selectionHeight = selectionCanvas.height;
+        this.selectionWidth = selectionCanvas.width;
         this.transformValues = ellipseSelectionService.transformValues;
         this.isCircle = ellipseSelectionService.isCircle;
+        this.isFromClipboard = ellipseSelectionService.isFromClipboard;
     }
 
     execute(): void {
-        const ellipseCenter = this.getEllipseCenter(this.cornerCoords[START_INDEX], this.cornerCoords[END_INDEX], this.isCircle);
-        const startX = ellipseCenter.x;
-        const startY = ellipseCenter.y;
-        const radiiXAndY = this.getRadiiXAndY(this.cornerCoords);
-        const xRadius = radiiXAndY[0];
-        const yRadius = radiiXAndY[1];
-        this.ctx.beginPath();
-        this.ctx.ellipse(startX, startY, xRadius, yRadius, ROTATION, START_ANGLE, END_ANGLE);
-        this.ctx.fillStyle = 'white';
-        this.ctx.fill();
+        const ellipseCenter = this.getEllipseCenter(this.pathData[START_INDEX], this.pathData[END_INDEX], this.isCircle);
+        const radiiXAndY = this.getRadiiXAndY(this.pathData);
+
+        if (!this.isFromClipboard) {
+            this.ctx.beginPath();
+            this.ctx.ellipse(ellipseCenter.x, ellipseCenter.y, radiiXAndY.x, radiiXAndY.y, ROTATION, START_ANGLE, END_ANGLE);
+            this.ctx.fillStyle = 'white';
+            this.ctx.fill();
+        }
 
         // Clip the ctx to only fit the what is inside the outline that is offset by 1
-        this.clipEllipse(this.ctx, this.transformValues, this.selectionHeight, this.selectionWidth, 1);
+        this.clipEllipse(this.ctx);
         this.ctx.drawImage(
             this.selectionCanvas,
             0,
@@ -54,42 +61,29 @@ export class EllipseSelectionCommand extends Command {
         this.ctx.restore();
     }
 
-    cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {
-        const newCanvas = document.createElement('canvas');
-        const context = newCanvas.getContext('2d') as CanvasRenderingContext2D;
-        newCanvas.width = selectionCanvas.width;
-        newCanvas.height = selectionCanvas.height;
-        // apply the old canvas to the new one
-        context.drawImage(selectionCanvas, 0, 0);
-        return newCanvas;
-    }
-
-    clipEllipse(ctx: CanvasRenderingContext2D, start: Vec2, height: number, width: number, offset: number): void {
+    private clipEllipse(ctx: CanvasRenderingContext2D): void {
         const end: Vec2 = {
-            x: start.x + width,
-            y: start.y + height,
+            x: this.transformValues.x + this.selectionWidth,
+            y: this.transformValues.y + this.selectionHeight,
         };
-        const ellipseCenter = this.getEllipseCenter(start, end, this.isCircle);
-        const startX = ellipseCenter.x;
-        const startY = ellipseCenter.y;
-        const radiiXAndY = this.getRadiiXAndY([start, end]);
-        const xRadius = radiiXAndY[0];
-        const yRadius = radiiXAndY[1];
+        const ellipseCenter = this.getEllipseCenter(this.transformValues, end, this.isCircle);
+        const radiiXAndY = this.getRadiiXAndY([this.transformValues, end]);
+        const offset = 1;
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(this.transformValues.x, this.transformValues.y);
-        ctx.ellipse(startX, startY, xRadius + offset, yRadius + offset, ROTATION, START_ANGLE, END_ANGLE);
+        ctx.ellipse(ellipseCenter.x, ellipseCenter.y, radiiXAndY.x + offset, radiiXAndY.y + offset, ROTATION, START_ANGLE, END_ANGLE);
         ctx.clip();
     }
 
-    private getRadiiXAndY(path: Vec2[]): number[] {
+    private getRadiiXAndY(path: Vec2[]): Vec2 {
         let xRadius = Math.abs(path[END_INDEX].x - path[START_INDEX].x) / 2;
         let yRadius = Math.abs(path[END_INDEX].y - path[START_INDEX].y) / 2;
         if (this.isCircle) {
             const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
             xRadius = yRadius = shortestSide;
         }
-        return [xRadius, yRadius];
+        return { x: xRadius, y: yRadius };
     }
 
     private getEllipseCenter(start: Vec2, end: Vec2, isCircle: boolean): Vec2 {

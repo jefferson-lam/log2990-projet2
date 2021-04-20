@@ -139,7 +139,7 @@ export class DrawingsDatabaseController {
          *
          * /api/database/getTags:
          *   get:
-         *     description: Return drawing with specific tags.
+         *     description: Return drawing with at least one of the specified tags.
          *     tags:
          *       - Database
          *     parameters:

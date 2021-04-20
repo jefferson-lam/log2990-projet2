@@ -4,19 +4,25 @@
         <div id="secondaryText">Secondaire</div>
     </div>
     <div class="color-display">
-        <div
-            class="color-preview"
-            [ngStyle]="{ 'background-color': colorService.convertRgbaToString(primaryColor) || 'black' }"
-            (click)="togglePrimaryPickerOpen()"
-        ></div>
+        <div class="preview-wrap">
+            <div class="preview-background"></div>
+            <div
+                class="color-preview"
+                [ngStyle]="{ 'background-color': colorService.convertRgbaToString(primaryColor) || 'black' }"
+                (click)="togglePrimaryPickerOpen()"
+            ></div>
+        </div>
         <div id="switch">
             <button mat-button (click)="switchPrimarySecondary()"><mat-icon>compare_arrows</mat-icon></button>
         </div>
-        <div
-            class="color-preview"
-            [ngStyle]="{ 'background-color': colorService.convertRgbaToString(secondaryColor) || 'white' }"
-            (click)="toggleSecondaryPickerOpen()"
-        ></div>
+        <div class="preview-wrap">
+            <div class="preview-background"></div>
+            <div
+                class="color-preview"
+                [ngStyle]="{ 'background-color': colorService.convertRgbaToString(secondaryColor) || 'white' }"
+                (click)="toggleSecondaryPickerOpen()"
+            ></div>
+        </div>
     </div>
     <div class="colorhistory-wrapper">
         <app-color-history></app-color-history>

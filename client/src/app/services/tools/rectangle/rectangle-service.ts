@@ -3,7 +3,7 @@ import { Command } from '@app/classes/command';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as RectangleConstants from '@app/constants/rectangle-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleCommand } from '@app/services/tools/rectangle/rectangle-command';
@@ -13,19 +13,26 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
-    cornerCoords: Vec2[] = new Array<Vec2>(2);
-    isSquare: boolean = false;
-    isShiftDown: boolean = false;
-    lineWidth: number = 30;
-    fillMode: ToolConstants.FillMode = ToolConstants.FillMode.OUTLINE_FILL;
-    primaryColor: string = 'red';
-    secondaryColor: string = 'grey';
-    mousePosition: Vec2;
+    cornerCoords: Vec2[];
+    isSquare: boolean;
+    isShiftDown: boolean;
+    lineWidth: number;
+    fillMode: ToolConstants.FillMode;
+    primaryColor: string;
+    secondaryColor: string;
+    private mousePosition: Vec2;
 
-    previewCommand: RectangleCommand;
+    private previewCommand: RectangleCommand;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService) {
         super(drawingService, undoRedoService);
+        this.cornerCoords = new Array<Vec2>(ShapeConstants.DIMENSION);
+        this.isSquare = false;
+        this.isShiftDown = false;
+        this.lineWidth = ShapeConstants.INITIAL_BORDER_WIDTH;
+        this.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
+        this.primaryColor = 'red';
+        this.secondaryColor = 'grey';
         this.clearCorners();
         this.previewCommand = new RectangleCommand(drawingService.previewCtx, this);
     }
@@ -34,13 +41,13 @@ export class RectangleService extends Tool {
         this.inUse = event.button === MouseConstants.MouseButton.Left;
         if (this.inUse) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.cornerCoords[RectangleConstants.START_INDEX] = this.mouseDownCoord;
+            this.cornerCoords[ShapeConstants.START_INDEX] = this.mouseDownCoord;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.inUse) {
-            this.cornerCoords[RectangleConstants.END_INDEX] = this.getPositionFromMouse(event);
+            this.cornerCoords[ShapeConstants.END_INDEX] = this.getPositionFromMouse(event);
             const command: Command = new RectangleCommand(this.drawingService.baseCtx, this);
             this.undoRedoService.executeCommand(command);
         }
@@ -53,7 +60,7 @@ export class RectangleService extends Tool {
         if (this.inUse) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             const exitCoords = this.getPositionFromMouse(event);
-            this.cornerCoords[RectangleConstants.END_INDEX] = exitCoords;
+            this.cornerCoords[ShapeConstants.END_INDEX] = exitCoords;
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();
         }
@@ -72,7 +79,7 @@ export class RectangleService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.inUse) {
             this.mousePosition = this.getPositionFromMouse(event);
-            this.cornerCoords[RectangleConstants.END_INDEX] = this.mousePosition;
+            this.cornerCoords[ShapeConstants.END_INDEX] = this.mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.previewCommand.setValues(this.drawingService.previewCtx, this);
             this.previewCommand.execute();
@@ -108,25 +115,13 @@ export class RectangleService extends Tool {
     }
 
     setLineWidth(width: number): void {
-        if (width < RectangleConstants.MIN_BORDER_WIDTH) {
-            this.lineWidth = RectangleConstants.MIN_BORDER_WIDTH;
-        } else if (width > RectangleConstants.MAX_BORDER_WIDTH) {
-            this.lineWidth = RectangleConstants.MAX_BORDER_WIDTH;
+        if (width < ShapeConstants.MIN_BORDER_WIDTH) {
+            this.lineWidth = ShapeConstants.MIN_BORDER_WIDTH;
+        } else if (width > ShapeConstants.MAX_BORDER_WIDTH) {
+            this.lineWidth = ShapeConstants.MAX_BORDER_WIDTH;
         } else {
             this.lineWidth = width;
         }
-    }
-
-    setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.fillMode = newFillMode;
-    }
-
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
-    }
-
-    setSecondaryColor(newColor: string): void {
-        this.secondaryColor = newColor;
     }
 
     private clearCorners(): void {

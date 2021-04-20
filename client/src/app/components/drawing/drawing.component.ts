@@ -1,54 +1,53 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
+import { CanvasGridService } from '@app/services/canvas-grid/canvas-grid.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { CursorManagerService } from '@app/services/manager/cursor-manager.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
-    @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+export class DrawingComponent implements AfterViewInit, OnDestroy {
+    @ViewChild('baseCanvas', { static: false }) private baseCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('previewCanvas', { static: false }) private previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: false }) private gridCanvas: ElementRef<HTMLCanvasElement>;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
-    private previewCanvasSize: Vec2 = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
+    private gridCtx: CanvasRenderingContext2D;
+    private defaultSize: Vec2;
 
-    @Input() currentTool: Tool;
-    constructor(private drawingService: DrawingService, public toolManager: ToolManagerService) {
+    @Input() private currentTool: Tool;
+
+    constructor(
+        private drawingService: DrawingService,
+        private autoSaveService: AutoSaveService,
+        public toolManager: ToolManagerService,
+        public canvasGridService: CanvasGridService,
+        private undoRedoService: UndoRedoService,
+        public cursorManager: CursorManagerService,
+    ) {
         this.currentTool = toolManager.pencilService; // default value
+        this.defaultSize = { x: CanvasConstants.DEFAULT_WIDTH, y: CanvasConstants.DEFAULT_HEIGHT };
     }
 
     ngAfterViewInit(): void {
-        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.baseCtx = this.baseCtx;
-        this.drawingService.previewCtx = this.previewCtx;
-        this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.drawingService.canvas.width = CanvasConstants.DEFAULT_WIDTH;
-        this.drawingService.canvas.height = CanvasConstants.DEFAULT_HEIGHT;
-        this.drawingService.previewCtx.canvas.width = CanvasConstants.DEFAULT_WIDTH;
-        this.drawingService.previewCtx.canvas.height = CanvasConstants.DEFAULT_HEIGHT;
+        this.assignContextValues();
+        this.propagateValuesToDrawingService();
+        this.canvasGridService.gridCtx = this.gridCtx;
 
-        this.baseCtx.fillStyle = 'white';
-        this.baseCtx.fillRect(0, 0, this.baseCtx.canvas.width, this.baseCtx.canvas.height);
-    }
+        this.autoSaveService.loadDrawing();
 
-    ngOnChanges(changes: SimpleChanges): void {
-        const newTool = changes.currentTool.currentValue;
-        const canvasStyle = (document.getElementById('previewLayer') as HTMLCanvasElement).style;
-        if (newTool === this.toolManager.pencilService) {
-            canvasStyle.cursor = 'url(assets/pencil.png) 0 15, auto';
-        } else if (newTool === this.toolManager.eraserService) {
-            canvasStyle.cursor = 'none';
-        } else {
-            canvasStyle.cursor = 'crosshair';
-        }
+        this.resizeGridCanvasOnSizeChange();
+        this.changeCursorOnToolChange();
     }
 
     ngOnDestroy(): void {
@@ -65,44 +64,44 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.currentTool.onKeyboardUp(event);
     }
 
-    @HostListener('keypress', ['$event'])
-    onKeyboardPress(event: KeyboardEvent): void {
-        this.currentTool.onKeyboardPress(event);
-    }
-
-    @HostListener('click', ['$event'])
-    onMouseClick(event: MouseEvent): void {
-        this.currentTool.onMouseClick(event);
-    }
-
     @HostListener('dblclick', ['$event'])
     onMouseDoubleClick(event: MouseEvent): void {
         this.currentTool.onMouseDoubleClick(event);
     }
 
-    @HostListener('mousemove', ['$event'])
+    @HostListener('window:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);
+        this.cursorManager.onMouseMove(this.currentTool.getPositionFromMouse(event));
     }
 
     @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
         this.currentTool.onMouseDown(event);
+        this.undoRedoService.updateActionsAllowed(!this.currentTool.inUse);
     }
 
-    @HostListener('mouseup', ['$event'])
+    @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.currentTool.onMouseUp(event);
+        this.undoRedoService.updateActionsAllowed(!this.currentTool.inUse);
     }
 
-    @HostListener('mouseleave', ['$event'])
+    @HostListener('window:mouseleave', ['$event'])
     onMouseLeave(event: MouseEvent): void {
         this.currentTool.onMouseLeave(event);
+        this.cursorManager.onMouseLeave();
     }
 
-    @HostListener('mouseenter', ['$event'])
+    @HostListener('window:mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.currentTool.onMouseEnter(event);
+        this.cursorManager.onMouseEnter();
+    }
+
+    @HostListener('mousewheel', ['$event'])
+    onMouseWheel(event: WheelEvent): void {
+        this.currentTool.onMouseWheel(event);
     }
 
     @HostListener('contextmenu', ['$event'])
@@ -110,19 +109,39 @@ export class DrawingComponent implements AfterViewInit, OnChanges, OnDestroy {
         event.preventDefault();
     }
 
-    get baseWidth(): number {
-        return this.canvasSize.x;
+    get defaultWidth(): number {
+        return this.defaultSize.x;
     }
 
-    get baseHeight(): number {
-        return this.canvasSize.y;
+    get defaultHeight(): number {
+        return this.defaultSize.y;
     }
 
-    get previewWidth(): number {
-        return this.previewCanvasSize.x;
+    private assignContextValues(): void {
+        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
     }
 
-    get previewHeight(): number {
-        return this.previewCanvasSize.y;
+    private propagateValuesToDrawingService(): void {
+        this.drawingService.baseCtx = this.baseCtx;
+        this.drawingService.previewCtx = this.previewCtx;
+        this.drawingService.gridCtx = this.gridCtx;
+        this.drawingService.canvas = this.baseCanvas.nativeElement;
+    }
+
+    private resizeGridCanvasOnSizeChange(): void {
+        this.drawingService.canvasSizeSubject = new BehaviorSubject<number[]>([this.drawingService.canvas.width, this.drawingService.canvas.height]);
+        this.drawingService.canvasSizeSubject.asObservable().subscribe((dimensions) => {
+            this.canvasGridService.resize(dimensions[0], dimensions[1]);
+        });
+    }
+
+    private changeCursorOnToolChange(): void {
+        this.cursorManager.previewCanvas = this.previewCanvas.nativeElement;
+        this.toolManager.currentToolSubject.asObservable().subscribe((tool) => {
+            this.currentTool = tool;
+            this.cursorManager.changeCursor(tool);
+        });
     }
 }

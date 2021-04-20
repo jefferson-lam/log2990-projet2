@@ -4,18 +4,17 @@ import * as LineConstants from '@app/constants/line-constants';
 import { LineService } from './line-service';
 
 export class LineCommand extends Command {
-    withJunction: boolean;
-    junctionRadius: number;
-    lineWidth: number;
-    primaryColor: string;
-    path: Vec2[] = [];
-    isPreview: boolean;
+    private withJunction: boolean;
+    private junctionRadius: number;
+    private lineWidth: number;
+    private primaryColor: string;
+    private path: Vec2[];
+    private isPreview: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, lineService: LineService) {
         super();
         this.isPreview = false;
         this.ctx = canvasContext;
-
         this.path = Object.assign([], lineService.linePathData);
 
         this.withJunction = lineService.withJunction;
@@ -59,7 +58,7 @@ export class LineCommand extends Command {
         }
     }
 
-    drawJunctions(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    private drawJunctions(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.fillStyle = this.primaryColor;
         for (const point of path) {
             ctx.beginPath();

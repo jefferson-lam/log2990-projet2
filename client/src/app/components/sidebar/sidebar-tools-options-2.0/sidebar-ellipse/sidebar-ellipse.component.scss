@@ -1,14 +1,23 @@
 * {
     font-family: 'Rubik', serif;
 }
+
 #settings-container {
     color: #eee;
     margin-left: 10px;
+    overflow-x: hidden;
 }
+
+#settingsWrapper {
+    margin-left: 10px;
+}
+
 #title {
     font-weight: bolder;
     font-size: x-large;
+    margin-left: 10px;
 }
+
 #width-setting {
     display: block;
     margin-top: 10px;
@@ -18,12 +27,15 @@
     flex-direction: column-reverse;
     margin-top: 10px;
 }
+
 #color-picker {
     margin-top: 25px;
 }
+
 .mat-radio-button {
     margin: 5px;
 }
+
 #colorPicker {
     margin-left: -20px;
 }

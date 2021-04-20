@@ -1,20 +1,32 @@
 #selectionLayer {
     position: absolute;
-    z-index: 13;
-    border: 1px dashed #000000;
+    z-index: 12;
+    border: none;
+}
+
+#borderLayer {
+    position: absolute;
+    z-index: 14;
+    pointer-events: none;
+    background: transparent;
+    opacity: 0.5;
+    border: none;
+    outline: black solid 1px;
+    padding: none;
+    margin: none;
 }
 
 #previewSelectionLayer {
     position: absolute;
-    z-index: 12;
-    border: 1px dashed #000000;
+    z-index: 13;
+    border: none;
+    outline: none;
+    background: transparent;
 }
 
 #selectionContainer {
     position: relative;
     overflow: hidden;
-    height: 800px;
-    width: 1000px;
     max-height: 100%;
     background-color: transparent;
 }
@@ -22,11 +34,27 @@
 .resizer {
     position: absolute;
     color: black;
-    border-style: 1px solid black;
     background-color: black;
     height: 7px;
     width: 7px;
     z-index: 13;
     visibility: hidden;
+    outline: rgb(255, 255, 255) solid 1px;
+}
+
+#leftSlider,
+#rightSlider {
+    cursor: w-resize;
+}
+#topSlider,
+#bottomSlider {
     cursor: n-resize;
+}
+#bottomLeftSlider,
+#topRightSlider {
+    cursor: sw-resize;
+}
+#bottomRightSlider,
+#topLeftSlider {
+    cursor: se-resize;
 }

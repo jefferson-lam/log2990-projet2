@@ -2,17 +2,18 @@ import { TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
-import { ResizerHandlerService } from '@app/services/resizer/resizer-handler.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle-service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse/ellipse-selection-service';
 import { RectangleSelectionService } from '@app/services/tools/selection/rectangle/rectangle-selection-service';
+import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subject } from 'rxjs';
 import { KeyboardListenerDirective } from './keyboard-listener.directive';
 
 class ToolStub extends Tool {}
 
+// tslint:disable: no-string-literal
 describe('KeyboardListenerDirective', () => {
     let toolManager: ToolManagerService;
     let drawingService: DrawingService;
@@ -53,24 +54,25 @@ describe('KeyboardListenerDirective', () => {
 
     it('directives currenttool should change to Rectangle if toolManagers subject changes', () => {
         toolManager.currentToolSubject.next(rectangleSelectionService);
-        expect(directive.currentTool).toBeInstanceOf(RectangleSelectionService);
-        expect(directive.currentTool).toEqual(rectangleSelectionService);
+        expect(directive['currentTool']).toBeInstanceOf(RectangleSelectionService);
+        expect(directive['currentTool']).toEqual(rectangleSelectionService);
     });
 
     it('directives currenttool should change to Ellipse if toolManagers subject changes', () => {
         toolManager.currentToolSubject.next(ellipseSelectionService);
-        expect(directive.currentTool).toBeInstanceOf(EllipseSelectionService);
-        expect(directive.currentTool).toEqual(ellipseSelectionService);
+        expect(directive['currentTool']).toBeInstanceOf(EllipseSelectionService);
+        expect(directive['currentTool']).toEqual(ellipseSelectionService);
     });
 
     it('directives currenttool should not change if tool is not of type ToolSelectionService', () => {
         toolManager.currentToolSubject.next(toolStub);
-        expect(directive.currentTool).toBeUndefined();
+        expect(directive['currentTool']).toBeUndefined();
     });
 
     it("should call select tool when 'Escape' key is down", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'Escape' });
-        directive.currentTool = rectangleSelectionService;
+
+        directive['currentTool'] = rectangleSelectionService;
         directive.onEscapeDown(eventSpy);
         expect(keyboardDownEventSpy).toHaveBeenCalled();
         expect(keyboardDownEventSpy).toHaveBeenCalledWith(eventSpy);
@@ -78,7 +80,7 @@ describe('KeyboardListenerDirective', () => {
 
     it("should call select tool when 'Escape' key is up", () => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'Escape' });
-        directive.currentTool = rectangleSelectionService;
+        directive['currentTool'] = rectangleSelectionService;
         directive.onEscapeUp(eventSpy);
         expect(keyboardUpEventSpy).toHaveBeenCalled();
         expect(keyboardUpEventSpy).toHaveBeenCalledWith(eventSpy);

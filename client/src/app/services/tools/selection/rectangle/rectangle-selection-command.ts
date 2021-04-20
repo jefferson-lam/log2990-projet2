@@ -3,35 +3,43 @@ import { Vec2 } from '@app/classes/vec2';
 import { RectangleSelectionService } from './rectangle-selection-service';
 
 export class RectangleSelectionCommand extends Command {
-    selectionWidth: number;
-    selectionHeight: number;
-    transformValues: Vec2;
+    private initialSelectionWidth: number;
+    private initialSelectionHeight: number;
+    private selectionWidth: number;
+    private selectionHeight: number;
+    private transformValues: Vec2;
     isSquare: boolean;
-    cornerCoords: Vec2[] = [];
-    selectionCanvas: HTMLCanvasElement;
+    private pathData: Vec2[];
+    private selectionCanvas: HTMLCanvasElement;
+    private isFromClipboard: boolean;
 
     constructor(canvasContext: CanvasRenderingContext2D, selectionCanvas: HTMLCanvasElement, rectangleSelectionService: RectangleSelectionService) {
         super();
         this.setValues(canvasContext, selectionCanvas, rectangleSelectionService);
     }
 
-    setValues(
+    private setValues(
         canvasContext: CanvasRenderingContext2D,
         selectionCanvas: HTMLCanvasElement,
         rectangleSelectionService: RectangleSelectionService,
     ): void {
         this.ctx = canvasContext;
-        this.cornerCoords = Object.assign([], rectangleSelectionService.cornerCoords);
+        this.pathData = Object.assign([], rectangleSelectionService.pathData);
         this.selectionCanvas = this.cloneCanvas(selectionCanvas);
-        this.selectionHeight = rectangleSelectionService.selectionHeight;
-        this.selectionWidth = rectangleSelectionService.selectionWidth;
+        this.initialSelectionHeight = rectangleSelectionService.selectionHeight;
+        this.initialSelectionWidth = rectangleSelectionService.selectionWidth;
+        this.selectionHeight = selectionCanvas.height;
+        this.selectionWidth = selectionCanvas.width;
         this.transformValues = rectangleSelectionService.transformValues;
         this.isSquare = rectangleSelectionService.isSquare;
+        this.isFromClipboard = rectangleSelectionService.isFromClipboard;
     }
 
     execute(): void {
-        this.ctx.fillStyle = 'white';
-        this.ctx.fillRect(this.cornerCoords[0].x, this.cornerCoords[0].y, this.selectionWidth, this.selectionHeight);
+        if (!this.isFromClipboard) {
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillRect(this.pathData[0].x, this.pathData[0].y, this.initialSelectionWidth, this.initialSelectionHeight);
+        }
         // When implementing scaling, we will have to sum selectionWidth and selectionHeight to a
         // the distance scaled by the mouse
         this.ctx.drawImage(
@@ -45,15 +53,5 @@ export class RectangleSelectionCommand extends Command {
             this.selectionWidth,
             this.selectionHeight,
         );
-    }
-
-    cloneCanvas(selectionCanvas: HTMLCanvasElement): HTMLCanvasElement {
-        const newCanvas = document.createElement('canvas');
-        const context = newCanvas.getContext('2d') as CanvasRenderingContext2D;
-        newCanvas.width = selectionCanvas.width;
-        newCanvas.height = selectionCanvas.height;
-        // apply the old canvas to the new one
-        context.drawImage(selectionCanvas, 0, 0);
-        return newCanvas;
     }
 }

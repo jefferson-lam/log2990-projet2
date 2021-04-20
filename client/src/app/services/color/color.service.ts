@@ -7,28 +7,29 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class ColorService {
-    primaryColor: Rgba;
-    primaryColorSource: Subject<Rgba>;
+    private primaryColor: Rgba;
+    private primaryColorSource: Subject<Rgba>;
     primaryObservable: Observable<Rgba>;
 
-    secondaryColor: Rgba;
-    secondaryColorSource: Subject<Rgba>;
+    private secondaryColor: Rgba;
+    private secondaryColorSource: Subject<Rgba>;
     secondaryObservable: Observable<Rgba>;
 
-    savedColors: Rgba[] = new Array();
-    savedColorsSource: Subject<Rgba[]>;
+    savedColors: Rgba[];
+    private savedColorsSource: Subject<Rgba[]>;
     savedColorsObservable: Observable<Rgba[]>;
 
     constructor() {
-        this.primaryColor = { red: '0', green: '0', blue: '0', alpha: 1 };
+        this.primaryColor = { red: 0, green: 0, blue: 0, alpha: 1 };
         this.primaryColorSource = new BehaviorSubject<Rgba>(this.primaryColor);
         this.primaryObservable = this.primaryColorSource.asObservable();
 
-        this.secondaryColor = { red: '255', green: '255', blue: '255', alpha: 1 };
+        this.secondaryColor = { red: 255, green: 255, blue: 255, alpha: 1 };
         this.secondaryColorSource = new BehaviorSubject<Rgba>(this.secondaryColor);
         this.secondaryObservable = this.secondaryColorSource.asObservable();
+        this.savedColors = new Array();
 
-        const placeholder = { red: '255', green: '255', blue: '255', alpha: 1 };
+        const placeholder = { red: 255, green: 255, blue: 255, alpha: 1 };
         for (let i = 0; i < ColorConstants.MAX_SAVED_COLORS; i++) {
             this.savedColors.push(placeholder);
         }
@@ -70,7 +71,7 @@ export class ColorService {
 
     getColorAtPosition(ctx: CanvasRenderingContext2D, x: number, y: number, opacity: number): Rgba {
         const imageData = ctx.getImageData(x, y, 1, 1).data;
-        const colorAtPosition: Rgba = { red: imageData[0].toString(), green: imageData[1].toString(), blue: imageData[2].toString(), alpha: opacity };
+        const colorAtPosition: Rgba = { red: imageData[0], green: imageData[1], blue: imageData[2], alpha: opacity };
         return colorAtPosition;
     }
 

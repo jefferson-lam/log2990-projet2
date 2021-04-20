@@ -5,6 +5,7 @@ import { LineCommand } from '@app/services/tools/line/line-command';
 import { LineService } from '@app/services/tools/line/line-service';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('LineCommand', () => {
     let command: LineCommand;
     let lineService: LineService;
@@ -43,24 +44,23 @@ describe('LineCommand', () => {
     it('setValues should set isPreview to true', () => {
         command.setValues(baseCtxStub, lineService);
 
-        expect(command.isPreview).toBeTrue();
+        expect(command['isPreview']).toBeTrue();
     });
 
     it('setValues should assign ctx to command', () => {
         command.setValues(baseCtxStub, lineService);
 
-        // tslint:disable-next-line:no-string-literal
         expect(command['ctx']).toBe(baseCtxStub);
     });
 
     it('setValues should assign lineService values to command', () => {
         command.setValues(baseCtxStub, lineService);
 
-        expect(command.path).toEqual(lineService.linePathData);
-        expect(command.withJunction).toBe(lineService.withJunction);
-        expect(command.junctionRadius).toBe(lineService.junctionRadius);
-        expect(command.lineWidth).toBe(lineService.lineWidth);
-        expect(command.primaryColor).toBe(lineService.primaryColor);
+        expect(command['path']).toEqual(lineService.linePathData);
+        expect(command['withJunction']).toBe(lineService.withJunction);
+        expect(command['junctionRadius']).toBe(lineService.junctionRadius);
+        expect(command['lineWidth']).toBe(lineService.lineWidth);
+        expect(command['primaryColor']).toBe(lineService.primaryColor);
     });
 
     it('execute should call drawLine', () => {
@@ -71,26 +71,24 @@ describe('LineCommand', () => {
 
     it('drawLine should call clearRect if isPreview', () => {
         const clearRectSpy = spyOn(baseCtxStub, 'clearRect');
-        command.isPreview = true;
+        command['isPreview'] = true;
 
-        // tslint:disable-next-line:no-string-literal
         command['drawLine'](baseCtxStub, pathStub);
 
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
     it('drawLine should call drawJunctions if withJunction', () => {
-        const drawJunctionsSpy = spyOn(command, 'drawJunctions');
-        command.withJunction = true;
+        const drawJunctionsSpy = spyOn<any>(command, 'drawJunctions');
+        command['withJunction'] = true;
 
-        // tslint:disable-next-line:no-string-literal
         command['drawLine'](baseCtxStub, pathStub);
 
         expect(drawJunctionsSpy).toHaveBeenCalled();
     });
 
     it('drawJunctions should set fillstyle', () => {
-        command.drawJunctions(baseCtxStub, pathStub);
+        command['drawJunctions'](baseCtxStub, pathStub);
 
         expect(baseCtxStub.fillStyle).toBe('#000000');
     });
@@ -100,7 +98,7 @@ describe('LineCommand', () => {
         const arcSpy = spyOn(baseCtxStub, 'arc');
         const fillSpy = spyOn(baseCtxStub, 'fill');
 
-        command.drawJunctions(baseCtxStub, pathStub);
+        command['drawJunctions'](baseCtxStub, pathStub);
 
         expect(beginPathSpy).toHaveBeenCalled();
         expect(arcSpy).toHaveBeenCalled();
@@ -109,10 +107,9 @@ describe('LineCommand', () => {
     });
 
     it('drawLine should not call drawJunctions if not withJunction', () => {
-        const drawJunctionsSpy = spyOn(command, 'drawJunctions');
+        const drawJunctionsSpy = spyOn<any>(command, 'drawJunctions');
 
-        command.withJunction = false;
-        // tslint:disable-next-line:no-string-literal
+        command['withJunction'] = false;
         command['drawLine'](baseCtxStub, pathStub);
 
         expect(drawJunctionsSpy).not.toHaveBeenCalled();

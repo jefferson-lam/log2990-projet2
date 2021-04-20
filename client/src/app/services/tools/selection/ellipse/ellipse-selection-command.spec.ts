@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
-import { END_ANGLE, END_INDEX, ROTATION, START_ANGLE, START_INDEX } from '@app/constants/ellipse-constants';
-import { OFFSET_RADIUS } from '@app/constants/selection-constants';
+import { ROTATION } from '@app/constants/ellipse-constants';
+import { END_ANGLE, END_INDEX, START_ANGLE, START_INDEX } from '@app/constants/shapes-constants';
 import { EllipseSelectionCommand } from './ellipse-selection-command';
 import { EllipseSelectionService } from './ellipse-selection-service';
 
+// tslint:disable: no-string-literal
 describe('EllipseSelectionCommandService', () => {
     let command: EllipseSelectionCommand;
     let ellipseSelectionService: EllipseSelectionService;
@@ -20,7 +21,6 @@ describe('EllipseSelectionCommandService', () => {
     let baseCtxDrawImageSpy: jasmine.Spy;
     let restoreCtxSpy: jasmine.Spy;
     let ellipseCtxSpy: jasmine.Spy;
-    let clipCtxSpy: jasmine.Spy;
 
     const TEST_X_OFFSET = 3;
     const TEST_Y_OFFSET = 3;
@@ -47,9 +47,9 @@ describe('EllipseSelectionCommandService', () => {
             { x: TEST_X_OFFSET, y: TEST_Y_OFFSET },
         ] as Vec2[];
 
-        ellipseSelectionService.cornerCoords = Object.assign([], pathStub);
-        ellipseSelectionService.selectionHeight = TEST_SELECTION_HEIGHT;
-        ellipseSelectionService.selectionWidth = TEST_SELECTION_WIDTH;
+        ellipseSelectionService.pathData = Object.assign([], pathStub);
+        selectionCtxStub.canvas.height = TEST_SELECTION_HEIGHT;
+        selectionCtxStub.canvas.width = TEST_SELECTION_WIDTH;
         ellipseSelectionService.transformValues = TEST_TRANSFORM_VALUES;
         ellipseSelectionService.isCircle = TEST_IS_CIRCLE;
 
@@ -57,7 +57,6 @@ describe('EllipseSelectionCommandService', () => {
         baseCtxDrawImageSpy = spyOn(baseCtxStub, 'drawImage').and.callThrough();
         restoreCtxSpy = spyOn(baseCtxStub, 'restore').and.callThrough();
         ellipseCtxSpy = spyOn(baseCtxStub, 'ellipse').and.callThrough();
-        clipCtxSpy = spyOn(baseCtxStub, 'clip').and.callThrough();
 
         command = new EllipseSelectionCommand(baseCtxStub, selectionCtxStub.canvas, ellipseSelectionService);
     });
@@ -67,12 +66,12 @@ describe('EllipseSelectionCommandService', () => {
     });
 
     it('setValues should bind correct values to Command', () => {
-        command.setValues(baseCtxStub, selectionCtxStub.canvas, ellipseSelectionService);
-        expect(command.selectionCanvas).toEqual(selectionCtxStub.canvas);
-        expect(command.selectionHeight).toEqual(TEST_SELECTION_HEIGHT);
-        expect(command.selectionWidth).toEqual(TEST_SELECTION_WIDTH);
-        expect(command.transformValues).toEqual(TEST_TRANSFORM_VALUES);
-        expect(command.isCircle).toEqual(TEST_IS_CIRCLE);
+        command['setValues'](baseCtxStub, selectionCtxStub.canvas, ellipseSelectionService);
+        expect(command['selectionCanvas']).toEqual(selectionCtxStub.canvas);
+        expect(command['selectionHeight']).toEqual(TEST_SELECTION_HEIGHT);
+        expect(command['selectionWidth']).toEqual(TEST_SELECTION_WIDTH);
+        expect(command['transformValues']).toEqual(TEST_TRANSFORM_VALUES);
+        expect(command['isCircle']).toEqual(TEST_IS_CIRCLE);
     });
 
     it('execute should correctly call with correct parameters', () => {
@@ -100,28 +99,9 @@ describe('EllipseSelectionCommandService', () => {
         expect(clonedCanvas).toEqual(canvasTestHelper.selectionCanvas);
     });
 
-    it('clipEllipse should clip correct path', () => {
-        const size = 250;
-        const expectedStartX = 125;
-        const expectedStartY = 125;
-        const expectedXRadius = 126;
-        const expectedYRadius = 126;
-        command.clipEllipse(baseCtxStub, { x: 0, y: 0 }, size, size, OFFSET_RADIUS);
-        expect(ellipseCtxSpy).toHaveBeenCalledWith(
-            expectedStartX,
-            expectedStartY,
-            expectedXRadius,
-            expectedYRadius,
-            ROTATION,
-            START_ANGLE,
-            END_ANGLE,
-        );
-        expect(clipCtxSpy).toHaveBeenCalled();
-    });
-
     it('getEllipseCenter should set displacement to shortest side if isCircle', () => {
-        const start = command.cornerCoords[START_INDEX];
-        const end = command.cornerCoords[END_INDEX];
+        const start = command['pathData'][START_INDEX];
+        const end = command['pathData'][END_INDEX];
 
         const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
 
@@ -136,11 +116,11 @@ describe('EllipseSelectionCommandService', () => {
     });
 
     it('getRadiiXAndY should set radius to shortest side if isCircle', () => {
-        command.isCircle = true;
+        command['isCircle'] = true;
 
-        const start = command.cornerCoords[START_INDEX];
+        const start = command['pathData'][START_INDEX];
 
-        const end = command.cornerCoords[END_INDEX];
+        const end = command['pathData'][END_INDEX];
 
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;
@@ -148,9 +128,15 @@ describe('EllipseSelectionCommandService', () => {
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));
 
         // tslint:disable:no-string-literal
-        const radii = command['getRadiiXAndY'](command.cornerCoords);
+        const radii = command['getRadiiXAndY'](command['pathData']);
 
-        expect(radii[0]).toEqual(shortestSide);
-        expect(radii[1]).toEqual(shortestSide);
+        expect(radii.x).toEqual(shortestSide);
+        expect(radii.y).toEqual(shortestSide);
+    });
+
+    it('execute should not fill shape if isFromClipboard is set to true', () => {
+        command['isFromClipboard'] = true;
+        command.execute();
+        expect(baseCtxFillSpy).not.toHaveBeenCalled();
     });
 });

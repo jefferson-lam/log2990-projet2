@@ -1,12 +1,13 @@
-import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { ResizerCommand } from '@app/components/resizer/resizer-command';
 import { ResizerComponent } from '@app/components/resizer/resizer.component';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
+// tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('ResizerComponent', () => {
     let component: ResizerComponent;
     let fixture: ComponentFixture<ResizerComponent>;
@@ -21,8 +22,6 @@ describe('ResizerComponent', () => {
     let bottomResizer: HTMLElement;
     const drawingService: DrawingService = new DrawingService();
     const undoRedoService: UndoRedoService = new UndoRedoService(drawingService);
-
-    const cdkDragEndEvent: CdkDragEnd = {} as CdkDragEnd;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -58,18 +57,19 @@ describe('ResizerComponent', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingService.canvas = canvasTestHelper.canvas;
 
         drawingService.previewCtx = previewCtxStub;
         drawingService.baseCtx = baseCtxStub;
 
         component.baseCtx = baseCtxStub;
         component.previewCtx = previewCtxStub;
-        component.baseCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        component.baseCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
         component.baseCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS;
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS;
 
-        drawPreviewSpy = spyOn(component, 'drawPreviewOfNewSize').and.callThrough();
+        drawPreviewSpy = spyOn<any>(component, 'drawPreviewOfNewSize').and.callThrough();
 
         fixture.detectChanges();
     });
@@ -79,33 +79,33 @@ describe('ResizerComponent', () => {
     });
 
     it('lockMinCanvasValue should set canvas height and width to minimum 250px', () => {
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS - 1;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS - 1;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS - 1;
-        component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.cornerResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
-        expect(component.bottomResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
+        component['lockMinCanvasValue']();
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component['cornerResizer'].nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component['cornerResizer'].nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
+        expect(component['bottomResizer'].nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
     });
 
     it('lockMinCanvasValue should set canvas width to minimum 250px', () => {
         const oldCanvasHeight = 400;
-        component.previewCtx.canvas.width = CanvasConstants.MIN_LENGTH_CANVAS - 1;
+        component.previewCtx.canvas.width = CanvasConstants.MIN_WIDTH_CANVAS - 1;
         component.previewCtx.canvas.height = oldCanvasHeight;
-        component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS + 'px');
-        expect(component.bottomResizer.nativeElement.style.left).toEqual(CanvasConstants.MIN_LENGTH_CANVAS / 2 + 'px');
+        component['lockMinCanvasValue']();
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component['cornerResizer'].nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS + 'px');
+        expect(component['bottomResizer'].nativeElement.style.left).toEqual(CanvasConstants.MIN_WIDTH_CANVAS / 2 + 'px');
     });
 
     it('lockMinCanvasValue should set canvas height to minimum 250px', () => {
         const oldCanvasWidth = 400;
         component.previewCtx.canvas.width = oldCanvasWidth;
         component.previewCtx.canvas.height = CanvasConstants.MIN_HEIGHT_CANVAS - 1;
-        component.lockMinCanvasValue();
-        expect(component.sideResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS / 2 + 'px');
-        expect(component.cornerResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
-        expect(component.bottomResizer.nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
+        component['lockMinCanvasValue']();
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS / 2 + 'px');
+        expect(component['cornerResizer'].nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
+        expect(component['bottomResizer'].nativeElement.style.top).toEqual(CanvasConstants.MIN_HEIGHT_CANVAS + 'px');
     });
 
     // Test: drawPreviewOfNewSize()
@@ -116,150 +116,106 @@ describe('ResizerComponent', () => {
     // 4. CornerResizer: -dx, -dy
 
     it('drawPreviewOfNewSize of +dx, +dy canvas on cornerResizer sets buttons and previewCanvas to correct size', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const newCanvasWidth = 1500;
         const newCanvasHeight = 1050;
         component.previewCtx.canvas.width = newCanvasWidth;
         component.previewCtx.canvas.height = newCanvasHeight;
 
-        component.drawPreviewOfNewSize();
+        component['drawPreviewOfNewSize']();
 
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.cornerResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.sideResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.sideResizer.nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
-        expect(component.bottomResizer.nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
-        expect(component.bottomResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.cornerResizer.nativeElement.style.transform).toEqual('');
+        expect(component['cornerResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['cornerResizer'].nativeElement.style.top).toEqual(newCanvasHeight + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
+        expect(component['bottomResizer'].nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
+        expect(component['bottomResizer'].nativeElement.style.top).toEqual(newCanvasHeight + 'px');
+        expect(component['cornerResizer'].nativeElement.style.transform).toEqual('');
     });
 
     it('drawPreviewOfNewSize of +dx, -dy canvas on cornerResizer sets buttons and previewCanvas to correct size', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const newCanvasWidth = 1500;
         const newCanvasHeight = 400;
         component.previewCtx.canvas.width = newCanvasWidth;
         component.previewCtx.canvas.height = newCanvasHeight;
 
-        component.drawPreviewOfNewSize();
+        component['drawPreviewOfNewSize']();
 
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.cornerResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.sideResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.sideResizer.nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
-        expect(component.bottomResizer.nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
-        expect(component.bottomResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.cornerResizer.nativeElement.style.transform).toEqual('');
+        expect(component['cornerResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['cornerResizer'].nativeElement.style.top).toEqual(newCanvasHeight + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
+        expect(component['bottomResizer'].nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
+        expect(component['bottomResizer'].nativeElement.style.top).toEqual(newCanvasHeight + 'px');
+        expect(component['cornerResizer'].nativeElement.style.transform).toEqual('');
     });
 
     it('drawPreviewOfNewSize of -dx, +dy canvas on cornerResizer sets buttons and previewCanvas to correct size', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const newCanvasWidth = 500;
         const newCanvasHeight = 1200;
         component.previewCtx.canvas.width = newCanvasWidth;
         component.previewCtx.canvas.height = newCanvasHeight;
 
-        component.drawPreviewOfNewSize();
+        component['drawPreviewOfNewSize']();
 
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.cornerResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.sideResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.sideResizer.nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
-        expect(component.bottomResizer.nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
-        expect(component.bottomResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.cornerResizer.nativeElement.style.transform).toEqual('');
+        expect(component['cornerResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['cornerResizer'].nativeElement.style.top).toEqual(newCanvasHeight + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
+        expect(component['bottomResizer'].nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
+        expect(component['bottomResizer'].nativeElement.style.top).toEqual(newCanvasHeight + 'px');
+        expect(component['cornerResizer'].nativeElement.style.transform).toEqual('');
     });
 
     it('drawPreviewOfNewSize of -dx, -dy canvas on cornerResizer sets buttons and previewCanvas to correct size', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const newCanvasWidth = 500;
         const newCanvasHeight = 400;
         component.previewCtx.canvas.width = newCanvasWidth;
         component.previewCtx.canvas.height = newCanvasHeight;
 
-        component.drawPreviewOfNewSize();
+        component['drawPreviewOfNewSize']();
 
-        expect(component.cornerResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.cornerResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.sideResizer.nativeElement.style.left).toEqual(newCanvasWidth + 'px');
-        expect(component.sideResizer.nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
-        expect(component.bottomResizer.nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
-        expect(component.bottomResizer.nativeElement.style.top).toEqual(newCanvasHeight + 'px');
-        expect(component.cornerResizer.nativeElement.style.transform).toEqual('');
+        expect(component['cornerResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['cornerResizer'].nativeElement.style.top).toEqual(newCanvasHeight + 'px');
+        expect(component['sideResizer'].nativeElement.style.left).toEqual(newCanvasWidth + 'px');
+        expect(component['sideResizer'].nativeElement.style.top).toEqual(newCanvasHeight / 2 + 'px');
+        expect(component['bottomResizer'].nativeElement.style.left).toEqual(newCanvasWidth / 2 + 'px');
+        expect(component['bottomResizer'].nativeElement.style.top).toEqual(newCanvasHeight + 'px');
+        expect(component['cornerResizer'].nativeElement.style.transform).toEqual('');
     });
 
     it('if cdkDragMove is triggered, with no resizer button clicked, drawPreviewOfNewSize should do nothing', () => {
         expect((): void => {
-            component.drawPreviewOfNewSize();
+            component['drawPreviewOfNewSize']();
         }).not.toThrow();
     });
 
     it('if expandCanvas is triggered with no buttons, function should not throw', () => {
         expect((): void => {
-            component.expandCanvas(cdkDragEndEvent);
+            component.expandCanvas();
         }).not.toThrow();
     });
 
     it('should return true if bottomResizer clicked', () => {
         component.onBottomResizerDown();
-        expect(component.isBottomResizerDown).toEqual(true);
+        expect(component['isBottomResizerDown']).toEqual(true);
     });
 
     it('should return true if sideResizer clicked', () => {
         component.onSideResizerDown();
-        expect(component.isSideResizerDown).toEqual(true);
+        expect(component['isSideResizerDown']).toEqual(true);
     });
 
     it('should return true if cornerResizer clicked', () => {
         component.onCornerResizerDown();
-        expect(component.isCornerResizerDown).toEqual(true);
-    });
-
-    it('ngAfterViewInit should set resetCanvasSize to default values if drawingService.imageURL is null', () => {
-        drawingService.imageURL = '';
-        const previousCommand = new ResizerCommand(1, 1);
-        const expectedCommand = new ResizerCommand(CanvasConstants.DEFAULT_WIDTH, CanvasConstants.DEFAULT_HEIGHT);
-        undoRedoService.resetCanvasSize = previousCommand;
-
-        component.ngAfterViewInit();
-
-        expect(undoRedoService.resetCanvasSize).toEqual(expectedCommand);
-    });
-
-    it('ngAfterViewInit should set resetCanvasSize if drawingService.imageURL is not null', () => {
-        drawingService.imageURL =
-            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
-        const previousCommand = new ResizerCommand(2, 2);
-        undoRedoService.resetCanvasSize = previousCommand;
-
-        component.ngAfterViewInit();
-
-        expect(undoRedoService.resetCanvasSize).not.toEqual(previousCommand);
-    });
-
-    it('ngAfterViewInit should reset UndoRedoService and execute resetCanvasSize if drawingService.imageURL is not null', () => {
-        drawingService.imageURL =
-            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
-
-        const resetSpy = spyOn(undoRedoService, 'reset');
-
-        component.ngAfterViewInit();
-
-        expect(resetSpy).toHaveBeenCalled();
-    });
-
-    it('ngAfterViewInit should drawImage on canvas if drawingService.imageURL is not null', () => {
-        drawingService.imageURL =
-            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC';
-
-        const drawImageSpy = spyOn(component.baseCtx, 'drawImage');
-
-        component.ngAfterViewInit();
-
-        expect(drawImageSpy).toHaveBeenCalled();
+        expect(component['isCornerResizerDown']).toEqual(true);
     });
 
     it('setPreviewSize should set width if isSideResizerDown and over min value', () => {
-        component.isSideResizerDown = true;
+        component['isSideResizerDown'] = true;
         const cdkDragMove = {
             pointerPosition: {
                 x: 600,
@@ -272,7 +228,7 @@ describe('ResizerComponent', () => {
     });
 
     it('setPreviewSize should set width and height if isCornerResizerDown and over min value', () => {
-        component.isCornerResizerDown = true;
+        component['isCornerResizerDown'] = true;
         const cdkDragMove = {
             pointerPosition: {
                 x: 600,
@@ -285,7 +241,7 @@ describe('ResizerComponent', () => {
     });
 
     it('setPreviewSize should set height if isBottomResizerDown and over min value', () => {
-        component.isBottomResizerDown = true;
+        component['isBottomResizerDown'] = true;
         const cdkDragMove = {
             pointerPosition: {
                 x: 600,
@@ -298,7 +254,7 @@ describe('ResizerComponent', () => {
     });
 
     it('setPreviewSize should call lockMinCanvasValue', () => {
-        const lockMinSpy = spyOn(component, 'lockMinCanvasValue');
+        const lockMinSpy = spyOn<any>(component, 'lockMinCanvasValue');
         const cdkDragMove = {
             pointerPosition: {
                 x: 100,

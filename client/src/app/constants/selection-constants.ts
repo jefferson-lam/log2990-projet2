@@ -19,3 +19,5 @@ export const OFFSET_RADIUS = 1;
 export const BUTTON_OFFSET = 6;
 
 export const DRAWN_ELLIPSE_RADIUS_OFFSET = 3;
+
+export const MINIMUM_LINE_LASSO = 2;

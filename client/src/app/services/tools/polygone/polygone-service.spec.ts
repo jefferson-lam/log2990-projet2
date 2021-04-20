@@ -1,14 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
-import * as PolygoneConstants from '@app/constants/polygone-constants';
-import * as ToolConstants from '@app/constants/tool-constants';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { PolygoneService } from './polygone-service';
 
 // tslint:disable:no-any
+// tslint:disable: no-string-literal
 describe('PolygoneService', () => {
     let service: PolygoneService;
     let mouseEvent: MouseEvent;
@@ -36,15 +37,16 @@ describe('PolygoneService', () => {
 
         undoRedoService = TestBed.inject(UndoRedoService);
         executeSpy = spyOn(undoRedoService, 'executeCommand').and.callThrough();
-        previewExecuteSpy = spyOn(service.previewCommand, 'execute');
+        previewExecuteSpy = spyOn(service['previewCommand'], 'execute');
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
+        const offsetX = 25;
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 40,
+            x: offsetX + CanvasConstants.LEFT_MARGIN,
+            y: 40,
             button: MouseConstants.MouseButton.Left,
         } as MouseEvent;
     });
@@ -152,7 +154,7 @@ describe('PolygoneService', () => {
         const mouseEnterEvent = {
             offsetX: 25,
             offsetY: 40,
-            buttons: MouseConstants.PRIMARY_BUTTON,
+            buttons: MouseConstants.MouseButton.Middle,
         } as MouseEvent;
         service.inUse = true;
         service.onMouseEnter(mouseEnterEvent);
@@ -182,8 +184,8 @@ describe('PolygoneService', () => {
     });
 
     it('getRadiiXAndY should set expected x and y radius', () => {
-        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
-        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const start = service.cornerCoords[ShapeConstants.START_INDEX];
+        const end = service.cornerCoords[ShapeConstants.END_INDEX];
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;
         // tslint:disable:no-string-literal
@@ -199,42 +201,6 @@ describe('PolygoneService', () => {
         expect(service.lineWidth).toEqual(RANDOM_TEST_WIDTH);
     });
 
-    it('setSidesCount should change sides count', () => {
-        const RANDOM_TEST_COUNT = 10;
-        service.setSidesCount(RANDOM_TEST_COUNT);
-        expect(service.initNumberSides).toEqual(RANDOM_TEST_COUNT);
-    });
-
-    it('setFillMode should change to FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.FILL_ONLY;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setFillMode should change to OUTLINE mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setFillMode should change to OUTLINE_FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE_FILL;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setPrimaryColor should change primary color to wanted color', () => {
-        const EXPECTED_RANDOM_COLOR = 'blue';
-        service.setPrimaryColor(EXPECTED_RANDOM_COLOR);
-        expect(service.primaryColor).toEqual(EXPECTED_RANDOM_COLOR);
-    });
-
-    it('setSecondaryColor should change secondary color to wanted color', () => {
-        const EXPECTED_RANDOM_COLOR = 'green';
-        service.setSecondaryColor(EXPECTED_RANDOM_COLOR);
-        expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
-    });
-
     it('onToolChange should call onMouseUp', () => {
         const onMouseUpSpy = spyOn(service, 'onMouseUp');
 
@@ -244,8 +210,8 @@ describe('PolygoneService', () => {
     });
 
     it('getPolygoneCenter should set polygone center', () => {
-        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
-        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const start = service.cornerCoords[ShapeConstants.START_INDEX];
+        const end = service.cornerCoords[ShapeConstants.END_INDEX];
         const shortestSide = Math.min(Math.abs(end.x - start.x) / 2, Math.abs(end.y - start.y) / 2);
         const xVector = end.x - start.x;
         const yVector = end.y - start.y;
@@ -258,8 +224,8 @@ describe('PolygoneService', () => {
     });
 
     it('getRadiiXAndY should set radius to shortest side always', () => {
-        const start = service.cornerCoords[PolygoneConstants.START_INDEX];
-        const end = service.cornerCoords[PolygoneConstants.END_INDEX];
+        const start = service.cornerCoords[ShapeConstants.START_INDEX];
+        const end = service.cornerCoords[ShapeConstants.END_INDEX];
         const xRadius = Math.abs(end.x - start.x) / 2;
         const yRadius = Math.abs(end.y - start.y) / 2;
         const shortestSide = Math.min(Math.abs(xRadius), Math.abs(yRadius));

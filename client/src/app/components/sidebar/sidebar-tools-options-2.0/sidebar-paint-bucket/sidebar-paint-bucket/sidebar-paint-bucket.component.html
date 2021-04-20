@@ -1,0 +1,22 @@
+<div id="settings-container">
+    <h2 id="title">Options sceau de peinture</h2>
+    <div id="settingsWrapper">
+        <div id="width-setting">
+            <p>Tolérance d'écart : {{ toleranceValue }}</p>
+            <mat-slider
+                id="width"
+                color="warn"
+                thumbLabel
+                [tickInterval]="tickInterval"
+                [min]="minToleranceValue"
+                [max]="maxToleranceValue"
+                [(value)]="toleranceValue"
+                (change)="emitToleranceValue()"
+            >
+            </mat-slider>
+        </div>
+        <div id="colorPicker">
+            <app-color-picker></app-color-picker>
+        </div>
+    </div>
+</div>

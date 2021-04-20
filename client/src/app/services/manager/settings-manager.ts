@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
-import { EditorComponent } from '@app/components/editor/editor.component';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { ColorService } from '@app/services/color/color.service';
 import { ToolManagerService } from './tool-manager-service';
@@ -9,50 +8,76 @@ import { ToolManagerService } from './tool-manager-service';
     providedIn: 'root',
 })
 export class SettingsManagerService {
-    editorComponent: EditorComponent;
-
-    constructor(public toolManagerService: ToolManagerService, colorService: ColorService) {
+    constructor(public toolManager: ToolManagerService, colorService: ColorService) {
         colorService.primaryObservable.subscribe((color: Rgba) => {
-            this.setPrimaryColorTools(colorService.convertRgbaToString(color));
+            toolManager.setPrimaryColorTools(colorService.convertRgbaToString(color));
         });
         colorService.secondaryObservable.subscribe((color: Rgba) => {
-            this.setSecondaryColorTools(colorService.convertRgbaToString(color));
+            toolManager.setSecondaryColorTools(colorService.convertRgbaToString(color));
         });
     }
 
     setLineWidth(newWidth: number): void {
-        this.editorComponent.currentTool.setLineWidth(newWidth);
+        this.toolManager.currentTool.setLineWidth(newWidth);
     }
 
     setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.editorComponent.currentTool.setFillMode(newFillMode);
+        this.toolManager.currentTool.fillMode = newFillMode;
     }
 
     setJunctionRadius(newJunctionRadius: number): void {
-        this.editorComponent.currentTool.setJunctionRadius(newJunctionRadius);
+        this.toolManager.currentTool.setJunctionRadius(newJunctionRadius);
     }
 
     setWithJunction(withJunction: boolean): void {
-        this.editorComponent.currentTool.setWithJunction(withJunction);
+        this.toolManager.currentTool.withJunction = withJunction;
     }
 
     setSidesCount(newSidesCount: number): void {
-        this.editorComponent.currentTool.setSidesCount(newSidesCount);
+        this.toolManager.currentTool.numberSides = newSidesCount;
     }
 
     setWaterDropWidth(newSize: number): void {
-        this.editorComponent.currentTool.setWaterDropWidth(newSize);
+        this.toolManager.currentTool.waterDropWidth = newSize;
     }
 
     setEmissionCount(newEmissionCount: number): void {
-        this.editorComponent.currentTool.setEmissionCount(newEmissionCount);
+        this.toolManager.currentTool.emissionCount = newEmissionCount;
     }
 
-    setPrimaryColorTools(color: string): void {
-        this.toolManagerService.setPrimaryColorTools(color);
+    setToleranceValue(newToleranceValue: number): void {
+        this.toolManager.currentTool.setToleranceValue(newToleranceValue);
     }
 
-    setSecondaryColorTools(color: string): void {
-        this.toolManagerService.setSecondaryColorTools(color);
+    setImageSource(newSource: string): void {
+        this.toolManager.currentTool.imageSource = newSource;
+    }
+
+    setImageZoomFactor(newFactor: number): void {
+        this.toolManager.currentTool.imageZoomFactor = newFactor;
+    }
+
+    setAngleRotation(newAngle: number): void {
+        this.toolManager.currentTool.setAngleRotation(newAngle);
+    }
+
+    setFontFamily(fontFamily: string): void {
+        this.toolManager.currentTool.setFontFamily(fontFamily);
+    }
+
+    setFontSize(fontSize: number): void {
+        this.toolManager.currentTool.setFontSize(fontSize);
+    }
+
+    setTextAlign(textAlign: string): void {
+        this.toolManager.currentTool.setTextAlign(textAlign);
+    }
+
+    setTextBold(fontWeight: string): void {
+        this.toolManager.currentTool.setTextBold(fontWeight);
+    }
+
+    setTextItalic(fontStyle: string): void {
+        this.toolManager.currentTool.setTextItalic(fontStyle);
     }
 }

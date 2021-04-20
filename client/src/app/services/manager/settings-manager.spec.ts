@@ -1,17 +1,12 @@
-import { async, TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
-import { Rgba } from '@app/classes/rgba';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
-import { EditorComponent } from '@app/components/editor/editor.component';
-import { ColorService } from '@app/services/color/color.service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
 
 // tslint:disable:no-any
 describe('SettingsManagerService', () => {
     let service: SettingsManagerService;
-    let editorComponent: EditorComponent;
     let toolSpy: jasmine.SpyObj<Tool>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
 
@@ -24,19 +19,23 @@ describe('SettingsManagerService', () => {
             'setSidesCount',
             'setWaterDropWidth',
             'setEmissionCount',
+            'setToleranceValue',
+            'setImageSource',
+            'setImageZoomFactor',
+            'setAngleRotation',
+            'setFontFamily',
+            'setFontSize',
+            'setTextAlign',
+            'setTextBold',
+            'setTextItalic',
         ]);
-        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools']);
+        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['setPrimaryColorTools', 'setSecondaryColorTools'], ['currentTool']);
+        (Object.getOwnPropertyDescriptor(toolManagerSpy, 'currentTool')?.get as jasmine.Spy<() => Tool>).and.returnValue(toolSpy);
         TestBed.configureTestingModule({
-            declarations: [EditorComponent],
-            providers: [
-                { provide: EditorComponent, useValue: editorComponent },
-                { provide: Tool, useValue: toolSpy },
-                { provide: ToolManagerService, useValue: toolManagerSpy },
-            ],
+            providers: [{ provide: ToolManagerService, useValue: toolManagerSpy }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         service = TestBed.inject(SettingsManagerService);
-        editorComponent = new EditorComponent({} as ToolManagerService, {} as MatDialog, service, {} as UndoRedoService);
-        editorComponent.currentTool = toolSpy;
     });
 
     it('should be created', () => {
@@ -52,7 +51,7 @@ describe('SettingsManagerService', () => {
     it('setFillMode should set the fill mode correctly of current tool', () => {
         const EXPECTED_FILL_MODE = 2;
         service.setFillMode(EXPECTED_FILL_MODE);
-        expect(toolSpy.setFillMode).toHaveBeenCalled();
+        expect(toolSpy.fillMode).toEqual(EXPECTED_FILL_MODE);
     });
 
     it('setJunctionRadius should call setJunctionRadius of current tool', () => {
@@ -64,64 +63,76 @@ describe('SettingsManagerService', () => {
     it('setWithJunction should call setWithJunction of current tool', () => {
         const hasJunction = true;
         service.setWithJunction(hasJunction);
-        expect(toolSpy.setWithJunction).toHaveBeenCalled();
+        expect(toolSpy.withJunction).toBeTrue();
     });
 
     it('setSidesCount should set the sides count correctly of current tool', () => {
         const EXPECTED_SIDES_COUNT = 10;
         service.setSidesCount(EXPECTED_SIDES_COUNT);
-        expect(toolSpy.setSidesCount).toHaveBeenCalled();
-    });
-
-    it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {
-        service.setPrimaryColorTools('blue');
-        expect(toolManagerSpy.setPrimaryColorTools).toHaveBeenCalled();
-    });
-
-    it('setSecondaryColorTools should call setPrimaryToolsColor of toolManager', () => {
-        service.setSecondaryColorTools('blue');
-        expect(toolManagerSpy.setSecondaryColorTools).toHaveBeenCalled();
+        expect(toolSpy.numberSides).toEqual(EXPECTED_SIDES_COUNT);
     });
 
     it('setWaterDropWidth should call setWaterDropWidth of toolManager', () => {
         const EXPECTED_WATER_DROP_WIDTH = 50;
         service.setWaterDropWidth(EXPECTED_WATER_DROP_WIDTH);
-        expect(toolSpy.setWaterDropWidth).toHaveBeenCalled();
+        expect(toolSpy.waterDropWidth).toEqual(EXPECTED_WATER_DROP_WIDTH);
     });
 
     it('setEmissionCount should call setEmissionCount of toolManager', () => {
         const EXPECTED_EMISSION_COUNT = 50;
         service.setEmissionCount(EXPECTED_EMISSION_COUNT);
-        expect(toolSpy.setEmissionCount).toHaveBeenCalled();
+        expect(toolSpy.emissionCount).toEqual(EXPECTED_EMISSION_COUNT);
     });
 
-    it('calls setPrimaryColorsTools when size changed', async(() => {
-        const mockColor = {
-            red: '255',
-            green: '10',
-            blue: '2',
-            alpha: 1,
-        } as Rgba;
-        const serviceSetter = spyOn(service, 'setPrimaryColorTools').and.callThrough();
-        const colorService = TestBed.inject(ColorService);
-        colorService.setPrimaryColor(mockColor);
+    it('setToleranceValue should call setToleranceValue of toolManagers currentTool', () => {
+        const EXPECTED_TOLERANCE_VALUE = 75;
+        service.setToleranceValue(EXPECTED_TOLERANCE_VALUE);
+        expect(toolSpy.setToleranceValue).toHaveBeenCalled();
+    });
 
-        expect(serviceSetter).toHaveBeenCalled();
-        expect(serviceSetter).toHaveBeenCalledWith(colorService.convertRgbaToString(mockColor));
-    }));
+    it('setImageSource should call setImageSource of toolManager', () => {
+        const EXPECTED_IMAGE_SOURCE = 'new_image_svg';
+        service.setImageSource(EXPECTED_IMAGE_SOURCE);
+        expect(toolSpy.imageSource).toEqual(EXPECTED_IMAGE_SOURCE);
+    });
 
-    it('calls setSecondaryColorsTools when size changed', async(() => {
-        const mockColor = {
-            red: '255',
-            green: '10',
-            blue: '2',
-            alpha: 1,
-        } as Rgba;
-        const serviceSetter = spyOn(service, 'setSecondaryColorTools').and.callThrough();
-        const colorService = TestBed.inject(ColorService);
-        colorService.setSecondaryColor(mockColor);
+    it('setImageZoomFactor should call setImageZoomFactor of toolManager', () => {
+        const EXPECTED_ZOOM_FACTOR = 50;
+        service.setImageZoomFactor(EXPECTED_ZOOM_FACTOR);
+        expect(toolSpy.imageZoomFactor).toEqual(EXPECTED_ZOOM_FACTOR);
+    });
 
-        expect(serviceSetter).toHaveBeenCalled();
-        expect(serviceSetter).toHaveBeenCalledWith(colorService.convertRgbaToString(mockColor));
-    }));
+    it('setAngleRotation should call setAngleRotation of toolManager', () => {
+        const EXPECTED_ANGLE = 50;
+        service.setAngleRotation(EXPECTED_ANGLE);
+        expect(toolSpy.setAngleRotation).toHaveBeenCalled();
+    });
+
+    it('setFontFamily should call setFontFamily of toolManager', () => {
+        const EXPECTED_FONT_FAMILY = 'Arial';
+        service.setFontFamily(EXPECTED_FONT_FAMILY);
+        expect(toolSpy.setFontFamily).toHaveBeenCalled();
+    });
+
+    it('setFontSize should call setFontSize of toolManager', () => {
+        const EXPECTED_FONT_SIZE = 50;
+        service.setFontSize(EXPECTED_FONT_SIZE);
+        expect(toolSpy.setFontSize).toHaveBeenCalled();
+    });
+    it('setTextAlign should call setTextAlign of toolManager', () => {
+        const EXPECTED_ALIGN = 'center';
+        service.setTextAlign(EXPECTED_ALIGN);
+        expect(toolSpy.setTextAlign).toHaveBeenCalled();
+    });
+    it('setTextBold should call setTextBold of toolManager', () => {
+        const EXPECTED_BOLD = 'bold';
+        service.setTextBold(EXPECTED_BOLD);
+        expect(toolSpy.setTextBold).toHaveBeenCalled();
+    });
+
+    it('setTextItalic should call setTextItalic of toolManager', () => {
+        const EXPECTED_ITALIC = 'italic';
+        service.setTextItalic(EXPECTED_ITALIC);
+        expect(toolSpy.setTextItalic).toHaveBeenCalled();
+    });
 });

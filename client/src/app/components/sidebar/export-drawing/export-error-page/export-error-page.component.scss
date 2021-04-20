@@ -1,0 +1,47 @@
+.modal-dialog {
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
+}
+
+#exportErrorDiv {
+    text-align: center;
+}
+
+#errorDivHeader {
+    margin: auto;
+}
+
+#errorDiv {
+    display: flex;
+    justify-content: center;
+}
+
+#errorX {
+    height: 200px;
+    width: 200px;
+    font-size: 200px;
+    color: red;
+    justify-content: center;
+}
+
+#reason {
+    color: red;
+    font-size: 15px;
+}
+
+#buttonDiv {
+    display: flex;
+    justify-content: center;
+}
+
+#closebutton {
+    font-size: large;
+    background-color: coral;
+    width: 125px;
+}
+
+#closebutton:hover {
+    color: beige;
+    background-color: #0c3164;
+}

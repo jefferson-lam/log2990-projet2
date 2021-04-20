@@ -1,189 +1,147 @@
-import { DebugElement } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { SelectionComponent } from '@app/components/selection/selection.component';
+import * as DirectionalMovementConstants from '@app/constants/directional-movement-constants';
+import { ShortcutManagerService } from '@app/services/manager/shortcut-manager.service';
 import { DirectionalMovementDirective } from './directional-movement.directive';
+import createSpyObj = jasmine.createSpyObj;
 
+// tslint:disable: no-string-literal
+// tslint:disable: no-any
 describe('DirectionalMovementDirective', () => {
     let fixture: ComponentFixture<SelectionComponent>;
     let directive: DirectionalMovementDirective;
     let selectionCanvas: DebugElement;
-    let delaySpy: jasmine.Spy;
+    let emitSpy: jasmine.Spy;
+    let shortcutManagerSpy: jasmine.SpyObj<ShortcutManagerService>;
 
-    const FIRST_PRESS_DELAY = 500;
-    const CONTINUOUS_PRESS_DELAY = 100;
-    const NUM_PIXELS = 3;
+    const initialPosition = { x: '10px', y: '10px' };
+    const movement = { x: 1, y: 1 };
 
     beforeEach(() => {
+        shortcutManagerSpy = createSpyObj('ShortcutManagerService', [
+            'isShortcutAllowed',
+            'selectionMovementOnArrowDown',
+            'selectionMovementOnKeyboardUp',
+        ]);
         fixture = TestBed.configureTestingModule({
             declarations: [DirectionalMovementDirective, SelectionComponent],
+            providers: [{ provide: ShortcutManagerService, useValue: shortcutManagerSpy }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).createComponent(SelectionComponent);
         fixture.detectChanges();
         selectionCanvas = fixture.debugElement.query(By.directive(DirectionalMovementDirective));
-        directive = new DirectionalMovementDirective(selectionCanvas);
-        delaySpy = spyOn(directive, 'delay').and.callThrough();
+        directive = new DirectionalMovementDirective(selectionCanvas, shortcutManagerSpy);
+        emitSpy = spyOn(directive.canvasMovement, 'emit');
     });
 
     it('should create an instance', () => {
         expect(directive).toBeTruthy();
     });
 
-    it('onKeyBoardDown should move selection left by NUM_PIXELS pixels if released immediately after specified timeout', fakeAsync((): void => {
+    it('onKeyBoardDown should call shortcutManager.selectionMovementOnArrowDown', fakeAsync((): void => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowLeft', timeStamp: '100' });
 
-        selectionCanvas.nativeElement.style.left = '10px';
-        selectionCanvas.nativeElement.style.top = '10px';
-        selectionCanvas.nativeElement.style.right = '10px';
-
-        const INITIAL_LEFT_POSITION = selectionCanvas.nativeElement.style.left;
-        const INITIAL_TOP_POSITION = selectionCanvas.nativeElement.style.top;
-
-        const EXPECTED_LEFT_END_POSITION = parseInt(INITIAL_LEFT_POSITION, 10) - NUM_PIXELS + 'px';
-        const EXPECTED_TOP_POSITION = INITIAL_TOP_POSITION;
-
         directive.onKeyboardDown(eventSpy);
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(INITIAL_TOP_POSITION);
 
-        tick(FIRST_PRESS_DELAY);
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_POSITION);
-        flush();
+        expect(shortcutManagerSpy.selectionMovementOnArrowDown).toHaveBeenCalled();
     }));
 
-    it('onKeyBoardDown should move selection right by NUM_PIXELS pixels if released immediately after specified timeout', fakeAsync((): void => {
-        const eventSpyPressDown = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowRight', timeStamp: '100' });
-
-        selectionCanvas.nativeElement.style.left = '10px';
-        selectionCanvas.nativeElement.style.top = '10px';
-        selectionCanvas.nativeElement.style.right = '10px';
-
-        const INITIAL_LEFT_POSITION = selectionCanvas.nativeElement.style.left;
-        const INITIAL_TOP_POSITION = selectionCanvas.nativeElement.style.top;
-
-        const EXPECTED_LEFT_END_POSITION = parseInt(INITIAL_LEFT_POSITION, 10) + NUM_PIXELS + 'px';
-        const EXPECTED_TOP_END_POSITION = INITIAL_TOP_POSITION;
-
-        directive.onKeyboardDown(eventSpyPressDown);
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(INITIAL_TOP_POSITION);
-
-        tick(FIRST_PRESS_DELAY);
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_END_POSITION);
-
-        const eventSpyPressUp = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowRight', timeStamp: '100' });
-        directive.onKeyboardUp(eventSpyPressUp);
-        expect(directive.keyPressed.get('ArrowRight')).toBe(0);
-
-        // Make sure that selection canvas hasn't moved with keyboard up
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_END_POSITION);
-
-        flush();
-    }));
-
-    it('onKeyBoardDown should move selection down by NUM_PIXELS pixels if released immediately after specified timeout', fakeAsync((): void => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowDown', timeStamp: '100' });
-
-        selectionCanvas.nativeElement.style.left = '10px';
-        selectionCanvas.nativeElement.style.top = '10px';
-        selectionCanvas.nativeElement.style.right = '10px';
-
-        const INITIAL_LEFT_POSITION = selectionCanvas.nativeElement.style.left;
-        const INITIAL_TOP_POSITION = selectionCanvas.nativeElement.style.top;
-
-        const EXPECTED_TOP_END_POSITION = parseInt(INITIAL_LEFT_POSITION, 10) + NUM_PIXELS + 'px';
-        const EXPECTED_LEFT_END_POSITION = INITIAL_TOP_POSITION;
-
-        directive.onKeyboardDown(eventSpy);
-        expect(selectionCanvas.nativeElement.style.left).toEqual(INITIAL_LEFT_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_END_POSITION);
-
-        tick(FIRST_PRESS_DELAY);
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_END_POSITION);
-
-        const eventSpyPressUp = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowRight', timeStamp: '100' });
-        directive.onKeyboardUp(eventSpyPressUp);
-        expect(directive.keyPressed.get('ArrowRight')).toBe(0);
-
-        // Make sure that selection canvas hasn't moved with keyboard up
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_END_POSITION);
-        flush();
-    }));
-
-    it('onKeyBoardDown should move selection up by NUM_PIXELS pixels if released immediately after specified timeout', fakeAsync((): void => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowUp', timeStamp: '100' });
-
-        selectionCanvas.nativeElement.style.left = '10px';
-        selectionCanvas.nativeElement.style.top = '10px';
-        selectionCanvas.nativeElement.style.right = '10px';
-
-        const INITIAL_LEFT_POSITION = selectionCanvas.nativeElement.style.left;
-        const INITIAL_TOP_POSITION = selectionCanvas.nativeElement.style.top;
-
-        const EXPECTED_TOP_END_POSITION = parseInt(INITIAL_LEFT_POSITION, 10) - NUM_PIXELS + 'px';
-        const EXPECTED_LEFT_END_POSITION = INITIAL_TOP_POSITION;
-
-        directive.onKeyboardDown(eventSpy);
-        expect(selectionCanvas.nativeElement.style.left).toEqual(INITIAL_LEFT_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_END_POSITION);
-
-        tick(FIRST_PRESS_DELAY);
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_END_POSITION);
-
-        const eventSpyPressUp = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowRight', timeStamp: '100' });
-        directive.onKeyboardUp(eventSpyPressUp);
-        expect(directive.keyPressed.get('ArrowRight')).toBe(0);
-
-        // Make sure that selection canvas hasn't moved with keyboard up
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_END_POSITION);
-        flush();
-    }));
-
-    it('onKeyBoardDown should skip continuous translation of canvas if hasMovedOnce is true', fakeAsync((): void => {
+    it('onKeyBoardUp should call shortcutManager.selectionMovementOnKeyboardUp', fakeAsync((): void => {
         const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowLeft', timeStamp: '100' });
-        const functionName = 'hasMovedOnce';
 
-        selectionCanvas.nativeElement.style.left = '10px';
-        selectionCanvas.nativeElement.style.top = '10px';
-        selectionCanvas.nativeElement.style.right = '10px';
-        directive[functionName] = true;
+        directive.onKeyboardUp(eventSpy);
 
-        directive.onKeyboardDown(eventSpy);
-        tick(FIRST_PRESS_DELAY);
-        directive.onKeyboardDown(eventSpy);
-        expect(delaySpy).not.toHaveBeenCalledWith(CONTINUOUS_PRESS_DELAY);
+        expect(shortcutManagerSpy.selectionMovementOnKeyboardUp).toHaveBeenCalled();
+    }));
+
+    it('translateLeft should move element left', () => {
+        selectionCanvas.nativeElement.style.left = initialPosition.x;
+        const expected = parseInt(initialPosition.x, 10) - movement.x + 'px';
+
+        directive['translateLeft'](movement.x);
+
+        expect(selectionCanvas.nativeElement.style.left).toBe(expected);
+    });
+
+    it('translateRight should move element right', () => {
+        selectionCanvas.nativeElement.style.left = initialPosition.x;
+        const expected = parseInt(initialPosition.x, 10) + movement.x + 'px';
+
+        directive['translateRight'](movement.x);
+
+        expect(selectionCanvas.nativeElement.style.left).toBe(expected);
+    });
+
+    it('translateUp should move element up', () => {
+        selectionCanvas.nativeElement.style.top = initialPosition.y;
+        const expected = parseInt(initialPosition.y, 10) - movement.y + 'px';
+
+        directive['translateUp'](movement.y);
+
+        expect(selectionCanvas.nativeElement.style.top).toBe(expected);
+    });
+
+    it('translateDown should move element down', () => {
+        selectionCanvas.nativeElement.style.top = initialPosition.y;
+        const expected = parseInt(initialPosition.y, 10) + movement.y + 'px';
+
+        directive['translateDown'](movement.y);
+
+        expect(selectionCanvas.nativeElement.style.top).toBe(expected);
+    });
+
+    it('delay should return promise with setTimeout call', fakeAsync(() => {
+        const timeoutSpy = spyOn(window, 'setTimeout');
+        directive.delay(DirectionalMovementConstants.FIRST_PRESS_DELAY_MS);
+        tick(DirectionalMovementConstants.FIRST_PRESS_DELAY_MS);
+        expect(timeoutSpy).toHaveBeenCalled();
         flush();
     }));
 
-    it('onKeyBoardDown should move selection left by increments of NUM_PIXELS if held down', fakeAsync((): void => {
-        const eventSpy = jasmine.createSpyObj('event', ['preventDefault'], { key: 'ArrowLeft', timeStamp: '100' });
-        const functionName = 'hasMovedOnce';
+    it('translateSelection should call translate left if ArrowLeft pressed', () => {
+        const leftSpy = spyOn<any>(directive, 'translateLeft');
+        directive.keyPressed.set('ArrowLeft', 1);
 
-        selectionCanvas.nativeElement.style.left = '10px';
-        selectionCanvas.nativeElement.style.top = '10px';
-        selectionCanvas.nativeElement.style.right = '10px';
+        directive.translateSelection();
 
-        const INITIAL_LEFT_POSITION = selectionCanvas.nativeElement.style.left;
-        const INITIAL_TOP_POSITION = selectionCanvas.nativeElement.style.top;
+        expect(leftSpy).toHaveBeenCalled();
+    });
 
-        const EXPECTED_LEFT_END_POSITION = parseInt(INITIAL_LEFT_POSITION, 10) - NUM_PIXELS * NUM_PIXELS + 'px';
-        const EXPECTED_TOP_POSITION = INITIAL_TOP_POSITION;
+    it('translateSelection should call translate up if ArrowUp pressed', () => {
+        const upSpy = spyOn<any>(directive, 'translateUp');
+        directive.keyPressed.set('ArrowUp', 1);
 
-        directive.onKeyboardDown(eventSpy);
-        tick(FIRST_PRESS_DELAY);
-        tick(CONTINUOUS_PRESS_DELAY);
+        directive.translateSelection();
 
-        directive.onKeyboardDown(eventSpy);
-        tick(CONTINUOUS_PRESS_DELAY);
-        expect(directive[functionName]).toBeFalse();
-        expect(selectionCanvas.nativeElement.style.left).toEqual(EXPECTED_LEFT_END_POSITION);
-        expect(selectionCanvas.nativeElement.style.top).toEqual(EXPECTED_TOP_POSITION);
-        flush();
-    }));
+        expect(upSpy).toHaveBeenCalled();
+    });
+
+    it('translateSelection should call translate right if ArrowRight pressed', () => {
+        const rightSpy = spyOn<any>(directive, 'translateRight');
+        directive.keyPressed.set('ArrowRight', 1);
+
+        directive.translateSelection();
+
+        expect(rightSpy).toHaveBeenCalled();
+    });
+
+    it('translateSelection should call translate down if ArrowDown pressed', () => {
+        const downSpy = spyOn<any>(directive, 'translateDown');
+        directive.keyPressed.set('ArrowDown', 1);
+
+        directive.translateSelection();
+
+        expect(downSpy).toHaveBeenCalled();
+    });
+
+    it('translateSelection should emit canvasMovement true', () => {
+        spyOn<any>(directive, 'translateDown');
+        directive.keyPressed.set('ArrowDown', 1);
+
+        directive.translateSelection();
+
+        expect(emitSpy).toHaveBeenCalled();
+    });
 });

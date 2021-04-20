@@ -1,0 +1,49 @@
+<div id="settingsContainer">
+    <div id="settingsWrapper">
+        <h2 id="title">Options Étampe</h2>
+        <div id="imagesContainer">
+            <img #relaxedEgg class="image" src="assets/stamp_1.svg" alt="Image broken" width="100" height="100" (click)="setStamp(1)" />
+            <img #sleepyEgg class="image" src="assets/stamp_2.svg" alt="Image broken" width="100" height="100" (click)="setStamp(2)" />
+            <img #hungryEgg class="image" src="assets/stamp_3.svg" alt="Image broken" width="100" height="100" (click)="setStamp(3)" />
+            <img #toastEgg class="image" src="assets/stamp_4.svg" alt="Image broken" width="100" height="100" (click)="setStamp(4)" />
+            <img #huskyPortrait class="image" src="assets/stamp_5.svg" alt="Image broken" width="100" height="100" (click)="setStamp(5)" />
+            <img #corgiPortrait class="image" src="assets/stamp_6.svg" alt="Image broken" width="100" height="100" (click)="setStamp(6)" />
+        </div>
+        <div id="zoomSettings">
+            <p>Facteur d'agrandissement : {{ zoomFactor }}</p>
+            <mat-slider
+                id="zoomValue"
+                color="warn"
+                thumbLabel
+                [tickInterval]="tickInterval"
+                [step]="tickInterval"
+                [min]="minFactor"
+                [max]="maxFactor"
+                [(value)]="zoomFactor"
+                (change)="emitZoomFactor()"
+            >
+            </mat-slider>
+        </div>
+
+        <div id="rotateSettings">
+            <p>Degrés de rotation: {{ rotationAngle }}</p>
+            <mat-slider
+                #angleSlider
+                id="angleValue"
+                color="warn"
+                thumbLabel
+                [tickInterval]="tickInterval"
+                [min]="minAngle"
+                [max]="maxAngle"
+                [(value)]="rotationAngle"
+                (change)="emitRotateAngle()"
+            >
+                {{ rotationAngle }} degrés
+            </mat-slider>
+        </div>
+
+        <div id="colorPicker">
+            <app-color-picker></app-color-picker>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import * as ShapeConstants from '@app/constants/shapes-constants';
 import { SettingsManagerService } from '@app/services/manager/settings-manager';
 
 @Component({
@@ -8,17 +8,24 @@ import { SettingsManagerService } from '@app/services/manager/settings-manager';
     styleUrls: ['./sidebar-rectangle.component.scss'],
 })
 export class SidebarRectangleComponent implements OnInit {
-    max: number = 200;
-    min: number = 1;
-    tickInterval: number = 1;
+    max: number;
+    min: number;
+    tickInterval: number;
     toolSize: number | undefined;
     fillMode: number | undefined;
-    currentTool: Tool;
 
-    @Output() toolSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() fillModeChanged: EventEmitter<number> = new EventEmitter();
+    @Output() private toolSizeChanged: EventEmitter<number>;
+    @Output() private fillModeChanged: EventEmitter<number>;
 
-    constructor(public settingsManager: SettingsManagerService) {}
+    constructor(public settingsManager: SettingsManagerService) {
+        this.max = ShapeConstants.MAX_BORDER_WIDTH;
+        this.min = ShapeConstants.MIN_BORDER_WIDTH;
+        this.tickInterval = ShapeConstants.TICK_INTERVAL;
+        this.toolSizeChanged = new EventEmitter();
+        this.fillModeChanged = new EventEmitter();
+        this.toolSize = settingsManager.toolManager.rectangleService.lineWidth;
+        this.fillMode = settingsManager.toolManager.rectangleService.fillMode;
+    }
 
     ngOnInit(): void {
         this.toolSizeChanged.subscribe((newSize: number) => this.settingsManager.setLineWidth(newSize));
