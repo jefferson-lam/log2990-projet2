@@ -131,7 +131,7 @@ export class ToolSelectionService extends Tool {
         this.drawingService.baseCtx.fillStyle = 'white';
         this.selectionTool.fillMode = ToolConstants.FillMode.OUTLINE;
         this.selectionTool.lineWidth = SelectionConstants.SELECTION_LINE_WIDTH;
-        this.selectionTool.primaryColor = 'white';
+        this.selectionTool.primaryColor = 'black';
         this.selectionTool.secondaryColor = 'black';
         this.drawingService.previewCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
     }
