@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import * as CanvasConstants from '@app/constants/canvas-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as ShapeConstants from '@app/constants/shapes-constants';
-import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { EllipseService } from './ellipse-service';
@@ -112,6 +111,13 @@ describe('EllipseService', () => {
         expect(predictionRectangleSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseMove should not call drawPredictionRectangle if drawnFromSelection', () => {
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onMouseMove(mouseEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it('onMouseLeave should call setValues and execute of previewCommand if mouse was pressed', () => {
         service.inUse = true;
 
@@ -126,6 +132,13 @@ describe('EllipseService', () => {
         service.onMouseLeave(mouseEvent);
         expect(setPreviewValuesSpy).not.toHaveBeenCalled();
         expect(previewExecuteSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseLeave should not call drawpredictionrectangle if from selection', () => {
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onMouseLeave(mouseEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseEnter should make service.inUse true if left mouse was pressed and mouse was pressed before leaving', () => {
@@ -206,6 +219,16 @@ describe('EllipseService', () => {
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
+    it('onKeyboardDown should not call drawPredictionRectangle if from selection', () => {
+        const keyEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onKeyboardDown(keyEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it(' onKeyboardUp should call setValues and execute of previewCommand if mouse was down and then shift was pressed', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.inUse = true;
@@ -246,6 +269,16 @@ describe('EllipseService', () => {
         expect(previewExecuteSpy).not.toHaveBeenCalled();
     });
 
+    it('onKeyboardUp should not drawPredictionRectangle if from selection', () => {
+        const keyEvent = {
+            key: 'Shift',
+        } as KeyboardEvent;
+        service.drawnFromSelection = true;
+        service.inUse = true;
+        service.onKeyboardUp(keyEvent);
+        expect(predictionRectangleSpy).not.toHaveBeenCalled();
+    });
+
     it('setLineWidth should change size of lineWidth if within min and max width allowed', () => {
         const RANDOM_TEST_WIDTH = 10;
         service.setLineWidth(RANDOM_TEST_WIDTH);
@@ -262,36 +295,6 @@ describe('EllipseService', () => {
         const RANDOM_TEST_WIDTH = 70;
         service.setLineWidth(RANDOM_TEST_WIDTH);
         expect(service.lineWidth).toEqual(ShapeConstants.MAX_BORDER_WIDTH);
-    });
-
-    it('setFillMode should change to FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.FILL_ONLY;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setFillMode should change to OUTLINE mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setFillMode should change to OUTLINE_FILL ONLY mode', () => {
-        const EXPECTED_FILL_MODE = ToolConstants.FillMode.OUTLINE_FILL;
-        service.setFillMode(EXPECTED_FILL_MODE);
-        expect(service.fillMode).toEqual(EXPECTED_FILL_MODE);
-    });
-
-    it('setPrimaryColor should change primary color to wanted color', () => {
-        const EXPECTED_RANDOM_COLOR = 'blue';
-        service.setPrimaryColor(EXPECTED_RANDOM_COLOR);
-        expect(service.primaryColor).toEqual(EXPECTED_RANDOM_COLOR);
-    });
-
-    it('setSecondaryColor should change secondary color to wanted color', () => {
-        const EXPECTED_RANDOM_COLOR = 'green';
-        service.setSecondaryColor(EXPECTED_RANDOM_COLOR);
-        expect(service.secondaryColor).toEqual(EXPECTED_RANDOM_COLOR);
     });
 
     it('onToolChange should call onMouseUp', () => {

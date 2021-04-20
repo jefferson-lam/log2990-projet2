@@ -175,6 +175,20 @@ describe('LassoSelectionService', () => {
         expect(initializeSelectionSpy).toHaveBeenCalled();
     });
 
+    it('onMouseMove should call focus if inUse', () => {
+        const focusSpy = spyOn(previewSelectionCtxStub.canvas, 'focus');
+        service.isManipulating = true;
+        service.onMouseUp();
+        expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should pass if not manipulating', () => {
+        const focusSpy = spyOn(previewSelectionCtxStub.canvas, 'focus');
+        service.isManipulating = false;
+        service.onMouseUp();
+        expect(focusSpy).not.toHaveBeenCalled();
+    });
+
     it('onMouseMove should pass if not in use', () => {
         service.inUse = false;
         expect(() => {
@@ -429,6 +443,12 @@ describe('LassoSelectionService', () => {
         expect(() => {
             service.onToolChange();
         }).not.toThrow();
+    });
+
+    it('onToolEnter should call parents onToolEnter', () => {
+        const parentOnToolEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onToolEnter');
+        service.onToolEnter();
+        expect(parentOnToolEnterSpy).toHaveBeenCalled();
     });
 
     it('isIntersect should return false if new line does not intersect with current lines', () => {

@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import * as SelectionConstants from '@app/constants/selection-constants';
 import * as ToolConstants from '@app/constants/tool-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { LineService } from '@app/services/tools/line/line-service';
 import { ResizerHandlerService } from '@app/services/tools/selection/resizer/resizer-handler.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -17,10 +16,11 @@ export class ToolSelectionService extends Tool {
 
     selectionTool: Tool;
     // Save selectionTool's lineWidth here and fillMode.
-    protected selectionToolLineWidth: number;
-    protected selectionToolFillMode: ToolConstants.FillMode;
-    protected selectionToolPrimaryColor: string;
-    protected selectionToolSecondaryColor: string;
+    selectionToolLineWidth: number;
+    selectionToolFillMode: ToolConstants.FillMode;
+    selectionToolPrimaryColor: string;
+    selectionToolSecondaryColor: string;
+    selectionToolWithJunction: boolean;
     isManipulating: boolean;
 
     constructor(
@@ -40,7 +40,6 @@ export class ToolSelectionService extends Tool {
     undoSelection(): void {}
 
     onMouseDown(event: MouseEvent): void {
-        this.getSelectedToolSettings();
         this.setSelectionSettings();
         this.selectionTool.onMouseDown(event);
     }
@@ -114,7 +113,7 @@ export class ToolSelectionService extends Tool {
     /**
      * Saves the selectionTool's past settings so we can reset to them later.
      */
-    protected getSelectedToolSettings(): void {
+    getSelectedToolSettings(): void {
         if (this.selectionTool.lineWidth != undefined) {
             this.selectionToolLineWidth = this.selectionTool.lineWidth;
         }
@@ -127,27 +126,28 @@ export class ToolSelectionService extends Tool {
         if (this.selectionTool.secondaryColor != undefined) {
             this.selectionToolSecondaryColor = this.selectionTool.secondaryColor;
         }
+        if (this.selectionTool.withJunction != undefined) {
+            this.selectionToolWithJunction = this.selectionTool.withJunction;
+        }
     }
 
-    protected setSelectionSettings(): void {
+    setSelectionSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'white';
-        this.selectionTool.setFillMode(ToolConstants.FillMode.OUTLINE);
-        this.selectionTool.setLineWidth(SelectionConstants.SELECTION_LINE_WIDTH);
-        if (this.selectionTool instanceof LineService) {
-            this.selectionTool.setPrimaryColor('black');
-        } else {
-            this.selectionTool.setPrimaryColor('white');
-        }
-        this.selectionTool.setSecondaryColor('black');
+        this.selectionTool.withJunction = false;
+        this.selectionTool.fillMode = ToolConstants.FillMode.OUTLINE;
+        this.selectionTool.lineWidth = SelectionConstants.SELECTION_LINE_WIDTH;
+        this.selectionTool.primaryColor = 'black';
+        this.selectionTool.secondaryColor = 'black';
         this.drawingService.previewCtx.setLineDash([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
     }
 
     resetSelectedToolSettings(): void {
         this.drawingService.baseCtx.fillStyle = 'black';
-        this.selectionTool.setFillMode(this.selectionToolFillMode);
-        this.selectionTool.setLineWidth(this.selectionToolLineWidth);
-        this.selectionTool.setPrimaryColor(this.selectionToolPrimaryColor);
-        this.selectionTool.setSecondaryColor(this.selectionToolSecondaryColor);
+        this.selectionTool.fillMode = this.selectionToolFillMode;
+        this.selectionTool.withJunction = this.selectionToolWithJunction;
+        this.selectionTool.lineWidth = this.selectionToolLineWidth;
+        this.selectionTool.primaryColor = this.selectionToolPrimaryColor;
+        this.selectionTool.secondaryColor = this.selectionToolSecondaryColor;
         this.drawingService.previewCtx.setLineDash([]);
     }
 
@@ -170,6 +170,7 @@ export class ToolSelectionService extends Tool {
         this.drawingService.borderCanvas.style.left = topLeft.x + 'px';
         this.drawingService.borderCanvas.style.top = topLeft.y + 'px';
         this.resizerHandlerService.setResizerPositions(this.drawingService.selectionCanvas);
+        this.drawingService.previewSelectionCanvas.focus();
     }
 
     resetCanvasState(canvas: HTMLCanvasElement): void {
@@ -179,7 +180,7 @@ export class ToolSelectionService extends Tool {
         canvas.height = SelectionConstants.DEFAULT_HEIGHT;
     }
 
-    protected addScalarToVec2(point: Vec2, scalar: number): Vec2 {
+    addScalarToVec2(point: Vec2, scalar: number): Vec2 {
         return {
             x: point.x + scalar,
             y: point.y + scalar,
@@ -190,8 +191,14 @@ export class ToolSelectionService extends Tool {
         return cornerCoords.fill({ x: 0, y: 0 });
     }
 
+    onToolEnter(): void {
+        this.getSelectedToolSettings();
+        this.setSelectionSettings();
+    }
+
     onToolChange(): void {
         this.resizerHandlerService.inUse = false;
+        this.resetSelectedToolSettings();
     }
 
     resetAllCanvasState(): void {

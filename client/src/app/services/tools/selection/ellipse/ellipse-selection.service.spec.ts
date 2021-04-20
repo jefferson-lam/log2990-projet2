@@ -30,7 +30,6 @@ describe('EllipseToolSelectionService', () => {
     let parentKeyboardUpSpy: jasmine.Spy;
     let parentMouseLeaveSpy: jasmine.Spy;
     let parentMouseEnterSpy: jasmine.Spy;
-    let parentResetSelectedToolSettingsSpy: jasmine.Spy;
 
     let resetCanvasStateSpy: jasmine.Spy;
     let clipEllipseSpy: jasmine.Spy;
@@ -80,7 +79,6 @@ describe('EllipseToolSelectionService', () => {
         parentKeyboardUpSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onKeyboardUp');
         parentMouseLeaveSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseLeave');
         parentMouseEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onMouseEnter');
-        parentResetSelectedToolSettingsSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'resetSelectedToolSettings');
 
         clipEllipseSpy = spyOn<any>(service, 'clipEllipse').and.callThrough();
         baseCtxDrawImage = spyOn(baseCtxStub, 'drawImage').and.callThrough();
@@ -359,6 +357,12 @@ describe('EllipseToolSelectionService', () => {
         expect(service.isEscapeDown).toBeFalsy();
     });
 
+    it('onToolEnter should call parents onToolEnter', () => {
+        const parentOnToolEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onToolEnter');
+        service.onToolEnter();
+        expect(parentOnToolEnterSpy).toHaveBeenCalled();
+    });
+
     it('onToolChange should call onMouseDown if isManipulating is true', () => {
         service.isManipulating = true;
         const confirmSelectionSpy = spyOn(service, 'confirmSelection');
@@ -484,7 +488,6 @@ describe('EllipseToolSelectionService', () => {
             service.selectionWidth,
             service.selectionHeight,
         );
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
         expect(service.isManipulating).toBeFalsy();
         expect(service.isEscapeDown).toBeFalsy();
@@ -504,7 +507,6 @@ describe('EllipseToolSelectionService', () => {
         service.undoSelection();
         expect(clipEllipseSpy).toHaveBeenCalled();
         expect(baseCtxDrawImage).not.toHaveBeenCalled();
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
         expect(service.isManipulating).toBeFalsy();
         expect(service.isEscapeDown).toBeFalsy();

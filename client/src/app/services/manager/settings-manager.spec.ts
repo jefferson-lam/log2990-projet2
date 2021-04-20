@@ -1,8 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, TestBed } from '@angular/core/testing';
-import { Rgba } from '@app/classes/rgba';
+import { TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
-import { ColorService } from '@app/services/color/color.service';
 import { SettingsManagerService } from './settings-manager';
 import { ToolManagerService } from './tool-manager-service';
 
@@ -53,7 +51,7 @@ describe('SettingsManagerService', () => {
     it('setFillMode should set the fill mode correctly of current tool', () => {
         const EXPECTED_FILL_MODE = 2;
         service.setFillMode(EXPECTED_FILL_MODE);
-        expect(toolSpy.setFillMode).toHaveBeenCalled();
+        expect(toolSpy.fillMode).toEqual(EXPECTED_FILL_MODE);
     });
 
     it('setJunctionRadius should call setJunctionRadius of current tool', () => {
@@ -65,35 +63,25 @@ describe('SettingsManagerService', () => {
     it('setWithJunction should call setWithJunction of current tool', () => {
         const hasJunction = true;
         service.setWithJunction(hasJunction);
-        expect(toolSpy.setWithJunction).toHaveBeenCalled();
+        expect(toolSpy.withJunction).toBeTrue();
     });
 
     it('setSidesCount should set the sides count correctly of current tool', () => {
         const EXPECTED_SIDES_COUNT = 10;
         service.setSidesCount(EXPECTED_SIDES_COUNT);
-        expect(toolSpy.setSidesCount).toHaveBeenCalled();
-    });
-
-    it('setPrimaryColorTools should call setPrimaryToolsColor of toolManager', () => {
-        service.setPrimaryColorTools('blue');
-        expect(toolManagerSpy.setPrimaryColorTools).toHaveBeenCalled();
-    });
-
-    it('setSecondaryColorTools should call setPrimaryToolsColor of toolManager', () => {
-        service.setSecondaryColorTools('blue');
-        expect(toolManagerSpy.setSecondaryColorTools).toHaveBeenCalled();
+        expect(toolSpy.initNumberSides).toEqual(EXPECTED_SIDES_COUNT);
     });
 
     it('setWaterDropWidth should call setWaterDropWidth of toolManager', () => {
         const EXPECTED_WATER_DROP_WIDTH = 50;
         service.setWaterDropWidth(EXPECTED_WATER_DROP_WIDTH);
-        expect(toolSpy.setWaterDropWidth).toHaveBeenCalled();
+        expect(toolSpy.waterDropWidth).toEqual(EXPECTED_WATER_DROP_WIDTH);
     });
 
     it('setEmissionCount should call setEmissionCount of toolManager', () => {
         const EXPECTED_EMISSION_COUNT = 50;
         service.setEmissionCount(EXPECTED_EMISSION_COUNT);
-        expect(toolSpy.setEmissionCount).toHaveBeenCalled();
+        expect(toolSpy.emissionCount).toEqual(EXPECTED_EMISSION_COUNT);
     });
 
     it('setToleranceValue should call setToleranceValue of toolManagers currentTool', () => {
@@ -105,13 +93,13 @@ describe('SettingsManagerService', () => {
     it('setImageSource should call setImageSource of toolManager', () => {
         const EXPECTED_IMAGE_SOURCE = 'new_image_svg';
         service.setImageSource(EXPECTED_IMAGE_SOURCE);
-        expect(toolSpy.setImageSource).toHaveBeenCalled();
+        expect(toolSpy.imageSource).toEqual(EXPECTED_IMAGE_SOURCE);
     });
 
     it('setImageZoomFactor should call setImageZoomFactor of toolManager', () => {
         const EXPECTED_ZOOM_FACTOR = 50;
         service.setImageZoomFactor(EXPECTED_ZOOM_FACTOR);
-        expect(toolSpy.setImageZoomFactor).toHaveBeenCalled();
+        expect(toolSpy.imageZoomFactor).toEqual(EXPECTED_ZOOM_FACTOR);
     });
 
     it('setAngleRotation should call setAngleRotation of toolManager', () => {
@@ -147,34 +135,4 @@ describe('SettingsManagerService', () => {
         service.setTextItalic(EXPECTED_ITALIC);
         expect(toolSpy.setTextItalic).toHaveBeenCalled();
     });
-
-    it('calls setPrimaryColorsTools when size changed', async(() => {
-        const mockColor = {
-            red: 255,
-            green: 10,
-            blue: 2,
-            alpha: 1,
-        } as Rgba;
-        const serviceSetter = spyOn(service, 'setPrimaryColorTools').and.callThrough();
-        const colorService = TestBed.inject(ColorService);
-        colorService.setPrimaryColor(mockColor);
-
-        expect(serviceSetter).toHaveBeenCalled();
-        expect(serviceSetter).toHaveBeenCalledWith(colorService.convertRgbaToString(mockColor));
-    }));
-
-    it('calls setSecondaryColorsTools when size changed', async(() => {
-        const mockColor = {
-            red: 255,
-            green: 10,
-            blue: 2,
-            alpha: 1,
-        } as Rgba;
-        const serviceSetter = spyOn(service, 'setSecondaryColorTools').and.callThrough();
-        const colorService = TestBed.inject(ColorService);
-        colorService.setSecondaryColor(mockColor);
-
-        expect(serviceSetter).toHaveBeenCalled();
-        expect(serviceSetter).toHaveBeenCalledWith(colorService.convertRgbaToString(mockColor));
-    }));
 });

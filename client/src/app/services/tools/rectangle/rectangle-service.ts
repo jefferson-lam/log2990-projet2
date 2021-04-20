@@ -124,18 +124,6 @@ export class RectangleService extends Tool {
         }
     }
 
-    setFillMode(newFillMode: ToolConstants.FillMode): void {
-        this.fillMode = newFillMode;
-    }
-
-    setPrimaryColor(newColor: string): void {
-        this.primaryColor = newColor;
-    }
-
-    setSecondaryColor(newColor: string): void {
-        this.secondaryColor = newColor;
-    }
-
     private clearCorners(): void {
         this.cornerCoords.fill({ x: 0, y: 0 });
     }

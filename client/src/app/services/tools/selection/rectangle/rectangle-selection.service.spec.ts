@@ -147,7 +147,6 @@ describe('RectangleSelectionService', () => {
         service.inUse = true;
         service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(service.inUse).toBeFalsy();
     });
 
@@ -160,7 +159,6 @@ describe('RectangleSelectionService', () => {
         service.pathData[START_INDEX] = startPoint;
         service.onMouseUp(mouseEvent);
         expect(service.inUse).toBeFalsy();
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(service.onMouseUp(mouseEvent)).toBe(undefined);
     });
 
@@ -385,6 +383,12 @@ describe('RectangleSelectionService', () => {
         expect(service.isManipulating).toBeTruthy();
     });
 
+    it('onToolEnter should call parents onToolEnter', () => {
+        const parentOnToolEnterSpy = spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'onToolEnter');
+        service.onToolEnter();
+        expect(parentOnToolEnterSpy).toHaveBeenCalled();
+    });
+
     it('onToolChange should call super.onToolChange', () => {
         const superSpy = spyOn(ToolSelectionService.prototype, 'onToolChange');
         service.onToolChange();
@@ -439,8 +443,6 @@ describe('RectangleSelectionService', () => {
         service.undoSelection();
         expect(baseCtxDrawImageSpy).toHaveBeenCalled();
         expect(baseCtxDrawImageSpy).toHaveBeenCalledWith(service.originalImageCanvas, 0, 0, sw, sh, left, top, sw, sh);
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
-        expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
         expect(service.isManipulating).toBeFalsy();
         expect(service.isEscapeDown).toBeFalsy();
     });
@@ -458,7 +460,6 @@ describe('RectangleSelectionService', () => {
         service.isFromClipboard = true;
         service.undoSelection();
         expect(baseCtxDrawImageSpy).not.toHaveBeenCalled();
-        expect(parentResetSelectedToolSettingsSpy).toHaveBeenCalled();
         expect(resetCanvasStateSpy).toHaveBeenCalledWith(selectionCtxStub.canvas);
         expect(service.isManipulating).toBeFalsy();
         expect(service.isEscapeDown).toBeFalsy();

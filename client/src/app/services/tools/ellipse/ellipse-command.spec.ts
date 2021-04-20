@@ -50,8 +50,8 @@ describe('EllipseCommand', () => {
         testCanvas = document.createElement('canvas');
         testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-        ellipseService.setPrimaryColor(TEST_PRIMARY_COLOR);
-        ellipseService.setSecondaryColor(TEST_SECONDARY_COLOR);
+        ellipseService.primaryColor = TEST_PRIMARY_COLOR;
+        ellipseService.secondaryColor = TEST_SECONDARY_COLOR;
         ellipseService.setLineWidth(TEST_LINE_WIDTH);
         ellipseService.cornerCoords[0] = { x: 0, y: 0 };
         ellipseService.cornerCoords[1] = { x: END_X, y: END_Y };
@@ -148,7 +148,7 @@ describe('EllipseCommand', () => {
     });
 
     it('should make an ellipse with border and fill color of same color on FillMode.FILL_ONLY', () => {
-        ellipseService.setFillMode(ToolConstants.FillMode.FILL_ONLY);
+        ellipseService.fillMode = ToolConstants.FillMode.FILL_ONLY;
 
         command.setValues(baseCtxStub, ellipseService);
 
@@ -182,7 +182,7 @@ describe('EllipseCommand', () => {
     });
 
     it('should make an ellipse with only border on FillMode.OUTLINE', () => {
-        ellipseService.setFillMode(ToolConstants.FillMode.OUTLINE);
+        ellipseService.fillMode = ToolConstants.FillMode.OUTLINE;
 
         command.setValues(baseCtxStub, ellipseService);
 
@@ -214,7 +214,7 @@ describe('EllipseCommand', () => {
     });
 
     it('should make an ellipse with secondary color border and primary color fill on FillMode.OUTLINE_FILL', () => {
-        ellipseService.setFillMode(ToolConstants.FillMode.OUTLINE_FILL);
+        ellipseService.fillMode = ToolConstants.FillMode.OUTLINE_FILL;
 
         command.setValues(baseCtxStub, ellipseService);
 

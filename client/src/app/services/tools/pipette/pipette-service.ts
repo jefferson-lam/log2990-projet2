@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Rgba } from '@app/classes/rgba';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { MAX_RGB_VALUE } from '@app/constants/color-constants';
 import * as MouseConstants from '@app/constants/mouse-constants';
 import * as PipetteConstants from '@app/constants/pipette-constants';
 import { ColorService } from '@app/services/color/color.service';
@@ -75,7 +76,7 @@ export class PipetteService extends Tool {
         const redPixel = data.data[PipetteConstants.RED_POSTITION];
         const greenPixel = data.data[PipetteConstants.GREEN_POSTITION];
         const bluePixel = data.data[PipetteConstants.BLUE_POSTITION];
-        const alphaPixel = data.data[PipetteConstants.ALPHA_POSTITION];
+        const alphaPixel = data.data[PipetteConstants.ALPHA_POSTITION] / MAX_RGB_VALUE;
 
         const color = { red: redPixel, green: greenPixel, blue: bluePixel, alpha: alphaPixel };
         return color;

@@ -35,6 +35,7 @@ describe('ToolSelectionService', () => {
             'setPrimaryColor',
             'setSecondaryColor',
             'setLineWidth',
+            'setWithJunction',
         ]);
         TestBed.configureTestingModule({
             providers: [
@@ -56,10 +57,10 @@ describe('ToolSelectionService', () => {
         service['drawingService'].selectionCanvas = canvasTestHelper.selectionCanvas;
         service['drawingService'].canvas = canvasTestHelper.canvas;
 
-        service['selectionToolFillMode'] = FillMode.OUTLINE;
-        service['selectionToolLineWidth'] = 1;
-        service['selectionToolPrimaryColor'] = 'white';
-        service['selectionToolSecondaryColor'] = 'black';
+        service.selectionToolFillMode = FillMode.OUTLINE;
+        service.selectionToolLineWidth = 1;
+        service.selectionToolPrimaryColor = 'black';
+        service.selectionToolSecondaryColor = 'black';
 
         setLineDashSpy = spyOn(drawServiceSpy.previewCtx, 'setLineDash');
 
@@ -142,10 +143,11 @@ describe('ToolSelectionService', () => {
         service.selectionTool.fillMode = undefined;
         service.selectionTool.primaryColor = undefined;
         service.selectionTool.secondaryColor = undefined;
-        service['getSelectedToolSettings']();
-        expect(service['selectionToolLineWidth']).toEqual(1);
-        expect(service['selectionToolPrimaryColor']).toEqual('white');
-        expect(service['selectionToolSecondaryColor']).toEqual('black');
+        service.selectionTool.withJunction = undefined;
+        service.getSelectedToolSettings();
+        expect(service.selectionToolLineWidth).toEqual(1);
+        expect(service.selectionToolPrimaryColor).toEqual('black');
+        expect(service.selectionToolSecondaryColor).toEqual('black');
     });
 
     it('getSelectionToolSettings should set correct selectionToolSettings if settings are not null', () => {
@@ -154,11 +156,13 @@ describe('ToolSelectionService', () => {
         service.selectionTool.fillMode = FillMode.OUTLINE_FILL;
         service.selectionTool.primaryColor = 'red';
         service.selectionTool.secondaryColor = 'black';
-        service['getSelectedToolSettings']();
-        expect(service['selectionToolLineWidth']).toEqual(lineWidth);
-        expect(service['selectionToolFillMode']).toEqual(FillMode.OUTLINE_FILL);
-        expect(service['selectionToolPrimaryColor']).toEqual('red');
-        expect(service['selectionToolSecondaryColor']).toEqual('black');
+        service.selectionTool.withJunction = false;
+        service.getSelectedToolSettings();
+        expect(service.selectionToolLineWidth).toEqual(lineWidth);
+        expect(service.selectionToolFillMode).toEqual(FillMode.OUTLINE_FILL);
+        expect(service.selectionToolPrimaryColor).toEqual('red');
+        expect(service.selectionToolSecondaryColor).toEqual('black');
+        expect(service.selectionToolWithJunction).toEqual(false);
     });
 
     it('resetCanvasState should reset the canvas to its default values', () => {
@@ -172,19 +176,19 @@ describe('ToolSelectionService', () => {
 
     it('resetSelectionSettings should call Tool setSettings functions', () => {
         service.resetSelectedToolSettings();
-        expect(selectedToolSpy.setFillMode).toHaveBeenCalledWith(service['selectionToolFillMode']);
-        expect(selectedToolSpy.setLineWidth).toHaveBeenCalledWith(service['selectionToolLineWidth']);
-        expect(selectedToolSpy.setPrimaryColor).toHaveBeenCalledWith(service['selectionToolPrimaryColor']);
-        expect(selectedToolSpy.setSecondaryColor).toHaveBeenCalledWith(service['selectionToolSecondaryColor']);
+        expect(selectedToolSpy.fillMode).toEqual(service.selectionToolFillMode);
+        expect(selectedToolSpy.lineWidth).toEqual(service.selectionToolLineWidth);
+        expect(selectedToolSpy.primaryColor).toEqual(service.selectionToolPrimaryColor);
+        expect(selectedToolSpy.secondaryColor).toEqual(service.selectionToolSecondaryColor);
         expect(setLineDashSpy).toHaveBeenCalledWith([]);
     });
 
     it('setSelectionSettings should call Tool setSettings functions', () => {
-        service['setSelectionSettings']();
-        expect(selectedToolSpy.setFillMode).toHaveBeenCalledWith(FillMode.OUTLINE);
-        expect(selectedToolSpy.setLineWidth).toHaveBeenCalledWith(SelectionConstants.SELECTION_LINE_WIDTH);
-        expect(selectedToolSpy.setPrimaryColor).toHaveBeenCalledWith('white');
-        expect(selectedToolSpy.setSecondaryColor).toHaveBeenCalledWith('black');
+        service.setSelectionSettings();
+        expect(selectedToolSpy.fillMode).toEqual(FillMode.OUTLINE);
+        expect(selectedToolSpy.lineWidth).toEqual(SelectionConstants.SELECTION_LINE_WIDTH);
+        expect(selectedToolSpy.primaryColor).toEqual('black');
+        expect(selectedToolSpy.secondaryColor).toEqual('black');
         expect(setLineDashSpy).toHaveBeenCalledWith([SelectionConstants.DEFAULT_LINE_DASH, SelectionConstants.DEFAULT_LINE_DASH]);
     });
 
@@ -404,7 +408,7 @@ describe('ToolSelectionService', () => {
             y: 125,
         };
         const scalar = 50;
-        expect(service['addScalarToVec2'](start, scalar)).toEqual(expectedPoint);
+        expect(service.addScalarToVec2(start, scalar)).toEqual(expectedPoint);
     });
 
     it('addScalarToVec2 should correctly return sum', () => {
@@ -417,7 +421,7 @@ describe('ToolSelectionService', () => {
             y: 25,
         };
         const scalar = -50;
-        expect(service['addScalarToVec2'](start, scalar)).toEqual(expectedPoint);
+        expect(service.addScalarToVec2(start, scalar)).toEqual(expectedPoint);
     });
 
     it('clearCorners should clear service.cornerCoords', () => {
@@ -426,6 +430,15 @@ describe('ToolSelectionService', () => {
         const expectedPoint = { x: 0, y: 0 };
         const result = service.clearCorners([startPoint, endPoint]);
         expect(result).toEqual([expectedPoint, expectedPoint]);
+    });
+
+    it('onToolEnter should get et set settings', () => {
+        const getSelectedToolSettingsSpy = spyOn(service, 'getSelectedToolSettings');
+        const setSelectionSettingsSpy = spyOn(service, 'setSelectionSettings');
+
+        service.onToolEnter();
+        expect(getSelectedToolSettingsSpy).toHaveBeenCalled();
+        expect(setSelectionSettingsSpy).toHaveBeenCalled();
     });
 
     it('onToolChange should set resizeHandlerService.inUse to false', () => {

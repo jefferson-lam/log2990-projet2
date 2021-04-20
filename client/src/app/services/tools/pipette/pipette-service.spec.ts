@@ -177,7 +177,7 @@ describe('PipetteService', () => {
             PipetteConstants.NON_TRANSPARENT_FF,
             PipetteConstants.NON_TRANSPARENT_FF,
             PipetteConstants.NON_TRANSPARENT_FF,
-            1,
+            PipetteConstants.NON_TRANSPARENT_FF,
         ]);
         const pixelData = new ImageData(arrayData, 1, 1);
         const expectedColor = { red: 255, green: 255, blue: 255, alpha: 1 };

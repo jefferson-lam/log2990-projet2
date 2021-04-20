@@ -134,6 +134,10 @@ export class RectangleSelectionService extends ToolSelectionService {
         this.isManipulating = true;
     }
 
+    onToolEnter(): void {
+        super.onToolEnter();
+    }
+
     onToolChange(): void {
         super.onToolChange();
         if (this.isManipulating) {
@@ -207,7 +211,6 @@ export class RectangleSelectionService extends ToolSelectionService {
 
     private validateSelectionHeightAndWidth(): boolean {
         if (this.selectionWidth === 0 || this.selectionHeight === 0) {
-            this.resetSelectedToolSettings();
             this.inUse = false;
             return false;
         }
@@ -259,7 +262,6 @@ export class RectangleSelectionService extends ToolSelectionService {
     private resetProperties(): void {
         this.resetAllCanvasState();
         this.clearCorners(this.pathData);
-        this.resetSelectedToolSettings();
         this.resizerHandlerService.resetResizers();
         this.isFromClipboard = false;
         this.inUse = false;

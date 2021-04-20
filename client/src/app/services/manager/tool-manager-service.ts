@@ -57,26 +57,27 @@ export class ToolManagerService {
     }
 
     setPrimaryColorTools(color: string): void {
-        this.rectangleService.setPrimaryColor(color);
-        this.ellipseService.setPrimaryColor(color);
-        this.polygoneService.setPrimaryColor(color);
-        this.pencilService.setPrimaryColor(color);
-        this.lineService.setPrimaryColor(color);
-        this.aerosolService.setPrimaryColor(color);
+        this.rectangleService.primaryColor = color;
+        this.ellipseService.primaryColor = color;
+        this.polygoneService.primaryColor = color;
+        this.pencilService.primaryColor = color;
+        this.lineService.primaryColor = color;
+        this.aerosolService.primaryColor = color;
         this.paintBucketService.setPrimaryColor(color);
         this.textService.setPrimaryColor(color);
     }
 
     setSecondaryColorTools(color: string): void {
-        this.rectangleService.setSecondaryColor(color);
-        this.ellipseService.setSecondaryColor(color);
-        this.polygoneService.setSecondaryColor(color);
+        this.rectangleService.secondaryColor = color;
+        this.ellipseService.secondaryColor = color;
+        this.polygoneService.secondaryColor = color;
     }
 
     private onToolChange(newTool: Tool): Tool {
         if (this.currentTool !== newTool) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.currentTool.onToolChange();
+            newTool.onToolEnter();
         }
         return newTool;
     }

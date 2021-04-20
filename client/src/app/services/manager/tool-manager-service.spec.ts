@@ -37,17 +37,23 @@ describe('ToolManagerService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setPrimaryColor', 'onMouseUp', 'onToolChange', 'onScroll']);
-        eraserServiceSpy = jasmine.createSpyObj('EraserService', ['setPrimaryColor', 'onMouseUp', 'onToolChange', 'onScroll']);
-        lineServiceSpy = jasmine.createSpyObj('LineService', ['setPrimaryColor', 'onMouseUp', 'onScroll']);
-        rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['setPrimaryColor', 'setSecondaryColor', 'onMouseUp', 'onScroll']);
-        ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['setPrimaryColor', 'setSecondaryColor', 'onMouseUp', 'onScroll']);
+        pencilServiceSpy = jasmine.createSpyObj('PencilService', ['setPrimaryColor', 'onMouseUp', 'onToolEnter', 'onToolChange', 'onScroll']);
+        eraserServiceSpy = jasmine.createSpyObj('EraserService', ['setPrimaryColor', 'onMouseUp', 'onToolEnter', 'onToolChange', 'onScroll']);
+        lineServiceSpy = jasmine.createSpyObj('LineService', ['setPrimaryColor', 'onMouseUp', 'onToolEnter', 'onScroll']);
+        rectangleServiceSpy = jasmine.createSpyObj('RectangleService', [
+            'setPrimaryColor',
+            'setSecondaryColor',
+            'onToolEnter',
+            'onMouseUp',
+            'onScroll',
+        ]);
+        ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['setPrimaryColor', 'setSecondaryColor', 'onToolEnter', 'onMouseUp', 'onScroll']);
         rectangleSelectionSpy = jasmine.createSpyObj('RectangleSelectionService', ['onScroll']);
         ellipseSelectionSpy = jasmine.createSpyObj('EllipseSelectionService', ['onScroll']);
         polygoneSpy = jasmine.createSpyObj('PolygoneService', ['setPrimaryColor', 'setSecondaryColor', 'onScroll']);
         aerosolSpy = jasmine.createSpyObj('AerosolService', ['setPrimaryColor', 'onScroll']);
         pipetteSpy = jasmine.createSpyObj('PipetteService', ['onScroll']);
-        lassoSelectionServiceSpy = jasmine.createSpyObj('LassoSelectionService', ['onMouseUp', 'onScroll']);
+        lassoSelectionServiceSpy = jasmine.createSpyObj('LassoSelectionService', ['onMouseUp', 'onScroll', 'onToolEnter']);
         paintBucketSpy = jasmine.createSpyObj('PaintBucketService', ['setPrimaryColor', 'onScroll']);
         stampSpy = jasmine.createSpyObj('StampService', ['onScroll']);
         textSpy = jasmine.createSpyObj('TextService', ['setPrimaryColor', 'onScroll']);
@@ -141,18 +147,18 @@ describe('ToolManagerService', () => {
     it('should call all needed setPrimaryColor methods when setPrimaryColor is called', () => {
         const RANDOM_COLOR = 'blue';
         service.setPrimaryColorTools(RANDOM_COLOR);
-        expect(rectangleServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(ellipseServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(pencilServiceSpy.setPrimaryColor).toHaveBeenCalled();
-        expect(lineServiceSpy.setPrimaryColor).toHaveBeenCalled();
+        expect(rectangleServiceSpy.primaryColor).toEqual(RANDOM_COLOR);
+        expect(ellipseServiceSpy.primaryColor).toEqual(RANDOM_COLOR);
+        expect(pencilServiceSpy.primaryColor).toEqual(RANDOM_COLOR);
+        expect(lineServiceSpy.primaryColor).toEqual(RANDOM_COLOR);
     });
 
     it('should call all needed setSecondaryColor methods when setSecondaryColor is called', () => {
         const RANDOM_COLOR = 'blue';
         service.setSecondaryColorTools(RANDOM_COLOR);
-        expect(rectangleServiceSpy.setSecondaryColor).toHaveBeenCalled();
-        expect(ellipseServiceSpy.setSecondaryColor).toHaveBeenCalled();
-        expect(polygoneSpy.setSecondaryColor).toHaveBeenCalled();
+        expect(rectangleServiceSpy.secondaryColor).toEqual(RANDOM_COLOR);
+        expect(ellipseServiceSpy.secondaryColor).toEqual(RANDOM_COLOR);
+        expect(polygoneSpy.secondaryColor).toEqual(RANDOM_COLOR);
     });
 
     it('onToolChange should not call clearCanvas and currentTool.onToolChange if same tool as before', () => {
@@ -161,6 +167,7 @@ describe('ToolManagerService', () => {
 
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(pencilServiceSpy.onToolChange).not.toHaveBeenCalled();
+        expect(eraserServiceSpy.onToolEnter).not.toHaveBeenCalled();
     });
 
     it('onToolChange should clearCanvas and call currentTool.onToolChange if different tool', () => {
@@ -169,6 +176,7 @@ describe('ToolManagerService', () => {
 
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(pencilServiceSpy.onToolChange).toHaveBeenCalled();
+        expect(eraserServiceSpy.onToolEnter).toHaveBeenCalled();
     });
 
     it('scrolled should call onScroll from each tool', () => {

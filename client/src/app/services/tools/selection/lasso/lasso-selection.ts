@@ -79,6 +79,11 @@ export class LassoSelectionService extends ToolSelectionService {
         }
     }
 
+    onMouseUp(): void {
+        if (!this.isManipulating) return;
+        this.drawingService.previewSelectionCanvas.focus();
+    }
+
     onMouseMove(event: MouseEvent): void {
         if (!this.inUse) return;
         const mousePosition = this.getPositionFromMouse(event);
@@ -150,6 +155,10 @@ export class LassoSelectionService extends ToolSelectionService {
         };
 
         return [maxWidth - minWidth, maxHeight - minHeight];
+    }
+
+    onToolEnter(): void {
+        super.onToolEnter();
     }
 
     onToolChange(): void {
@@ -276,7 +285,6 @@ export class LassoSelectionService extends ToolSelectionService {
 
     private resetProperties(): void {
         this.resetAllCanvasState();
-        this.resetSelectedToolSettings();
         this.clearPath();
         this.resizerHandlerService.resetResizers();
         this.drawingService.previewCtx.canvas.style.cursor = 'crosshair';
