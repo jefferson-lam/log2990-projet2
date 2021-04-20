@@ -182,31 +182,20 @@ describe('EllipseCommand', () => {
         command.execute();
 
         // Trace test ellipse to be compared with stub.
-        testCtx.save();
+        testCtx.strokeStyle = ellipseService.secondaryColor;
+        testCtx.lineWidth = ellipseService.lineWidth;
         testCtx.beginPath();
-        const smallRadii = { x: TEST_X_RADIUS - ellipseService.lineWidth / 2, y: TEST_Y_RADIUS - ellipseService.lineWidth / 2 };
         testCtx.ellipse(
             TEST_START_X,
             TEST_START_Y,
-            smallRadii.x,
-            smallRadii.y,
+            TEST_X_RADIUS,
+            TEST_Y_RADIUS,
             EllipseConstants.ROTATION,
             ShapeConstants.START_ANGLE,
             ShapeConstants.END_ANGLE,
         );
-        testCtx.ellipse(
-            TEST_START_X,
-            TEST_START_Y,
-            smallRadii.x + ellipseService.lineWidth,
-            smallRadii.y + ellipseService.lineWidth,
-            EllipseConstants.ROTATION,
-            ShapeConstants.START_ANGLE,
-            ShapeConstants.END_ANGLE,
-        );
-        testCtx.clip('evenodd');
-        testCtx.fillStyle = TEST_SECONDARY_COLOR;
-        testCtx.fill();
-        testCtx.restore();
+        testCtx.closePath();
+        testCtx.stroke();
 
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, END_X, END_Y);
         const testData: ImageData = testCtx.getImageData(0, 0, END_X, END_Y);

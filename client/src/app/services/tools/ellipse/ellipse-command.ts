@@ -144,13 +144,34 @@ export class EllipseCommand extends Command {
         ctx.fill();
     }
 
+    private drawOutlineEllipse(ctx: CanvasRenderingContext2D): void {
+        ctx.strokeStyle = this.secondaryColor;
+        ctx.lineWidth = this.lineWidth;
+        ctx.beginPath();
+        ctx.ellipse(
+            this.centerPosition.x,
+            this.centerPosition.y,
+            this.radiiPosition.x,
+            this.radiiPosition.y,
+            EllipseConstants.ROTATION,
+            ShapeConstants.START_ANGLE,
+            ShapeConstants.END_ANGLE,
+        );
+        ctx.closePath();
+        ctx.stroke();
+    }
+
     private drawTypeEllipse(ctx: CanvasRenderingContext2D): void {
-        if (this.fillMode !== ToolConstants.FillMode.FILL_ONLY) this.drawBorderEllipse(ctx);
+        if (this.fillMode === ToolConstants.FillMode.OUTLINE) {
+            this.drawOutlineEllipse(ctx);
+            return;
+        }
+        if (this.fillMode === ToolConstants.FillMode.OUTLINE_FILL) this.drawBorderEllipse(ctx);
 
         if (this.radiiPosition.x - this.lineWidth / 2 <= 0 || this.radiiPosition.y - this.lineWidth / 2 <= 0) return;
         if (this.fillMode === ToolConstants.FillMode.OUTLINE_FILL) {
             this.drawCenterEllipse(ctx);
-        } else if (this.fillMode === ToolConstants.FillMode.FILL_ONLY) {
+        } else {
             this.drawFullEllipse(ctx);
         }
     }
