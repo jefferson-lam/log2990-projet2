@@ -138,8 +138,7 @@ mat-icon {
 }
 
 .selected {
-    background-color: #4682b4;
-    color: red;
+    background-color: #4682b4 !important;
 }
 
 .mat-drawer-inner-container {
@@ -210,4 +209,10 @@ mat-drawer-content {
 .noselect::-webkit-scrollbar-thumb {
   background: floralwhite;
   border-radius: 10px;
+}
+
+img {
+    position: center;
+    margin-left: 7px;
+    margin-top: 4px;
 }
