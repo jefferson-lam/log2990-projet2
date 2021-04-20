@@ -1,0 +1,228 @@
+<div class="modal-dialog">
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'PencilService'" >
+    <div class='newTitle'> Outil crayon </div>
+    L'outil crayon est l'outil de base de notre logiciel. Il permet de completer des traits pleins.
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Épaisseur du trait en pixels </div>
+  </div>
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'AerosolService'">
+    <div class='newTitle'> Outil aérosol </div>
+    L'outil aérosol simule un effet de peinture en aérosol. Dès que le bouton est enfoncé, un jet de peinture
+    est vaporisé sous le pointeur de la souris. L’outil continu ensuite d’émettre de la peinture à intervalle
+    régulier au point où le bouton soit relâché. Pour plus de réalisme, le motif de vaporisation présente de
+    légères variations à chaque fois qu’il est émis.
+
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Nombre d’émissions par seconde</div>
+    <div class='spacerFunctions'> • Diamètre du jet en pixels</div>
+    <div class='spacerFunctions'> </div>
+    <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ' class='spacerFunctions'> • Diamètre des gouttelettes composant le jet</a>
+  </div>
+
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'RectangleService'" >
+    <div class='newTitle'> Outil rectangle </div>
+    L'outil rectangle permet de dessiner des rectangles. Ceux-ci sont de même superficie que le
+    périmètre qui est lui-même rectangulaire. À tout moment pendant la première ou la deuxième étape
+    de la création, si la touche Shift est maintenue appuyée, la forme à créer devra être un carré plutôt
+    qu’un rectangle. Celui-ci occupera la plus grande aire possible et sera ancré au coin initial du rectangle
+    d’encadrement.
+
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Type de tracé </div>
+    <div class='spacerFunctions'> • Épaisseur du trait de contour en pixels </div>
+  </div>
+
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'EllipseService'" >
+    <div class='newTitle'> Outil ellipse </div>
+    L'outil ellipse adopte le même comportement que l'outil rectangle. La seule différence est que la
+    forme dessinée est une ellipse. Comme pour l’outil rectangle, l’utilisation de la touche Shift aura
+    un effet. Ici, elle transformera l’ellipse en cercle.
+
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Type de tracé </div>
+    <div class='spacerFunctions'> • Épaisseur du trait de contour en pixels </div>
+  </div>
+
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'PolygoneService'" >
+    <div class='newTitle'> Outil polygone </div>
+    L’outil de polygone permet de dessiner des polygones réguliers et convexes. Il permet toutefois à
+    l’utilisateur de spécifier le nombre de côtés de la forme à dessiner.
+
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Type de tracé </div>
+    <div class='spacerFunctions'> • Épaisseur du trait de contour en pixels </div>
+    <div class='spacerFunctions'> • Nombre de côtés du polygone (de 3 à 12) </div>
+  </div>
+
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'LineService'" >
+    <div class='newTitle'> Outil ligne </div>
+    L'outil ligne permet de tracer une ligne composée d’un ou plusieurs segments. Un premier clic définit la
+    position de départ de la ligne. Ensuite, chaque clic qui suit "connecte" avec le clic qui le précède
+    pour former un segment de la ligne.
+    <div class='spacerSubTitle'> Il est possible de créer des segments alignés de sorte que l’angle entre eux et l’axe des x soit un
+      multiple de 45 degrés. Si la touche Shift est enfoncée, le segment temporaire devra s’orienter selon
+      l’un des angles suivants : 0, 45, 90, 135, 180, 225, 270 ou 315 degrés.</div>
+
+    <div class='spacerSubTitle'> Un double-clic indique qu’il s’agit du dernier point. Un dernier segment est alors formé et la ligne est
+      terminée. Si le double-clic est effectué à plus ou moins 20 pixels (sur chaque axe) du point initial de la
+      ligne, ce sera alors les coordonnées du point initial qui seront utilisées pour le deuxième point du
+      segment final. Concrètement, la ligne sera fermée. Elle formera une boucle. Notez que la
+      fonctionnalité de fermeture ne tient pas compte de la touche Shift. La fermeture a donc lieu, même si
+      la touche Shift est enfoncée, et ce peu importe l’orientation du segment temporaire.</div>
+
+    <div class='spacerSubTitle'>Pendant la construction d’une ligne, si la touche d’échappement (Escape) est appuyée, la
+      totalité de la ligne est annulée. Si la touche de retour arrière (Backspace) est appuyée, le
+      point le plus récent est supprimé. S’il s’agit du premier point, celui-ci n’est toutefois pas supprimé. </div>
+
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Type de jonction : normal, avec point </div>
+    <div class='spacerFunctions'> • Épaisseur de la ligne en pixels </div>
+    <div class='spacerFunctions'> • Diamètre des points de jonction </div>
+  </div>
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'TextService'" >
+    <div class='newTitle'> Outil texte </div>
+    L'outil texte permet d’écrire des chaines de caractères sur la surface de dessin. Pour l’utiliser, il suffit de
+    cliquer à l’endroit où l’on veut écrire. Il n’y a pas de retour à la ligne automatique, l’utilisateur doit
+    appuyer sur la touche d’entrée (Enter) pour créer une nouvelle ligne. Pendant l’édition du texte, il
+    devra être possible de se déplacer dans le texte avec les touches directionnelles (flèches) du clavier et
+    de supprimer avec la touche de retour arrière (Backspace) ou la touche de suppression (Delete). Si
+    pendant l’édition, du texte se trouve hors de la surface de dessin, celui-ci ne doit pas être affiché
+    même s’il continue d’exister.
+    <div class='spacerSubTitle'>Un caractère partiellement hors de la surface de dessin devra être
+      affiché partiellement. Pour terminer la création d’un texte, il suffit de cliquer à l’extérieur de celui-ci
+      ou de sélectionner un autre outil. Lorsqu'un texte est terminé, toute partie se trouvant en dehors de
+      la surface de dessin est perdue.</div>
+    <div class='spacerSubTitle'>  Appuyer sur la touche d’échappement (Escape) annule la création du
+      texte. Pendant la création du texte, tous les raccourcis sauf la touche d’échappement sont ignorés. Le
+      texte doit être coloré en utilisant la couleur principale.
+    </div>
+
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • La police du texte </div>
+    <div class='spacerFunctions'> • La taille de la police </div>
+    <div class='spacerFunctions'> • Des mutateurs pour mettre le texte en gras et/ou italique. </div>
+    <div class='spacerFunctions'> • Alignement du texte : gauche, centre, droit </div>
+  </div>
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'PaintBucketService'" >
+    <div class='newTitle'> Outil sceau de peinture </div>
+    L'outil sceau de peinture permet d’effectuer un « remplissage » qui colore une ou plusieurs étendues de pixels en
+    fonction de leur couleur. L’outil peut s’utiliser selon deux modes d’opérations : « pixels contigus » et
+    « pixels non contigus »
+    <div class='spacerSubTitle'> -- Pixels contigus --</div>
+    <div class='spacerSubTitle'> Lorsque l’on clique avec le bouton gauche de la souris sur la surface de dessin, la couleur du pixel sous
+      le pointeur de la souris est saisie. Une « région » est définie avec ce premier pixel. À partir de ce point,
+      un algorithme vérifie la couleur des voisins (gauche, droite, bas, haut) de ce pixel. Chaque pixel qui
+      partage sa couleur est ajouté à la région. Ensuite, pour chaque nouveau pixel ajouté, la même
+      vérification est effectuée. La routine est répétée ainsi jusqu'à ce qu’il n’y ait plus de pixel à vérifier.
+      L’idée est d’établir une région de pixels connectés (voisins) qui partagent une même couleur.
+      Une fois la région déterminée, chaque pixel qui en fait partie est coloré avec la couleur principale.</div>
+    <div class='spacerSubTitle'>-- Pixels non contigus -- </div>
+    <div class='spacerSubTitle'> Ce mode s’utilise avec un clic du bouton droit de la souris et diffère du précédent par le fait que les
+      pixels n’ont pas à être voisin pour faire partie de ceux qui seront colorés. En effet, lorsque l’utilisateur
+      clique sur la surface de dessin, tous les pixels ayant la même couleur que celui cliqué sont alors
+      colorés avec la couleur principale. </div>
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Tolérance en pourcentage </div>
+
+  </div>
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'EraserService'" >
+    <div class='newTitle'> Outil efface </div>
+    L'outil efface permet d’effacer (rendre blanc) des pixels de la surface de dessin. Lorsque le clic gauche de
+    la souris est enfoncé, tous les pixels se trouvant sous l’icône du pointeur de la souris deviennent
+    blancs. Si le bouton gauche est maintenu enfoncé et que la souris est déplacée, tous les prochains
+    pixels qui entrent en contact avec l’icône pendant son déplacement deviennent blancs eux aussi.
+    Pour représenter l’efface, l’icône du pointeur de la souris doit être un carré blanc avec une très mince
+    bordure noire. La taille de ce carré devra être égale à l’attribut taille de l’outil.
+
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Taille de l’efface en pixels </div>
+  </div>
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'StampService'" >
+    <div class='newTitle'> Outil étampe </div>
+    L’étampe est un outil qui permet d’apposer de petites images sur le dessin. Pour l’utiliser, il suffit d’un
+    simple clic du bouton gauche à l’endroit où l’on désire apposer l’image. Le clic doit être fait sur la
+    surface de dessin. Si l’étampe ne peut pas être apposée complètement parce qu’une partie d’elle se
+    trouverait hors de la surface de dessin, ce n’est pas grave. L’étampe est quand même dessinée, mais
+    partiellement.
+    <div class='spacerSubTitle'>Les valeurs minimale et maximale du facteur de mise à échelle doivent faire en sorte qu’il sera autant
+      possible de réduire l’image à une fraction de sa taille réelle que de l’agrandir jusqu'à plusieurs fois sa
+      taille réelle.
+    </div>
+    <div class='spacerSubTitle'>Il est aussi possible de changer l’angle d’orientation de l’étampe à l’aide de la roulette de la souris. À
+      chaque cran de roulette, une rotation de 15 degrés est effectuée. Si la touche Alt du clavier est
+      maintenue enfoncée pendant cette action, la rotation sera plutôt de 1 degré.
+    </div>
+    <div class='spacerSubTitle'>Le panneau d’attributs doit permettre la configuration suivante : </div>
+    <div class='spacerFunctions'> • Facteur de mise à échelle de l’étampe </div>
+    <div class='spacerFunctions'> • Angle d’orientation de l’étampe en degrés </div>
+    <div class='spacerFunctions'> • Choix d’image </div>
+  </div>
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'PipetteService'" >
+    <div class='newTitle'> Outil pipette </div>
+    L'outil pipette est utilisé pour saisir la couleur sous le pointeur de la souris. Un clic avec le bouton gauche
+    assigne la couleur saisie à la couleur principale. Un clic avec le bouton droit l’assigne à la couleur
+    secondaire. La couleur saisie est celle du pixel sous le pointeur de la souris.
+    <div class='spacerSubTitle'> Pour rendre l’utilisation de la pipette plus conviviale, une loupe est présent dans le panneau d’attributs.
+      Le cercle de prévisualisation de cette loupe est mis à jour pendant le déplacement du pointeur au-dessus de
+      la surface de dessin.
+    </div>
+  </div>
+
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'EllipseSelectionService'" >
+    <div class='newTitle'> Outil ellipse de sélection </div>
+    L'outil ellipse de sélection se comporte pratiquement de la même manière que le rectangle de sélection. La seule
+    différence est qu’il permet de créer une ellipse de sélection plutôt qu’un rectangle de sélection. Cela
+    implique que l’utilisation de la touche Shift imposera ici un cercle plutôt qu’un carré.
+  </div>
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'LassoSelectionService'" >
+    <div class='newTitle'> Outil lasso polygonal </div>
+    L'outil lasso polygonal sert à créer une aire de sélection sur mesure en définissant, segment par segment, un
+    polygone dont le périmètre constituera le contour de sélection.
+    À quelques différences près, le lasso s'utilise comme l'outil ligne. Cela inclut l'utilisation de la touche
+    Shift pour imposer l'angle d'orientation des segments.
+    Contrairement à l'outil ligne, pour terminer le polygone (fermer la boucle), il faut faire un simple clic.
+    Ce dernier devra être positionné à plus ou moins 20 pixels (sur chaque axe) du point initial. Comme pour la
+    fermeture d'une ligne dans de telles conditions, les coordonnées du point initial seront utilisées pour le deuxième
+    point du segment final du polygone.
+
+    <div class='spacerSubTitle'> Un polygone doit avoir au minimum trois segments. Donc, si après avoir créé un seul segment,
+      l'utilisateur tente de fermer la boucle, cela ne fera qu'ajouter un nouveau segment sans fermer la
+      boucle. Le deuxième point de ce nouveau segment aura alors pour coordonnées la position du clic et
+      non la position du point initial.</div>
+
+    <div class='spacerSubTitle'>Aussi, l'outil ne permet pas d'ajouter un segment qui en croiserait un autre déjà présent.
+      Si l'utilisateur tente de le faire, il ne se passe rien; le clic n’a aucun effet. Idéalement, l'icône du
+      pointeur de la souris pourrait être altérée lorsque l'outil se trouve à une position où il serait illégal
+      d'ajouter un segment. </div>
+
+    <div class='spacerSubTitle'>Lorsque la boucle est fermée, le périmètre du polygone devient un contour de sélection. Ce dernier
+      est alors encadré dans une boite englobante. </div>
+  </div>
+
+  <div class ='toolInfo' *ngIf="this.toolManager.currentTool.constructor.name === 'RectangleSelectionService'" >
+    <div class='newTitle'> Outil rectangle de sélection </div>
+    L'outil rectangle de sélection a un fonctionnement semblable à l’outil de création de rectangles.
+    Le point initial du glisser-déposer pour créer le rectangle de sélection doit être situé sur la surface de dessin,
+    mais en dehors d’une boite englobante et ne doit pas être sur un point de contrôle (s’il y a une sélection active).
+
+    <div class='spacerSubTitle'> Après le point initial du glisser-déposer choisi, il faut déplacer le pointeur de la souris pour
+      déterminer la taille de la sélection. À tout moment pendant cette étape, un aperçu du contour de
+      sélection doit être affiché, mais pas la boite englobante. Si le pointeur de la souris se retrouve hors de
+      la surface de dessin, l’aperçu du contour de sélection doit être limité par la frontière de la surface de
+      dessin. Concrètement, il va longer la frontière plutôt que de poursuivre sur la zone de travail. Lorsque
+      le bouton est finalement relâché, la sélection est officiellement créée et une boite englobante est
+      aussitôt ajoutée.</div>
+
+    <div class='spacerSubTitle'>Comme pour l’outil de création de rectangles, l’utilisation de la touche d’échappement (Escape) fait
+      annuler l’opération et l’utilisation de la touche Shift permet de forcer la création d’un carré plutôt
+      qu’un rectangle. </div>
+
+    <div class='spacerSubTitle'>Il est important de préciser que l’outil sélectionne une région rectangulaire de pixels de la surface de
+      dessin et que cela inclut les pixels blancs qui font partie de « l’arrière-plan » du dessin. </div>
+  </div>
+
+  <div mat-dialog-actions>
+    <div id='creditTag'> *Informations des outils tiré du document de vision initial </div>
+    <button mat-button mat-dialog-close id="closeButton">Fermer</button>
+  </div>
+</div>

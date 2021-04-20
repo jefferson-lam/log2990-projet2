@@ -6,6 +6,7 @@ import { MainPageCarrouselComponent } from '@app/components/main-page/main-page-
 import { ExportDrawingComponent } from '@app/components/sidebar/export-drawing/export-drawing.component';
 import { NewDrawingBoxComponent } from '@app/components/sidebar/new-drawing-box/new-drawing-box.component';
 import { SaveDrawingComponent } from '@app/components/sidebar/save-drawing-page/save-drawing.component';
+import { ToolInfoComponent } from '@app/components/sidebar/tool-info/tool-info.component';
 import { ToolManagerService } from '@app/services/manager/tool-manager-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
@@ -77,5 +78,11 @@ export class PopupManagerService {
         if (this.isPopUpOpen) return;
         this.toolManager.currentTool.onToolChange();
         this.dialog.open(SaveDrawingComponent);
+    }
+
+    openToolInfoPopUp(): void {
+        if (this.isPopUpOpen) return;
+        this.toolManager.currentTool.onToolChange();
+        this.dialog.open(ToolInfoComponent);
     }
 }

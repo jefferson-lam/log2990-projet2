@@ -21,7 +21,11 @@ export class CursorManagerService {
         this.cursors
             .set(toolManager.pencilService, 'url(assets/pencil.png) 0 15, auto')
             .set(toolManager.eraserService, 'none')
-            .set(toolManager.stampService, 'none');
+            .set(toolManager.stampService, 'none')
+            .set(toolManager.pipetteService, 'url(assets/eyedroper.png) 0 21, auto')
+            .set(toolManager.paintBucketService, 'url(assets/paint-bucket.png) 0 18, auto')
+            .set(toolManager.aerosolService, 'url(assets/spray.png) 0 0, auto')
+            .set(toolManager.textService, 'text');
 
         this.undoRedoService.pileSizeObservable.subscribe(() => {
             this.toolManager.currentTool.drawCursor(this.mousePosition);

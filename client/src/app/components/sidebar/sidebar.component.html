@@ -23,7 +23,13 @@
             </ul>
             <ul class="grid-magnet">
                 <li id="gridButton" (click)="openGridOptions()">
-                    <mat-icon matTooltip="Options grille (Touche G)" [matTooltipPosition]="'right'"> grid_on </mat-icon>
+                    <img
+                        height="24px"
+                        class="toolClass"
+                        src="assets/sidebar-icons/grid.svg"
+                        matTooltip="Options grille (Touche G)"
+                        [matTooltipPosition]="'right'"
+                    />
                 </li>
             </ul>
             <ul class="tools-sidebar">
@@ -34,16 +40,23 @@
                     class="listToolsClass"
                     (click)="onSelectTool(tool)"
                 >
-                    <mat-icon
+                    <img
+                        height="24px"
                         class="toolClass"
                         id="icon-button-{{ tool.name }}"
+                        src="{{ tool.icon }}"
                         matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
                         [matTooltipPosition]="'right'"
-                    >
-                        {{ tool.icon }}
-                    </mat-icon>
+                    />
                 </li>
             </ul>
+          <ul class="info">
+            <li id="infoButton" (click)="showToolInfo()">
+              <mat-icon matTooltip="Info sur l'outil actif" [matTooltipPosition]="'right'">
+                info
+              </mat-icon>
+            </li>
+          </ul>
         </div>
         <div id="right-column">
             <ul class="options-sidebar">
@@ -72,7 +85,13 @@
             </ul>
             <ul class="grid-magnet">
                 <li id="magnetismButton" (click)="toggleMagnetismOptions()">
-                    <mat-icon matTooltip="Options magnétisme (Touche M)" [matTooltipPosition]="'right'"> select_all </mat-icon>
+                    <img
+                        height="24px"
+                        class="toolClass"
+                        src="assets/sidebar-icons/magnet.svg"
+                        matTooltip="Options magnétisme (Touche M)"
+                        [matTooltipPosition]="'right'"
+                    />
                 </li>
             </ul>
             <ul class="tools-sidebar">
@@ -83,17 +102,18 @@
                     class="listToolsClass"
                     (click)="onSelectTool(tool)"
                 >
-                    <mat-icon
+                    <img
+                        height="24px"
                         class="toolClass"
                         id="icon-button-{{ tool.name }}"
+                        src="{{ tool.icon }}"
                         matTooltip="{{ tool.name }} {{ tool.helpShortcut }}"
                         [matTooltipPosition]="'right'"
-                    >
-                        {{ tool.icon }}
-                    </mat-icon>
+                    />
                 </li>
             </ul>
         </div>
+
     </div>
     <!-- Ici on rentres dans l'interface des options des outils -->
     <mat-drawer-container class="tools-option-container">

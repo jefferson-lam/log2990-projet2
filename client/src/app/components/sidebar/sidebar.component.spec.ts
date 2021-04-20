@@ -46,7 +46,11 @@ describe('SidebarComponent', () => {
             ['refresh', 'executeCommand', 'undo', 'redo'],
             ['isUndoAllowed', 'isRedoAllowed'],
         );
-        popupManagerSpy = jasmine.createSpyObj('PopupManagerService', ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp'], ['isPopupOpen']);
+        popupManagerSpy = jasmine.createSpyObj(
+            'PopupManagerService',
+            ['openExportPopUp', 'openSavePopUp', 'openNewDrawingPopUp', 'openToolInfoPopUp'],
+            ['isPopupOpen'],
+        );
         pencilStub = new PencilService({} as DrawingService, undoRedoServiceSpy);
         eraserStub = new EraserService({} as DrawingService, undoRedoServiceSpy);
         lineStub = new LineService({} as DrawingService, undoRedoServiceSpy);
@@ -130,7 +134,7 @@ describe('SidebarComponent', () => {
         expect(selectToolSpy).toHaveBeenCalledWith({
             service: 'PencilService',
             name: 'Crayon',
-            icon: 'create',
+            icon: 'assets/sidebar-icons/pencil.svg',
             keyShortcut: 'c',
             helpShortcut: '(Touche C)',
         });
@@ -149,7 +153,7 @@ describe('SidebarComponent', () => {
         expect(selectToolSpy).toHaveBeenCalledWith({
             service: 'EraserService',
             name: 'Efface',
-            icon: 'settings_cell',
+            icon: 'assets/sidebar-icons/eraser.svg',
             keyShortcut: 'e',
             helpShortcut: '(Touche E)',
         });
@@ -168,7 +172,7 @@ describe('SidebarComponent', () => {
         expect(selectToolSpy).toHaveBeenCalledWith({
             service: 'LineService',
             name: 'Ligne',
-            icon: 'remove',
+            icon: 'assets/sidebar-icons/line.svg',
             keyShortcut: 'l',
             helpShortcut: '(Touche L)',
         });
@@ -187,7 +191,7 @@ describe('SidebarComponent', () => {
         expect(selectToolSpy).toHaveBeenCalledWith({
             service: 'RectangleService',
             name: 'Rectangle',
-            icon: 'crop_5_4',
+            icon: 'assets/sidebar-icons/rectangle.svg',
             keyShortcut: '1',
             helpShortcut: '(Touche 1)',
         });
@@ -206,7 +210,7 @@ describe('SidebarComponent', () => {
         expect(selectToolSpy).toHaveBeenCalledWith({
             service: 'EllipseService',
             name: 'Ellipse',
-            icon: 'panorama_fish_eye',
+            icon: 'assets/sidebar-icons/ellipse.svg',
             keyShortcut: '2',
             helpShortcut: '(Touche 2)',
         });
@@ -217,7 +221,7 @@ describe('SidebarComponent', () => {
         expect(component.selectedTool).toEqual({
             service: 'EraserService',
             name: 'Efface',
-            icon: 'settings_cell',
+            icon: 'assets/sidebar-icons/eraser.svg',
             keyShortcut: 'e',
             helpShortcut: '(Touche E)',
         });
@@ -242,6 +246,13 @@ describe('SidebarComponent', () => {
         saveDrawingButton.click();
         fixture.detectChanges();
         expect(popupManagerSpy.openSavePopUp).toHaveBeenCalled();
+    });
+
+    it('pressing on showToolInfo should emit to editor', () => {
+        const infoButton = fixture.debugElement.nativeElement.querySelector('#infoButton');
+        infoButton.click();
+        fixture.detectChanges();
+        expect(popupManagerSpy.openToolInfoPopUp).toHaveBeenCalled();
     });
 
     it('clicking on undo button when isUndoAllowed should call undoRedoService.undo', () => {
