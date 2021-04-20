@@ -19,8 +19,6 @@ describe('RectangleCommand', () => {
 
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
-    let testCanvas: HTMLCanvasElement;
-    let testCtx: CanvasRenderingContext2D;
 
     // Constants
     const BIG_TEST_LINE_WIDTH = 50;
@@ -32,10 +30,6 @@ describe('RectangleCommand', () => {
     const TEST_SECONDARY_COLOR = 'black';
     const TEST_X_OFFSET = 3;
     const TEST_Y_OFFSET = 3;
-    const START_X = 0 + TEST_LINE_WIDTH / 2;
-    const START_Y = 0 + TEST_LINE_WIDTH / 2;
-    const WIDTH = TEST_X_OFFSET - TEST_LINE_WIDTH;
-    const HEIGHT = TEST_Y_OFFSET - TEST_LINE_WIDTH;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -48,9 +42,6 @@ describe('RectangleCommand', () => {
             { x: 0, y: 0 },
             { x: TEST_X_OFFSET, y: TEST_Y_OFFSET },
         ] as Vec2[];
-
-        testCanvas = document.createElement('canvas');
-        testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         rectangleService.cornerCoords = Object.assign([], pathStub);
 
@@ -130,28 +121,6 @@ describe('RectangleCommand', () => {
 
         expect(drawRectangleTypeSpy).toHaveBeenCalled();
         expect(drawRectangleTypeSpy).toHaveBeenCalledWith(baseCtxStub, pathStub);
-    });
-
-    it('FillMode.FILL_ONLY should fill all pixels between start and end point with the same color.', () => {
-        rectangleService.fillMode = ToolConstants.FillMode.FILL_ONLY;
-
-        command.setValues(baseCtxStub, rectangleService);
-        command.execute();
-
-        testCtx.beginPath();
-        testCtx.lineJoin = 'miter';
-        testCtx.fillStyle = TEST_PRIMARY_COLOR;
-        testCtx.strokeStyle = TEST_PRIMARY_COLOR;
-        testCtx.lineWidth = TEST_LINE_WIDTH;
-        testCtx.rect(START_X, START_Y, WIDTH, HEIGHT);
-        testCtx.stroke();
-        testCtx.fill();
-
-        const imageData: ImageData = baseCtxStub.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
-        const testData: ImageData = testCtx.getImageData(0, 0, TEST_X_OFFSET, TEST_Y_OFFSET);
-        for (let i = 0; i < imageData.data.length; i++) {
-            expect(imageData.data[i]).toEqual(testData.data[i]);
-        }
     });
 
     it('drawRectangle should fill all pixels with border color if width or height to be is smaller than line width.', () => {
